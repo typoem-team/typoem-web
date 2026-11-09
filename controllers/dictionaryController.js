@@ -61,7 +61,10 @@ async function getDictionary(req, res) {
     // 2. Cache miss -> call the external Free Dictionary API
     let apiRes;
     try {
-      apiRes = await fetch(`${DICT_API}/${encodeURIComponent(word)}`);
+      apiRes = await fetch(`${DICT_API}/${encodeURIComponent(word)}`, {
+        headers: { Accept: "application/json", "User-Agent": "Typoem/1.0 (+https://typoem-app.onrender.com)" },
+        signal: AbortSignal.timeout(10000),
+      });
     } catch (err) {
       console.error("Dictionary fetch failed:", err);
       return res.status(502).json({ error: "dictionary service unavailable" });
@@ -71,6 +74,11 @@ async function getDictionary(req, res) {
       return res.status(404).json({ error: "word not found" });
     }
     if (!apiRes.ok) {
+      // Log why the upstream refused (e.g. 429 rate limit, 403 blocked) so it shows in Render logs
+      const body = await apiRes.text().catch(() => "");
+      console.error(
+        `Dictionary upstream error: status=${apiRes.status} word=${word} body=${body.slice(0, 200).replace(/\s+/g, " ")}`
+      );
       return res.status(502).json({ error: "dictionary service unavailable" });
     }
 
