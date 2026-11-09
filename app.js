@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 // for Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -15,6 +16,19 @@ const publicRouter = require('./routes/public');
 const vocabRouter = require('./routes/vocab');
 
 const app = express();
+
+// CORS — allow the Capacitor app (Android: https://localhost, iOS: capacitor://localhost).
+// Same-origin web pages send no Origin header and are always allowed.
+const allowedOrigins = (process.env.CORS_ORIGINS ||
+  'https://localhost,capacitor://localhost,http://localhost')
+  .split(',').map((s) => s.trim()).filter(Boolean);
+
+app.use(cors({
+  origin(origin, cb) {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(null, false);
+  },
+}));
 
 app.use(express.json());
 
