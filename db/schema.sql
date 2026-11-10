@@ -111,3 +111,70 @@ CREATE TABLE IF NOT EXISTS vocab (
   UNIQUE(user_id, word),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+-- ===== Books (v1.1) =====
+-- A room reads one Project Gutenberg novel; each member keeps their own progress.
+-- Import order: book_chapters + book_paragraphs first (many small batches), the books row LAST.
+-- A book exists (is "imported") only when its books row exists.
+
+-- Books (id = Project Gutenberg ebook number, not AUTOINCREMENT)
+CREATE TABLE IF NOT EXISTS books (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  author TEXT NOT NULL,
+  author_death_year INTEGER,
+  total_words INTEGER NOT NULL,
+  total_paragraphs INTEGER NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Book Chapters
+-- No FOREIGN KEY to books on purpose: these rows are written before the books row.
+CREATE TABLE IF NOT EXISTS book_chapters (
+  book_id INTEGER NOT NULL,
+  idx INTEGER NOT NULL,
+  title TEXT,
+  start_paragraph INTEGER NOT NULL,
+  paragraph_count INTEGER NOT NULL,
+  word_count INTEGER NOT NULL,
+  PRIMARY KEY (book_id, idx)
+);
+
+-- Book Paragraphs (idx is 0-based across the whole book; id is the stable key for later annotations)
+-- No FOREIGN KEY to books on purpose: these rows are written before the books row.
+CREATE TABLE IF NOT EXISTS book_paragraphs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  book_id INTEGER NOT NULL,
+  idx INTEGER NOT NULL,
+  chapter_idx INTEGER NOT NULL,
+  text TEXT NOT NULL,
+  word_count INTEGER NOT NULL,
+  UNIQUE(book_id, idx)
+);
+CREATE INDEX IF NOT EXISTS idx_book_paragraphs_chapter ON book_paragraphs(book_id, chapter_idx);
+
+-- Room Books (one book per room)
+CREATE TABLE IF NOT EXISTS room_books (
+  room_id INTEGER PRIMARY KEY,
+  book_id INTEGER NOT NULL,
+  set_by INTEGER NOT NULL,
+  set_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (room_id) REFERENCES rooms(id),
+  FOREIGN KEY (book_id) REFERENCES books(id),
+  FOREIGN KEY (set_by) REFERENCES users(id)
+);
+
+-- Reading Progress (per user, per room, per book; kept when the room changes book or the user leaves)
+-- No FOREIGN KEY to books: a book may be deleted and re-imported while progress rows remain.
+CREATE TABLE IF NOT EXISTS reading_progress (
+  user_id INTEGER NOT NULL,
+  room_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  paragraph_idx INTEGER NOT NULL DEFAULT 0,
+  target_end_date TEXT,
+  started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, room_id, book_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
