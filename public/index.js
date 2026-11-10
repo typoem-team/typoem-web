@@ -299,14 +299,6 @@ $('join-form').addEventListener('submit', async (e) => {
 // =====================================================================
 //  Cover deck
 // =====================================================================
-function titleSize(title) {
-  const n = (title || '').length;
-  if (n > 44) return ' c-title-xs';
-  if (n > 24) return ' c-title-sm';
-  if (n > 12) return ' c-title-md';
-  return '';
-}
-
 function contributorText(row) {
   const n = row.contributor_count || 0;
   return n > 0 ? `${n}명 참여` : '메모 없음';
@@ -334,7 +326,7 @@ function coverHTML(item) {
   return `
     <div class="cover" style="background:${UI.coverColor(p.id)}" role="group" aria-label="${esc(title)}">
       <span class="c-kicker">${kicker}</span>
-      <span class="c-title${titleSize(title)}">${meta(title)}</span>
+      <span class="c-title${UI.titleSize(title)}">${meta(title)}</span>
       <span class="c-author">${meta(p.author)}</span>
       <span class="c-foot">${foot}</span>
     </div>`;
@@ -396,12 +388,70 @@ function openCover(i) {
     UI.openSheet('sheet-history');
     UI.haptic();
   } else if (item.kind === 'today') {
-    window.location.href = `/room.html?id=${encodeURIComponent(room.id)}`;
+    openReader(covers()[i]);
   } else {
     // Past poems open once the read-only API exists (GET /rooms/:id/history/:date).
     UI.toast('지난 시는 곧 열려요');
   }
 }
+
+// Unfold: the tapped cover grows into the reading screen's top band, then the
+// reading page (room.html) takes over with the same band already in place.
+let opening = false;
+function openReader(coverEl) {
+  if (opening) return;
+  const p = today.poem;
+  const color = UI.coverColor(p.id);
+  const url = `/room.html?id=${encodeURIComponent(room.id)}`;
+  try {
+    sessionStorage.setItem('typoem:open', JSON.stringify({
+      roomId: room.id, roomName: room.name, color, title: p.title, author: p.author,
+    }));
+  } catch (err) { /* the reader just paints the band a moment later */ }
+
+  UI.haptic();
+  if (UI.reduceMotion || !coverEl || !coverEl.animate) {
+    window.location.href = url;
+    return;
+  }
+  opening = true;
+
+  const cr = coverEl.getBoundingClientRect();
+  const col = document.body.getBoundingClientRect();   // the centre column
+  const morph = document.createElement('div');
+  morph.className = 'morph';
+  morph.style.background = color;
+  // same height as .r-head on the reading screen
+  morph.style.height = 'calc(230px + var(--safe-top))';
+  document.body.appendChild(morph);
+  const bandHeight = morph.offsetHeight;
+
+  const from = { left: cr.left + 'px', top: cr.top + 'px', width: cr.width + 'px', height: cr.height + 'px', borderRadius: '6px 12px 12px 6px' };
+  const to = { left: col.left + 'px', top: '0px', width: col.width + 'px', height: bandHeight + 'px', borderRadius: '0px' };
+  Object.assign(morph.style, from);
+
+  window.TypoemNative.setStatusBar('light');
+  const tabbar = $('tabbar');
+  if (tabbar) tabbar.classList.add('away');
+  UI.anim($('home'), [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 420 });
+  UI.anim(morph, [from, to], { duration: 520 }).finished.then(() => {
+    window.location.href = url;
+  });
+}
+
+// Coming back with the browser's back button can restore this page from the
+// back/forward cache mid-unfold: put everything back.
+window.addEventListener('pageshow', (e) => {
+  if (!e.persisted) return;
+  opening = false;
+  document.querySelectorAll('.morph').forEach((m) => m.remove());
+  const home = $('home');
+  if (home.getAnimations) home.getAnimations().forEach((a) => a.cancel());
+  const tabbar = $('tabbar');
+  if (tabbar) tabbar.classList.remove('away');
+  window.TypoemNative.setStatusBar('dark');
+  if (room) showRoom(room);        // memo counts may have changed while reading
+});
 
 // Drag to turn: the cover follows the finger with a slight tilt;
 // past 70px it goes to the next / previous cover.
@@ -490,6 +540,7 @@ $('h-list').addEventListener('click', (e) => {
 //  Start
 // =====================================================================
 (async function start() {
+  window.TypoemNative.setStatusBar('dark');   // dark status bar text on the paper background
   TypoemStreak.load();           // hides itself on 404
   await loadHome();
   // deep links from the tab bar / other pages
