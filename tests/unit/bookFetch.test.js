@@ -416,4 +416,38 @@ describe("network helpers", () => {
         fetchSpy.mockRejectedValueOnce(new TypeError("fetch failed"));
         await expect(bf.fetchBookText(meta)).resolves.toEqual({ ok: false, error: "network" });
     });
+
+    describe("timeouts", () => {
+        // fetch that hangs until its signal aborts, then rejects like the real one
+        const hangingFetch = (url, { signal }) => new Promise((_resolve, reject) => {
+            signal.addEventListener("abort", () => reject(Object.assign(new Error("aborted"), { name: "AbortError" })));
+        });
+
+        beforeEach(() => jest.useFakeTimers());
+        afterEach(() => jest.useRealTimers());
+
+        test("getBookMeta gives up after 15s", async () => {
+            fetchSpy.mockImplementation(hangingFetch);
+            let result;
+            bf.getBookMeta(1342).then((r) => { result = r; });
+
+            await jest.advanceTimersByTimeAsync(bf.META_TIMEOUT - 1);
+            expect(result).toBeUndefined();
+            await jest.advanceTimersByTimeAsync(1);
+            expect(result).toEqual({ ok: false, error: "timeout" });
+            expect(bf.META_TIMEOUT).toBe(15000);
+        });
+
+        test("fetchBookText keeps the 30s timeout", async () => {
+            fetchSpy.mockImplementation(hangingFetch);
+            let result;
+            bf.fetchBookText({ id: 1, formats: { "text/plain": "https://x/1.txt" } }).then((r) => { result = r; });
+
+            await jest.advanceTimersByTimeAsync(bf.META_TIMEOUT);
+            expect(result).toBeUndefined();
+            await jest.advanceTimersByTimeAsync(bf.FETCH_TIMEOUT - bf.META_TIMEOUT);
+            expect(result).toEqual({ ok: false, error: "timeout" });
+            expect(bf.FETCH_TIMEOUT).toBe(30000);
+        });
+    });
 });

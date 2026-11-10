@@ -28,6 +28,8 @@ tags:
     description: Unauthenticated endpoints for the landing page
   - name: Vocab
     description: Personal vocabulary notebook
+  - name: Books
+    description: A Project Gutenberg novel a room reads together, with per-member reading progress
 
 components:
   securitySchemes:
@@ -352,6 +354,180 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LineAnnotation'
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Same as gutenbergId.
+          example: 1342
+        gutenbergId:
+          type: integer
+          description: Project Gutenberg ebook number.
+          example: 1342
+        title:
+          type: string
+          example: "Pride and Prejudice"
+        author:
+          type: string
+          description: Author names joined with "; ".
+          example: "Austen, Jane"
+        authorDeathYear:
+          type: integer
+          nullable: true
+          description: Death year of the first author.
+          example: 1817
+        totalWords:
+          type: integer
+          example: 121581
+        totalParagraphs:
+          type: integer
+          example: 2061
+
+    BookListItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1342
+        gutenbergId:
+          type: integer
+          example: 1342
+        title:
+          type: string
+          example: "Pride and Prejudice"
+        author:
+          type: string
+          example: "Austen, Jane"
+        totalWords:
+          type: integer
+          example: 121581
+
+    BookSearchResult:
+      type: object
+      properties:
+        gutenbergId:
+          type: integer
+          example: 1342
+        title:
+          type: string
+          example: "Pride and Prejudice"
+        authors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Austen, Jane"
+              deathYear:
+                type: integer
+                nullable: true
+                example: 1817
+        alreadyImported:
+          type: boolean
+          description: True if the book is already stored, so assigning it is instant.
+          example: false
+
+    BookChapter:
+      type: object
+      properties:
+        idx:
+          type: integer
+          description: 0-based chapter index.
+          example: 0
+        title:
+          type: string
+          nullable: true
+          description: Heading text; null for books without chapter headings.
+          example: "Chapter I."
+        startParagraph:
+          type: integer
+          description: Book-wide index of the chapter's first paragraph.
+          example: 0
+        paragraphCount:
+          type: integer
+          example: 25
+        wordCount:
+          type: integer
+          example: 852
+
+    BookParagraph:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Stable paragraph id.
+          example: 5012
+        idx:
+          type: integer
+          description: 0-based index across the whole book.
+          example: 0
+        text:
+          type: string
+          example: "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife."
+
+    ReadingProgress:
+      type: object
+      properties:
+        paragraphIdx:
+          type: integer
+          description: Book-wide paragraph index the reader is at (0 when not started).
+          example: 120
+        targetEndDate:
+          type: string
+          nullable: true
+          description: Reader's goal date (YYYY-MM-DD). Remaining days are computed on the client.
+          example: "2026-12-31"
+        startedAt:
+          type: string
+          nullable: true
+          description: When progress was first saved (null when not started).
+          example: "2026-11-10 09:12:00"
+        updatedAt:
+          type: string
+          nullable: true
+          example: "2026-11-10 09:40:00"
+
+    RoomBook:
+      type: object
+      properties:
+        room:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "English Lit Study"
+        book:
+          $ref: '#/components/schemas/Book'
+        chapters:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookChapter'
+        progress:
+          $ref: '#/components/schemas/ReadingProgress'
+
+    RoomBookChapter:
+      type: object
+      properties:
+        chapter:
+          type: object
+          properties:
+            idx:
+              type: integer
+              example: 0
+            title:
+              type: string
+              nullable: true
+              example: "Chapter I."
+        paragraphs:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookParagraph'
 
 paths:
   /api/public/poem:
@@ -1483,6 +1659,290 @@ paths:
                 $ref: '#/components/schemas/Error'
         '401':
           description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/books:
+    get:
+      tags: [Books]
+      summary: List imported books
+      description: Books already stored on the server, newest first. Assigning one of these to a room is instant.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Imported books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookListItem'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/books/search:
+    get:
+      tags: [Books]
+      summary: Search Project Gutenberg
+      description: >
+        Proxies a Gutendex search (English, plain-text editions, first result page).
+        Only books whose authors and translators all died in 1962 or earlier
+        (public domain in Korea) are returned.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Title or author words, 1-100 characters.
+          schema:
+            type: string
+          example: pride prejudice
+      responses:
+        '200':
+          description: Matching books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookSearchResult'
+        '400':
+          description: Missing or too long q
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Gutendex unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/rooms/{id}/book:
+    get:
+      tags: [Books]
+      summary: Get the room's book (overview or one chapter)
+      description: >
+        Without `chapter`, returns the book, its chapter list and the caller's
+        progress (`paragraphIdx: 0`, `targetEndDate: null` if not started; no row
+        is created), sent with `Cache-Control: no-store`.
+        With `chapter=N`, returns that chapter's paragraphs in order.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: chapter
+          in: query
+          required: false
+          description: 0-based chapter index.
+          schema:
+            type: integer
+            minimum: 0
+          example: 0
+      responses:
+        '200':
+          description: Overview (no chapter) or one chapter (chapter=N)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RoomBook'
+                  - $ref: '#/components/schemas/RoomBookChapter'
+        '400':
+          description: Invalid room id or chapter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not a member of this room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Room not found, no book assigned to this room, or chapter out of range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Books]
+      summary: Set the room's book (owner only)
+      description: >
+        Assigns a Project Gutenberg book to the room, replacing the current one
+        (members' progress is kept per book). If the book is not stored yet it is
+        fetched from Gutendex, checked (English only, public domain in Korea),
+        split into chapters and paragraphs, and stored. Returns 200 whether the book
+        was newly imported or already stored.
+
+
+        Timing: an already stored book responds immediately. A new import usually
+        takes a few seconds (about 4 s for Pride and Prejudice locally) but can take
+        up to about 60 seconds plus storage time in the worst case: the Gutendex
+        metadata lookup times out after 15 s and is retried once on a timeout or
+        network error (30 s), then the text download times out after 30 s.
+        Clients should show a loading state and allow at least 70 seconds.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [gutenbergId]
+              properties:
+                gutenbergId:
+                  type: integer
+                  example: 1342
+      responses:
+        '200':
+          description: The room's book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid room id or gutenbergId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not a member of this room, or not the room owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Only the room owner can change the book
+        '404':
+          description: Room not found, or no such book on Project Gutenberg
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Not an English book, not public domain in Korea, no plain-text edition, over 200,000 words, or under 50 paragraphs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Gutendex or Project Gutenberg unavailable (metadata lookup has a 15 s timeout and is retried once first; text download has a 30 s timeout)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Import was interrupted by a concurrent import; retry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/rooms/{id}/book/progress:
+    put:
+      tags: [Books]
+      summary: Save my reading progress for the room's book
+      description: >
+        Upserts the caller's progress for the room's current book. Omitting
+        targetEndDate keeps the stored value; null clears it. Sent with
+        `Cache-Control: no-store`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paragraphIdx]
+              properties:
+                paragraphIdx:
+                  type: integer
+                  minimum: 0
+                  description: Must be less than the book's totalParagraphs.
+                  example: 120
+                targetEndDate:
+                  type: string
+                  nullable: true
+                  description: A real calendar date (YYYY-MM-DD) or null.
+                  example: "2026-12-31"
+      responses:
+        '200':
+          description: Saved progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadingProgress'
+        '400':
+          description: Invalid room id, paragraphIdx or targetEndDate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not a member of this room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Room not found, or no book assigned to this room
           content:
             application/json:
               schema:
