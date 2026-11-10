@@ -14,6 +14,7 @@ const { roomMemosRouter, memosRouter } = require('./routes/memos');
 const { roomAnnotationsRouter, annotationsRouter } = require('./routes/annotations');
 const publicRouter = require('./routes/public'); 
 const vocabRouter = require('./routes/vocab');
+const { booksRouter, roomBooksRouter } = require('./routes/books');
 
 const app = express();
 
@@ -42,7 +43,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // API routes
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/rooms', roomsRouter); 
+app.use('/api/rooms', roomsRouter);
+app.use('/api/rooms', roomBooksRouter); // before memos/annotations
 app.use('/api/rooms', roomMemosRouter);
 app.use('/api/memos', memosRouter);
 app.use('/api/rooms', roomAnnotationsRouter);
@@ -50,6 +52,7 @@ app.use('/api/annotations', annotationsRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/public', publicRouter);   
 app.use('/api/vocab', vocabRouter);
+app.use('/api/books', booksRouter);
 
 
 // API docs
