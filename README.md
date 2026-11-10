@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/so-yeon-333/typoem/actions/workflows/test.yml/badge.svg)
 
-**Live app:** https://typoem.onrender.com &nbsp;·&nbsp; **API docs:** https://typoem.onrender.com/api/docs
+**Live app:** https://typoem-app.onrender.com &nbsp;·&nbsp; **API docs:** https://typoem.onrender.com/api/docs
 
 > *Type + Poem* — A cozy little corner where friends gather to read a daily poem and leave their ink-marks across the page.
 
