@@ -19,14 +19,14 @@
     popup = document.createElement('div');
     popup.className = 'dict-popup';
     popup.setAttribute('role', 'dialog');
-    popup.setAttribute('aria-label', 'Dictionary');
+    popup.setAttribute('aria-label', '사전');
     popup.hidden = true;
 
     popup.innerHTML = `
       <div class="dict-popup-head">
         <h4 class="dict-popup-word" id="dict-popup-word"></h4>
-        <button type="button" class="link-btn dict-popup-save" id="dict-popup-save" hidden>Save</button>
-        <button type="button" class="link-btn dict-popup-close" aria-label="Close">&times;</button>
+        <button type="button" class="link-btn dict-popup-save" id="dict-popup-save" hidden>단어장에 담기</button>
+        <button type="button" class="link-btn dict-popup-close" aria-label="닫기">&times;</button>
       </div>
       <div class="dict-popup-body" id="dict-popup-body"></div>
     `;
@@ -86,7 +86,7 @@
     if (!btn) return;
     btn.hidden = false;
     btn.disabled = false;
-    btn.textContent = 'Save';
+    btn.textContent = '단어장에 담기';
   }
 
   // Store the first definition of the current word in the personal notebook.
@@ -112,10 +112,10 @@
 
       if (res.ok || res.status === 201) {
         if (btn) {
-          btn.textContent = 'Saved \u2713';
+          btn.textContent = '단어장에 담았어요';
           setTimeout(() => {
             const b = saveButtonEl();
-            if (b && !popup.hidden) { b.textContent = 'Save'; b.disabled = false; }
+            if (b && !popup.hidden) { b.textContent = '단어장에 담기'; b.disabled = false; }
           }, 5000);
         }
       } else if (btn) {
@@ -143,7 +143,7 @@
 
     const defs = Array.isArray(data.definitions) ? data.definitions : [];
     if (defs.length === 0) {
-      html += `<p class="dict-empty">No definition available.</p>`;
+      html += `<p class="dict-empty">뜻을 찾지 못했어요.</p>`;
       hideSaveButton();
     } else {
       html += '<ol class="dict-def-list">';
@@ -234,7 +234,7 @@
     document.getElementById('dict-popup-word').textContent = word;
     currentEntry = null;
     hideSaveButton();
-    setBody('<p class="dict-loading">Looking up&hellip;</p>');
+    setBody('<p class="dict-loading">찾는 중이에요&hellip;</p>');
     popup.hidden = false;
     positionPopup(anchorEl);
 
@@ -244,7 +244,7 @@
       res = await fetchEntry(word);
     } catch (err) {
       if (seq !== lookupSeq) return;
-      setBody('<p class="dict-error">Could not reach the dictionary. Try again.</p>');
+      setBody('<p class="dict-error">사전에 연결하지 못했어요. 다시 눌러 주세요.</p>');
       return;
     }
     // The user tapped another word (or closed the popup) while we were retrying.
@@ -252,11 +252,11 @@
 
     // authFetch handles 401 (logout + redirect); handle the rest here.
     if (res.status === 404) {
-      setBody('<p class="dict-error">No entry found for this word.</p>');
+      setBody('<p class="dict-error">이 단어는 사전에 없어요.</p>');
       return;
     }
     if (!res.ok) {
-      setBody('<p class="dict-error">The dictionary is unavailable right now.</p>');
+      setBody('<p class="dict-error">지금은 사전을 쓸 수 없어요.</p>');
       return;
     }
 

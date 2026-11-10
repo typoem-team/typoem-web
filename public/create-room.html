@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New Room · Typoem</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f2eee7">
+  <title>새 방 만들기 · Typoem</title>
 
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
@@ -17,21 +13,21 @@
 
   <div class="auth-card">
 
-    <h1 class="auth-brand">New Room</h1>
-    <p class="auth-subtitle">Start a new corner for daily poems.</p>
+    <h1 class="card-title">새 방 만들기</h1>
+    <p class="auth-subtitle">매일 시 한 편을 같이 읽을 방이에요.</p>
 
-    <div id="errorBox" class="auth-error hidden"></div>
+    <div id="errorBox" class="auth-error hidden" role="alert"></div>
 
     <!-- Create form -->
     <form class="auth-form" id="createForm" novalidate>
 
       <div class="field">
-        <label for="name">Room Name</label>
+        <label for="name">방 이름</label>
         <input
           id="name"
           name="name"
           type="text"
-          placeholder="e.g. English Lit Study"
+          placeholder="예: 우리 셋의 시집"
           required
           minlength="1"
           maxlength="50"
@@ -40,34 +36,34 @@
       </div>
 
       <div class="field">
-        <label for="description">Description (optional)</label>
+        <label for="description">소개 (선택)</label>
         <textarea
           id="description"
           name="description"
-          placeholder="What is this room about?"
+          placeholder="어떤 방인가요?"
           maxlength="200"
           rows="3"
         ></textarea>
       </div>
 
-      <button type="submit" id="submitBtn" class="auth-submit">Create Room</button>
+      <button type="submit" id="submitBtn" class="auth-submit">방 만들기</button>
 
     </form>
 
     <!-- Success view (hidden until creation succeeds) -->
     <div id="successBox" class="hidden">
-      <p class="auth-subtitle" style="margin-top: 24px;">Room created! Share this invite code:</p>
+      <p class="auth-subtitle">방을 만들었어요. 초대 코드를 나눠 주세요.</p>
 
       <div class="invite-code-row">
         <p class="invite-code" id="inviteCode"></p>
-        <button type="button" id="copyBtn" class="copy-btn" title="Copy code">Copy</button>
+        <button type="button" id="copyBtn" class="copy-btn">복사</button>
       </div>
-      <p class="copy-feedback hidden" id="copyFeedback">Copied to clipboard.</p>
+      <p class="copy-feedback hidden" id="copyFeedback">초대 코드를 복사했어요</p>
     </div>
 
     <!-- Back link -->
     <p class="auth-footer" id="backFooter">
-      <a href="index.html">&larr; Back to My Rooms</a>
+      <a href="index.html">&larr; 내 방으로</a>
     </p>
 
   </div>

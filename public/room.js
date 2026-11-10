@@ -9,19 +9,8 @@ requireLogin();
 const params = new URLSearchParams(window.location.search);
 const ROOM_ID = params.get('id');
 
-// ---- Masthead: greet the user + wire up logout + date line ----
+// The date line, tab bar and log out live in ui.js.
 const me = getCurrentUser();
-const navUser = document.getElementById('nav-user');
-if (me && me.nickname) {
-  navUser.textContent = me.nickname;
-}
-document.getElementById('logout-btn').addEventListener('click', logout);
-document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
 
 // Point the "Poem history" link at this room's history page.
 if (ROOM_ID) {
@@ -55,25 +44,27 @@ async function loadToday() {
   const status = document.getElementById('status');
 
   if (!ROOM_ID) {
-    status.textContent = 'No room specified.';
+    status.textContent = '방을 찾지 못했어요.';
     return;
   }
 
-  status.textContent = 'Loading today\u2019s poem\u2026';
+  status.textContent = '오늘의 시를 펼치는 중이에요\u2026';
 
   const res = await authFetch(`/api/rooms/${ROOM_ID}/today`);
 
   // authFetch already handles 401 (logout + redirect); handle the rest here
   if (!res.ok) {
-    const data = await res.json();
-    status.textContent = data.error || 'Could not load today\u2019s poem.';
+    status.textContent = loadErrorText(res.status);
     return;
   }
 
   const data = await res.json();
   status.textContent = '';
 
-  // Room name in the masthead headline
+  // Remember this room: the 오늘 tab opens the last room you read in.
+  TypoemUI.setLastRoom(ROOM_ID);
+
+  // Room name in the sub-nav
   if (data.room && data.room.name) {
     document.getElementById('room-name').textContent = data.room.name;
   }
@@ -84,6 +75,14 @@ async function loadToday() {
   renderMemos(data.memos || []);
   loadInviteCode();
   loadMembers();
+}
+
+// Korean message for a failed /today load (the API's own messages are English).
+function loadErrorText(status) {
+  if (status === 403) return '이 방의 멤버가 아니에요.';
+  if (status === 404) return '방을 찾지 못했어요.';
+  if (status === 503) return '오늘의 시를 가져오지 못했어요. 잠시 뒤에 다시 열어 주세요.';
+  return '오늘의 시를 불러오지 못했어요.';
 }
 
 // The invite code isn't in the /today payload, but /api/rooms/mine returns it
@@ -125,23 +124,21 @@ function drawRoomActionButton() {
   const row = document.getElementById('room-actions-row');
 
   row.innerHTML = isOwner
-    ? `<button type="button" id="delete-room-btn" class="btn-sm btn-danger">Delete Room</button>
-       <span class="room-actions-hint">Deletes this room and all its memos and notes for everyone.</span>`
-    : `<button type="button" id="leave-room-btn" class="btn-sm btn-danger">Leave Room</button>
-       <span class="room-actions-hint">Removes you from this room. You can rejoin with the invite code.</span>`;
+    ? '<button type="button" id="delete-room-btn" class="btn-sm btn-danger">이 방 삭제하기</button>'
+    : '<button type="button" id="leave-room-btn" class="btn-sm btn-danger">이 방 나가기</button>';
 
   if (isOwner) {
     document.getElementById('delete-room-btn')
       .addEventListener('click', () => confirmRoomAction({
         verb: 'delete',
-        prompt: 'Delete this room for everyone? This cannot be undone.',
+        prompt: '이 방을 삭제할까요? 모두의 메모가 함께 사라지고 되돌릴 수 없어요.',
         apiPath: `/api/rooms/${ROOM_ID}`,
       }));
   } else {
     document.getElementById('leave-room-btn')
       .addEventListener('click', () => confirmRoomAction({
         verb: 'leave',
-        prompt: 'Leave this room?',
+        prompt: '이 방에서 나갈까요?',
         apiPath: `/api/rooms/${ROOM_ID}/leave`,
       }));
   }
@@ -161,8 +158,8 @@ function confirmRoomAction(cfg) {
   box.innerHTML = `
     <span class="note-confirm-text">${cfg.prompt}</span>
     <span class="note-confirm-actions">
-      <button type="button" class="btn-sm btn-danger room-confirm-yes">${cfg.verb === 'delete' ? 'Delete' : 'Leave'}</button>
-      <button type="button" class="btn-sm room-confirm-no">Cancel</button>
+      <button type="button" class="btn-sm btn-danger room-confirm-yes">${cfg.verb === 'delete' ? '삭제' : '나가기'}</button>
+      <button type="button" class="btn-sm room-confirm-no">취소</button>
     </span>
   `;
   row.innerHTML = '';
@@ -174,8 +171,7 @@ function confirmRoomAction(cfg) {
   box.querySelector('.room-confirm-yes').addEventListener('click', async () => {
     const res = await authFetch(cfg.apiPath, { method: 'DELETE' });
     if (!res.ok && res.status !== 204) {
-      const data = await res.json().catch(() => ({}));
-      showError(err, data.error || `Could not ${cfg.verb} the room.`);
+      showError(err, cfg.verb === 'delete' ? '방을 삭제하지 못했어요.' : '방에서 나가지 못했어요.');
       drawRoomActionButton();
       return;
     }
@@ -194,7 +190,7 @@ async function loadMembers() {
   ul.innerHTML = members.map((m) => {
     const name = escapeHtml(m.nickname || m.username || '');
     const owner = m.role === 'owner'
-      ? ' <span class="member-badge">owner</span>'
+      ? ' <span class="member-badge">방장</span>'
       : '';
     return `<li class="member-item">${name}${owner}</li>`;
   }).join('');
@@ -218,10 +214,10 @@ function wireCopyButton(code) {
       document.execCommand('copy');
       sel.removeAllRanges();
     }
-    btn.textContent = 'Copied';
+    btn.textContent = '복사했어요';
     feedback.hidden = false;
     setTimeout(function () {
-      btn.textContent = 'Copy';
+      btn.textContent = '복사';
       feedback.hidden = true;
     }, 5000);
   });
@@ -247,12 +243,12 @@ function renderPoem(poem) {
   const bodyEl = document.getElementById('poem-body');
 
   if (!poem) {
-    bodyEl.innerHTML = '<p class="status">No poem available.</p>';
+    bodyEl.innerHTML = '<p class="status">시를 불러오지 못했어요.</p>';
     return;
   }
 
   titleEl.innerHTML = renderMeta(poem.title) || 'Untitled';
-  authorEl.innerHTML = poem.author ? `by ${renderMeta(poem.author)}` : '';
+  authorEl.innerHTML = renderMeta(poem.author);
 
   const lines = Array.isArray(poem.lines) ? poem.lines : [];
   bodyEl.innerHTML = lines.map(renderLine).join('');
@@ -291,7 +287,7 @@ function renderLine(line) {
     <div class="poem-line" data-line-id="${line.id}">
       <span class="line-gutter${noted}" data-line-id="${line.id}"
             role="button" tabindex="0"
-            title="Notes on this line" aria-label="Notes on this line">
+            aria-label="이 줄의 메모">
         <span class="gutter-bar"></span>
       </span>
       <span class="line-text${hl}">${wrapWords(line.text)}</span>
@@ -406,8 +402,8 @@ function memoItem(memo) {
   const liked = memo.liked_by_me ? ' liked' : '';
   const controls = mine
     ? `<span class="note-controls">
-         <button type="button" class="link-btn" data-memo-edit="${memo.id}">Edit</button>
-         <button type="button" class="link-btn" data-memo-del="${memo.id}">Delete</button>
+         <button type="button" class="link-btn" data-memo-edit="${memo.id}">고치기</button>
+         <button type="button" class="link-btn" data-memo-del="${memo.id}">지우기</button>
        </span>`
     : '';
   return `
@@ -417,7 +413,7 @@ function memoItem(memo) {
         <span class="note-author">${escapeHtml(memo.author_nickname)}</span>
         <span class="note-date">${formatDate(memo.created_at)}</span>
         <button type="button" class="like-btn${liked}" data-memo-like="${memo.id}"
-                aria-pressed="${memo.liked_by_me ? 'true' : 'false'}" aria-label="Like this memo">
+                aria-pressed="${memo.liked_by_me ? 'true' : 'false'}" aria-label="좋아요">
           <span class="like-heart" aria-hidden="true">${memo.liked_by_me ? '\u2665' : '\u2661'}</span>
           <span class="like-count">${memo.like_count || 0}</span>
         </button>
@@ -434,7 +430,7 @@ async function submitMemo() {
   err.textContent = '';
 
   if (content.length < 1 || content.length > 1000) {
-    showError(err, 'Memo must be 1\u20131000 characters.');
+    showError(err, '메모는 1~1000자로 써 주세요.');
     return;
   }
 
@@ -443,8 +439,7 @@ async function submitMemo() {
     body: JSON.stringify({ content }),
   });
   if (!res.ok) {
-    const data = await res.json();
-    showError(err, data.error || 'Could not post memo.');
+    showError(err, '메모를 남기지 못했어요.');
     return;
   }
   input.value = '';
@@ -452,10 +447,9 @@ async function submitMemo() {
 }
 
 // ---- Shared inline edit/delete helpers for memo & annotation cards ----
-// cfg: { id, selector, apiPath, noun, reload }
+// cfg: { id, selector, apiPath, reload }
 //   selector -> attribute that identifies the card (e.g. 'data-memo-id')
 //   apiPath  -> resource path (e.g. '/api/memos')
-//   noun     -> word shown in messages ('memo' or 'note')
 //   reload   -> function to refresh the list after a change
 function startInlineEdit(cfg) {
   const card = document.querySelector(`.note-card[${cfg.selector}="${cfg.id}"]`);
@@ -463,17 +457,16 @@ function startInlineEdit(cfg) {
   const contentEl = card.querySelector('.note-content');
   if (!contentEl || card.querySelector('.note-edit')) return;  // already editing
 
-  const Noun = cfg.noun.charAt(0).toUpperCase() + cfg.noun.slice(1);
   const current = contentEl.textContent;
 
   const editor = document.createElement('div');
   editor.className = 'note-edit';
   editor.innerHTML = `
-    <textarea class="note-edit-input" maxlength="1000" rows="3"></textarea>
+    <textarea class="note-edit-input" maxlength="1000" rows="3" aria-label="메모 고치기"></textarea>
     <p class="note-edit-error"></p>
     <div class="note-edit-actions">
-      <button type="button" class="btn-sm note-edit-save">Save</button>
-      <button type="button" class="btn-sm note-edit-cancel">Cancel</button>
+      <button type="button" class="btn-sm note-edit-save">저장</button>
+      <button type="button" class="btn-sm note-edit-cancel">취소</button>
     </div>
   `;
   const textarea = editor.querySelector('.note-edit-input');
@@ -505,7 +498,7 @@ function startInlineEdit(cfg) {
   editor.querySelector('.note-edit-save').addEventListener('click', async () => {
     const trimmed = textarea.value.trim();
     if (trimmed.length < 1 || trimmed.length > 1000) {
-      errEl.textContent = `${Noun} must be 1\u20131000 characters.`;
+      errEl.textContent = '메모는 1~1000자로 써 주세요.';
       return;
     }
     const res = await authFetch(`${cfg.apiPath}/${cfg.id}`, {
@@ -513,8 +506,7 @@ function startInlineEdit(cfg) {
       body: JSON.stringify({ content: trimmed }),
     });
     if (!res.ok) {
-      const data = await res.json();
-      errEl.textContent = data.error || `Could not update ${cfg.noun}.`;
+      errEl.textContent = '메모를 고치지 못했어요.';
       return;
     }
     await cfg.reload();
@@ -530,10 +522,10 @@ function startInlineDelete(cfg) {
   const box = document.createElement('div');
   box.className = 'note-confirm';
   box.innerHTML = `
-    <span class="note-confirm-text">Delete this ${cfg.noun}?</span>
+    <span class="note-confirm-text">이 메모를 지울까요?</span>
     <span class="note-confirm-actions">
-      <button type="button" class="btn-sm btn-danger note-confirm-yes">Delete</button>
-      <button type="button" class="btn-sm note-confirm-no">Cancel</button>
+      <button type="button" class="btn-sm btn-danger note-confirm-yes">지우기</button>
+      <button type="button" class="btn-sm note-confirm-no">취소</button>
     </span>
   `;
   contentEl.hidden = true;
@@ -549,9 +541,7 @@ function startInlineDelete(cfg) {
   box.querySelector('.note-confirm-yes').addEventListener('click', async () => {
     const res = await authFetch(`${cfg.apiPath}/${cfg.id}`, { method: 'DELETE' });
     if (!res.ok && res.status !== 204) {
-      const data = await res.json();
-      box.querySelector('.note-confirm-text').textContent =
-        data.error || `Could not delete ${cfg.noun}.`;
+      box.querySelector('.note-confirm-text').textContent = '메모를 지우지 못했어요.';
       return;
     }
     await cfg.reload();
@@ -563,7 +553,6 @@ function editMemo(id) {
     id,
     selector: 'data-memo-id',
     apiPath: '/api/memos',
-    noun: 'memo',
     reload: reloadMemos,
   });
 }
@@ -573,7 +562,6 @@ function deleteMemo(id) {
     id,
     selector: 'data-memo-id',
     apiPath: '/api/memos',
-    noun: 'memo',
     reload: reloadMemos,
   });
 }
@@ -631,8 +619,8 @@ function annotationItem(a) {
   const mine = me && a.user_id === me.id;
   const controls = mine
     ? `<span class="note-controls">
-         <button type="button" class="link-btn" data-anno-edit="${a.id}">Edit</button>
-         <button type="button" class="link-btn" data-anno-del="${a.id}">Delete</button>
+         <button type="button" class="link-btn" data-anno-edit="${a.id}">고치기</button>
+         <button type="button" class="link-btn" data-anno-del="${a.id}">지우기</button>
        </span>`
     : '';
   return `
@@ -655,7 +643,7 @@ async function submitAnnotation() {
 
   if (currentLineId == null) return;
   if (content.length < 1 || content.length > 1000) {
-    showError(err, 'Note must be 1\u20131000 characters.');
+    showError(err, '메모는 1~1000자로 써 주세요.');
     return;
   }
 
@@ -664,9 +652,10 @@ async function submitAnnotation() {
     { method: 'POST', body: JSON.stringify({ content }) }
   );
   if (!res.ok) {
-    const data = await res.json();
     // 409 = already annotated this line (one per user per line)
-    showError(err, data.error || 'Could not post note.');
+    showError(err, res.status === 409
+      ? '이 줄에는 이미 메모를 남겼어요. 내 메모를 고쳐 주세요.'
+      : '메모를 남기지 못했어요.');
     return;
   }
   input.value = '';
@@ -678,7 +667,6 @@ function editAnnotation(id) {
     id,
     selector: 'data-anno-id',
     apiPath: '/api/annotations',
-    noun: 'note',
     reload: () => reloadAnnotations(currentLineId),
   });
 }
@@ -689,7 +677,6 @@ function deleteAnnotation(id) {
     id,
     selector: 'data-anno-id',
     apiPath: '/api/annotations',
-    noun: 'note',
     reload: () => reloadAnnotations(currentLineId),
   });
 }

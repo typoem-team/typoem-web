@@ -17,11 +17,11 @@ form.addEventListener('submit', async function (e) {
   const description = document.getElementById('description').value.trim();
 
   if (name.length < 1 || name.length > 50) {
-    showError('Room name must be 1–50 characters.');
+    showError('방 이름은 1~50자로 써 주세요.');
     return;
   }
   if (description.length > 200) {
-    showError('Description must be 200 characters or fewer.');
+    showError('소개는 200자까지 쓸 수 있어요.');
     return;
   }
 
@@ -29,7 +29,7 @@ form.addEventListener('submit', async function (e) {
   if (description) body.description = description;
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Creating...';
+  submitBtn.textContent = '만드는 중이에요…';
 
   try {
     const res = await authFetch('/api/rooms', {
@@ -38,8 +38,12 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.error || 'Could not create the room.');
+      // 403 = room limit reached (owned or joined)
+      const e = new Error(res.status === 403
+        ? '방을 더 만들 수 없어요. 가진 방 수가 한도에 닿았어요.'
+        : '방을 만들지 못했어요.');
+      e.isUserMessage = true;
+      throw e;
     }
 
     const room = await res.json();
@@ -65,10 +69,10 @@ form.addEventListener('submit', async function (e) {
         document.execCommand('copy');
         sel.removeAllRanges();
       }
-      copyBtn.textContent = 'Copied';
+      copyBtn.textContent = '복사했어요';
       copyFeedback.classList.remove('hidden');
       setTimeout(function () {
-        copyBtn.textContent = 'Copy';
+        copyBtn.textContent = '복사';
         copyFeedback.classList.add('hidden');
       }, 5000);
     });
@@ -77,12 +81,17 @@ form.addEventListener('submit', async function (e) {
     console.error('Create room error:', err);
     successBox.classList.add('hidden');
     form.classList.remove('hidden');  
-    showError(err.message || 'Something went wrong. Please try again.');
+    showError(userMessage(err));
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Create Room';
+    submitBtn.textContent = '방 만들기';
   }
 });
 
+
+// Our own errors carry a Korean message; anything else (network, parse) is generic.
+function userMessage(err) {
+  return err && err.isUserMessage ? err.message : '문제가 생겼어요. 다시 시도해 주세요.';
+}
 
 function showError(message) {
   errorBox.textContent = message;
