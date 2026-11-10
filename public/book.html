@@ -1,72 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reading &middot; Typoem</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>책 읽기 &middot; Typoem</title>
 
-  <!-- Google Fonts (same set as the other pages) -->
+  <!-- Google Fonts: Latin display + body text. Korean UI text falls back through --ko. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="book-page">
 
-  <!-- Top bar: back to room, title, contents + goal toggles, progress + pace -->
+  <!-- Top bar: back to the room, title, contents + goal sheets, progress + pace -->
   <header class="book-bar">
     <div class="book-bar-row">
-      <a id="book-back" class="book-back" href="/index.html">&larr; Room</a>
-      <span id="book-title" class="book-bar-title">&hellip;</span>
-      <span class="book-bar-actions">
-        <button type="button" id="book-toc-btn" class="btn-sm" aria-expanded="false" disabled>Contents</button>
-        <button type="button" id="book-goal-btn" class="btn-sm" aria-expanded="false" disabled>Goal</button>
-      </span>
+      <a id="book-back" class="book-back" href="/index.html" aria-label="방으로 돌아가기">
+        <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div class="book-bar-head">
+        <span id="book-room" class="book-bar-room"></span>
+        <span id="book-title" class="book-bar-title">&hellip;</span>
+      </div>
+      <button type="button" id="book-toc-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-toc" disabled>목차</button>
+      <button type="button" id="book-goal-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-goal" disabled>목표</button>
     </div>
-    <div class="book-bar-row book-bar-stats">
+    <div class="book-bar-stats">
       <span id="book-progress-text" class="book-progress-text"></span>
       <span id="book-pace" class="book-pace"></span>
     </div>
     <div class="book-progress-track" aria-hidden="true"><div id="book-progress-fill" class="book-progress-fill"></div></div>
-
-    <!-- Contents panel -->
-    <nav id="book-toc" class="book-panel" aria-label="Contents" hidden>
-      <ol id="book-toc-list" class="book-toc-list"></ol>
-    </nav>
-
-    <!-- Goal panel -->
-    <div id="book-goal" class="book-panel" hidden>
-      <label class="book-goal-row">
-        <span>Finish by</span>
-        <input type="date" id="book-goal-input">
-      </label>
-      <button type="button" id="book-goal-clear" class="link-btn">Clear goal</button>
-      <p id="book-goal-status" class="book-goal-status" role="status"></p>
-    </div>
   </header>
 
   <!-- Message (loading, not a member, no book, ...) -->
-  <div id="book-message" class="book-message" role="status">Loading&hellip;</div>
+  <div id="book-message" class="book-message" role="status"><p class="book-note">불러오는 중이에요&hellip;</p></div>
 
   <!-- Reader: text flows into one-screen-wide columns; pages move with translateX -->
   <main id="book-stage" class="book-stage" hidden>
     <div id="book-viewport" class="book-viewport">
-      <div id="book-flow" class="book-flow"></div>
+      <div id="book-flow" class="book-flow" lang="en"></div>
     </div>
     <!-- Page-turn zones: outer ~15% on each side, so the middle stays free for word taps -->
-    <button type="button" id="book-edge-prev" class="book-edge book-edge-prev" aria-label="Previous page"></button>
-    <button type="button" id="book-edge-next" class="book-edge book-edge-next" aria-label="Next page"></button>
+    <button type="button" id="book-edge-prev" class="book-btn book-edge book-edge-prev" aria-label="이전 쪽"></button>
+    <button type="button" id="book-edge-next" class="book-btn book-edge book-edge-next" aria-label="다음 쪽"></button>
   </main>
 
   <footer id="book-foot" class="book-foot" hidden>
-    <button type="button" id="book-prev" class="link-btn book-foot-nav" aria-label="Previous page">&lsaquo;</button>
+    <button type="button" id="book-prev" class="book-btn book-foot-nav" aria-label="이전 쪽">
+      <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
     <span class="book-foot-text">
-      <span id="book-chapter-name" class="book-chapter-name"></span>
+      <span id="book-chapter-name" class="book-chapter-name" lang="en"></span>
       <span id="book-page-num" class="book-page-num"></span>
     </span>
-    <button type="button" id="book-next" class="link-btn book-foot-nav" aria-label="Next page">&rsaquo;</button>
+    <button type="button" id="book-next" class="book-btn book-foot-nav" aria-label="다음 쪽">
+      <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
   </footer>
+
+  <!-- Bottom sheets -->
+  <div id="book-scrim" class="book-scrim" hidden></div>
+
+  <section id="book-toc" class="book-sheet" role="dialog" aria-label="목차" hidden>
+    <span class="book-handle" aria-hidden="true"></span>
+    <p class="book-sheet-title">목차 <span id="book-toc-count"></span></p>
+    <ol id="book-toc-list" class="book-toc-list" lang="en"></ol>
+  </section>
+
+  <section id="book-goal" class="book-sheet" role="dialog" aria-label="목표" hidden>
+    <span class="book-handle" aria-hidden="true"></span>
+    <p class="book-sheet-title">목표 <span>언제까지 다 읽을까요?</span></p>
+    <label class="book-note book-goal-label" for="book-goal-input">이 날까지 다 읽을래요</label>
+    <input type="date" id="book-goal-input" class="book-field">
+    <p class="book-note book-goal-hint">날짜를 정하면 남은 분량을 남은 날로 나눠 오늘 읽을 양을 알려 드려요.</p>
+    <div class="book-goal-actions">
+      <button type="button" id="book-goal-clear" class="book-btn book-btn-sec">목표일 지우기</button>
+      <button type="button" id="book-goal-close" class="book-btn book-btn-pri">닫기</button>
+    </div>
+    <p id="book-goal-status" class="book-note book-goal-status" role="status"></p>
+  </section>
 
   <script src="auth.js"></script>
   <script src="book.js"></script>

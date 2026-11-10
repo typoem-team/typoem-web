@@ -108,7 +108,7 @@ const flow = el('book-flow');
 // =====================================================================
 async function init() {
   if (!ROOM) {
-    showMessage('No room specified.', false);
+    showMessage('어느 방의 책인지 알 수 없어요.', false);
     return;
   }
   el('book-back').href = `/room.html?id=${encodeURIComponent(ROOM)}`;
@@ -117,21 +117,21 @@ async function init() {
   try {
     res = await authFetch(`/api/rooms/${encodeURIComponent(ROOM)}/book`);
   } catch (err) {
-    showMessage('Could not reach the server. Try reloading the page.', true);
+    showMessage('서버에 연결할 수 없어요. 새로고침해 주세요.', true);
     return;
   }
   if (res.status === 401) return;   // authFetch is redirecting to login
   if (res.status === 403) {
-    showMessage('You are not a member of this room.', true);
+    showMessage('이 방의 멤버가 아니에요.', true);
     return;
   }
   if (res.status === 404) {
-    showMessage('This room has no book yet.', true);
+    showMessage('이 방에는 아직 책이 없어요.', true);
     return;
   }
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
-    showMessage(data.error || 'Could not load the book.', true);
+    showMessage(data.error || '책을 불러오지 못했어요.', true);
     return;
   }
 
@@ -144,14 +144,14 @@ async function init() {
 
   document.title = `${book.title} · Typoem`;
   el('book-title').textContent = book.title;
-  el('book-back').textContent = `← ${data.room && data.room.name ? data.room.name : 'Room'}`;
+  el('book-room').textContent = data.room && data.room.name ? data.room.name : '';
   el('book-goal-input').value = targetEndDate || '';
   renderToc();
   el('book-toc-btn').disabled = false;
   el('book-goal-btn').disabled = false;
 
   if (chapters.length === 0) {
-    showMessage('This book has no chapters.', true);
+    showMessage('이 책에는 읽을 장이 없어요.', true);
     return;
   }
 
@@ -169,9 +169,9 @@ async function init() {
 
 function showMessage(text, withBackLink) {
   const box = el('book-message');
-  box.innerHTML = `<p>${escapeHtml(text)}</p>` + (withBackLink && ROOM
-    ? `<p><a href="/room.html?id=${encodeURIComponent(ROOM)}">&larr; Back to the room</a></p>`
-    : '<p><a href="/index.html">&larr; My Rooms</a></p>');
+  box.innerHTML = `<p class="book-note">${escapeHtml(text)}</p>` + (withBackLink && ROOM
+    ? `<a class="book-btn book-btn-pri" href="/room.html?id=${encodeURIComponent(ROOM)}">방으로 돌아가기</a>`
+    : '<a class="book-btn book-btn-pri" href="/index.html">내 방 목록으로</a>');
   box.hidden = false;
   el('book-stage').hidden = true;
   el('book-foot').hidden = true;
@@ -197,13 +197,13 @@ async function fetchChapter(c) {
 async function openChapter(c, where) {
   if (navBusy) return;
   navBusy = true;
-  el('book-page-num').textContent = 'Loading…';
+  el('book-page-num').textContent = '불러오는 중…';
   let paragraphs;
   try {
     paragraphs = await fetchChapter(c);
   } catch (err) {
     console.error(err);
-    el('book-page-num').textContent = 'Could not load this chapter. Try again.';
+    el('book-page-num').textContent = '이 장을 불러오지 못했어요. 다시 시도해 주세요.';
     navBusy = false;
     return;
   }
@@ -238,7 +238,7 @@ function renderChapter(paragraphs) {
     const heading = ch && ch.title && p.text.trim() === ch.title.trim();
     return `<p class="book-para${heading ? ' book-para-heading' : ''}" data-idx="${p.idx}">${wrapWords(p.text)}</p>`;
   }).join('');
-  el('book-chapter-name').textContent = ch && ch.title ? ch.title : `Part ${curChapter + 1}`;
+  el('book-chapter-name').textContent = chapterLabel(ch || { idx: curChapter, title: null });
   markTocCurrent();
 }
 
@@ -306,7 +306,7 @@ function anchorForPage(n) {
 function showPage(n) {
   curPage = Math.max(0, Math.min(pageCount - 1, n));
   flow.style.transform = `translateX(${-curPage * step}px)`;
-  el('book-page-num').textContent = `Page ${curPage + 1} of ${pageCount} (this chapter)`;
+  el('book-page-num').textContent = `${curPage + 1} / ${pageCount}쪽 (이 장)`;
 }
 
 // A real page turn: move, take the new anchor, save soon.
@@ -394,22 +394,22 @@ function updateStats() {
   const read = wordsRead();
   const pct = total ? Math.floor((read / total) * 100) : 0;
   el('book-progress-text').textContent =
-    `${read.toLocaleString('en-US')} / ${total.toLocaleString('en-US')} words · ${pct}%`;
+    `${read.toLocaleString('ko-KR')} / ${total.toLocaleString('ko-KR')}단어 · ${pct}%`;
   el('book-progress-fill').style.width = `${total ? (read / total) * 100 : 0}%`;
 
   const pace = el('book-pace');
   pace.classList.remove('is-late');
   pace.title = '';
   if (!targetEndDate) {
-    pace.textContent = 'No goal date';
+    pace.textContent = '목표일을 정하지 않았어요';
     return;
   }
   const remaining = total - read;
   const days = daysLeftIncludingToday(targetEndDate);
   if (remaining <= 0) {
-    pace.textContent = 'Finished!';
+    pace.textContent = '다 읽었어요!';
   } else if (days < 1) {
-    pace.textContent = 'The goal date has passed';
+    pace.textContent = '목표일이 지났어요';
     pace.classList.add('is-late');
   } else {
     const perDay = Math.ceil(remaining / days);
@@ -418,9 +418,9 @@ function updateStats() {
     const perPage = ch && pageCount ? ch.wordCount / pageCount : 0;
     const pages = perPage > 0 ? Math.max(1, Math.round(perDay / perPage)) : null;
     pace.textContent = pages
-      ? `Today: about ${pages} page${pages === 1 ? '' : 's'} (${perDay.toLocaleString('en-US')} words)`
-      : `Today: about ${perDay.toLocaleString('en-US')} words`;
-    pace.title = `${days} day${days === 1 ? '' : 's'} left including today`;
+      ? `오늘 약 ${pages}쪽 (${perDay.toLocaleString('ko-KR')}단어)`
+      : `오늘 약 ${perDay.toLocaleString('ko-KR')}단어`;
+    pace.title = `오늘을 포함해 ${days}일 남았어요`;
   }
 }
 
@@ -470,7 +470,7 @@ function saveOnLeave() {
 
 async function saveGoal(value) {
   const status = el('book-goal-status');
-  status.textContent = 'Saving…';
+  status.textContent = '저장하는 중…';
   clearTimeout(saveTimer);
   const idx = anchorIdx;
   try {
@@ -480,29 +480,36 @@ async function saveGoal(value) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      status.textContent = data.error || 'Could not save the goal.';
+      status.textContent = data.error || '목표일을 저장하지 못했어요.';
       return;
     }
     savedIdx = idx;
     targetEndDate = data.targetEndDate || null;
-    status.textContent = targetEndDate ? 'Goal saved.' : 'Goal cleared.';
+    status.textContent = targetEndDate ? '목표일을 저장했어요.' : '목표일을 지웠어요.';
     updateStats();
   } catch (err) {
-    status.textContent = 'Could not reach the server.';
+    status.textContent = '서버에 연결할 수 없어요.';
   }
 }
 
 // =====================================================================
 //  Contents + goal panels
 // =====================================================================
+// Label for a chapter: its heading, or "N장" for books without headings.
+function chapterLabel(c) {
+  return c.title || `${c.idx + 1}장`;
+}
+
 function renderToc() {
+  el('book-toc-count').textContent = `${chapters.length}장`;
   el('book-toc-list').innerHTML = chapters.map((c) => `
-    <li><button type="button" class="book-toc-item" data-ch="${c.idx}">
-      ${escapeHtml(c.title || `Part ${c.idx + 1}`)}
+    <li><button type="button" class="book-btn book-toc-item" data-ch="${c.idx}">
+      <span>${escapeHtml(chapterLabel(c))}</span>
+      <span class="book-toc-here" lang="ko" hidden>읽는 중</span>
     </button></li>`).join('');
   el('book-toc-list').querySelectorAll('.book-toc-item').forEach((b) => {
     b.addEventListener('click', async () => {
-      togglePanel('book-toc', false);
+      closeSheets();
       await openChapter(Number(b.dataset.ch), { page: 'first' });
     });
   });
@@ -510,24 +517,39 @@ function renderToc() {
 
 function markTocCurrent() {
   el('book-toc-list').querySelectorAll('.book-toc-item').forEach((b) => {
-    b.classList.toggle('is-current', Number(b.dataset.ch) === curChapter);
+    const cur = Number(b.dataset.ch) === curChapter;
+    b.classList.toggle('is-current', cur);
+    b.querySelector('.book-toc-here').hidden = !cur;
   });
 }
 
-function togglePanel(id, open) {
-  const panel = el(id);
-  const btn = el(id === 'book-toc' ? 'book-toc-btn' : 'book-goal-btn');
-  const show = open == null ? panel.hidden : open;
-  // only one panel at a time
-  for (const other of ['book-toc', 'book-goal']) {
-    el(other).hidden = true;
-    el(other === 'book-toc' ? 'book-toc-btn' : 'book-goal-btn').setAttribute('aria-expanded', 'false');
+// Bottom sheets (contents, goal): one at a time, over a scrim.
+const SHEETS = { 'book-toc': 'book-toc-btn', 'book-goal': 'book-goal-btn' };
+
+function sheetOpen() {
+  return !el('book-scrim').hidden;
+}
+
+function closeSheets() {
+  for (const id in SHEETS) {
+    el(id).hidden = true;
+    el(SHEETS[id]).setAttribute('aria-expanded', 'false');
   }
-  panel.hidden = !show;
-  btn.setAttribute('aria-expanded', show ? 'true' : 'false');
-  if (show && id === 'book-toc') {
-    const cur = panel.querySelector('.book-toc-item.is-current');
+  el('book-scrim').hidden = true;
+}
+
+function toggleSheet(id) {
+  const show = el(id).hidden;
+  closeSheets();
+  if (!show) return;
+  el(id).hidden = false;
+  el(SHEETS[id]).setAttribute('aria-expanded', 'true');
+  el('book-scrim').hidden = false;
+  if (id === 'book-toc') {
+    const cur = el(id).querySelector('.book-toc-item.is-current');
     if (cur) cur.scrollIntoView({ block: 'center' });
+  } else {
+    el('book-goal-status').textContent = '';
   }
 }
 
@@ -548,11 +570,12 @@ el('book-next').addEventListener('click', nextPage);
 
 document.addEventListener('keydown', (e) => {
   if (!book || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'Escape') { closeSheets(); return; }
+  if (sheetOpen()) return;   // arrows don't turn pages behind an open sheet
   const tag = e.target && e.target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
   if (e.key === 'ArrowRight') { e.preventDefault(); nextPage(); }
   else if (e.key === 'ArrowLeft') { e.preventDefault(); prevPage(); }
-  else if (e.key === 'Escape') togglePanel('book-toc', false);   // closes both panels
 });
 
 // Swipe: a mostly-horizontal drag of 50px+ turns the page.
@@ -571,8 +594,10 @@ el('book-stage').addEventListener('touchend', (e) => {
   if (dx < 0) nextPage(); else prevPage();
 }, { passive: true });
 
-el('book-toc-btn').addEventListener('click', () => togglePanel('book-toc'));
-el('book-goal-btn').addEventListener('click', () => togglePanel('book-goal'));
+el('book-toc-btn').addEventListener('click', () => toggleSheet('book-toc'));
+el('book-goal-btn').addEventListener('click', () => toggleSheet('book-goal'));
+el('book-goal-close').addEventListener('click', closeSheets);
+el('book-scrim').addEventListener('click', closeSheets);
 el('book-goal-input').addEventListener('change', (e) => saveGoal(e.target.value));
 el('book-goal-clear').addEventListener('click', () => {
   el('book-goal-input').value = '';

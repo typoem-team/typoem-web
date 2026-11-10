@@ -803,20 +803,28 @@ async function bookEntryLoad() {
     const started = data.progress && data.progress.startedAt;
     body.innerHTML = `
       <div class="book-entry-card">
-        <p class="book-entry-title">${escapeHtml(data.book.title)}</p>
-        <p class="book-entry-author">${data.book.author ? 'by ' + escapeHtml(data.book.author) : ''}</p>
-        <p class="book-entry-progress">${started ? `You&rsquo;ve read about ${pct}%` : 'You haven&rsquo;t started yet'}</p>
-        <div class="book-entry-actions">
-          <a class="btn btn-enter" href="/book.html?room=${encodeURIComponent(ROOM_ID)}">Read</a>
-          ${bookIsOwner ? '<button type="button" class="btn-sm" id="book-change-btn">Change Book</button>' : ''}
+        <span class="book-cover book-cover-${(data.book.id % 7) + 1}" aria-hidden="true"></span>
+        <div class="book-entry-info">
+          <p class="book-entry-title" lang="en">${escapeHtml(data.book.title)}</p>
+          <p class="book-entry-author" lang="en">${escapeHtml(data.book.author || '')}</p>
+          <p class="book-entry-progress">${started ? `약 ${pct}% 읽었어요` : '아직 읽기 시작하지 않았어요'}</p>
+          <div class="book-entry-meter" aria-hidden="true"><div class="book-entry-meter-fill" style="width:${started ? pct : 0}%"></div></div>
+          <div class="book-entry-actions">
+            <a class="book-btn book-btn-pri" href="/book.html?room=${encodeURIComponent(ROOM_ID)}">${started ? '이어 읽기' : '읽기'}</a>
+            ${bookIsOwner ? '<button type="button" class="book-btn book-btn-text" id="book-change-btn">책 바꾸기</button>' : ''}
+          </div>
         </div>
       </div>`;
   } else if (bookRes.status === 404) {
     bookCurrent = null;
     body.innerHTML = bookIsOwner
-      ? `<p class="empty-sub">No book yet. Pick one for everyone in this room.</p>
-         <button type="button" class="btn-sm" id="book-change-btn">Choose a Book</button>`
-      : '<p class="empty-sub">No book yet. The room owner can choose one.</p>';
+      ? `<div class="book-empty">
+           <p class="book-note">아직 책이 없어요. 방 멤버들과 함께 읽을 책을 골라 주세요.</p>
+           <button type="button" class="book-btn book-btn-pri" id="book-change-btn">책 고르기</button>
+         </div>`
+      : `<div class="book-empty">
+           <p class="book-note">아직 책이 없어요. 방장이 책을 고르면 여기에 나와요.</p>
+         </div>`;
   } else {
     // 403 / other errors: the poem area above already reports room problems
     return;
@@ -849,10 +857,10 @@ function bookOpenPicker() {
   const picker = document.getElementById('book-picker');
   picker.innerHTML = `
     <form id="book-search-form" class="book-search-row">
-      <input type="search" id="book-search-input" maxlength="100"
-             placeholder="Title, author, or Gutenberg number&hellip;" autocomplete="off">
-      <button type="submit" class="btn-sm" id="book-search-btn">Search</button>
-      <button type="button" class="btn-sm" id="book-picker-close">Close</button>
+      <input type="search" id="book-search-input" class="book-field" maxlength="100"
+             placeholder="제목, 작가, 구텐베르크 번호" autocomplete="off" aria-label="책 검색">
+      <button type="submit" class="book-btn book-btn-pri" id="book-search-btn">검색</button>
+      <button type="button" class="book-btn book-btn-sec" id="book-picker-close">닫기</button>
     </form>
     <div id="book-picker-status" class="book-picker-status" role="status"></div>
     <ul id="book-results" class="book-results"></ul>`;
@@ -877,41 +885,41 @@ async function bookSearch() {
   const q = input.value.trim();
   if (!q || bookBusy) return;
 
-  status.textContent = 'Searching…';
+  status.innerHTML = '<p class="book-loading">찾는 중이에요&hellip;</p>';
   list.innerHTML = '';
   let res;
   try {
     res = await authFetch(`/api/books/search?q=${encodeURIComponent(q)}`);
   } catch (err) {
-    status.textContent = 'Could not reach the server. Try again.';
+    status.innerHTML = '<p class="book-error">서버에 연결할 수 없어요. 다시 시도해 주세요.</p>';
     return;
   }
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
-    status.textContent = res.status === 502
-      ? 'The book catalogue is unavailable right now. Try again in a moment.'
-      : (data.error || 'Search failed.');
+    status.innerHTML = `<p class="book-error">${res.status === 502
+      ? '지금은 책 목록을 불러올 수 없어요. 잠시 후 다시 시도해 주세요.'
+      : escapeHtml(data.error || '검색하지 못했어요.')}</p>`;
     return;
   }
   const results = await res.json();
   if (results.length === 0) {
-    status.textContent = 'No books found.';
+    status.innerHTML = '<p class="book-note">찾는 책이 없어요. 다른 제목이나 번호로 찾아보세요.</p>';
     return;
   }
-  status.textContent = '';
+  status.innerHTML = '';
   list.innerHTML = results.map((b) => {
     const authors = (b.authors || []).map((a) => a.name).join('; ');
     const current = bookCurrent && bookCurrent.id === b.gutenbergId;
     return `
       <li class="book-result">
         <div class="book-result-text">
-          <span class="book-result-title">${escapeHtml(b.title)}</span>
-          <span class="book-result-author">${escapeHtml(authors || 'Unknown author')} &middot; #${b.gutenbergId}</span>
-          ${b.alreadyImported ? '<span class="book-result-tag">On the shelf &middot; instant</span>' : ''}
+          <span class="book-result-title" lang="en">${escapeHtml(b.title)}</span>
+          <span class="book-result-author">${authors ? `<span lang="en">${escapeHtml(authors)}</span>` : '작가 미상'} &middot; #${b.gutenbergId}</span>
+          ${b.alreadyImported ? '<span class="book-tag">바로 읽을 수 있어요</span>' : ''}
         </div>
         ${current
-          ? '<span class="book-result-tag">Current book</span>'
-          : `<button type="button" class="btn-sm book-choose-btn" data-gid="${b.gutenbergId}">Choose</button>`}
+          ? '<span class="book-tag book-tag-current">지금 읽는 책</span>'
+          : `<button type="button" class="book-btn book-btn-sec book-choose-btn" data-gid="${b.gutenbergId}">고르기</button>`}
       </li>`;
   }).join('');
 
@@ -932,13 +940,14 @@ function bookChoose(b) {
   }
   const status = document.getElementById('book-picker-status');
   status.innerHTML = `
-    <div class="note-confirm">
-      <span class="note-confirm-text">Replace &ldquo;${escapeHtml(bookCurrent.title)}&rdquo; with
-        &ldquo;${escapeHtml(b.title)}&rdquo;? Each member&rsquo;s progress stays saved with each book.</span>
-      <span class="note-confirm-actions">
-        <button type="button" class="btn-sm btn-danger" id="book-replace-yes">Replace</button>
-        <button type="button" class="btn-sm" id="book-replace-no">Cancel</button>
-      </span>
+    <div class="book-confirm" role="alertdialog" aria-label="책 바꾸기">
+      <p class="book-note">지금 읽는 <i lang="en">${escapeHtml(bookCurrent.title)}</i> 대신
+        <i lang="en">${escapeHtml(b.title)}</i>${' '}책으로 바꿀까요?</p>
+      <p class="book-note">멤버마다 읽던 진도는 책별로 남아 있어서, 다시 돌아오면 이어 읽을 수 있어요.</p>
+      <div class="book-confirm-actions">
+        <button type="button" class="book-btn book-btn-sec" id="book-replace-no">취소</button>
+        <button type="button" class="book-btn book-btn-pri" id="book-replace-yes">바꾸기</button>
+      </div>
     </div>`;
   document.getElementById('book-replace-no').addEventListener('click', () => { status.innerHTML = ''; });
   document.getElementById('book-replace-yes').addEventListener('click', () => bookAssign(b));
@@ -964,8 +973,8 @@ async function bookAssign(b) {
   bookBusy = true;
   bookSetPickerDisabled(true);
   status.innerHTML = `
-    <p class="book-loading">Setting &ldquo;${escapeHtml(b.title)}&rdquo; as this room&rsquo;s book&hellip;</p>
-    ${b.alreadyImported ? '' : '<p class="book-loading-note">A book fetched for the first time can take about a minute.</p>'}`;
+    <p class="book-loading"><span><i lang="en">${escapeHtml(b.title)}</i>${' '}책을 준비하고 있어요&hellip;</span></p>
+    ${b.alreadyImported ? '' : '<p class="book-note">처음 가져오는 책은 1분 정도 걸릴 수 있어요.</p>'}`;
 
   let res = null;
   let failure = null;
@@ -976,8 +985,8 @@ async function bookAssign(b) {
     }), BOOK_PUT_TIMEOUT_MS);
   } catch (err) {
     failure = err && err.message === 'timeout'
-      ? 'This is taking too long.'
-      : 'Could not reach the server.';
+      ? '시간이 너무 오래 걸리고 있어요.'
+      : '서버에 연결할 수 없어요.';
   }
 
   bookBusy = false;
@@ -995,19 +1004,19 @@ async function bookAssign(b) {
   if (res) {
     const data = await res.json().catch(() => ({}));
     if (res.status === 502 || res.status === 503) {
-      failure = 'The book service is busy or unavailable.';
+      failure = '책을 가져오는 곳이 바쁘거나 잠시 멈췄어요.';
       retryable = true;
     } else {
-      failure = data.error || 'Could not set the book.';   // 422 etc.: the server's message as is
+      failure = data.error || '책을 정하지 못했어요.';   // 422 etc.: the server's message as is
     }
   }
 
-  status.innerHTML = `<p class="auth-error">${escapeHtml(failure)}</p>`;
+  status.innerHTML = `<p class="book-error">${escapeHtml(failure)}</p>`;
   if (retryable) {
     const retry = document.createElement('button');
     retry.type = 'button';
-    retry.className = 'btn-sm';
-    retry.textContent = 'Try again in a moment';
+    retry.className = 'book-btn book-btn-sec';
+    retry.textContent = '잠시 후 다시 시도';
     retry.addEventListener('click', () => bookAssign(b));
     status.appendChild(retry);
   }
