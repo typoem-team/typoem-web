@@ -12,9 +12,9 @@ const ROOM_ID = params.get('id');
 // The date line, tab bar and log out live in ui.js.
 const me = getCurrentUser();
 
-// Point the "Poem history" link at this room's history page.
+// Past poems are a sheet on the home screen now.
 if (ROOM_ID) {
-  document.getElementById('history-link').href = `/history.html?id=${ROOM_ID}`;
+  document.getElementById('history-link').href = '/index.html#history';
 }
 
 // ---- Escape user-provided text before inserting into HTML (XSS guard) ----
@@ -35,7 +35,6 @@ function hasContent(text) {
 // Annotations are grouped by line_id so the drawer can show one line's notes.
 let annotationsByLine = {};   // { line_id: [annotation, ...] }
 let currentLineId = null;     // line whose drawer is open, or null
-let isOwner = false;          // is the current user this room's owner?
 
 // =====================================================================
 //  Initial load
@@ -73,8 +72,6 @@ async function loadToday() {
   indexAnnotations(data.annotations || []);
   renderPoem(data.poem);
   renderMemos(data.memos || []);
-  loadInviteCode();
-  loadMembers();
 }
 
 // Korean message for a failed /today load (the API's own messages are English).
@@ -83,144 +80,6 @@ function loadErrorText(status) {
   if (status === 404) return '방을 찾지 못했어요.';
   if (status === 503) return '오늘의 시를 가져오지 못했어요. 잠시 뒤에 다시 열어 주세요.';
   return '오늘의 시를 불러오지 못했어요.';
-}
-
-// The invite code isn't in the /today payload, but /api/rooms/mine returns it
-// for each of the user's rooms — pull this room's code from there.
-async function loadInviteCode() {
-  const res = await authFetch('/api/rooms/mine');
-  if (!res.ok) return;
-  const rooms = await res.json();
-
-  // find this room in the list
-  let room = null;
-  for (const r of rooms) {
-    if (String(r.id) === String(ROOM_ID)) {
-      room = r;
-    }
-  }
-  if (!room || !room.invite_code) return;
-
-  document.getElementById('invite-code').textContent = room.invite_code;
-  document.getElementById('invite-share').hidden = false;
-  wireCopyButton(room.invite_code);
-  renderRoomActions(room);
-}
-
-// Owner sees a Delete button (removes the room + all its content); a non-owner
-// member sees a Leave button. Both confirm inline before calling the backend.
-function renderRoomActions(room) {
-  if (!me) return;
-  isOwner = room.owner_id === me.id;
-
-  const wrap = document.getElementById('room-actions');
-  drawRoomActionButton();
-  wrap.hidden = false;
-}
-
-// (Re)draw the single action button for the current user's role. Split out so
-// the inline-confirm Cancel path can restore the button without re-fetching.
-function drawRoomActionButton() {
-  const row = document.getElementById('room-actions-row');
-
-  row.innerHTML = isOwner
-    ? '<button type="button" id="delete-room-btn" class="btn-sm btn-danger">이 방 삭제하기</button>'
-    : '<button type="button" id="leave-room-btn" class="btn-sm btn-danger">이 방 나가기</button>';
-
-  if (isOwner) {
-    document.getElementById('delete-room-btn')
-      .addEventListener('click', () => confirmRoomAction({
-        verb: 'delete',
-        prompt: '이 방을 삭제할까요? 모두의 메모가 함께 사라지고 되돌릴 수 없어요.',
-        apiPath: `/api/rooms/${ROOM_ID}`,
-      }));
-  } else {
-    document.getElementById('leave-room-btn')
-      .addEventListener('click', () => confirmRoomAction({
-        verb: 'leave',
-        prompt: '이 방에서 나갈까요?',
-        apiPath: `/api/rooms/${ROOM_ID}/leave`,
-      }));
-  }
-}
-
-// Inline confirm box for leave/delete (same note-confirm pattern as memos).
-// On success the backend returns 204; we send the user back to My Rooms.
-function confirmRoomAction(cfg) {
-  const row = document.getElementById('room-actions-row');
-  if (row.querySelector('.note-confirm')) return;  // already confirming
-
-  const err = document.getElementById('room-action-error');
-  err.textContent = '';
-
-  const box = document.createElement('div');
-  box.className = 'note-confirm';
-  box.innerHTML = `
-    <span class="note-confirm-text">${cfg.prompt}</span>
-    <span class="note-confirm-actions">
-      <button type="button" class="btn-sm btn-danger room-confirm-yes">${cfg.verb === 'delete' ? '삭제' : '나가기'}</button>
-      <button type="button" class="btn-sm room-confirm-no">취소</button>
-    </span>
-  `;
-  row.innerHTML = '';
-  row.appendChild(box);
-
-  box.querySelector('.room-confirm-no')
-    .addEventListener('click', drawRoomActionButton);
-
-  box.querySelector('.room-confirm-yes').addEventListener('click', async () => {
-    const res = await authFetch(cfg.apiPath, { method: 'DELETE' });
-    if (!res.ok && res.status !== 204) {
-      showError(err, cfg.verb === 'delete' ? '방을 삭제하지 못했어요.' : '방에서 나가지 못했어요.');
-      drawRoomActionButton();
-      return;
-    }
-    window.location.href = '/index.html';
-  });
-}
-
-// Member list — GET /api/rooms/:id/members returns members in join order
-// (id, username, nickname, role). Backend already exists (P3); just render.
-async function loadMembers() {
-  const res = await authFetch(`/api/rooms/${ROOM_ID}/members`);
-  if (!res.ok) return;
-  const members = await res.json();
-
-  const ul = document.getElementById('member-list');
-  ul.innerHTML = members.map((m) => {
-    const name = escapeHtml(m.nickname || m.username || '');
-    const owner = m.role === 'owner'
-      ? ' <span class="member-badge">방장</span>'
-      : '';
-    return `<li class="member-item">${name}${owner}</li>`;
-  }).join('');
-}
-
-// Copy the invite code to the clipboard (same fallback pattern as create-room.js).
-function wireCopyButton(code) {
-  const btn = document.getElementById('copy-code-btn');
-  const feedback = document.getElementById('copy-feedback');
-  const codeEl = document.getElementById('invite-code');
-
-  btn.addEventListener('click', async function () {
-    try {
-      await navigator.clipboard.writeText(code);
-    } catch (err) {
-      const range = document.createRange();
-      range.selectNodeContents(codeEl);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      document.execCommand('copy');
-      sel.removeAllRanges();
-    }
-    btn.textContent = '복사했어요';
-    feedback.hidden = false;
-    setTimeout(function () {
-      btn.textContent = '복사';
-      feedback.hidden = true;
-    }, 5000);
-  });
 }
 
 // Group the flat annotations array by line_id.

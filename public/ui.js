@@ -4,8 +4,11 @@
 //   - bottom tab bar: 오늘 · 내 방 · 단어장 · 나
 //   - bottom sheets + toast
 //
+//   - small helpers shared by the screens (escape, cover / avatar colours, haptic)
+//   - window.TypoemNav.back() and window.TypoemNative for the Android app shell
+//
 // Load after auth.js. A page picks its active tab with <body data-tab="...">
-// (today | rooms | vocab).
+// (today | vocab).
 
 (function () {
   'use strict';
@@ -40,7 +43,52 @@
     return formatDay(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)));
   }
 
-  // ---- Last opened room (used by the 오늘 tab, and by the home screen later) ----
+  // ---- Escape user-provided text before inserting into HTML (XSS guard) ----
+  function esc(str) {
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  // ---- Colours ----
+  // One cover colour per poem, picked by id so a poem always gets the same one.
+  var COVERS = ['#2e3d35', '#5a2b33', '#2a3444', '#7a5f36', '#3b3a36', '#4a5a46', '#4b3b4f'];
+  function coverColor(id) {
+    var n = Math.abs(parseInt(id, 10)) || 0;
+    return COVERS[n % COVERS.length];
+  }
+
+  // Avatar colour from the nickname (the history API only gives nicknames).
+  var AVATARS = ['#6e2f3a', '#2a3444', '#7a5f36', '#1f1b16', '#4a5a46', '#4b3b4f'];
+  function avatarColor(name) {
+    var s = String(name || ''), h = 7;
+    for (var i = 0; i < s.length; i++) h = (h * 33 + s.charCodeAt(i) * (i + 1)) % 65521;
+    return AVATARS[h % AVATARS.length];
+  }
+
+  // <i> avatar with the first letter of the nickname
+  function avatar(name) {
+    var first = Array.from(String(name || '?'))[0] || '?';
+    return '<i style="background:' + avatarColor(name) + '">' + esc(first) + '</i>';
+  }
+
+  // ---- Haptic: a light tap in the Android app, nothing on the web ----
+  function haptic() {
+    try {
+      var H = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics;
+      if (H) H.impact({ style: 'LIGHT' });
+    } catch (e) { /* never let a buzz break the screen */ }
+  }
+
+  // ---- Quiet motion: Web Animations API, off when the user asks ----
+  var EASE = 'cubic-bezier(.22,.61,.36,1)';
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function anim(el, frames, opts) {
+    if (reduceMotion || !el || !el.animate) return { finished: Promise.resolve() };
+    return el.animate(frames, Object.assign({ duration: 400, easing: EASE, fill: 'both' }, opts));
+  }
+
+  // ---- Last opened room (the home screen opens this room) ----
   function getLastRoom() {
     try { return localStorage.getItem(LAST_ROOM_KEY); } catch (e) { return null; }
   }
@@ -94,7 +142,7 @@
     document.querySelectorAll('.sheet.show').forEach(function (s) {
       if (s !== el) s.classList.remove('show');
     });
-    lastFocus = document.activeElement;
+    if (!openSheetEl()) lastFocus = document.activeElement;
     scrim.classList.add('show');
     el.classList.add('show');
     el.scrollTop = 0;
@@ -109,8 +157,15 @@
     open.forEach(function (s) { s.classList.remove('show'); });
     if (open.length && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
     lastFocus = null;
+    open.forEach(function (s) { s.dispatchEvent(new CustomEvent('sheet:close')); });
     return open.length > 0;
   }
+
+  // The grab handle and any [data-close] button close the sheet they are in.
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('.sheet .handle, .sheet [data-close]') : null;
+    if (t) closeSheets();
+  });
 
   // ---- "나" sheet: nickname, privacy policy, log out ----
   var meSheet = null;
@@ -136,7 +191,6 @@
       meSheet.querySelector('#logout-btn').addEventListener('click', function () {
         if (typeof logout === 'function') logout();
       });
-      meSheet.querySelector('.handle').addEventListener('click', closeSheets);
     }
     openSheet(meSheet);
   }
@@ -156,22 +210,28 @@
   function buildTabbar() {
     if (document.getElementById('tabbar')) return;
     var active = document.body.dataset.tab || '';
-    var lastRoom = getLastRoom();
-    var todayHref = lastRoom ? '/room.html?id=' + encodeURIComponent(lastRoom) : '/index.html';
+    var isHome = active === 'today' && !!document.getElementById('home');
 
     var nav = document.createElement('nav');
     nav.className = 'tabbar';
     nav.id = 'tabbar';
     nav.setAttribute('aria-label', '메뉴');
     nav.innerHTML =
-      '<a class="tab" data-tab="today" href="' + todayHref + '">' + icon('today') + '오늘</a>' +
-      '<a class="tab" data-tab="rooms" href="/index.html">' + icon('rooms') + '내 방</a>' +
+      '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '오늘</a>' +
+      '<a class="tab" data-tab="rooms" href="/index.html#rooms">' + icon('rooms') + '내 방</a>' +
       '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
       '<button type="button" class="tab" data-tab="me" aria-haspopup="dialog">' + icon('me') + '나</button>';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
     });
-    nav.querySelector('[data-tab="me"]').addEventListener('click', openMe);
+    nav.querySelector('[data-tab="me"]').addEventListener('click', function () { haptic(); openMe(); });
+    // 내 방 opens the room list sheet on the home screen; from other pages the
+    // link goes to /index.html#rooms and the home screen opens it on load.
+    nav.querySelector('[data-tab="rooms"]').addEventListener('click', function (e) {
+      if (!isHome) return;
+      e.preventDefault();
+      document.dispatchEvent(new CustomEvent('typoem:rooms'));
+    });
     document.body.appendChild(nav);
   }
 
@@ -188,7 +248,39 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
+  // ---- Android back button (the app shell calls TypoemNav.back()) ----
+  // Order: close an open sheet -> the page's own handler (reader -> home) ->
+  // not handled (false), and the shell then leaves the app.
+  var backHandler = null;
+  window.TypoemNav = {
+    back: function () {
+      if (closeSheets()) return true;
+      if (backHandler) return backHandler() !== false;
+      return false;
+    },
+    setBackHandler: function (fn) { backHandler = fn; },
+  };
+
+  // ---- Native status bar text colour: 'light' on dark covers, 'dark' on paper ----
+  // Does nothing outside the app.
+  window.TypoemNative = {
+    setStatusBar: function (tone) {
+      try {
+        var S = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
+        // Capacitor: Style.Dark = light text, Style.Light = dark text
+        if (S) S.setStyle({ style: tone === 'light' ? 'DARK' : 'LIGHT' });
+      } catch (e) { /* not in the app */ }
+    },
+  };
+
   window.TypoemUI = {
+    esc: esc,
+    coverColor: coverColor,
+    avatarColor: avatarColor,
+    avatar: avatar,
+    haptic: haptic,
+    anim: anim,
+    reduceMotion: reduceMotion,
     formatDay: formatDay,
     formatIsoDay: formatIsoDay,
     getLastRoom: getLastRoom,

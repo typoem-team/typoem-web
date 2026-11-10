@@ -18,7 +18,7 @@
 
   <!-- Room sub-nav: room name left, room links right -->
   <nav class="room-subnav" aria-label="방">
-    <span class="room-name" id="room-name">&hellip;</span>
+    <a class="room-name room-back" href="/index.html" aria-label="홈으로"><span aria-hidden="true">&larr;</span> <span id="room-name">&hellip;</span></a>
     <div class="room-subnav-links">
       <a href="#" class="is-active" aria-current="page">오늘의 시</a>
       <span class="sep">&middot;</span>
@@ -64,35 +64,6 @@
       <h4 class="book-label">이 방의 책</h4>
       <div id="book-entry-body"></div>
       <div id="book-picker" class="book-picker" hidden></div>
-    </section>
-
-    <!-- Invite code: share to add more members -->
-    <section class="invite-share" id="invite-share" hidden>
-      <div class="rule-thin"></div>
-      <div class="invite-grid">
-
-        <div class="invite-col">
-          <h2 class="panel-heading">친구 초대</h2>
-          <div class="invite-code-row">
-            <span class="invite-code" id="invite-code">&hellip;</span>
-            <button type="button" id="copy-code-btn" class="copy-btn">복사</button>
-          </div>
-          <p id="copy-feedback" class="copy-feedback" hidden>초대 코드를 복사했어요</p>
-        </div>
-
-        <div class="member-col">
-          <h2 class="panel-heading">멤버</h2>
-          <ul class="member-list" id="member-list" aria-live="polite"></ul>
-        </div>
-
-      </div>
-
-      <!-- Room actions: owner sees Delete, members see Leave (set in room.js) -->
-      <div class="room-actions" id="room-actions" hidden>
-        <div class="rule-thin"></div>
-        <div class="room-actions-row" id="room-actions-row"></div>
-        <p id="room-action-error" class="auth-error" role="alert"></p>
-      </div>
     </section>
 
   </main>
