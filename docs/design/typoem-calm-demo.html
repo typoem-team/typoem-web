@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typoem 차분한 독서앱 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Gentium+Book+Plus:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css" rel="stylesheet">
+<style>
+:root {
+  /* 따뜻한 회색 종이 위에 짙은 잉크, 포인트는 깊은 와인 하나 */
+  --bg: #f2eee7;
+  --surface: #fbf9f5;
+  --ink: #1f1b16;
+  --ink-2: #6b6358;
+  --hair: #e2dbcf;
+  --accent: #6e2f3a;
+  --ko: 'MaruBuri', 'Nanum Myeongjo', serif;
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --poem: 'Gentium Book Plus', Georgia, serif;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  /* 레이아웃: 폰 한 대 + 옆 안내. 홈(방 · 오늘 표지 · 지난 시 책장) → 표지가 펼쳐져 읽기 화면 */
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: #e6e1d7; color: var(--ink); font-family: var(--ko); display: flex; flex-wrap: wrap; gap: 40px;
+  align-items: center; justify-content: center; padding: 28px 16px; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- 안내 ---------- */
+.guide { width: 260px; }
+.guide h1 { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 34px; }
+.guide p { font-size: 14px; line-height: 1.75; color: var(--ink-2); margin-top: 8px; }
+.guide ul { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #d3cbbd; padding-top: 16px; }
+.guide li { font-size: 13.5px; line-height: 1.6; }
+.guide li span { color: var(--ink-2); display: block; font-size: 12.5px; }
+
+/* ---------- 폰 ---------- */
+.phone { width: 375px; height: 790px; border-radius: 48px; padding: 11px; background: #161310; flex: none;
+  box-shadow: 0 40px 80px -30px rgba(31,27,22,.55), inset 0 0 0 1.5px #2c2620; }
+.screen { position: relative; height: 100%; border-radius: 38px; overflow: hidden; background: var(--bg); isolation: isolate; }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 80; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 30px; font: 600 14px/1 system-ui, sans-serif; color: var(--ink); pointer-events: none; transition: color .3s; }
+.status.light { color: #f4efe6; }
+.view { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; }
+.view::-webkit-scrollbar { display: none; }
+
+/* ---------- 홈 ---------- */
+#home { padding: 56px 24px 110px; }
+.room-switch { display: inline-flex; align-items: center; gap: 4px; font-size: 13.5px; color: var(--ink-2); padding: 4px 0; }
+.room-switch svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.home-top { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2px; }
+.home-top h1 { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 36px; line-height: 1; }
+.date { font-family: var(--display); font-size: 16px; letter-spacing: .04em; color: var(--ink-2); margin-top: 8px; }
+.ring { position: relative; width: 52px; height: 52px; }
+.ring svg { width: 52px; height: 52px; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 3; }
+.ring .track { stroke: var(--hair); }
+.ring .bar { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .9s var(--ease); }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-size: 20px; font-weight: 500; }
+.ring-cap { font-size: 11px; color: var(--ink-2); text-align: center; margin-top: 4px; }
+
+.week { display: grid; grid-template-columns: repeat(7, 1fr); margin: 22px 0 24px; text-align: center; }
+.week span { font-family: var(--display); font-size: 14px; letter-spacing: .04em; color: var(--ink-2); }
+.week i { display: block; width: 8px; height: 8px; border-radius: 50%; margin: 8px auto 0; background: var(--hair); transition: background .5s var(--ease), transform .5s var(--ease); }
+.week .on i { background: var(--ink); }
+.week .today span { color: var(--ink); font-weight: 700; }
+.week .today i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink); }
+.week .today.on i { background: var(--accent); box-shadow: none; transform: scale(1.25); }
+
+/* 방 멤버 줄 */
+.members { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 12px 12px; border-radius: 16px; background: var(--surface);
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 8px 18px -14px rgba(31,27,22,.4); margin-bottom: 22px; }
+.avs { display: flex; align-items: center; }
+.avs i { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11.5px; color: #f4efe6;
+  margin-left: -7px; box-shadow: 0 0 0 2px var(--surface); }
+.avs i:first-child { margin-left: 0; }
+.room-info { display: flex; flex-direction: column; gap: 8px; }
+.room-switch { font-size: 15px; color: var(--ink); padding: 0; }
+.room-info .avs i { width: 22px; height: 22px; font-size: 10px; margin-left: -5px; }
+.room-info .avs i:first-child { margin-left: 0; }
+.invite-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #f4efe6; }
+.invite-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.label { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: baseline; }
+.label button { font-size: 12.5px; color: var(--ink-2); }
+
+/* 표지: 책등 음영 + 안쪽 얇은 테두리 + 길고 부드러운 그림자 */
+/* 표지 덱: 맨 앞 표지를 옆으로 밀면 다음 표지(지난 시)가 앞으로 온다 */
+.deck { position: relative; height: 372px; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.cover { position: absolute; border-radius: 6px 12px 12px 6px; overflow: hidden; color: #f4efe6; }
+.cover::before { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,.28) 0, rgba(0,0,0,.05) 7px, rgba(255,255,255,.08) 9px, transparent 16px),
+              radial-gradient(120% 80% at 30% 0%, rgba(255,255,255,.12), transparent 60%); pointer-events: none; }
+.cover::after { content: ""; position: absolute; inset: 12px 12px 12px 20px; border: 1px solid rgba(244,239,230,.22); border-radius: 2px; pointer-events: none; }
+.deck .cover { top: 0; bottom: 0; left: 0; width: calc(100% - 34px); padding: 32px 30px 24px 38px; display: flex; flex-direction: column;
+  transform-origin: 50% 100%; transition: transform .5s var(--ease), opacity .4s var(--ease), box-shadow .4s var(--ease); will-change: transform; cursor: pointer; }
+.deck.dragging .cover.k0 { transition: none; cursor: grabbing; }
+.deck .cover.k0 { z-index: 5; box-shadow: 0 34px 46px -28px rgba(31,27,22,.65), 0 14px 18px -12px rgba(31,27,22,.35); }
+.deck .cover.k1 { z-index: 4; transform: translateX(20px) scale(.94); box-shadow: 0 20px 30px -20px rgba(31,27,22,.5); }
+.deck .cover.k2 { z-index: 3; transform: translateX(36px) scale(.88); box-shadow: 0 16px 24px -18px rgba(31,27,22,.45); }
+.deck .cover.k3 { z-index: 2; transform: translateX(46px) scale(.82); opacity: 0; }
+.deck .cover.gone { z-index: 6; transform: translateX(-118%) rotate(-7deg); opacity: 0; pointer-events: none; }
+.deck .cover.k1 > *, .deck .cover.k2 > *, .deck .cover.k3 > * { opacity: 0; transition: opacity .3s; }
+.deck .cover > * { transition: opacity .35s var(--ease) .1s; }
+.c-kicker { font-size: 11.5px; letter-spacing: .14em; opacity: .7; }
+.c-title { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 56px; line-height: 1; margin-top: auto; }
+.c-author { font-family: var(--display); font-size: 17px; letter-spacing: .06em; margin-top: 10px; opacity: .85; }
+.c-foot { display: flex; justify-content: space-between; font-size: 11.5px; opacity: .72; margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(244,239,230,.2); }
+.deck .more { background: var(--surface); color: var(--ink); align-items: center; justify-content: center; text-align: center; gap: 10px;
+  box-shadow: inset 0 0 0 1px var(--hair), 0 20px 30px -24px rgba(31,27,22,.4) !important; }
+.deck .more::before, .deck .more::after { display: none; }
+.more b { font-family: var(--display); font-size: 64px; font-weight: 500; line-height: 1; }
+.more span { font-size: 14px; color: var(--ink-2); }
+.more em { font-style: normal; font-size: 13px; margin-top: 10px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: #f4efe6; }
+.deck-foot { display: flex; justify-content: center; margin-top: 18px; padding-right: 34px; }
+.dots { display: flex; gap: 6px; }
+.dots button { width: 6px; height: 6px; border-radius: 3px; background: var(--hair); padding: 0; transition: width .35s var(--ease), background .35s; }
+.dots button[aria-current="true"] { width: 20px; background: var(--ink); }
+
+/* ---------- 읽기 화면 ---------- */
+#reader { background: var(--surface); visibility: hidden; z-index: 10; }
+.r-head { position: relative; height: 230px; color: #f4efe6; padding: 96px 30px 26px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.r-head::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 20% 0%, rgba(255,255,255,.12), transparent 60%); }
+.r-head .c-title { font-size: 46px; margin: 0; position: relative; }
+.r-head .c-author { position: relative; }
+.r-bar { position: absolute; top: 44px; left: 0; right: 0; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; z-index: 5; color: #f4efe6; }
+.r-bar button { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; }
+.r-bar svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.r-bar span { font-size: 13.5px; opacity: .85; }
+.r-body { padding: 30px 30px 20px; }
+.r-meta { font-size: 12.5px; color: var(--ink-2); margin-bottom: 22px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.badge { font-size: 11.5px; padding: 3px 9px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hair); color: var(--ink-2); }
+.poem { font-family: var(--poem); font-size: 18px; line-height: 2; color: #2a241d; }
+.ln { position: relative; display: block; }
+.ln .tx { background-image: linear-gradient(transparent 62%, rgba(176,138,72,.28) 62%, rgba(176,138,72,.28) 94%, transparent 94%);
+  background-repeat: no-repeat; background-size: 0% 100%; transition: background-size .55s var(--ease); }
+.ln.marked .tx { background-size: 100% 100%; }
+.mark { position: absolute; left: -22px; top: 50%; width: 18px; height: 18px; margin-top: -9px; border-radius: 50%; opacity: 0; transition: opacity .2s; }
+.mark::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: var(--hair); }
+.ln:hover .mark, .ln.marked .mark { opacity: 1; }
+.ln.marked .mark::after { background: #b08a48; }
+.ro .mark { display: none; }
+/* 메모가 달린 줄: 점선 밑줄 + 오른쪽 숫자 표시, 누르면 그 줄의 메모 */
+.ln.has-cm .tx { text-decoration: underline dotted rgba(110,47,58,.45); text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.cm { position: absolute; right: -25px; top: 8px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: var(--accent); color: #f4efe6;
+  font: 600 10.5px/19px system-ui, sans-serif; text-align: center; box-shadow: 0 4px 8px -4px rgba(110,47,58,.6); transition: transform .2s var(--ease); }
+.cm:hover { transform: scale(1.1); }
+.line-btn { width: 100%; margin-top: 14px; padding: 12px; border-radius: 14px; font-size: 14px; text-align: center; }
+.w { cursor: pointer; transition: color .2s; }
+.w:hover { color: var(--accent); }
+.w.active { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.r-end { margin: 40px 30px 0; padding: 26px 0 120px; border-top: 1px solid var(--hair); text-align: center; }
+.r-end p { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+.finish { margin-top: 14px; padding: 13px 26px; border-radius: 999px; background: var(--ink); color: #f4efe6; font-size: 14.5px; text-align: center; }
+.finish.done { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--hair); }
+
+.memo-pill { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px 10px 12px; border-radius: 999px; background: rgba(251,249,245,.82); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: 0 12px 30px -14px rgba(31,27,22,.45), inset 0 0 0 1px rgba(255,255,255,.7); font-size: 13.5px; white-space: nowrap; visibility: hidden; }
+.memo-pill .avs i { width: 24px; height: 24px; font-size: 10.5px; }
+
+/* ---------- 바텀시트 ---------- */
+.scrim { position: absolute; inset: 0; z-index: 60; background: rgba(31,27,22,.28); opacity: 0; pointer-events: none; transition: opacity .35s var(--ease); }
+.scrim.show { opacity: 1; pointer-events: auto; }
+.sheet { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 61; background: var(--surface); border-radius: 30px; padding: 12px 24px 26px;
+  box-shadow: 0 -10px 40px -10px rgba(31,27,22,.35); transform: translateY(110%); transition: transform .45s var(--ease); max-height: 78%; overflow-y: auto; scrollbar-width: none; }
+.sheet.show { transform: translateY(0); }
+.handle { display: block; width: 36px; height: 4px; border-radius: 2px; background: var(--hair); margin: 0 auto 18px; }
+.s-title { font-size: 17px; font-weight: 700; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.s-title span { font-size: 12.5px; font-weight: 400; color: var(--ink-2); }
+.s-note { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+
+.d-word { font-family: var(--poem); font-size: 30px; display: flex; align-items: baseline; gap: 12px; }
+.d-word small { font-size: 15px; color: var(--ink-2); font-style: italic; }
+.d-pos { display: inline-block; font-size: 11.5px; color: var(--ink-2); border: 1px solid var(--hair); border-radius: 4px; padding: 1px 6px; margin: 14px 0 8px; }
+.d-def { font-size: 15.5px; line-height: 1.7; }
+.d-ex { font-family: var(--poem); font-style: italic; font-size: 15px; color: var(--ink-2); margin-top: 10px; padding-left: 12px; border-left: 2px solid var(--hair); }
+.actions { display: flex; gap: 10px; margin-top: 22px; }
+.actions button { flex: 1; padding: 13px; border-radius: 14px; font-size: 14px; text-align: center; }
+.pri { background: var(--ink); color: #f4efe6; }
+.sec { box-shadow: inset 0 0 0 1px var(--hair); }
+
+.m-item { display: grid; grid-template-columns: 32px 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--hair); }
+.m-item > i { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; color: #f4efe6; }
+.m-item b { font-size: 13px; }
+.m-item b small { font-weight: 400; color: var(--ink-2); margin-left: 6px; }
+.m-item p { font-size: 14.5px; line-height: 1.65; margin-top: 3px; }
+.m-item q { display: block; font-family: var(--poem); font-style: italic; font-size: 13.5px; color: var(--ink-2); margin-top: 6px; quotes: none; }
+.m-write { display: flex; gap: 8px; margin-top: 16px; }
+.m-write label { flex: 1; }
+.m-write input, .field { width: 100%; font: inherit; font-size: 14px; padding: 13px 16px; border-radius: 14px; border: 0; background: var(--bg); color: var(--ink); }
+.m-write input:focus, .field:focus { outline: 1.5px solid var(--ink-2); }
+.m-write button { padding: 0 18px; border-radius: 14px; background: var(--ink); color: #f4efe6; font-size: 14px; }
+.ro-note { margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: var(--bg); font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+
+/* 초대 */
+.code-box { margin: 18px 0 6px; padding: 22px 16px; border-radius: 20px; background: var(--bg); text-align: center; }
+.code-box small { font-size: 12px; color: var(--ink-2); }
+.code { font-family: var(--display); font-size: 40px; font-weight: 500; letter-spacing: .28em; margin: 6px 0 0 .28em; }
+.mem-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--hair); font-size: 14.5px; }
+.mem-row i { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; color: #f4efe6; }
+.mem-row span { margin-left: auto; font-size: 12px; color: var(--ink-2); }
+.leave { display: block; margin: 18px auto 0; font-size: 12.5px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+
+/* 방 목록 */
+.room-row { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+.room-row .sw { width: 38px; height: 50px; border-radius: 3px 6px 6px 3px; flex: none; box-shadow: 0 8px 12px -8px rgba(31,27,22,.5); }
+.room-row b { display: block; font-size: 15px; font-weight: 400; }
+.room-row small { font-size: 12px; color: var(--ink-2); }
+.room-row .chk { margin-left: auto; color: var(--accent); font-size: 13px; }
+.join { display: grid; gap: 10px; margin-top: 18px; }
+.join-row { display: flex; gap: 8px; }
+.join-row label { flex: 1; }
+.join-row button { padding: 0 18px; border-radius: 14px; font-size: 14px; }
+
+/* 지난 시 목록 */
+.h-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: center; width: 100%; padding: 12px 0; border-bottom: 1px solid var(--hair); }
+.h-row .sw { width: 34px; height: 46px; border-radius: 2px 5px 5px 2px; box-shadow: 0 8px 12px -8px rgba(31,27,22,.5); }
+.h-row b { display: block; font-family: var(--poem); font-style: italic; font-weight: 400; font-size: 16.5px; }
+.h-row small { font-size: 12px; color: var(--ink-2); }
+.h-row em { font-style: normal; font-size: 12px; color: var(--ink-2); text-align: right; }
+
+/* ---------- 탭바 ---------- */
+.tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 10px 22px;
+  background: rgba(242,238,231,.82); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); border-top: 1px solid rgba(226,219,207,.8);
+  transition: transform .4s var(--ease); }
+.tabbar.away { transform: translateY(100%); }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: #9a9184; }
+.tab svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.tab[aria-selected="true"] { color: var(--ink); }
+
+.toast { position: absolute; left: 50%; top: 56px; z-index: 90; transform: translate(-50%, -12px); opacity: 0; padding: 10px 16px; border-radius: 999px;
+  background: var(--ink); color: #f4efe6; font-size: 13px; white-space: nowrap; transition: opacity .3s, transform .3s var(--ease); pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.morph { position: absolute; z-index: 40; pointer-events: none; overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+
+<aside class="guide">
+  <h1>Typoem</h1>
+  <p>고급 독서앱처럼 차분하게 잡은 시안이에요. 방 · 초대 · 지난 시까지 실제 앱에 있는 기능을 다 넣었어요.</p>
+  <ul>
+    <li>표지를 눌러 보세요<span>표지가 펼쳐져 그 시를 읽어요</span></li>
+    <li>&lsquo;초대&rsquo;를 눌러 보세요<span>초대 코드 복사 · 공유 · 멤버 목록</span></li>
+    <li>방 이름을 눌러 보세요<span>다른 방으로 바꾸기, 방 만들기, 코드로 참여</span></li>
+    <li>초록 표지를 옆으로 밀어 보세요<span>지난 시 세 편이 차례로 나오고, 끝에서 &lsquo;지난 시 전체 보기&rsquo;</span></li>
+    <li>지난 시를 펼쳐 보세요<span>읽기 전용: 그날의 메모만 보여요</span></li>
+    <li>줄 오른쪽 숫자 · 왼쪽 여백을 눌러 보세요<span>그 줄에 달린 메모를 보고, 밑줄 긋기 · 메모 남기기</span></li>
+    <li>오늘의 시 맨 아래 &lsquo;다 읽었어요&rsquo;<span>이번 주 기록과 연속일이 채워져요</span></li>
+  </ul>
+</aside>
+
+<div class="phone">
+  <div class="screen" id="screen">
+    <div class="status" id="status"><span>9:41</span><span aria-hidden="true">●●● ▮</span></div>
+
+    <!-- ===== 홈 ===== -->
+    <main class="view" id="home">
+      <div class="home-top">
+        <div>
+          <h1>Typoem</h1>
+          <p class="date">11/10 Tue</p>
+        </div>
+        <div>
+          <div class="ring" aria-label="연속 6일">
+            <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="ring-bar" cx="26" cy="26" r="23"/></svg>
+            <b id="streak">6</b>
+          </div>
+          <p class="ring-cap">일 연속</p>
+        </div>
+      </div>
+
+      <div class="week" aria-label="이번 주 읽은 날">
+        <div class="on"><span>M</span><i></i></div>
+        <div class="today" id="today-dot"><span>T</span><i></i></div>
+        <div><span>W</span><i></i></div><div><span>T</span><i></i></div><div><span>F</span><i></i></div><div><span>S</span><i></i></div><div><span>S</span><i></i></div>
+      </div>
+
+      <div class="members">
+        <div class="room-info">
+          <button type="button" class="room-switch" id="room-switch"><span id="room-name">우리 셋의 시집</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></button>
+          <div class="avs" aria-label="멤버 4명"><i style="background:#6e2f3a">소</i><i style="background:#2a3444">지</i><i style="background:#7a5f36">시</i><i style="background:#1f1b16">경</i></div>
+        </div>
+        <button type="button" class="invite-btn" id="invite-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>초대</button>
+      </div>
+
+      <div class="deck" id="deck" aria-roledescription="carousel" aria-label="오늘의 시와 지난 시"></div>
+      <div class="deck-foot">
+        <div class="dots" id="dots" role="tablist" aria-label="표지 고르기"></div>
+      </div>
+    </main>
+
+    <!-- ===== 읽기 ===== -->
+    <article class="view" id="reader" aria-label="시 읽기">
+      <div class="r-bar">
+        <button type="button" id="back" aria-label="뒤로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span id="r-room">우리 셋의 시집</span>
+        <button type="button" aria-label="글자 크기"><svg viewBox="0 0 24 24"><path d="M4 18l5-12 5 12M6 14h6M15 18l3-7 3 7M16 16h4"/></svg></button>
+      </div>
+      <header class="r-head" id="r-head">
+        <span class="c-title" id="r-title">Snow</span>
+        <span class="c-author" id="r-author">Edward Thomas</span>
+      </header>
+      <div class="r-body" id="r-body">
+        <p class="r-meta" id="r-meta"></p>
+        <div class="poem" id="poem"></div>
+      </div>
+      <div class="r-end" id="r-end">
+        <p>오늘의 시를 끝까지 읽었다면</p>
+        <button type="button" class="finish" id="finish">다 읽었어요</button>
+      </div>
+    </article>
+
+    <button type="button" class="memo-pill" id="memo-pill"><span class="avs" id="pill-avs"></span><span id="pill-label">메모 3</span></button>
+
+    <!-- ===== 시트 ===== -->
+    <div class="scrim" id="scrim"></div>
+
+    <section class="sheet" id="sheet-dict" role="dialog" aria-label="사전">
+      <span class="handle"></span>
+      <p class="d-word"><span id="d-word">gloom</span><small id="d-ph"></small></p>
+      <span class="d-pos" id="d-pos">명사</span>
+      <p class="d-def" id="d-def"></p>
+      <p class="d-ex" id="d-ex"></p>
+      <div class="actions"><button type="button" class="sec" data-close>닫기</button><button type="button" class="pri" id="d-save">단어장에 담기</button></div>
+    </section>
+
+    <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모">
+      <span class="handle"></span>
+      <p class="s-title">메모 <span id="m-count"></span></p>
+      <div id="m-list"></div>
+      <form class="m-write" id="m-write">
+        <label for="m-input"><input id="m-input" placeholder="이 시에 메모 남기기" autocomplete="off"></label>
+        <button type="submit">남기기</button>
+      </form>
+      <p class="ro-note" id="m-ro" hidden>지난 시의 메모는 읽기만 할 수 있어요. 메모는 그날의 시에 남겨 주세요.</p>
+    </section>
+
+    <section class="sheet" id="sheet-line" role="dialog" aria-label="이 줄의 메모">
+      <span class="handle"></span>
+      <p class="s-title">이 줄의 메모 <span id="l-count"></span></p>
+      <p class="d-ex" id="l-text" style="margin-top:4px"></p>
+      <button type="button" class="sec line-btn" id="l-mark">밑줄 긋기</button>
+      <div id="l-list"></div>
+      <form class="m-write" id="l-write">
+        <label for="l-input"><input id="l-input" placeholder="이 줄에 메모 남기기" autocomplete="off"></label>
+        <button type="submit">남기기</button>
+      </form>
+    </section>
+
+    <section class="sheet" id="sheet-invite" role="dialog" aria-label="초대">
+      <span class="handle"></span>
+      <p class="s-title">친구 초대 <span>우리 셋의 시집</span></p>
+      <div class="code-box"><small>초대 코드</small><p class="code" id="code">K7Q2MX</p></div>
+      <div class="actions" style="margin-top:12px"><button type="button" class="sec" id="copy">코드 복사</button><button type="button" class="pri" id="share">공유하기</button></div>
+      <p class="s-title" style="margin-top:26px">멤버 <span>4명</span></p>
+      <div class="mem-row"><i style="background:#6e2f3a">소</i>소연<span>방장</span></div>
+      <div class="mem-row"><i style="background:#2a3444">지</i>지섭<span></span></div>
+      <div class="mem-row"><i style="background:#7a5f36">시</i>시현<span></span></div>
+      <div class="mem-row"><i style="background:#1f1b16">경</i>경윤<span>나</span></div>
+      <button type="button" class="leave" id="leave">이 방 나가기</button>
+    </section>
+
+    <section class="sheet" id="sheet-rooms" role="dialog" aria-label="내 방">
+      <span class="handle"></span>
+      <p class="s-title">내 방 <span>2개</span></p>
+      <button type="button" class="room-row" data-room="우리 셋의 시집"><span class="sw" style="background:#2e3d35"></span><span><b>우리 셋의 시집</b><small>4명 · 오늘 Snow</small></span><span class="chk">✓</span></button>
+      <button type="button" class="room-row" data-room="영문과 스터디"><span class="sw" style="background:#2a3444"></span><span><b>영문과 스터디</b><small>7명 · 오늘 The Road Not Taken</small></span><span class="chk" hidden>✓</span></button>
+      <div class="join">
+        <div class="join-row"><label for="join-code"><input class="field" id="join-code" placeholder="초대 코드 6자리" maxlength="6" autocomplete="off"></label><button type="button" class="pri" id="join-btn">참여</button></div>
+        <button type="button" class="sec" id="create-btn" style="padding:13px;border-radius:14px;font-size:14px;text-align:center">새 방 만들기</button>
+      </div>
+    </section>
+
+    <section class="sheet" id="sheet-history" role="dialog" aria-label="지난 시">
+      <span class="handle"></span>
+      <p class="s-title">지난 시 <span id="h-count"></span></p>
+      <div id="h-list"></div>
+    </section>
+
+    <nav class="tabbar" id="tabbar" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="today"><svg viewBox="0 0 24 24"><path d="M4 5.5C6.5 4 9.5 4 12 5.5v14C9.5 18 6.5 18 4 19.5zM20 5.5C17.5 4 14.5 4 12 5.5v14c2.5-1.5 5.5-1.5 8 0z"/></svg>오늘</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="rooms"><svg viewBox="0 0 24 24"><path d="M4 10l8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/></svg>내 방</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="vocab"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>단어장</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 7-5.5s5.8 1.9 7 5.5"/></svg>나</button>
+    </nav>
+
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var EASE = 'cubic-bezier(.22,.61,.36,1)';
+  var $ = function (id) { return document.getElementById(id); };
+  var screen = $('screen'), home = $('home'), reader = $('reader'), tabbar = $('tabbar');
+  var AV = { '소연': '#6e2f3a', '지섭': '#2a3444', '시현': '#7a5f36', '경윤': '#1f1b16' };
+
+  /* ---------- 데이터: 기존 API 모양을 따름 (/today · /history · /history/:date) ---------- */
+  var POEMS = {
+    snow: { today: true, date: '11/10', day: 'Tue', title: 'Snow', author: 'Edward Thomas', year: '1917', color: '#2e3d35',
+      lines: ['IN the gloom of whiteness,', 'In the great silence of snow,', 'A child was sighing', 'And bitterly saying: "Oh,',
+        'They have killed a white bird up there on her nest,', 'The down is fluttering from her breast."',
+        'And still it fell through that dusky brightness', 'On the child crying for the bird of the snow.'],
+      memos: [['소연', '2시간 전', '눈이 아이 울음까지 덮는 마지막 장면이 계속 남아요.', 'On the child crying for the bird of the snow.'],
+        ['지섭', '4시간 전', '하얀데 어둡다는 첫 줄이 이상하게 정확해요.', 'IN the gloom of whiteness,'],
+        ['시현', '어제', '새가 아니라 눈송이였다는 걸 두 번째 읽을 때 알았어요.']] },
+    wild: { date: '11/9', day: 'Mon', title: 'Wild Nights', author: 'Emily Dickinson', year: '1891', color: '#5a2b33',
+      lines: ['Wild nights - Wild nights!', 'Were I with thee', 'Wild nights should be', 'Our luxury!', '', 'Futile - the winds -',
+        'To a Heart in port -', 'Done with the Compass -', 'Done with the Chart!', '', 'Rowing in Eden -', 'Ah - the Sea!',
+        'Might I but moor - tonight -', 'In thee!'],
+      memos: [['시현', '11/9', '항구에 닿은 마음이라는 표현이 좋아요.', 'To a Heart in port -'], ['소연', '11/9', '줄표가 숨 고르는 자리 같아요.']] },
+    tyger: { date: '11/8', day: 'Sun', title: 'The Tyger', author: 'William Blake', year: '1794', color: '#2a3444',
+      lines: ['Tyger Tyger, burning bright,', 'In the forests of the night;', 'What immortal hand or eye,', 'Could frame thy fearful symmetry?', '',
+        'In what distant deeps or skies.', 'Burnt the fire of thine eyes?', 'On what wings dare he aspire?', 'What the hand, dare seize the fire?'],
+      memos: [['지섭', '11/8', '질문만으로 끝나는 시라서 더 무서워요.']] },
+    ozy: { date: '11/7', day: 'Sat', title: 'Ozymandias', author: 'P. B. Shelley', year: '1818', color: '#7a5f36',
+      lines: ['I met a traveller from an antique land,', 'Who said—“Two vast and trunkless legs of stone', 'Stand in the desert. . . . Near them, on the sand,',
+        'Half sunk a shattered visage lies, whose frown,', 'And wrinkled lip, and sneer of cold command,', 'Tell that its sculptor well those passions read',
+        'Which yet survive, stamped on these lifeless things,', 'The hand that mocked them, and the heart that fed;', 'And on the pedestal, these words appear:',
+        'My name is Ozymandias, King of Kings;', 'Look on my Works, ye Mighty, and despair!', 'Nothing beside remains. Round the decay',
+        'Of that colossal Wreck, boundless and bare', 'The lone and level sands stretch far away.”'],
+      memos: [['경윤', '11/7', '마지막 두 줄에서 사막이 갑자기 넓어지는 느낌.', 'The lone and level sands stretch far away.”'], ['소연', '11/7', '왕의 말이 모래에 묻히는 게 아이러니해요.']] },
+    sonnet: { date: '11/6', day: 'Fri', title: 'Sonnet 18', author: 'William Shakespeare', year: '1609', color: '#3b3a36',
+      lines: ['Shall I compare thee to a summer’s day?', 'Thou art more lovely and more temperate:', 'Rough winds do shake the darling buds of May,', 'And summer’s lease hath all too short a date;'],
+      memos: [['지섭', '11/6', '익숙한 첫 줄인데 끝까지 읽은 건 처음이에요.']] },
+    road: { date: '11/5', day: 'Thu', title: 'The Road Not Taken', author: 'Robert Frost', year: '1916', color: '#4a5a46',
+      lines: ['Two roads diverged in a yellow wood,', 'And sorry I could not travel both', 'And be one traveler, long I stood', 'And looked down one as far as I could', 'To where it bent in the undergrowth;'],
+      memos: [] },
+    death: { date: '11/4', day: 'Wed', title: 'Because I could not stop for Death', author: 'Emily Dickinson', year: '1890', color: '#4b3b4f',
+      lines: ['Because I could not stop for Death –', 'He kindly stopped for me –', 'The Carriage held but just Ourselves –', 'And Immortality.'],
+      memos: [['시현', '11/4', '죽음이 친절하다니.']] }
+  };
+  var PAST = ['wild', 'tyger', 'ozy', 'sonnet', 'road', 'death'];
+
+  function haptic() {
+    try { var H = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.Haptics; if (H) H.impact({ style: 'LIGHT' }); else if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+  }
+  function anim(el, frames, opts) {
+    if (reduce || !el.animate) return { finished: Promise.resolve() };
+    return el.animate(frames, Object.assign({ duration: 400, easing: EASE, fill: 'both' }, opts));
+  }
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+  function contributors(p) { var seen = []; p.memos.forEach(function (m) { if (seen.indexOf(m[0]) < 0) seen.push(m[0]); }); return seen; }
+  function avs(names) { return names.map(function (n) { return '<i style="background:' + AV[n] + '">' + n[0] + '</i>'; }).join(''); }
+
+  /* ---------- 연속일 링 ---------- */
+  var C = 2 * Math.PI * 23, bar = $('ring-bar');
+  bar.style.strokeDasharray = C;
+  function setRing(n) { bar.style.strokeDashoffset = C * (1 - Math.min(n, 7) / 7); $('streak').textContent = n; }
+  setRing(6);
+
+  /* ---------- 표지 덱: 오늘의 시 + 지난 시 세 편 + 더보기 ---------- */
+  var DECK = ['snow'].concat(PAST.slice(0, 3), ['more']);
+  var deck = $('deck'), idx = 0;
+  function coverHTML(id) {
+    if (id === 'more') return '<div class="cover more" data-id="more" role="group" aria-label="지난 시 더보기"><b>+' + (PAST.length - 3) + '</b><span>더 이전의 시가 있어요</span><em>지난 시 전체 보기</em></div>';
+    var p = POEMS[id], who = contributors(p);
+    var kick = p.today ? 'TODAY\u2019S POEM · ' + p.date : p.date + ' · 지난 시';
+    var foot = (p.memos.length ? '메모 ' + p.memos.length : '메모 없음') + (p.today || !who.length ? '' : ' · ' + who.length + '명 참여');
+    return '<div class="cover" data-id="' + id + '" style="background:' + p.color + '" role="group" aria-label="' + esc(p.title) + '">' +
+      '<span class="c-kicker">' + kick + '</span><span class="c-title">' + esc(p.title) + '</span><span class="c-author">' + esc(p.author) + '</span>' +
+      '<span class="c-foot"><span>' + foot + '</span><span>' + (p.today ? '읽기 →' : '다시 읽기 →') + '</span></span></div>';
+  }
+  deck.innerHTML = DECK.map(coverHTML).join('');
+  $('dots').innerHTML = DECK.map(function (id, i) { return '<button type="button" role="tab" aria-label="' + (i + 1) + '번째 표지" data-i="' + i + '"></button>'; }).join('');
+  var covers = Array.prototype.slice.call(deck.children);
+  function layout() {
+    covers.forEach(function (c, i) {
+      var k = i - idx;
+      c.className = c.className.replace(/\s?(k\d|gone)/g, '') + (k < 0 ? ' gone' : ' k' + Math.min(k, 3));
+      c.style.transform = ''; c.setAttribute('aria-hidden', String(k !== 0));
+    });
+    document.querySelectorAll('#dots button').forEach(function (d, i) { d.setAttribute('aria-current', String(i === idx)); });
+  }
+  function go(n) { n = Math.max(0, Math.min(DECK.length - 1, n)); if (n !== idx) { idx = n; layout(); haptic(); } else layout(); }
+  layout();
+
+  // 끌어서 넘기기: 손가락을 따라 기울며 움직이고, 70px 넘게 밀면 다음/이전 표지
+  var startX = 0, dx = 0, dragging = false, moved = false;
+  deck.addEventListener('pointerdown', function (e) {
+    var c = e.target.closest('.cover'); if (!c || !c.classList.contains('k0')) return;
+    dragging = true; moved = false; startX = e.clientX; dx = 0; deck.classList.add('dragging');
+  });
+  deck.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    if (!moved && Math.abs(dx) > 6) { moved = true; try { deck.setPointerCapture(e.pointerId); } catch (err) {} }  // 탭은 그대로 클릭으로 두고, 실제로 끌 때만 붙잡음
+    var c = covers[idx], edge = (idx === 0 && dx > 0) || (idx === DECK.length - 1 && dx < 0);
+    var x = edge ? dx * .25 : dx;
+    c.style.transform = 'translateX(' + x + 'px) rotate(' + (x * .03) + 'deg)';
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false; deck.classList.remove('dragging');
+    if (dx < -70) go(idx + 1); else if (dx > 70) go(idx - 1); else layout();
+  }
+  deck.addEventListener('pointerup', endDrag);
+  deck.addEventListener('pointercancel', endDrag);
+  deck.addEventListener('click', function (e) {
+    if (moved) { moved = false; return; }
+    var c = e.target.closest('.cover'); if (!c) return;
+    if (!c.classList.contains('k0')) { go(covers.indexOf(c)); return; }   // 뒤에 보이는 표지를 누르면 앞으로
+    if (c.dataset.id === 'more') { openSheet('sheet-history'); return; }
+    openReader(c.dataset.id, c);
+  });
+  $('dots').addEventListener('click', function (e) { var d = e.target.closest('button'); if (d) go(+d.dataset.i); });
+  deck.tabIndex = 0;
+  deck.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') go(idx + 1); else if (e.key === 'ArrowLeft') go(idx - 1);
+    else if (e.key === 'Enter') covers[idx].click();
+  });
+
+  $('h-count').textContent = PAST.length + '편';
+  $('h-list').innerHTML = PAST.map(function (id) {
+    var p = POEMS[id], who = contributors(p);
+    return '<button type="button" class="h-row" data-id="' + id + '"><span class="sw" style="background:' + p.color + '"></span>' +
+      '<span><b>' + esc(p.title) + '</b><small>' + esc(p.author) + '</small></span>' +
+      '<em>' + p.date + '<br>' + (who.length ? who.join(', ') : '메모 없음') + '</em></button>';
+  }).join('');
+
+  /* ---------- 읽기 화면 채우기 ---------- */
+  var current = null, finishedToday = false;
+  function fillReader(id) {
+    var p = POEMS[id]; current = id;
+    var ro = !p.today;
+    reader.classList.toggle('ro', ro);
+    $('r-head').style.background = p.color;
+    $('r-title').textContent = p.title; $('r-author').textContent = p.author;
+    $('r-meta').innerHTML = (ro ? '<span class="badge">지난 시 · 읽기 전용</span>' : '') +
+      '<span>' + p.date + ' ' + p.day + '</span><span>·</span><span>' + p.year + '</span>';
+    $('poem').innerHTML = p.lines.map(function (l, i) {
+      if (!l) return '<span class="ln">&nbsp;</span>';
+      var ws = l.split(' ').map(function (w) { return '<span class="w" data-word="' + w.replace(/[^A-Za-z'-]/g, '').toLowerCase() + '">' + esc(w) + '</span>'; }).join(' ');
+      return '<span class="ln" data-i="' + i + '">' + (ro ? '' : '<button type="button" class="mark" aria-label="이 줄에 밑줄 · 메모"></button>') + '<span class="tx">' + ws + '</span></span>';
+    }).join('');
+    p.lines.forEach(function (l, i) { if (l) renderLineMark(i); });
+    $('r-end').hidden = ro;
+    $('m-write').hidden = ro; $('m-ro').hidden = !ro;
+    renderMemos();
+  }
+  function memoHTML(m, withQuote) {
+    return '<div class="m-item"><i style="background:' + AV[m[0]] + '">' + m[0][0] + '</i><div><b>' + m[0] + '<small>' + m[1] + '</small></b><p>' + esc(m[2]) + '</p>' + (withQuote && m[3] ? '<q>' + esc(m[3]) + '</q>' : '') + '</div></div>';
+  }
+  function lineMemos(i) { var p = POEMS[current], t = p.lines[i]; return p.memos.filter(function (m) { return m[3] === t; }); }
+  // 메모가 달린 줄에 점선 밑줄과 숫자 표시
+  function renderLineMark(i) {
+    var ln = document.querySelector('#poem .ln[data-i="' + i + '"]'); if (!ln) return;
+    var n = lineMemos(i).length, cm = ln.querySelector('.cm');
+    ln.classList.toggle('has-cm', n > 0);
+    if (!n) { if (cm) cm.remove(); return; }
+    if (!cm) { cm = document.createElement('button'); cm.type = 'button'; cm.className = 'cm'; ln.appendChild(cm); }
+    cm.textContent = n; cm.setAttribute('aria-label', '이 줄의 메모 ' + n + '개 보기');
+  }
+  function renderMemos() {
+    var p = POEMS[current], ro = !p.today, who = contributors(p);
+    $('pill-avs').innerHTML = avs(who);
+    $('pill-label').textContent = p.memos.length ? '메모 ' + p.memos.length : '메모 없음';
+    $('m-count').textContent = p.memos.length + '개' + (ro ? ' · ' + p.date : '');
+    $('m-list').innerHTML = p.memos.map(function (m) { return memoHTML(m, true); }).join('') || '<p class="s-note" style="padding:16px 0">이 시에는 남긴 메모가 없어요.</p>';
+  }
+
+  /* ---------- 줄 메모 시트 ---------- */
+  var currentLine = null;
+  function openLine(i) {
+    var p = POEMS[current], ro = !p.today, ms = lineMemos(i);
+    currentLine = i;
+    $('l-text').textContent = p.lines[i];
+    $('l-count').textContent = ms.length ? ms.length + '개' : '';
+    $('l-list').innerHTML = ms.map(function (m) { return memoHTML(m, false); }).join('') || '<p class="s-note" style="padding:14px 0 0">아직 이 줄에 남긴 메모가 없어요.</p>';
+    var ln = document.querySelector('#poem .ln[data-i="' + i + '"]');
+    $('l-mark').hidden = ro; $('l-write').hidden = ro;
+    $('l-mark').textContent = ln && ln.classList.contains('marked') ? '밑줄 지우기' : '밑줄 긋기';
+    openSheet('sheet-line'); haptic();
+  }
+  $('l-mark').addEventListener('click', function () {
+    var ln = document.querySelector('#poem .ln[data-i="' + currentLine + '"]'); if (!ln) return;
+    var on = ln.classList.toggle('marked');
+    this.textContent = on ? '밑줄 지우기' : '밑줄 긋기'; haptic();
+  });
+  $('l-write').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('l-input').value.trim(), p = POEMS[current]; if (!v || !p.today) return;
+    p.memos.unshift(['경윤', '방금', v, p.lines[currentLine]]);
+    $('l-input').value = '';
+    renderLineMark(currentLine); renderMemos(); openLine(currentLine);
+  });
+
+  /* ---------- 펼치기: 누른 표지가 그대로 읽기 화면 윗부분이 됨 ---------- */
+  function openReader(id, fromEl) {
+    haptic(); closeSheets();
+    fillReader(id);
+    var sr = screen.getBoundingClientRect(), cr = fromEl.getBoundingClientRect();
+    reader.scrollTop = 0; reader.style.visibility = 'visible';
+    var headH = $('r-head').getBoundingClientRect().height;
+    var morph = document.createElement('div');
+    morph.className = 'morph'; morph.style.background = POEMS[id].color;
+    var from = { left: (cr.left - sr.left) + 'px', top: (cr.top - sr.top) + 'px', width: cr.width + 'px', height: cr.height + 'px', borderRadius: '6px 12px 12px 6px' };
+    Object.assign(morph.style, from);
+    screen.appendChild(morph);
+    $('status').classList.add('light'); tabbar.classList.add('away');
+    anim(reader, [{ opacity: 0 }, { opacity: 1 }], { duration: 420, delay: 180 });
+    anim($('r-body'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: 300 });
+    anim($('r-title'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 260 });
+    anim(home, [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 420 });
+    anim(morph, [from, { left: '0px', top: '0px', width: sr.width + 'px', height: headH + 'px', borderRadius: '0px' }], { duration: 560 })
+      .finished.then(function () {
+        morph.remove(); home.style.visibility = 'hidden';
+        var pill = $('memo-pill'); pill.style.visibility = 'visible';
+        anim(pill, [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380 });
+      });
+  }
+  function closeReader() {
+    closeSheets();
+    home.style.visibility = 'visible';
+    $('status').classList.remove('light'); tabbar.classList.remove('away');
+    $('memo-pill').style.visibility = 'hidden';
+    anim(home, [{ opacity: 0, transform: 'scale(.97)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 380 });
+    return anim(reader, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(24px)' }], { duration: 320 })
+      .finished.then(function () { reader.style.visibility = 'hidden'; if (reader.getAnimations) reader.getAnimations().forEach(function (x) { x.cancel(); }); });
+  }
+
+  $('back').addEventListener('click', closeReader);
+  $('h-list').addEventListener('click', function (e) {
+    var r = e.target.closest('.h-row'); if (!r) return;
+    openReader(r.dataset.id, r.querySelector('.sw'));
+  });
+
+  /* ---------- 단어 → 사전 / 여백 → 밑줄 ---------- */
+  var defs = {
+    gloom: ['/ɡluːm/', '명사', '어둑어둑함, 어둠.'], whiteness: ['/ˈwaɪtnəs/', '명사', '흰 빛, 새하얌.'], silence: ['/ˈsaɪləns/', '명사', '고요, 침묵.'],
+    sighing: ['/ˈsaɪɪŋ/', '동사', '한숨을 쉬다(sigh)의 진행형.'], bitterly: ['/ˈbɪtərli/', '부사', '몹시 슬프게, 비통하게.'], dusky: ['/ˈdʌski/', '형용사', '어스름한.'],
+    futile: ['/ˈfjuːtaɪl/', '형용사', '헛된, 소용없는.'], moor: ['/mʊr/', '동사', '(배를) 정박시키다.'], symmetry: ['/ˈsɪmətri/', '명사', '대칭, 균형.'],
+    visage: ['/ˈvɪzɪdʒ/', '명사', '얼굴, 용모.'], pedestal: ['/ˈpedɪstl/', '명사', '받침대, 주춧대.'], trunkless: ['/ˈtrʌŋkləs/', '형용사', '몸통이 없는.']
+  };
+  var activeWord = null;
+  $('poem').addEventListener('click', function (e) {
+    var mark = e.target.closest('.mark, .cm');
+    if (mark) { openLine(+mark.parentNode.dataset.i); return; }
+    var w = e.target.closest('.w'); if (!w || !w.dataset.word) return;
+    if (activeWord) activeWord.classList.remove('active');
+    activeWord = w; w.classList.add('active');
+    var d = defs[w.dataset.word] || ['', '단어', '실제 앱에서는 서버 사전에서 뜻을 가져와요.'];
+    $('d-word').textContent = w.dataset.word; $('d-ph').textContent = d[0]; $('d-pos').textContent = d[1]; $('d-def').textContent = d[2];
+    $('d-ex').textContent = w.closest('.ln').textContent.trim();
+    var s = $('d-save'); s.textContent = '단어장에 담기'; s.disabled = false;
+    openSheet('sheet-dict'); haptic();
+  });
+  $('d-save').addEventListener('click', function () { this.textContent = '단어장에 담았어요'; this.disabled = true; haptic(); });
+
+  /* ---------- 시트 공통 ---------- */
+  function openSheet(id) {
+    document.querySelectorAll('.sheet.show').forEach(function (s) { if (s.id !== id) s.classList.remove('show'); });
+    $('scrim').classList.add('show'); $(id).classList.add('show'); $(id).scrollTop = 0;
+  }
+  function closeSheets() {
+    $('scrim').classList.remove('show');
+    document.querySelectorAll('.sheet.show').forEach(function (s) { s.classList.remove('show'); });
+    if (activeWord) { activeWord.classList.remove('active'); activeWord = null; }
+  }
+  $('scrim').addEventListener('click', closeSheets);
+  document.querySelectorAll('[data-close], .handle').forEach(function (b) { b.addEventListener('click', closeSheets); });
+  $('memo-pill').addEventListener('click', function () { openSheet('sheet-memo'); haptic(); });
+  $('m-write').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('m-input').value.trim(); if (!v || !POEMS[current].today) return;
+    POEMS[current].memos.unshift(['경윤', '방금', v]);
+    $('m-input').value = ''; renderMemos();
+    anim($('m-list').firstChild, [{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 360 });
+    haptic();
+  });
+
+  /* ---------- 초대 · 방 ---------- */
+  $('invite-open').addEventListener('click', function () { openSheet('sheet-invite'); haptic(); });
+  $('copy').addEventListener('click', function () {
+    var code = $('code').textContent;
+    try { navigator.clipboard.writeText(code).then(function () { toast('초대 코드를 복사했어요'); }, function () { toast('초대 코드: ' + code); }); }
+    catch (e) { toast('초대 코드: ' + code); }
+    haptic();
+  });
+  $('share').addEventListener('click', function () {
+    var data = { title: 'Typoem', text: '우리 셋의 시집에서 같이 시 읽어요. 초대 코드: ' + $('code').textContent };
+    if (navigator.share) navigator.share(data).catch(function () {}); else toast('앱에서는 카톡 · 문자로 공유돼요');
+  });
+  $('leave').addEventListener('click', function () { toast('실제 앱에서는 한 번 더 확인해요'); });
+  $('room-switch').addEventListener('click', function () { openSheet('sheet-rooms'); haptic(); });
+  document.querySelectorAll('.room-row').forEach(function (r) {
+    r.addEventListener('click', function () {
+      document.querySelectorAll('.room-row .chk').forEach(function (c) { c.hidden = true; });
+      r.querySelector('.chk').hidden = false;
+      $('room-name').textContent = r.dataset.room;
+      $('r-room').textContent = r.dataset.room;
+      closeSheets(); toast(r.dataset.room + '(으)로 바꿨어요 · 데모라 화면은 그대로예요');
+    });
+  });
+  $('join-btn').addEventListener('click', function () {
+    var v = $('join-code').value.trim().toUpperCase();
+    toast(/^[A-Z0-9]{6}$/.test(v) ? v + ' 방에 참여하는 중… (데모)' : '초대 코드 6자리를 입력해 주세요');
+  });
+  $('create-btn').addEventListener('click', function () { toast('방 이름만 정하면 초대 코드가 바로 생겨요 (데모)'); });
+
+  /* ---------- 다 읽었어요 ---------- */
+  $('finish').addEventListener('click', function () {
+    if (finishedToday) return;
+    finishedToday = true; this.classList.add('done'); this.textContent = '오늘의 시를 읽었어요';
+    haptic(); toast('7일째 이어서 읽고 있어요');
+    setTimeout(function () { closeReader().then(function () { $('today-dot').classList.add('on'); setRing(7); }); }, 900);
+  });
+
+  /* ---------- 탭 ---------- */
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var k = t.dataset.tab;
+      if (k === 'rooms') { openSheet('sheet-rooms'); return; }
+      if (k !== 'today') toast('데모에서는 오늘 · 내 방만 열려요');
+    });
+  });
+  var tt;
+  function toast(msg) { var el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(function () { el.classList.remove('show'); }, 2000); }
+})();
+</script>
+</body>
+</html>
