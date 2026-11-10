@@ -72,6 +72,16 @@
     return '<i style="background:' + avatarColor(name) + '">' + esc(first) + '</i>';
   }
 
+  // Long titles step down in size so they fit a cover / the reader band.
+  // Returns an extra class for a .c-title element ('' for short titles).
+  function titleSize(title) {
+    var n = String(title || '').length;
+    if (n > 44) return ' c-title-xs';
+    if (n > 24) return ' c-title-sm';
+    if (n > 12) return ' c-title-md';
+    return '';
+  }
+
   // ---- Haptic: a light tap in the Android app, nothing on the web ----
   function haptic() {
     try {
@@ -278,6 +288,7 @@
     coverColor: coverColor,
     avatarColor: avatarColor,
     avatar: avatar,
+    titleSize: titleSize,
     haptic: haptic,
     anim: anim,
     reduceMotion: reduceMotion,

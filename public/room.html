@@ -3,60 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f2eee7">
+  <meta name="theme-color" content="#3b3a36">
   <title>오늘의 시 · Typoem</title>
 
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-tab="today">
+<body class="reader-page">
 
-  <header class="app-head">
-    <a href="/index.html" class="app-brand">Typoem</a>
-    <p class="app-date" id="today"></p>
-  </header>
-
-  <!-- Room sub-nav: room name left, room links right -->
-  <nav class="room-subnav" aria-label="방">
-    <a class="room-name room-back" href="/index.html" aria-label="홈으로"><span aria-hidden="true">&larr;</span> <span id="room-name">&hellip;</span></a>
-    <div class="room-subnav-links">
-      <a href="#" class="is-active" aria-current="page">오늘의 시</a>
-      <span class="sep">&middot;</span>
-      <a id="history-link" href="/index.html">지난 시</a>
+  <!-- ===== 읽기 화면 ===== -->
+  <article class="reader" id="reader" aria-label="시 읽기">
+    <div class="r-bar">
+      <a href="/index.html" class="r-back" id="back" aria-label="뒤로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <span id="room-name"></span>
+      <span class="r-bar-space" aria-hidden="true"></span>
     </div>
-  </nav>
 
-  <main class="page">
+    <!-- 표지 색 띠 + 제목 · 작가 -->
+    <header class="r-head" id="r-head">
+      <h1 class="c-title" id="poem-title"></h1>
+      <p class="c-author" id="poem-author"></p>
+    </header>
 
-    <p id="status" class="status" role="status"></p>
+    <div class="r-body" id="r-body">
+      <p class="r-meta" id="r-meta"></p>
+      <p id="status" class="status" role="status"></p>
+      <div class="poem" id="poem-body"></div>
+    </div>
 
-    <div class="poem-layout">
-
-      <!-- Today's poem -->
-      <section class="poem-column" aria-label="오늘의 시">
-        <article class="poem-sheet">
-          <h2 class="poem-title" id="poem-title"></h2>
-          <p class="poem-author" id="poem-author"></p>
-          <div class="rule-thin"></div>
-          <div class="poem-body" id="poem-body"></div>
-        </article>
-      </section>
-
-      <!-- Memos (full-poem notes) -->
-      <aside class="memo-column" aria-label="메모">
-        <h2 class="panel-heading">메모</h2>
-
-        <div class="memo-compose">
-          <textarea id="memo-input" class="note-input" rows="3"
-            placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000"></textarea>
-          <p id="memo-error" class="auth-error" role="alert"></p>
-          <button type="button" id="memo-submit" class="btn">남기기</button>
-        </div>
-
-        <p id="memo-empty" class="empty-sub" hidden>아직 남긴 메모가 없어요.</p>
-        <div id="memo-list" class="note-list" aria-live="polite"></div>
-      </aside>
-
+    <!-- "다 읽었어요": 스트릭 API가 없으면(404) 숨겨요 -->
+    <div class="r-end" id="r-end" hidden>
+      <p>오늘의 시를 끝까지 읽었다면</p>
+      <button type="button" class="finish" id="finish">다 읽었어요</button>
     </div>
 
     <!-- This room's book (v1.1, temporary UI) — filled in by the book section of room.js -->
@@ -65,32 +45,40 @@
       <div id="book-entry-body"></div>
       <div id="book-picker" class="book-picker" hidden></div>
     </section>
+  </article>
 
-  </main>
+  <!-- 떠 있는 "메모 N" 알약 -->
+  <button type="button" class="memo-pill" id="memo-pill" aria-haspopup="dialog" hidden>
+    <span class="avs" id="pill-avs"></span><span id="pill-label"></span>
+  </button>
 
-  <!-- Annotation drawer -->
-  <div id="drawer-backdrop" class="drawer-backdrop"></div>
-  <aside id="drawer" class="drawer" role="dialog" aria-label="이 줄의 메모">
-    <div class="drawer-head">
-      <h2 class="panel-heading">이 줄의 메모</h2>
-      <button type="button" id="drawer-close" class="link-btn">닫기</button>
-    </div>
+  <!-- ===== 시트 ===== -->
+  <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모">
+    <span class="handle"></span>
+    <p class="s-title">메모 <span id="m-count"></span></p>
+    <div id="memo-list" aria-live="polite"></div>
+    <form class="m-write" id="memo-form" novalidate>
+      <input id="memo-input" class="field" placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000" autocomplete="off">
+      <button type="submit" class="pri" id="memo-submit">남기기</button>
+    </form>
+  </section>
 
-    <blockquote class="drawer-line" id="drawer-line"></blockquote>
-
-    <div class="memo-compose">
-      <textarea id="annotation-input" class="note-input" rows="3"
-        placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000"></textarea>
-      <p id="annotation-error" class="auth-error" role="alert"></p>
-      <button type="button" id="annotation-submit" class="btn">남기기</button>
-    </div>
-
-    <p id="annotation-empty" class="empty-sub" hidden>아직 이 줄에 남긴 메모가 없어요.</p>
-    <div id="annotation-list" class="note-list" aria-live="polite"></div>
-  </aside>
+  <section class="sheet" id="sheet-line" role="dialog" aria-label="이 줄의 메모">
+    <span class="handle"></span>
+    <p class="s-title">이 줄의 메모 <span id="l-count"></span></p>
+    <p class="d-ex" id="drawer-line"></p>
+    <button type="button" class="sec line-btn" id="l-mark">밑줄 긋기</button>
+    <div id="annotation-list" aria-live="polite"></div>
+    <form class="m-write" id="annotation-form" novalidate>
+      <input id="annotation-input" class="field" placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000" autocomplete="off">
+      <button type="submit" class="pri" id="annotation-submit">남기기</button>
+    </form>
+    <button type="button" class="sec line-btn" id="l-edit-mine" hidden>내 메모 고치기</button>
+  </section>
 
   <script src="auth.js"></script>
   <script src="ui.js"></script>
+  <script src="streak.js"></script>
   <script src="room.js"></script>
   <script src="dict-popup.js"></script>
 

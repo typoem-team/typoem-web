@@ -1,57 +1,56 @@
 // public/dict-popup.js
-// P12 — Dictionary popup.
-// Shows a small in-app popup for a word. Exposes window.openDictionary(word).
+// Dictionary — tap a word in the poem and its entry rises in a bottom sheet.
+// Exposes window.openDictionary(word, anchorEl).
+//
+// The lookup logic (retries, latest-lookup-wins, saving to the notebook) is
+// unchanged; only the shell moved from a floating popup to a sheet.
 //
 // Depends on:
-//   - auth.js  -> authFetch()  (added in a later commit; the route is auth-protected)
+//   - auth.js  -> authFetch()  (the route is auth-protected)
+//   - ui.js    -> TypoemUI.openSheet / closeSheets / haptic
 //   - room.js  -> renders <span class="word" data-word="..."> in the poem body
 
 (function () {
-  // ---- Build the popup shell once and reuse it ----
+  // ---- Build the sheet once and reuse it ----
   let popup = null;
   let popupBody = null;
   let activeWordEl = null;
   let currentEntry = null; 
 
+  const UI = window.TypoemUI;
+
   function ensurePopup() {
     if (popup) return;
 
-    popup = document.createElement('div');
-    popup.className = 'dict-popup';
+    popup = document.createElement('section');
+    popup.className = 'sheet';
+    popup.id = 'sheet-dict';
     popup.setAttribute('role', 'dialog');
     popup.setAttribute('aria-label', '사전');
-    popup.hidden = true;
 
     popup.innerHTML = `
-      <div class="dict-popup-head">
-        <h4 class="dict-popup-word" id="dict-popup-word"></h4>
-        <button type="button" class="link-btn dict-popup-save" id="dict-popup-save" hidden>단어장에 담기</button>
-        <button type="button" class="link-btn dict-popup-close" aria-label="닫기">&times;</button>
-      </div>
+      <span class="handle"></span>
+      <p class="d-word"><span id="dict-popup-word"></span><small id="dict-popup-phonetic"></small></p>
       <div class="dict-popup-body" id="dict-popup-body"></div>
+      <div class="sheet-actions">
+        <button type="button" class="sec" data-close>닫기</button>
+        <button type="button" class="pri" id="dict-popup-save" hidden>단어장에 담기</button>
+      </div>
     `;
 
     document.body.appendChild(popup);
     popupBody = popup.querySelector('#dict-popup-body');
 
-    // Close button
-    popup.querySelector('.dict-popup-close').addEventListener('click', closeDictionary);
-
     // Save button — store the looked-up word in the personal notebook
     popup.querySelector('#dict-popup-save').addEventListener('click', saveCurrentWord);
 
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !popup.hidden) closeDictionary();
-    });
+    // ui.js closes the sheet (scrim, handle, 닫기, Escape, Android back);
+    // tidy up our own state when that happens.
+    popup.addEventListener('sheet:close', onClosed);
+  }
 
-    // Close when clicking outside the popup (but not on a .word, which reopens it)
-    document.addEventListener('click', (e) => {
-      if (popup.hidden) return;
-      if (popup.contains(e.target)) return;
-      if (e.target.closest('.word')) return;
-      closeDictionary();
-    });
+  function isOpen() {
+    return !!popup && popup.classList.contains('show');
   }
 
   // ---- Escape text before inserting into HTML (XSS guard) ----
@@ -61,8 +60,8 @@
     return div.innerHTML;
   }
 
-  function closeDictionary() {
-    if (popup) popup.hidden = true;
+  function onClosed() {
+    lookupSeq++;            // drop a lookup that is still on its way
     hideSaveButton();
     currentEntry = null;
     if (activeWordEl) {
@@ -112,11 +111,8 @@
 
       if (res.ok || res.status === 201) {
         if (btn) {
-          btn.textContent = '단어장에 담았어요';
-          setTimeout(() => {
-            const b = saveButtonEl();
-            if (b && !popup.hidden) { b.textContent = '단어장에 담기'; b.disabled = false; }
-          }, 5000);
+          btn.textContent = '단어장에 담았어요';   // stays until the next word
+          UI.haptic();
         }
       } else if (btn) {
         btn.disabled = false;
@@ -135,11 +131,9 @@
   function renderEntry(data) {
     currentEntry = data || null;
     document.getElementById('dict-popup-word').textContent = data.word || '';
+    document.getElementById('dict-popup-phonetic').textContent = data.phonetic || '';
 
     let html = '';
-    if (data.phonetic) {
-      html += `<p class="dict-phonetic">${escapeHtml(data.phonetic)}</p>`;
-    }
 
     const defs = Array.isArray(data.definitions) ? data.definitions : [];
     if (defs.length === 0) {
@@ -149,48 +143,18 @@
       html += '<ol class="dict-def-list">';
       for (const d of defs) {
         const pos = d.partOfSpeech
-          ? `<span class="dict-pos">${escapeHtml(d.partOfSpeech)}</span> `
+          ? `<span class="d-pos">${escapeHtml(d.partOfSpeech)}</span> `
           : '';
         const ex = d.example
-          ? `<span class="dict-example">&ldquo;${escapeHtml(d.example)}&rdquo;</span>`
+          ? `<span class="d-ex">${escapeHtml(d.example)}</span>`
           : '';
-        html += `<li>${pos}${escapeHtml(d.definition)}${ex ? '<br>' + ex : ''}</li>`;
+        html += `<li>${pos}${escapeHtml(d.definition)}${ex}</li>`;
       }
       html += '</ol>';
       showSaveButton();
     }
     setBody(html);
   }
-
-  // Position the popup near the clicked word — below it by default,
-  // but above it when there isn't enough room below.
-  function positionPopup(anchorEl) {
-    if (!anchorEl) return;
-    const rect = anchorEl.getBoundingClientRect();
-    const gap = 6;
-    const popupHeight = popup.offsetHeight || 240;
-    const popupWidth = popup.offsetWidth || 380;
-    const viewportH = document.documentElement.clientHeight;
-
-    // Vertical: flip above the word if it would overflow the bottom.
-    const spaceBelow = viewportH - rect.bottom;
-    let top;
-    if (spaceBelow < popupHeight + gap && rect.top > popupHeight + gap) {
-      top = rect.top + window.scrollY - popupHeight - gap;   // above
-    } else {
-      top = rect.bottom + window.scrollY + gap;              // below
-    }
-
-    // Horizontal: keep it within the viewport.
-    let left = rect.left + window.scrollX;
-    const maxLeft = window.scrollX + document.documentElement.clientWidth - popupWidth - 12;
-    if (left > maxLeft) left = maxLeft;
-    if (left < window.scrollX + 12) left = window.scrollX + 12;
-
-    popup.style.top = `${top}px`;
-    popup.style.left = `${left}px`;
-  }
-
 
   // ---- Fetch with retries ----
   // The first lookup of a new word makes the server call the free dictionary API,
@@ -226,17 +190,20 @@
 
     ensurePopup();
 
-    // Mark the clicked word as active (same styling as :hover)
+    // Mark the tapped word while its entry is open
     if (activeWordEl) activeWordEl.classList.remove('active');
     activeWordEl = anchorEl || null;
     if (activeWordEl) activeWordEl.classList.add('active');
     
     document.getElementById('dict-popup-word').textContent = word;
+    document.getElementById('dict-popup-phonetic').textContent = '';
     currentEntry = null;
     hideSaveButton();
     setBody('<p class="dict-loading">찾는 중이에요&hellip;</p>');
-    popup.hidden = false;
-    positionPopup(anchorEl);
+    if (!isOpen()) {
+      UI.openSheet(popup);
+      UI.haptic();
+    }
 
     const seq = ++lookupSeq;
     let res;
@@ -248,7 +215,7 @@
       return;
     }
     // The user tapped another word (or closed the popup) while we were retrying.
-    if (seq !== lookupSeq || popup.hidden) return;
+    if (seq !== lookupSeq || !isOpen()) return;
 
     // authFetch handles 401 (logout + redirect); handle the rest here.
     if (res.status === 404) {
@@ -261,8 +228,8 @@
     }
 
     const data = await res.json();
+    if (seq !== lookupSeq || !isOpen()) return;
     renderEntry(data);
-    positionPopup(anchorEl);   // re-position now that the popup has its full height
   }
 
   // Expose globally so room.js / P13 can trigger a lookup directly if needed.
