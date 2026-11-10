@@ -1693,6 +1693,12 @@ paths:
       summary: Search Project Gutenberg
       description: >
         Proxies a Gutendex search (English, plain-text editions, first result page).
+        A purely numeric q of 1-7 digits (e.g. "11" or "1984") also looks that
+        number up as a Project Gutenberg id in Project Gutenberg's own catalog, at
+        the same time as the title search. The id match is listed first, then title
+        matches. If the title search is still running 3 s after the id lookup
+        finishes, the id result is returned alone, so a book can be found by number
+        while Gutendex is down.
         Only books whose authors and translators all died in 1962 or earlier
         (public domain in Korea) are returned.
       security:
@@ -1798,16 +1804,18 @@ paths:
       description: >
         Assigns a Project Gutenberg book to the room, replacing the current one
         (members' progress is kept per book). If the book is not stored yet it is
-        fetched from Gutendex, checked (English only, public domain in Korea),
+        fetched from Project Gutenberg (metadata from its RDF catalog file, with
+        Gutendex as a fallback), checked (English only, public domain in Korea),
         split into chapters and paragraphs, and stored. Returns 200 whether the book
         was newly imported or already stored.
 
 
         Timing: an already stored book responds immediately. A new import usually
         takes a few seconds (about 4 s for Pride and Prejudice locally) but can take
-        up to about 60 seconds plus storage time in the worst case: the Gutendex
-        metadata lookup times out after 15 s and is retried once on a timeout or
-        network error (30 s), then the text download times out after 30 s.
+        up to about 60 seconds plus storage time in the worst case: the metadata
+        lookup (RDF file and Gutendex in parallel) times out after 15 s and is
+        retried once on a timeout or network error (30 s), then the text download
+        times out after 30 s.
         Clients should show a loading state and allow at least 70 seconds.
       security:
         - bearerAuth: []

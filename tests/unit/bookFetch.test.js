@@ -29,6 +29,70 @@ function gutenberg(text) {
     ].join("\n");
 }
 
+// minimal Project Gutenberg RDF record (same structure as /cache/epub/{id}/pg{id}.rdf)
+function agentXml(about, name, birth, death) {
+    return `<pgterms:agent rdf:about="${about}">
+        <pgterms:name>${name}</pgterms:name>
+        ${birth == null ? "" : `<pgterms:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">${birth}</pgterms:birthdate>`}
+        ${death == null ? "" : `<pgterms:deathdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">${death}</pgterms:deathdate>`}
+        <pgterms:alias>Alias, Some</pgterms:alias>
+      </pgterms:agent>`;
+}
+function rdf({
+    id = 11,
+    title = "Alice's Adventures in Wonderland",
+    rights = "Public domain in the USA.",
+    creators = [agentXml("2009/agents/7", "Carroll, Lewis", 1832, 1898)],
+    translators = [],
+    extraRoles = "",
+    languages = ["en"],
+    files = [
+        ["https://www.gutenberg.org/ebooks/11.txt.utf-8", "text/plain; charset=utf-8"],
+        ["https://www.gutenberg.org/files/11/11-0.txt", "text/plain; charset=us-ascii"],
+        ["https://www.gutenberg.org/ebooks/11.epub3.images", "application/epub+zip"],
+    ],
+} = {}) {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xml:base="http://www.gutenberg.org/"
+  xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcam="http://purl.org/dc/dcam/"
+  xmlns:marcrel="http://id.loc.gov/vocabulary/relators/">
+  <pgterms:ebook rdf:about="ebooks/${id}">
+    <dcterms:publisher>Project Gutenberg</dcterms:publisher>
+    <dcterms:rights>${rights}</dcterms:rights>
+    ${creators.map((a) => `<dcterms:creator>\n      ${a}\n    </dcterms:creator>`).join("\n    ")}
+    ${translators.map((a) => `<marcrel:trl>\n      ${a}\n    </marcrel:trl>`).join("\n    ")}
+    ${extraRoles}
+    <dcterms:title>${title}</dcterms:title>
+    ${languages.map((l, i) => `<dcterms:language>
+      <rdf:Description rdf:nodeID="L${i}">
+        <rdf:value rdf:datatype="http://purl.org/dc/terms/RFC4646">${l}</rdf:value>
+      </rdf:Description>
+    </dcterms:language>`).join("\n    ")}
+    <dcterms:subject>
+      <rdf:Description rdf:nodeID="S1">
+        <dcam:memberOf rdf:resource="http://purl.org/dc/terms/LCSH"/>
+        <rdf:value>Fantasy fiction</rdf:value>
+      </rdf:Description>
+    </dcterms:subject>
+    ${files.map(([url, mime], i) => `<dcterms:hasFormat>
+      <pgterms:file rdf:about="${url}">
+        <dcterms:isFormatOf rdf:resource="ebooks/${id}"/>
+        <dcterms:format>
+          <rdf:Description rdf:nodeID="F${i}">
+            <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+            <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">${mime}</rdf:value>
+          </rdf:Description>
+        </dcterms:format>
+      </pgterms:file>
+    </dcterms:hasFormat>`).join("\n    ")}
+  </pgterms:ebook>
+</rdf:RDF>
+`;
+}
+
 // fake fetch Response
 function response({ status = 200, json, text, bytes, contentType = "application/json", url = "" } = {}) {
     return {
@@ -320,6 +384,76 @@ describe("pickTextFormat / decodeText", () => {
 });
 
 // ---------------------------------------------------------------------------
+// parseRdf
+// ---------------------------------------------------------------------------
+describe("parseRdf", () => {
+    test("reads id, title, authors, languages, formats and rights in the Gutendex shape", () => {
+        const m = bf.parseRdf(rdf());
+        expect(m).toEqual({
+            id: 11,
+            title: "Alice's Adventures in Wonderland",
+            authors: [{ name: "Carroll, Lewis", birth_year: 1832, death_year: 1898 }],
+            translators: [],
+            languages: ["en"],
+            formats: {
+                "text/plain; charset=utf-8": "https://www.gutenberg.org/ebooks/11.txt.utf-8",
+                "text/plain; charset=us-ascii": "https://www.gutenberg.org/files/11/11-0.txt",
+                "application/epub+zip": "https://www.gutenberg.org/ebooks/11.epub3.images",
+            },
+            copyright: false,
+        });
+        expect(bf.isKoreaPublicDomain(m)).toBe(true);
+        expect(bf.pickTextFormat(m.formats).url).toBe("https://www.gutenberg.org/ebooks/11.txt.utf-8");
+    });
+
+    test("translators come from marcrel:trl and count for the Korean PD check", () => {
+        const m = bf.parseRdf(rdf({
+            id: 2413,
+            creators: [agentXml("2009/agents/574", "Flaubert, Gustave", 1821, 1880)],
+            translators: [agentXml("2009/agents/902", "Aveling, Eleanor Marx", 1855, 1898)],
+        }));
+        expect(m.translators).toEqual([{ name: "Aveling, Eleanor Marx", birth_year: 1855, death_year: 1898 }]);
+        expect(bf.isKoreaPublicDomain(m)).toBe(true);
+
+        const late = bf.parseRdf(rdf({
+            translators: [agentXml("2009/agents/9", "Late, Translator", 1900, 1970)],
+        }));
+        expect(bf.isKoreaPublicDomain(late)).toBe(false);
+    });
+
+    test("missing death date, or a person referenced but not defined, fails the PD check", () => {
+        const alive = bf.parseRdf(rdf({ creators: [agentXml("2009/agents/1", "Someone, Living", 1950, null)] }));
+        expect(alive.authors[0].death_year).toBeNull();
+        expect(bf.isKoreaPublicDomain(alive)).toBe(false);
+
+        const dangling = bf.parseRdf(rdf({ extraRoles: '<marcrel:trl rdf:resource="2009/agents/404"/>' }));
+        expect(dangling.translators).toEqual([{ name: null, birth_year: null, death_year: null }]);
+        expect(bf.isKoreaPublicDomain(dangling)).toBe(false);
+    });
+
+    test("a person referenced by rdf:resource resolves to an agent defined elsewhere in the file", () => {
+        const m = bf.parseRdf(rdf({ extraRoles: '<marcrel:trl rdf:resource="2009/agents/7"/>' }));
+        expect(m.translators).toEqual([{ name: "Carroll, Lewis", birth_year: 1832, death_year: 1898 }]);
+    });
+
+    test("multiple languages, entities and copyrighted rights", () => {
+        const m = bf.parseRdf(rdf({
+            title: "Pride &amp; Prejudice\n  A Novel",
+            languages: ["fr", "en"],
+            rights: "Copyrighted. Read the copyright notice inside this book for details.",
+        }));
+        expect(m.title).toBe("Pride & Prejudice A Novel");
+        expect(m.languages).toEqual(["fr", "en"]);
+        expect(m.copyright).toBe(true);
+    });
+
+    test("not a book record -> null", () => {
+        expect(bf.parseRdf("")).toBeNull();
+        expect(bf.parseRdf("<html>Not found</html>")).toBeNull();
+    });
+});
+
+// ---------------------------------------------------------------------------
 // network helpers (global.fetch mocked)
 // ---------------------------------------------------------------------------
 describe("network helpers", () => {
@@ -330,6 +464,7 @@ describe("network helpers", () => {
         fetchSpy = jest.spyOn(global, "fetch");
         delete process.env.GUTENDEX_URL;
         delete process.env.GUTENBERG_MIRROR;
+        delete process.env.GUTENBERG_RDF;
     });
 
     afterEach(() => {
@@ -356,13 +491,13 @@ describe("network helpers", () => {
     test("GUTENDEX_URL overrides the base URL", async () => {
         process.env.GUTENDEX_URL = "http://localhost:9999/";
         fetchSpy.mockResolvedValue(response({ json: { id: 84, formats: {} } }));
-        await bf.getBookMeta(84);
+        await bf.getBookMetaFromGutendex(84);
         expect(fetchSpy.mock.calls[0][0]).toBe("http://localhost:9999/books/84");
     });
 
     test("HTTP errors are reported, not thrown", async () => {
         fetchSpy.mockResolvedValue(response({ status: 404, json: { detail: "Not found." } }));
-        await expect(bf.getBookMeta(999999)).resolves.toEqual({ ok: false, error: "http", status: 404 });
+        await expect(bf.getBookMetaFromGutendex(999999)).resolves.toEqual({ ok: false, error: "http", status: 404 });
     });
 
     test("timeouts and network errors are reported, not thrown", async () => {
@@ -376,7 +511,7 @@ describe("network helpers", () => {
     test("unexpected JSON shape -> bad_response", async () => {
         fetchSpy.mockResolvedValue(response({ json: { nope: true } }));
         await expect(bf.searchBooks("x")).resolves.toEqual({ ok: false, error: "bad_response" });
-        await expect(bf.getBookMeta(1)).resolves.toEqual({ ok: false, error: "bad_response" });
+        await expect(bf.getBookMetaFromGutendex(1)).resolves.toEqual({ ok: false, error: "bad_response" });
     });
 
     test("fetchBookText picks utf-8, follows the final URL and decodes", async () => {
@@ -415,6 +550,168 @@ describe("network helpers", () => {
         await expect(bf.fetchBookText(meta)).resolves.toEqual({ ok: false, error: "http", status: 503 });
         fetchSpy.mockRejectedValueOnce(new TypeError("fetch failed"));
         await expect(bf.fetchBookText(meta)).resolves.toEqual({ ok: false, error: "network" });
+    });
+
+    describe("getBookMeta: RDF first, Gutendex as fallback", () => {
+        const isRdf = (url) => /\/cache\/epub\/\d+\/pg\d+\.rdf$/.test(url);
+        const gutendexMeta = { id: 11, title: "From Gutendex", authors: [], translators: [], languages: ["en"], formats: { "text/plain": "g" } };
+
+        test("uses the RDF file and cancels the Gutendex request", async () => {
+            let gutendexSignal;
+            fetchSpy.mockImplementation(async (url, opts) => {
+                if (isRdf(url)) return response({ text: rdf(), contentType: "application/rdf+xml" });
+                gutendexSignal = opts.signal;
+                return new Promise(() => {}); // Gutendex hangs
+            });
+            const r = await bf.getBookMeta(11);
+            expect(r.ok).toBe(true);
+            expect(r.meta.title).toBe("Alice's Adventures in Wonderland");
+            expect(fetchSpy.mock.calls.map((c) => c[0])).toContain("https://www.gutenberg.org/cache/epub/11/pg11.rdf");
+            expect(gutendexSignal.aborted).toBe(true);
+        });
+
+        test("GUTENBERG_RDF overrides the RDF URL", async () => {
+            process.env.GUTENBERG_RDF = "https://mirror.example/rdf/{id}.rdf";
+            fetchSpy.mockImplementation(async (url) =>
+                url.startsWith("https://mirror.example/") ? response({ text: rdf(), contentType: "application/rdf+xml" }) : new Promise(() => {}));
+            const r = await bf.getBookMeta(11);
+            expect(r.ok).toBe(true);
+            expect(fetchSpy.mock.calls.map((c) => c[0])).toContain("https://mirror.example/rdf/11.rdf");
+        });
+
+        test("RDF 404 -> 404 without waiting for Gutendex", async () => {
+            fetchSpy.mockImplementation(async (url) => (isRdf(url) ? response({ status: 404 }) : new Promise(() => {})));
+            await expect(bf.getBookMeta(99999999)).resolves.toEqual({ ok: false, error: "http", status: 404 });
+        });
+
+        test("RDF fails (network / bad file / other id) -> Gutendex answer is used", async () => {
+            for (const rdfAnswer of [
+                () => Promise.reject(new TypeError("fetch failed")),
+                async () => response({ text: "<html>maintenance</html>", contentType: "text/html" }),
+                async () => response({ text: rdf({ id: 12 }), contentType: "application/rdf+xml" }),
+                async () => response({ status: 503 }),
+            ]) {
+                fetchSpy.mockReset();
+                fetchSpy.mockImplementation((url) => (isRdf(url) ? rdfAnswer() : Promise.resolve(response({ json: gutendexMeta }))));
+                await expect(bf.getBookMeta(11)).resolves.toEqual({ ok: true, meta: gutendexMeta });
+            }
+        });
+
+        test("both fail -> the RDF error is reported (Gutendex 404 wins over an RDF outage)", async () => {
+            fetchSpy.mockImplementation(async (url) => (isRdf(url) ? response({ status: 503 }) : response({ status: 500 })));
+            await expect(bf.getBookMeta(11)).resolves.toEqual({ ok: false, error: "http", status: 503 });
+
+            fetchSpy.mockImplementation(async (url) => (isRdf(url) ? response({ status: 503 }) : response({ status: 404 })));
+            await expect(bf.getBookMeta(11)).resolves.toEqual({ ok: false, error: "http", status: 404 });
+        });
+    });
+
+    describe("searchBooks with a numeric query", () => {
+        const isRdfUrl = (url) => /\.rdf$/.test(url);
+        const isTitleSearch = (url) => url.includes("/books/?search=");
+        const isGutendexMeta = (url) => /\/books\/\d+$/.test(url);
+        const rdfOk = (opts) => response({ text: rdf(opts), contentType: "application/rdf+xml" });
+        const titleHit = { id: 2001, title: "1984 Stories", authors: [] };
+        // fetch that hangs until aborted, like a stuck Gutendex
+        const hang = (url, { signal }) => new Promise((_resolve, reject) => {
+            signal.addEventListener("abort", () => reject(Object.assign(new Error("aborted"), { name: "AbortError" })));
+        });
+
+        test("runs the id lookup and the title search together; id match first, no duplicates", async () => {
+            fetchSpy.mockImplementation(async (url) => {
+                if (isRdfUrl(url)) return rdfOk();
+                if (isTitleSearch(url)) return response({ json: { count: 2, results: [titleHit, { id: 11, title: "dup" }] } });
+                return response({ status: 404 });
+            });
+            const r = await bf.searchBooks(" 11 ");
+            expect(r.ok).toBe(true);
+            expect(r.results.map((b) => b.id)).toEqual([11, 2001]);
+            expect(r.count).toBe(2);
+            expect(fetchSpy.mock.calls.some((c) => isTitleSearch(c[0]) && c[0].includes("search=11"))).toBe(true);
+        });
+
+        test("a number that is a title ('1984') still finds title matches when the id doesn't exist", async () => {
+            fetchSpy.mockImplementation(async (url) => {
+                if (isRdfUrl(url)) return response({ status: 404 });
+                if (isTitleSearch(url)) return response({ json: { count: 1, results: [titleHit] } });
+                return response({ status: 404 });
+            });
+            await expect(bf.searchBooks("1984")).resolves.toEqual({ ok: true, results: [titleHit], count: 1 });
+        });
+
+        test("unknown id, non-English or no text -> no id result", async () => {
+            const emptyTitle = () => response({ json: { count: 0, results: [] } });
+            for (const rdfAnswer of [
+                () => response({ status: 404 }),
+                () => rdfOk({ languages: ["fr"] }),
+                () => rdfOk({ files: [] }),
+            ]) {
+                fetchSpy.mockImplementation(async (url) => {
+                    if (isRdfUrl(url)) return rdfAnswer();
+                    if (isTitleSearch(url)) return emptyTitle();
+                    return response({ status: 404 });
+                });
+                await expect(bf.searchBooks("9999999")).resolves.toEqual({ ok: true, results: [], count: 0 });
+            }
+        });
+
+        test("8+ digit queries are a plain title search", async () => {
+            fetchSpy.mockResolvedValue(response({ json: { count: 0, results: [] } }));
+            await bf.searchBooks("12345678");
+            expect(fetchSpy).toHaveBeenCalledTimes(1);
+            expect(isTitleSearch(fetchSpy.mock.calls[0][0])).toBe(true);
+        });
+
+        test("text queries go to Gutendex search only", async () => {
+            fetchSpy.mockResolvedValue(response({ json: { count: 0, results: [] } }));
+            await bf.searchBooks("alice 2");
+            expect(fetchSpy).toHaveBeenCalledTimes(1);
+            expect(fetchSpy.mock.calls[0][0]).toContain("/books/?search=alice+2");
+        });
+
+        test("both searches fail -> the id lookup error is reported", async () => {
+            fetchSpy.mockImplementation(async () => response({ status: 503 }));
+            await expect(bf.searchBooks("11")).resolves.toEqual({ ok: false, error: "http", status: 503 });
+        });
+
+        test("id lookup fails but title search works -> title results", async () => {
+            fetchSpy.mockImplementation(async (url) => {
+                if (isTitleSearch(url)) return response({ json: { count: 1, results: [titleHit] } });
+                return response({ status: 503 });
+            });
+            await expect(bf.searchBooks("1984")).resolves.toEqual({ ok: true, results: [titleHit], count: 1 });
+        });
+
+        describe("when Gutendex search hangs", () => {
+            beforeEach(() => jest.useFakeTimers());
+            afterEach(() => jest.useRealTimers());
+
+            test("the id result is returned after the grace period and the title search is cancelled", async () => {
+                let titleSignal;
+                fetchSpy.mockImplementation((url, opts) => {
+                    if (isRdfUrl(url)) return Promise.resolve(rdfOk());
+                    if (isTitleSearch(url)) titleSignal = opts.signal;
+                    return hang(url, opts);
+                });
+                let result;
+                bf.searchBooks("11").then((r) => { result = r; });
+
+                await jest.advanceTimersByTimeAsync(bf.NUMERIC_SEARCH_GRACE - 1);
+                expect(result).toBeUndefined();
+                await jest.advanceTimersByTimeAsync(1);
+                expect(result).toMatchObject({ ok: true, count: 1 });
+                expect(result.results[0].id).toBe(11);
+                expect(titleSignal.aborted).toBe(true);
+            });
+
+            test("unknown id + stuck title search -> empty results, not an error", async () => {
+                fetchSpy.mockImplementation((url, opts) => (isRdfUrl(url) ? Promise.resolve(response({ status: 404 })) : hang(url, opts)));
+                let result;
+                bf.searchBooks("9999999").then((r) => { result = r; });
+                await jest.advanceTimersByTimeAsync(bf.NUMERIC_SEARCH_GRACE);
+                expect(result).toEqual({ ok: true, results: [], count: 0 });
+            });
+        });
     });
 
     describe("timeouts", () => {
