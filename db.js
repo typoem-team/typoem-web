@@ -110,6 +110,24 @@ function makeDb() {
         changes: rs.rowsAffected,
       };
     },
+    // Run several statements atomically in ONE request: [{ sql, args }] -> [{ rows, lastID, changes }].
+    // Goes straight to client.batch(), never through the global `tx` above, so it can't
+    // swallow (or roll back) statements from other requests. Use this instead of
+    // exec('BEGIN') for bulk writes. Note: with DB_PATH=':memory:' the client has a single
+    // connection, so a batch issued while a BEGIN transaction is open fails (TRANSACTION_ACTIVE).
+    async batch(statements) {
+      const stmts = statements.map(({ sql, args }) => ({ sql, args: toArgs(args === undefined ? [] : [args]) }));
+      try {
+        const results = await client.batch(stmts, 'write');
+        return results.map((rs) => ({
+          rows: rs.rows.map((row) => toObject(rs, row)),
+          lastID: rs.lastInsertRowid !== undefined ? Number(rs.lastInsertRowid) : undefined,
+          changes: rs.rowsAffected,
+        }));
+      } catch (err) {
+        throw normalizeError(err);
+      }
+    },
     async exec(sql) {
       const cmd = sql.trim().replace(/;$/, '').toUpperCase();
       if (cmd === 'BEGIN' || cmd === 'BEGIN TRANSACTION') return begin();
