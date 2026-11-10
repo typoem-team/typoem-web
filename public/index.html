@@ -9,34 +9,98 @@
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-tab="rooms">
+<body data-tab="today">
 
-  <header class="app-head">
-    <a href="/index.html" class="app-brand">Typoem</a>
-    <p class="app-date" id="today"></p>
-  </header>
+  <!-- ===== 홈: 마지막으로 연 방 ===== -->
+  <main class="home" id="home">
 
-  <main class="page">
-    <div class="page-headline">
-      <h1>내 방</h1>
+    <div class="home-top">
+      <div>
+        <h1 class="app-brand">Typoem</h1>
+        <p class="app-date" id="today"></p>
+      </div>
+      <!-- 연속일 링: 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
+      <div data-streak hidden>
+        <div class="ring" id="streak-ring" role="img">
+          <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="streak-bar" cx="26" cy="26" r="23"/></svg>
+          <b id="streak-count"></b>
+        </div>
+        <p class="ring-cap">일 연속</p>
+      </div>
     </div>
+
+    <div class="week" id="streak-week" aria-label="이번 주 읽은 날" data-streak hidden></div>
 
     <p id="status" class="status" role="status"></p>
 
-    <section id="rooms-grid" class="rooms-grid" aria-live="polite"></section>
+    <!-- 방이 있을 때 -->
+    <div id="room-view" hidden>
+      <div class="members">
+        <div class="room-info">
+          <button type="button" class="room-switch" id="room-switch" aria-haspopup="dialog">
+            <span id="room-name"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+          </button>
+          <div class="avs" id="room-avs"></div>
+        </div>
+        <button type="button" class="invite-btn" id="invite-open" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>초대
+        </button>
+      </div>
 
-    <div id="empty-state" class="empty-state" hidden>
-      <p class="empty-lead">아직 방이 없어요</p>
+      <div class="deck" id="deck" tabindex="0" aria-roledescription="carousel" aria-label="오늘의 시와 지난 시"></div>
+      <div class="deck-foot">
+        <div class="dots" id="dots" role="tablist" aria-label="표지 고르기"></div>
+      </div>
     </div>
 
-    <div class="actions">
-      <a href="/create-room.html" class="btn">방 만들기</a>
-      <a href="/join.html" class="btn btn-ghost">코드로 참여</a>
+    <!-- 방이 없을 때 -->
+    <div id="empty-state" class="empty-state" hidden>
+      <p class="empty-lead">아직 방이 없어요</p>
+      <div class="actions">
+        <a href="/create-room.html" class="btn">방 만들기</a>
+        <a href="/join.html" class="btn btn-ghost">코드로 참여</a>
+      </div>
     </div>
   </main>
 
+  <!-- ===== 시트 ===== -->
+  <section class="sheet" id="sheet-invite" role="dialog" aria-label="친구 초대">
+    <span class="handle"></span>
+    <p class="s-title">친구 초대 <span id="invite-room"></span></p>
+    <div class="code-box"><small>초대 코드</small><p class="code" id="invite-code"></p></div>
+    <div class="sheet-actions">
+      <button type="button" class="sec" id="invite-copy">코드 복사</button>
+      <button type="button" class="pri" id="invite-share">공유하기</button>
+    </div>
+    <p class="s-title s-title-gap">멤버 <span id="member-count"></span></p>
+    <div id="member-list"></div>
+    <div id="room-actions-row" class="room-leave"></div>
+  </section>
+
+  <section class="sheet" id="sheet-rooms" role="dialog" aria-label="내 방">
+    <span class="handle"></span>
+    <p class="s-title">내 방 <span id="rooms-count"></span></p>
+    <div id="rooms-list"></div>
+    <form class="join" id="join-form" novalidate>
+      <div class="join-row">
+        <input class="field code-field" id="join-code" placeholder="초대 코드 6자리" aria-label="초대 코드 6자리"
+          maxlength="6" autocomplete="off" autocapitalize="characters">
+        <button type="submit" class="pri" id="join-btn">참여</button>
+      </div>
+      <a class="sec" href="/create-room.html">새 방 만들기</a>
+    </form>
+  </section>
+
+  <section class="sheet" id="sheet-history" role="dialog" aria-label="지난 시">
+    <span class="handle"></span>
+    <p class="s-title">지난 시 <span id="h-count"></span></p>
+    <div id="h-list"></div>
+  </section>
+
   <script src="auth.js"></script>
   <script src="ui.js"></script>
+  <script src="streak.js"></script>
   <script src="index.js"></script>
 
 </body>
