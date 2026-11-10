@@ -765,3 +765,252 @@ document.addEventListener('keydown', (e) => {
 });
 
 loadToday();
+
+// =====================================================================
+//  This room's book (v1.1, temporary UI)
+// =====================================================================
+// Entry area for the book reader: shows the room's book + my progress with a
+// "Read" link, or lets the owner pick a book. Self-contained: it does not call
+// or change any of the poem functions above (only the shared escapeHtml helper).
+// Endpoints: GET/PUT /api/rooms/:id/book, GET /api/books/search?q=
+
+const BOOK_PUT_TIMEOUT_MS = 75000;   // a first-time import can take ~70 s on the server
+
+let bookIsOwner = false;     // owner of this room? (own lookup; isOwner above is set asynchronously)
+let bookCurrent = null;      // the room's book ({ id, title, ... }) or null
+let bookBusy = false;        // a PUT is in flight
+
+async function bookEntryLoad() {
+  if (!ROOM_ID) return;
+  const section = document.getElementById('book-entry');
+  const body = document.getElementById('book-entry-body');
+
+  const [bookRes, roomsRes] = await Promise.all([
+    authFetch(`/api/rooms/${ROOM_ID}/book`),
+    authFetch('/api/rooms/mine'),
+  ]);
+
+  if (roomsRes.ok && me) {
+    const rooms = await roomsRes.json();
+    const room = rooms.find((r) => String(r.id) === String(ROOM_ID));
+    bookIsOwner = !!room && room.owner_id === me.id;
+  }
+
+  if (bookRes.ok) {
+    const data = await bookRes.json();
+    bookCurrent = data.book;
+    const pct = bookProgressPercent(data);
+    const started = data.progress && data.progress.startedAt;
+    body.innerHTML = `
+      <div class="book-entry-card">
+        <p class="book-entry-title">${escapeHtml(data.book.title)}</p>
+        <p class="book-entry-author">${data.book.author ? 'by ' + escapeHtml(data.book.author) : ''}</p>
+        <p class="book-entry-progress">${started ? `You&rsquo;ve read about ${pct}%` : 'You haven&rsquo;t started yet'}</p>
+        <div class="book-entry-actions">
+          <a class="btn btn-enter" href="/book.html?room=${encodeURIComponent(ROOM_ID)}">Read</a>
+          ${bookIsOwner ? '<button type="button" class="btn-sm" id="book-change-btn">Change Book</button>' : ''}
+        </div>
+      </div>`;
+  } else if (bookRes.status === 404) {
+    bookCurrent = null;
+    body.innerHTML = bookIsOwner
+      ? `<p class="empty-sub">No book yet. Pick one for everyone in this room.</p>
+         <button type="button" class="btn-sm" id="book-change-btn">Choose a Book</button>`
+      : '<p class="empty-sub">No book yet. The room owner can choose one.</p>';
+  } else {
+    // 403 / other errors: the poem area above already reports room problems
+    return;
+  }
+
+  const changeBtn = document.getElementById('book-change-btn');
+  if (changeBtn) changeBtn.addEventListener('click', bookOpenPicker);
+  section.hidden = false;
+}
+
+// Approximate % read from the overview: words in earlier chapters + the read
+// share of the current chapter (paragraph texts are not in the overview).
+function bookProgressPercent(data) {
+  const total = data.book.totalWords || 0;
+  const idx = data.progress ? data.progress.paragraphIdx : 0;
+  if (!total) return 0;
+  let words = 0;
+  for (const c of data.chapters || []) {
+    if (idx >= c.startParagraph + c.paragraphCount) {
+      words += c.wordCount;
+    } else if (idx >= c.startParagraph && c.paragraphCount > 0) {
+      words += c.wordCount * (idx - c.startParagraph) / c.paragraphCount;
+    }
+  }
+  return Math.min(100, Math.round((words / total) * 100));
+}
+
+// ---- Book picker (owner only) ----
+function bookOpenPicker() {
+  const picker = document.getElementById('book-picker');
+  picker.innerHTML = `
+    <form id="book-search-form" class="book-search-row">
+      <input type="search" id="book-search-input" maxlength="100"
+             placeholder="Title, author, or Gutenberg number&hellip;" autocomplete="off">
+      <button type="submit" class="btn-sm" id="book-search-btn">Search</button>
+      <button type="button" class="btn-sm" id="book-picker-close">Close</button>
+    </form>
+    <div id="book-picker-status" class="book-picker-status" role="status"></div>
+    <ul id="book-results" class="book-results"></ul>`;
+  picker.hidden = false;
+
+  document.getElementById('book-search-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    bookSearch();
+  });
+  document.getElementById('book-picker-close').addEventListener('click', () => {
+    if (bookBusy) return;
+    picker.hidden = true;
+    picker.innerHTML = '';
+  });
+  document.getElementById('book-search-input').focus();
+}
+
+async function bookSearch() {
+  const input = document.getElementById('book-search-input');
+  const status = document.getElementById('book-picker-status');
+  const list = document.getElementById('book-results');
+  const q = input.value.trim();
+  if (!q || bookBusy) return;
+
+  status.textContent = 'Searching…';
+  list.innerHTML = '';
+  let res;
+  try {
+    res = await authFetch(`/api/books/search?q=${encodeURIComponent(q)}`);
+  } catch (err) {
+    status.textContent = 'Could not reach the server. Try again.';
+    return;
+  }
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    status.textContent = res.status === 502
+      ? 'The book catalogue is unavailable right now. Try again in a moment.'
+      : (data.error || 'Search failed.');
+    return;
+  }
+  const results = await res.json();
+  if (results.length === 0) {
+    status.textContent = 'No books found.';
+    return;
+  }
+  status.textContent = '';
+  list.innerHTML = results.map((b) => {
+    const authors = (b.authors || []).map((a) => a.name).join('; ');
+    const current = bookCurrent && bookCurrent.id === b.gutenbergId;
+    return `
+      <li class="book-result">
+        <div class="book-result-text">
+          <span class="book-result-title">${escapeHtml(b.title)}</span>
+          <span class="book-result-author">${escapeHtml(authors || 'Unknown author')} &middot; #${b.gutenbergId}</span>
+          ${b.alreadyImported ? '<span class="book-result-tag">On the shelf &middot; instant</span>' : ''}
+        </div>
+        ${current
+          ? '<span class="book-result-tag">Current book</span>'
+          : `<button type="button" class="btn-sm book-choose-btn" data-gid="${b.gutenbergId}">Choose</button>`}
+      </li>`;
+  }).join('');
+
+  list.querySelectorAll('.book-choose-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const b = results.find((r) => r.gutenbergId === Number(btn.dataset.gid));
+      bookChoose(b);
+    });
+  });
+}
+
+// Replacing an existing book asks first (inline, same note-confirm pattern).
+function bookChoose(b) {
+  if (bookBusy) return;
+  if (!bookCurrent) {
+    bookAssign(b);
+    return;
+  }
+  const status = document.getElementById('book-picker-status');
+  status.innerHTML = `
+    <div class="note-confirm">
+      <span class="note-confirm-text">Replace &ldquo;${escapeHtml(bookCurrent.title)}&rdquo; with
+        &ldquo;${escapeHtml(b.title)}&rdquo;? Each member&rsquo;s progress stays saved with each book.</span>
+      <span class="note-confirm-actions">
+        <button type="button" class="btn-sm btn-danger" id="book-replace-yes">Replace</button>
+        <button type="button" class="btn-sm" id="book-replace-no">Cancel</button>
+      </span>
+    </div>`;
+  document.getElementById('book-replace-no').addEventListener('click', () => { status.innerHTML = ''; });
+  document.getElementById('book-replace-yes').addEventListener('click', () => bookAssign(b));
+}
+
+// authFetch takes no abort signal, so the 75 s client limit is a race. The server
+// may still finish the import afterwards, in which case a retry is instant.
+function bookWithTimeout(promise, ms) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), ms); }),
+  ]).finally(() => clearTimeout(timer));
+}
+
+function bookSetPickerDisabled(disabled) {
+  document.querySelectorAll('#book-picker button, #book-picker input, #book-change-btn')
+    .forEach((el) => { el.disabled = disabled; });
+}
+
+async function bookAssign(b) {
+  const status = document.getElementById('book-picker-status');
+  bookBusy = true;
+  bookSetPickerDisabled(true);
+  status.innerHTML = `
+    <p class="book-loading">Setting &ldquo;${escapeHtml(b.title)}&rdquo; as this room&rsquo;s book&hellip;</p>
+    ${b.alreadyImported ? '' : '<p class="book-loading-note">A book fetched for the first time can take about a minute.</p>'}`;
+
+  let res = null;
+  let failure = null;
+  try {
+    res = await bookWithTimeout(authFetch(`/api/rooms/${ROOM_ID}/book`, {
+      method: 'PUT',
+      body: JSON.stringify({ gutenbergId: b.gutenbergId }),
+    }), BOOK_PUT_TIMEOUT_MS);
+  } catch (err) {
+    failure = err && err.message === 'timeout'
+      ? 'This is taking too long.'
+      : 'Could not reach the server.';
+  }
+
+  bookBusy = false;
+  bookSetPickerDisabled(false);
+
+  if (res && res.ok) {
+    const picker = document.getElementById('book-picker');
+    picker.hidden = true;
+    picker.innerHTML = '';
+    await bookEntryLoad();
+    return;
+  }
+
+  let retryable = !!failure;
+  if (res) {
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 502 || res.status === 503) {
+      failure = 'The book service is busy or unavailable.';
+      retryable = true;
+    } else {
+      failure = data.error || 'Could not set the book.';   // 422 etc.: the server's message as is
+    }
+  }
+
+  status.innerHTML = `<p class="auth-error">${escapeHtml(failure)}</p>`;
+  if (retryable) {
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn-sm';
+    retry.textContent = 'Try again in a moment';
+    retry.addEventListener('click', () => bookAssign(b));
+    status.appendChild(retry);
+  }
+}
+
+bookEntryLoad();

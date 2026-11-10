@@ -1548,3 +1548,363 @@ hr {
   .section-link { padding: 10px 16px; font-size: 13px; letter-spacing: 2px; }
   .room-subnav { flex-direction: column; gap: 6px; align-items: flex-start; }
 }
+
+
+/* ===== Book reader (v1.1, temporary) ===== */
+/* Room page entry area + book.html reader. Every class here starts with book-. */
+
+/* ---- Room page: this room's book ---- */
+.book-entry {
+  margin-top: 28px;
+}
+.book-entry-card {
+  border: 1px solid #2b1f12;
+  background: #f8f2e2;
+  padding: 18px 20px;
+}
+.book-entry-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+.book-entry-author,
+.book-entry-progress {
+  color: #5a4a35;
+  margin-bottom: 8px;
+}
+.book-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.book-entry-actions .btn-enter {
+  margin-top: 0;
+}
+.book-picker {
+  margin-top: 18px;
+}
+.book-search-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.book-search-row input {
+  flex: 1;
+  min-width: 0;
+}
+.book-picker-status {
+  margin: 12px 0;
+  color: #5a4a35;
+  font-style: italic;
+}
+.book-picker-status p {
+  margin-bottom: 6px;
+}
+.book-loading::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border: 2px solid #c9bca0;
+  border-top-color: #722f37;
+  border-radius: 50%;
+  vertical-align: -1px;
+  animation: book-spin 0.9s linear infinite;
+}
+@keyframes book-spin {
+  to { transform: rotate(360deg); }
+}
+.book-loading-note {
+  font-size: 14px;
+}
+.book-results {
+  list-style: none;
+}
+.book-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #c9bca0;
+}
+.book-result-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.book-result-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+.book-result-author {
+  color: #5a4a35;
+  font-size: 14px;
+}
+.book-result-tag {
+  font-family: 'IM Fell English SC', Georgia, serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #722f37;
+  white-space: nowrap;
+}
+
+/* ---- Reader page shell: bar / stage / footer fill the screen ---- */
+body.book-page {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.book-bar {
+  position: relative;
+  flex: none;
+  border-bottom: 3px double #2b1f12;
+  padding: 8px 16px 0;
+  z-index: 20;
+  background: #f4ecd8;
+}
+.book-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.book-back {
+  flex: none;
+  max-width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.book-bar-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 18px;
+}
+.book-bar-actions {
+  flex: none;
+  display: flex;
+  gap: 6px;
+}
+.book-bar-actions .btn-sm[aria-expanded="true"] {
+  background: #2b1f12;
+  color: #f4ecd8;
+}
+.book-bar-stats {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin-top: 6px;
+  font-family: 'Gentium Book Plus', Georgia, serif;
+  font-size: 13px;
+  color: #5a4a35;
+}
+.book-pace.is-late {
+  color: #722f37;
+}
+.book-progress-track {
+  max-width: 880px;
+  margin: 6px auto 8px;
+  height: 3px;
+  background: #e3d7bb;
+}
+.book-progress-fill {
+  height: 100%;
+  width: 0;
+  background: #722f37;
+}
+
+/* Panels drop over the text so opening one does not re-flow the pages. */
+.book-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, calc(100vw - 24px));
+  max-height: 65vh;
+  overflow-y: auto;
+  background: #faf4dd;
+  border: 1px solid #2b1f12;
+  box-shadow: 4px 4px 0 rgba(43, 31, 18, 0.25);
+  padding: 12px 16px;
+}
+.book-toc-list {
+  list-style: none;
+}
+.book-toc-item,
+.book-toc-item:hover {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid #e3d7bb;
+  background: none;
+  padding: 8px 4px;
+  font-family: 'IM Fell English', Georgia, serif;
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #2b1f12;
+}
+.book-toc-item:hover {
+  color: #722f37;
+}
+.book-toc-item.is-current {
+  color: #722f37;
+  font-style: italic;
+}
+.book-goal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.book-goal-row input {
+  width: auto;
+  flex: 1;
+}
+.book-goal-status {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #5a4a35;
+  font-style: italic;
+}
+
+.book-message {
+  text-align: center;
+  padding: 48px 16px;
+  color: #5a4a35;
+  font-style: italic;
+}
+
+/* ---- Stage: viewport clips the sideways column flow ---- */
+.book-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  touch-action: pan-y;
+}
+.book-viewport {
+  position: relative;
+  height: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.book-flow {
+  /* width, height, margin, column-width and column-gap are set by book.js */
+  column-fill: auto;
+  font-family: 'Gentium Book Plus', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  will-change: transform;
+}
+.book-chapter-title {
+  text-align: center;
+  margin: 8px 0 20px;
+  break-after: avoid;
+}
+.book-para {
+  font-family: inherit;
+  margin: 0 0 0.75em;
+  text-align: justify;
+  hyphens: auto;
+  orphans: 2;
+  widows: 2;
+}
+.book-para-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  text-align: center;
+  margin: 8px 0 20px;
+  break-after: avoid;
+}
+
+/* Page-turn zones: outer 15% of the stage on each side, invisible. */
+.book-edge,
+.book-edge:hover,
+.book-edge:focus {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 15%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+  -webkit-tap-highlight-color: transparent;
+}
+.book-edge:focus-visible {
+  outline: 1px dashed #c9bca0;
+}
+.book-edge-prev { left: 0; }
+.book-edge-next { right: 0; }
+
+/* ---- Footer: chapter + page number ---- */
+.book-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 6px 16px 10px;
+  border-top: 1px solid #c9bca0;
+  font-family: 'Gentium Book Plus', Georgia, serif;
+  font-size: 13px;
+  color: #5a4a35;
+}
+.book-foot-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px 12px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.book-chapter-name {
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.book-foot-nav {
+  font-size: 22px;
+  line-height: 1;
+  text-decoration: none;
+  padding: 0 8px;
+}
+
+@media (max-width: 600px) {
+  .book-bar { padding: 6px 12px 0; }
+  .book-bar-title { font-size: 15px; text-align: left; }
+  .book-back { font-size: 13px; max-width: 26%; }
+  .book-bar-actions .btn-sm { padding: 4px 8px; letter-spacing: 1px; }
+  .book-flow { font-size: 17px; }
+  .book-search-row { flex-wrap: wrap; }
+  .book-search-row input { flex-basis: 100%; }
+}
