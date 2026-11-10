@@ -192,6 +192,33 @@
   }
 
 
+  // ---- Fetch with retries ----
+  // The first lookup of a new word makes the server call the free dictionary API,
+  // which is sometimes slow and makes the server answer 5xx. Retry quietly while
+  // "Looking up…" stays on screen, so a one-off hiccup never reaches the user.
+  const RETRY_DELAYS_MS = [800, 2000];   // up to 2 retries
+  let lookupSeq = 0;                     // latest lookup wins
+
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function fetchEntry(word) {
+    const url = `/api/dictionary/${encodeURIComponent(word)}`;
+    for (let attempt = 0; ; attempt++) {
+      let res = null;
+      try {
+        res = await authFetch(url);
+      } catch (err) {
+        // network error: retry below, rethrow on the last attempt
+        if (attempt >= RETRY_DELAYS_MS.length) throw err;
+      }
+      const retryable = !res || res.status >= 500;
+      if (!retryable || attempt >= RETRY_DELAYS_MS.length) return res;
+      await wait(RETRY_DELAYS_MS[attempt]);
+    }
+  }
+
   // ---- Public: look a word up and show the popup ----
   async function openDictionary(rawWord, anchorEl) {
     const word = String(rawWord || '').toLowerCase().trim();
@@ -211,13 +238,17 @@
     popup.hidden = false;
     positionPopup(anchorEl);
 
+    const seq = ++lookupSeq;
     let res;
     try {
-      res = await authFetch(`/api/dictionary/${encodeURIComponent(word)}`);
+      res = await fetchEntry(word);
     } catch (err) {
+      if (seq !== lookupSeq) return;
       setBody('<p class="dict-error">Could not reach the dictionary. Try again.</p>');
       return;
     }
+    // The user tapped another word (or closed the popup) while we were retrying.
+    if (seq !== lookupSeq || popup.hidden) return;
 
     // authFetch handles 401 (logout + redirect); handle the rest here.
     if (res.status === 404) {
