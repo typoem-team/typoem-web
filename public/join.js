@@ -20,12 +20,12 @@ form.addEventListener('submit', async function (e) {
   const code = codeInput.value.trim().toUpperCase();
 
   if (code.length !== 6) {
-    showError('An invite code is exactly 6 characters.');
+    showError('초대 코드 6자리를 입력해 주세요.');
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Joining...';
+  submitBtn.textContent = '참여하는 중이에요…';
 
   try {
     const res = await authFetch('/api/rooms/join', {
@@ -34,9 +34,15 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      const errData = await res.json();
-      // 404 -> "Room not found", 409 -> "already a member"
-      throw new Error(errData.error || 'Could not join the room.');
+      // 404 -> no such room, 409 -> already a member, 403 -> room limit reached
+      const messages = {
+        404: '그 코드의 방을 찾지 못했어요.',
+        409: '이미 참여한 방이에요.',
+        403: '방에 더 참여할 수 없어요. 참여한 방 수가 한도에 닿았어요.',
+      };
+      const e = new Error(messages[res.status] || '방에 참여하지 못했어요.');
+      e.isUserMessage = true;
+      throw e;
     }
 
     // Joined successfully -> go to the room list
@@ -44,9 +50,9 @@ form.addEventListener('submit', async function (e) {
 
   } catch (err) {
     console.error('Join room error:', err);
-    showError(err.message || 'Something went wrong. Please try again.');
+    showError(err.isUserMessage ? err.message : '문제가 생겼어요. 다시 시도해 주세요.');
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Join Room';
+    submitBtn.textContent = '참여';
   }
 });
 

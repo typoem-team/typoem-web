@@ -4,21 +4,7 @@
 // Guard: redirect to login if there is no token
 requireLogin();
 
-// ---- Masthead: greet the user + wire up logout ----
-const user = getCurrentUser();
-const navUser = document.getElementById('nav-user');
-if (user && user.nickname) {
-  navUser.textContent = user.nickname;
-}
-document.getElementById('logout-btn').addEventListener('click', logout);
-
-// ---- Date line (newspaper masthead) ----
-document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+// The date line, tab bar and log out live in ui.js.
 
 // ---- Escape user-provided text before inserting into HTML (XSS guard) ----
 function escapeHtml(str) {
@@ -36,7 +22,7 @@ function vocabCard(v) {
     <article class="vocab-card" data-vocab-id="${encodeURIComponent(v.id)}">
       <h2 class="vocab-word">${escapeHtml(v.word)} ${phon}</h2>
       <p class="vocab-def">${escapeHtml(v.definition)}</p>
-      <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">Delete</button>
+      <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">지우기</button>
     </article>
   `;
 }
@@ -47,7 +33,7 @@ async function loadVocab() {
   const list = document.getElementById('vocab-list');
   const empty = document.getElementById('empty-state');
 
-  status.textContent = 'Loading your notebook…';
+  status.textContent = '단어장을 불러오는 중이에요…';
   empty.hidden = true;
 
   try {
@@ -55,8 +41,7 @@ async function loadVocab() {
 
     // authFetch already handles 401 (logout + redirect); handle the rest here
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      status.textContent = errData.error || 'Could not load your notebook.';
+      status.textContent = '단어장을 불러오지 못했어요.';
       return;
     }
 
@@ -72,7 +57,7 @@ async function loadVocab() {
     list.innerHTML = words.map(vocabCard).join('');
   } catch (err) {
     console.error(err);
-    status.textContent = 'A network error occurred. Please try again.';
+    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
   }
 }
 

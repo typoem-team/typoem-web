@@ -1,86 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today&rsquo;s Poem &middot; Typoem</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@0;1&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f2eee7">
+  <title>오늘의 시 · Typoem</title>
 
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-tab="today">
 
-  <!-- Masthead -->
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a href="/index.html" class="masthead-title">Typoem</a>
-      <nav class="masthead-nav">
-        <span id="nav-user" class="nav-user"></span>
-        <button type="button" id="logout-btn" class="link-btn">Log out</button>
-      </nav>
-    </div>
-    <p class="masthead-date" id="today"></p>
+  <header class="app-head">
+    <a href="/index.html" class="app-brand">Typoem</a>
+    <p class="app-date" id="today"></p>
   </header>
 
-  <!-- Global section bar -->
-  <nav class="section-bar" aria-label="Sections">
-    <div class="section-bar-inner">
-      <a href="/index.html" class="section-link">My Rooms</a>
-      <a href="/vocab.html" class="section-link">My Vocabulary</a>
-    </div>
-  </nav>
-
   <!-- Room sub-nav: room name left, room links right -->
-  <nav class="room-subnav" aria-label="Room">
+  <nav class="room-subnav" aria-label="방">
     <span class="room-name" id="room-name">&hellip;</span>
     <div class="room-subnav-links">
-      <a href="#" class="is-active">Today&rsquo;s Poem</a>
+      <a href="#" class="is-active" aria-current="page">오늘의 시</a>
       <span class="sep">&middot;</span>
-      <a id="history-link" href="/index.html">Poem History</a>
+      <a id="history-link" href="/index.html">지난 시</a>
     </div>
   </nav>
 
   <main class="page">
-
-    <div class="page-headline">
-      <h1 id="page-title">Today&rsquo;s Poem</h1>
-      <div class="rule-double"></div>
-    </div>
 
     <p id="status" class="status" role="status"></p>
 
     <div class="poem-layout">
 
       <!-- Today's poem -->
-      <section class="poem-column" aria-label="Today's poem">
+      <section class="poem-column" aria-label="오늘의 시">
         <article class="poem-sheet">
           <h2 class="poem-title" id="poem-title"></h2>
           <p class="poem-author" id="poem-author"></p>
           <div class="rule-thin"></div>
           <div class="poem-body" id="poem-body"></div>
-          <p class="poem-hint">Tap a word for the dictionary &middot; tap the bar beside a line to add a note</p>
         </article>
       </section>
 
       <!-- Memos (full-poem notes) -->
-      <aside class="memo-column" aria-label="Memos">
-        <!-- Paw divider above the memo panel -->
-        <div class="rule-paw"><span class="paw"></span></div>
-        <h4 class="panel-heading">Memos</h4>
+      <aside class="memo-column" aria-label="메모">
+        <h2 class="panel-heading">메모</h2>
 
         <div class="memo-compose">
           <textarea id="memo-input" class="note-input" rows="3"
-            placeholder="Leave a memo on today&rsquo;s poem&hellip;" maxlength="1000"></textarea>
+            placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000"></textarea>
           <p id="memo-error" class="auth-error" role="alert"></p>
-          <button type="button" id="memo-submit" class="btn">Post Memo</button>
+          <button type="button" id="memo-submit" class="btn">남기기</button>
         </div>
 
-        <p id="memo-empty" class="empty-sub with-paw" hidden>No memos yet. Be the first.</p>
+        <p id="memo-empty" class="empty-sub" hidden>아직 남긴 메모가 없어요.</p>
         <div id="memo-list" class="note-list" aria-live="polite"></div>
       </aside>
 
@@ -91,20 +64,17 @@
       <div class="rule-thin"></div>
       <div class="invite-grid">
 
-        <!-- Left: invite code -->
         <div class="invite-col">
-          <h4 class="panel-heading">Invite to this room</h4>
-          <p class="invite-lead">Share this code so others can join.</p>
+          <h2 class="panel-heading">친구 초대</h2>
           <div class="invite-code-row">
             <span class="invite-code" id="invite-code">&hellip;</span>
-            <button type="button" id="copy-code-btn" class="copy-btn">Copy</button>
+            <button type="button" id="copy-code-btn" class="copy-btn">복사</button>
           </div>
-          <p id="copy-feedback" class="copy-feedback" hidden>Copied to clipboard.</p>
+          <p id="copy-feedback" class="copy-feedback" hidden>초대 코드를 복사했어요</p>
         </div>
 
-        <!-- Right: member list -->
         <div class="member-col">
-          <h4 class="panel-heading">Members</h4>
+          <h2 class="panel-heading">멤버</h2>
           <ul class="member-list" id="member-list" aria-live="polite"></ul>
         </div>
 
@@ -122,26 +92,27 @@
 
   <!-- Annotation drawer -->
   <div id="drawer-backdrop" class="drawer-backdrop"></div>
-  <aside id="drawer" class="drawer" aria-label="Line annotations">
+  <aside id="drawer" class="drawer" role="dialog" aria-label="이 줄의 메모">
     <div class="drawer-head">
-      <h4 class="panel-heading">Annotations</h4>
-      <button type="button" id="drawer-close" class="link-btn">Close &times;</button>
+      <h2 class="panel-heading">이 줄의 메모</h2>
+      <button type="button" id="drawer-close" class="link-btn">닫기</button>
     </div>
 
     <blockquote class="drawer-line" id="drawer-line"></blockquote>
 
     <div class="memo-compose">
       <textarea id="annotation-input" class="note-input" rows="3"
-        placeholder="Add a note on this line&hellip;" maxlength="1000"></textarea>
+        placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000"></textarea>
       <p id="annotation-error" class="auth-error" role="alert"></p>
-      <button type="button" id="annotation-submit" class="btn">Post Note</button>
+      <button type="button" id="annotation-submit" class="btn">남기기</button>
     </div>
 
-    <p id="annotation-empty" class="empty-sub" hidden>No notes on this line yet.</p>
+    <p id="annotation-empty" class="empty-sub" hidden>아직 이 줄에 남긴 메모가 없어요.</p>
     <div id="annotation-list" class="note-list" aria-live="polite"></div>
   </aside>
 
   <script src="auth.js"></script>
+  <script src="ui.js"></script>
   <script src="room.js"></script>
   <script src="dict-popup.js"></script>
 

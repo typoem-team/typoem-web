@@ -12,19 +12,7 @@ requireLogin();
 const params = new URLSearchParams(window.location.search);
 const ROOM_ID = params.get('id');
 
-// ---- Masthead: greet the user + wire up logout + date line ----
-const me = getCurrentUser();
-const navUser = document.getElementById('nav-user');
-if (me && me.nickname) {
-  navUser.textContent = me.nickname;
-}
-document.getElementById('logout-btn').addEventListener('click', logout);
-document.getElementById('today').textContent = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+// The date line, tab bar and log out live in ui.js.
 
 // "Back to room" returns to this room's poem screen (same id).
 if (ROOM_ID) {
@@ -45,18 +33,17 @@ async function loadHistory() {
   const status = document.getElementById('status');
 
   if (!ROOM_ID) {
-    status.textContent = 'No room specified.';
+    status.textContent = '방을 찾지 못했어요.';
     return;
   }
 
-  status.textContent = 'Loading history\u2026';
+  status.textContent = '지난 시를 불러오는 중이에요\u2026';
 
   const res = await authFetch(`/api/rooms/${ROOM_ID}/history`);
 
   // authFetch already handles 401 (logout + redirect); handle the rest here
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    status.textContent = data.error || 'Could not load history.';
+    status.textContent = res.status === 403 ? '이 방의 멤버가 아니에요.' : '지난 시를 불러오지 못했어요.';
     return;
   }
 
@@ -89,9 +76,11 @@ function renderHistory(rows) {
 
 // One day's poem as a single-line card: [ date ] [ title / author ] [ contributors ]
 function historyRow(row) {
-  const date = escapeHtml(row.date || '');
-  const title = escapeHtml(row.title || 'Untitled');
-  const author = row.author ? `by ${escapeHtml(row.author)}` : '';
+  // row.date is 'YYYY-MM-DD' -> "11/10 Tue"
+  const date = escapeHtml(TypoemUI.formatIsoDay(row.date || ''));
+  // PoetryDB writes an em dash as "--" (same rule as room.js)
+  const title = escapeHtml(row.title || 'Untitled').replace(/-{2,}/g, '\u2014');
+  const author = escapeHtml(row.author || '');
   return `
     <article class="history-row">
       <span class="history-date">${date}</span>
@@ -105,21 +94,19 @@ function historyRow(row) {
 }
 
 // Contributors: list every nickname, then the count.
-//   "소연, 경윤, 시현 · 3 contributors"
-//   "지섭 · 1 contributor"        (singular)
-//   "no notes yet"               (no memos or annotations on this poem)
+//   "소연, 경윤, 시현 · 3명 참여"
+//   "메모 없음"                  (no memos or annotations on this poem)
 function contributorLabel(row) {
   const count = row.contributor_count || 0;
   if (count === 0 || !row.contributors) {
-    return '<span class="history-none">no notes yet</span>';
+    return '<span class="history-none">메모 없음</span>';
   }
   // contributors is a comma-separated nickname string from the backend.
   const names = row.contributors
     .split(',')
     .map((n) => escapeHtml(n.trim()))
     .join(', ');
-  const noun = count === 1 ? 'contributor' : 'contributors';
-  return `<span class="history-names">${names}</span> &middot; ${count} ${noun}`;
+  return `<span class="history-names">${names}</span> &middot; ${count}명 참여`;
 }
 
 // =====================================================================
