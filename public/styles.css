@@ -824,6 +824,37 @@ html[lang="en"] .landing-invite {
   stroke-width: 1.6;
 }
 
+/* 시 | 책: the same two tabs on room.html and book.html. Colours follow the
+   bar (light on the cover band, ink on paper), so they work on both. */
+.r-tabs {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.r-tabs a {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: inherit;
+  font-size: 13.5px;
+  text-decoration: none;
+  opacity: .72;
+  transition: opacity .3s var(--ease), background .3s var(--ease);
+}
+
+.r-tabs a[aria-current="page"] {
+  opacity: 1;
+  font-weight: 700;
+  background: color-mix(in srgb, currentColor 18%, transparent);
+}
+
 /* the cover, opened: a band in the poem's colour with title and author */
 .r-head {
   position: relative;
@@ -1013,11 +1044,6 @@ html[lang="en"] .landing-invite {
   color: var(--accent);
   box-shadow: inset 0 0 0 1px var(--hair);
   opacity: 1;
-}
-
-/* this room's book (feat/books), under the poem */
-.reader .book-entry {
-  margin: 36px 30px 0;
 }
 
 /* floating "메모 N" pill */
@@ -2106,7 +2132,7 @@ textarea.field:focus {
 
 
 /* ===== Book reader (v1.1, temporary) ===== */
-/* Room page entry area + book.html reader. Every class here starts with book-.
+/* book.html: shelf + reader. Every class here starts with book-.
    Colours, fonts and spacing use the design tokens (feat/design-tokens-fonts)
    with their values as fallbacks, so this works before and after that merge.
    No variables are defined here. */
@@ -2222,142 +2248,9 @@ textarea.field:focus {
   margin: 0 0 8px;
 }
 
-/* =====================================================================
-   Room page: this room's book
-   ===================================================================== */
-.book-entry {
-  margin-top: 32px;
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  color: var(--ink, #1f1b16);
-}
-.book-label {
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12.5px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--ink-2, #6b6358);
-  margin: 0 0 14px;
-}
-.book-entry-card {
-  display: flex;
-  gap: 18px;
-  align-items: stretch;
-  background: var(--surface, #fbf9f5);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: var(--shadow-card, 0 1px 0 rgba(255, 255, 255, .8) inset, 0 8px 18px -14px rgba(31, 27, 22, .4));
-}
-/* small book cover swatch: spine shading + inner hairline, like the demo covers */
-.book-cover {
-  position: relative;
-  flex: none;
-  width: 64px;
-  height: 88px;
-  border-radius: 3px 7px 7px 3px;
-  background: var(--accent, #6e2f3a);
-  box-shadow: 0 10px 16px -10px rgba(31, 27, 22, .55);
-  overflow: hidden;
-}
-.book-cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, .05) 5px, rgba(255, 255, 255, .08) 6px, transparent 11px);
-}
-.book-cover::after {
-  content: "";
-  position: absolute;
-  inset: 6px 6px 6px 11px;
-  border: 1px solid rgba(244, 239, 230, .22);
-  border-radius: 2px;
-}
-.book-entry-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.book-entry-title {
-  font-family: var(--display, 'Cormorant Garamond', 'MaruBuri', Georgia, serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 1.1;
-  color: var(--ink, #1f1b16);
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-.book-entry-author {
-  font-family: var(--display, 'Cormorant Garamond', 'MaruBuri', Georgia, serif);
-  font-size: 15px;
-  letter-spacing: 0.04em;
-  color: var(--ink-2, #6b6358);
-  margin: 4px 0 0;
-}
-.book-entry-progress {
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  font-size: 12.5px;
-  color: var(--ink-2, #6b6358);
-  margin: 10px 0 0;
-}
-.book-entry-meter {
-  height: 3px;
-  border-radius: 2px;
-  background: var(--hair, #e2dbcf);
-  margin-top: 6px;
-  overflow: hidden;
-}
-.book-entry-meter-fill {
-  height: 100%;
-  background: var(--accent, #6e2f3a);
-  border-radius: 2px;
-}
-.book-entry-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-}
 a.book-btn {
   display: inline-block;
   text-decoration: none;
-}
-.book-empty {
-  background: var(--surface, #fbf9f5);
-  border-radius: 16px;
-  padding: 20px 18px;
-  box-shadow: var(--shadow-card, 0 1px 0 rgba(255, 255, 255, .8) inset, 0 8px 18px -14px rgba(31, 27, 22, .4));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-/* ---- Picker (owner) ---- */
-.book-picker {
-  margin-top: 14px;
-  background: var(--surface, #fbf9f5);
-  border-radius: 16px;
-  padding: 16px 18px 6px;
-  box-shadow: var(--shadow-card, 0 1px 0 rgba(255, 255, 255, .8) inset, 0 8px 18px -14px rgba(31, 27, 22, .4));
-}
-.book-search-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.book-search-row .book-field {
-  flex: 1;
-  min-width: 0;
-}
-.book-picker-status {
-  margin: 12px 0 4px;
-}
-.book-picker-status:empty {
-  margin: 4px 0 0;
 }
 .book-loading {
   display: flex;
@@ -2380,54 +2273,6 @@ a.book-btn {
 }
 @keyframes book-spin {
   to { transform: rotate(360deg); }
-}
-.book-confirm {
-  background: var(--bg, #f2eee7);
-  border-radius: 14px;
-  padding: 14px 16px;
-}
-.book-confirm .book-note {
-  color: var(--ink, #1f1b16);
-}
-.book-confirm .book-note + .book-note {
-  margin-top: 6px;
-  color: var(--ink-2, #6b6358);
-}
-.book-confirm-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-.book-results {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.book-result {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  border-top: 1px solid var(--hair, #e2dbcf);
-}
-.book-result-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.book-result-title {
-  font-family: var(--poem, 'Gentium Book Plus', 'MaruBuri', Georgia, serif);
-  font-style: italic;
-  font-size: 16.5px;
-  color: var(--ink, #1f1b16);
-  overflow-wrap: anywhere;
-}
-.book-result-author {
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  font-size: 12px;
-  color: var(--ink-2, #6b6358);
-  margin-top: 2px;
 }
 .book-tag {
   display: inline-block;
@@ -2462,11 +2307,22 @@ body.book-page {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---- Top bar ---- */
+/* ---- Shared top bar (.r-bar) on the reader: on paper, so in ink and in the
+   page flow (on room.html it floats over the dark cover band). The shelf keeps
+   the room.html look: band + floating bar. ---- */
+body.book-page:not(.is-shelf) .r-bar {
+  position: relative;
+  top: auto;
+  flex: none;
+  margin-top: var(--safe-top, 0px);
+  color: var(--ink, #1f1b16);   /* padding: the shared .r-bar rules, so 시 | 책 sits where it does on room.html */
+}
+
+/* ---- Book bar: title, 목차 · 목표 · 책 바꾸기, progress ---- */
 .book-bar {
   position: relative;
   flex: none;
-  padding: calc(6px + var(--safe-top, 0px)) 10px 0;
+  padding: 0 10px;
   background: var(--surface, #fbf9f5);
   z-index: 20;
 }
@@ -2476,20 +2332,6 @@ body.book-page {
   gap: 6px;
   max-width: 720px;
   margin: 0 auto;
-}
-.book-back,
-.book-back:hover {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: var(--ink, #1f1b16);
-  text-decoration: none;
-}
-.book-back:hover {
-  background: var(--bg, #f2eee7);
 }
 .book-icon {
   width: 22px;
@@ -2508,14 +2350,6 @@ body.book-page {
   align-items: center;
   text-align: center;
   line-height: 1.2;
-}
-.book-bar-room {
-  font-size: 11.5px;
-  color: var(--ink-2, #6b6358);
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .book-bar-title {
   font-family: var(--display, 'Cormorant Garamond', 'MaruBuri', Georgia, serif);
@@ -2803,11 +2637,6 @@ body.book-page {
 }
 
 @media (max-width: 600px) {
-  .book-entry-card { padding: 16px; gap: 14px; }
-  .book-cover { width: 52px; height: 72px; }
-  .book-entry-title { font-size: 21px; }
-  .book-search-row { flex-wrap: wrap; }
-  .book-search-row .book-field { flex-basis: 100%; }
   .book-bar-title { font-size: 17px; }
   .book-btn.book-bar-btn { padding: 7px 9px; }
   .book-flow { font-size: 17px; }
@@ -2819,7 +2648,195 @@ body.book-page {
   .book-progress-fill { transition: none; }
 }
 
-/* one cover colour per book (picked by book id in room.js) */
+/* =====================================================================
+   Shelf (book.html, the room has no book yet / 책 바꾸기)
+   ===================================================================== */
+/* the shelf scrolls like a normal page (the reader is a fixed full screen) */
+body.book-page.is-shelf {
+  display: block;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+/* The band's title and lead are Korean here (on room.html they are an English
+   poem title + author), so no display italic: Korean has no italic face. */
+.book-shelf-view .r-head .c-title {
+  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.2;
+}
+.book-shelf-view .r-head .c-author {
+  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
+  font-size: 14.5px;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.book-shelf-wrap {
+  padding: 18px 30px calc(48px + var(--safe-bottom, 0px));
+}
+
+.book-shelf {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.book-shelf-view .book-shelf {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 36px;
+}
+
+.book-shelf-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hair, #e2dbcf);
+  font: inherit;
+  color: var(--ink, #1f1b16);
+  text-align: left;
+  background: none;
+}
+
+button.book-shelf-item {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.book-shelf-item:hover .book-shelf-title {
+  color: var(--accent, #6e2f3a);
+}
+
+button.book-shelf-item:focus-visible {
+  outline: 2px solid var(--accent, #6e2f3a);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+button.book-shelf-item:active .book-cover {
+  transform: translateY(1px);
+}
+
+/* small cover: spine shading + inner hairline, like the home screen covers */
+.book-cover {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 64px;
+  border-radius: 2px 6px 6px 2px;
+  background: var(--accent, #6e2f3a);
+  box-shadow: 0 8px 14px -9px rgba(31, 27, 22, .55);
+  overflow: hidden;
+  transition: transform .2s var(--ease, cubic-bezier(.22, .61, .36, 1));
+}
+.book-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, .05) 4px, rgba(255, 255, 255, .08) 5px, transparent 9px);
+}
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 5px 5px 5px 9px;
+  border: 1px solid rgba(244, 239, 230, .22);
+  border-radius: 2px;
+}
+
+.book-shelf-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-shelf-title {
+  font-family: var(--display, 'Cormorant Garamond', 'MaruBuri', Georgia, serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  transition: color .2s;
+}
+
+.book-shelf-author {
+  font-family: var(--display, 'Cormorant Garamond', 'MaruBuri', Georgia, serif);
+  font-size: 14.5px;
+  letter-spacing: .04em;
+  color: var(--ink-2, #6b6358);
+  margin-top: 3px;
+}
+
+.book-shelf-item .book-tag-current {
+  flex: none;
+}
+
+/* 읽던 책으로 돌아가기 · 다른 책 찾기 */
+.book-shelf-foot {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 22px;
+}
+
+/* ---- Pick sheet + search sheet ---- */
+#pick-book .book-shelf-item {
+  border-bottom: 0;
+  padding: 10px 0 6px;
+}
+.book-pick-note {
+  margin: 4px 0 0;
+}
+.book-pick-status {
+  margin-top: 14px;
+}
+.book-pick-status:empty {
+  margin-top: 0;
+}
+.book-search-status {
+  margin: 14px 0 0;
+}
+.book-shelf-results {
+  margin-top: 4px;
+}
+
+@media (min-width: 600px) {
+  .book-shelf-wrap {
+    padding-left: max(44px, calc(50% - var(--read, 640px) / 2));
+    padding-right: max(44px, calc(50% - var(--read, 640px) / 2));
+  }
+  .book-shelf-view .book-shelf {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  /* lines up with the band text (.r-head at 1024px+) */
+  .book-shelf-wrap {
+    padding: 28px max(76px, calc(50% - 574px + 44px)) 72px;
+  }
+  .book-shelf-view .book-shelf {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .book-shelf-view .r-head .c-title {
+    font-size: 40px;
+  }
+  .book-cover {
+    width: 52px;
+    height: 72px;
+  }
+}
+
+/* one cover colour per book (picked by book id in book.js) */
 .book-cover.book-cover-1 { background: var(--cover-1, #2e3d35); }
 .book-cover.book-cover-2 { background: var(--cover-2, #5a2b33); }
 .book-cover.book-cover-3 { background: var(--cover-3, #2a3444); }
@@ -2831,13 +2848,9 @@ body.book-page {
 .book-goal-hint {
   margin-top: 8px;
 }
-.book-picker-status > .book-btn {
-  margin-bottom: 10px;
-}
 
 /* main has no global [hidden] rule, and several book- boxes set display */
-.book-page [hidden],
-.book-entry [hidden] {
+.book-page [hidden] {
   display: none !important;
 }
 
@@ -2931,8 +2944,7 @@ body.book-page {
     margin: 0 auto;
   }
 
-  .r-end,
-  .reader .book-entry {
+  .r-end {
     margin-left: 44px;
     margin-right: 44px;
   }

@@ -404,6 +404,24 @@ components:
           type: integer
           example: 121581
 
+    ShelfBook:
+      type: object
+      properties:
+        gutenbergId:
+          type: integer
+          example: 1342
+        title:
+          type: string
+          example: "Pride and Prejudice"
+        author:
+          type: string
+          description: Display name (first name first)
+          example: "Jane Austen"
+        imported:
+          type: boolean
+          description: Already stored on the server (assigning it is instant)
+          example: true
+
     BookSearchResult:
       type: object
       properties:
@@ -1682,6 +1700,40 @@ paths:
                   $ref: '#/components/schemas/BookListItem'
         '401':
           description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/books/shelf:
+    get:
+      tags: [Books]
+      summary: The room book shelf (10 fixed books)
+      description: >
+        The fixed list of 10 books a room owner picks from (data/bookShelf.json),
+        in shelf order, each with whether it is already stored on the server.
+        Assigning an imported book is instant; any other book is imported from
+        Project Gutenberg the first time (see PUT /api/rooms/{id}/book).
+        This endpoint never calls Gutendex or Project Gutenberg.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: The shelf
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShelfBook'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
           content:
             application/json:
               schema:

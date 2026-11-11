@@ -1,0 +1,12 @@
+[
+  { "gutenbergId": 11, "title": "Alice's Adventures in Wonderland", "author": "Lewis Carroll" },
+  { "gutenbergId": 43, "title": "The Strange Case of Dr. Jekyll and Mr. Hyde", "author": "Robert Louis Stevenson" },
+  { "gutenbergId": 35, "title": "The Time Machine", "author": "H. G. Wells" },
+  { "gutenbergId": 64317, "title": "The Great Gatsby", "author": "F. Scott Fitzgerald" },
+  { "gutenbergId": 16, "title": "Peter Pan", "author": "J. M. Barrie" },
+  { "gutenbergId": 1661, "title": "The Adventures of Sherlock Holmes", "author": "Arthur Conan Doyle" },
+  { "gutenbergId": 84, "title": "Frankenstein", "author": "Mary Wollstonecraft Shelley" },
+  { "gutenbergId": 174, "title": "The Picture of Dorian Gray", "author": "Oscar Wilde" },
+  { "gutenbergId": 1342, "title": "Pride and Prejudice", "author": "Jane Austen" },
+  { "gutenbergId": 345, "title": "Dracula", "author": "Bram Stoker" }
+]

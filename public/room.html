@@ -18,7 +18,11 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <span id="room-name"></span>
-      <span class="r-bar-space" aria-hidden="true"></span>
+      <!-- 시 | 책: the same two tabs sit here on book.html too -->
+      <nav class="r-tabs" aria-label="시와 책">
+        <a id="tab-poem" href="#" aria-current="page">시</a>
+        <a id="tab-book" href="/book.html">책</a>
+      </nav>
     </div>
 
     <!-- 표지 색 띠 + 제목 · 작가 -->
@@ -42,13 +46,6 @@
           <p>오늘의 시를 끝까지 읽었다면</p>
           <button type="button" class="finish" id="finish">다 읽었어요</button>
         </div>
-
-        <!-- This room's book (v1.1, temporary UI) — filled in by the book section of room.js -->
-        <section class="book-entry" id="book-entry" aria-label="이 방의 책" lang="ko" hidden>
-          <h4 class="book-label">이 방의 책</h4>
-          <div id="book-entry-body"></div>
-          <div id="book-picker" class="book-picker" hidden></div>
-        </section>
       </div>
 
       <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널. 패널에서는 둘 중 하나만 보여요. -->

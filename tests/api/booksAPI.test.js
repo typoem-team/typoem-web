@@ -75,6 +75,55 @@ describe("GET /api/books", () => {
 // -----------------------------------------------------------------------------
 // GET /api/books/search
 // -----------------------------------------------------------------------------
+describe("GET /api/books/shelf", () => {
+    const SHELF_IDS = [11, 43, 35, 64317, 16, 1661, 84, 174, 1342, 345];
+
+    test("401 without a token", async () => {
+        const res = await request(app).get("/api/books/shelf");
+        expect(res.statusCode).toBe(401);
+        expect(booksModel.findImportedIds).not.toHaveBeenCalled();
+    });
+
+    test("200 returns the 10 shelf books in order with imported flags", async () => {
+        booksModel.findImportedIds.mockResolvedValue([84, 1342]);
+
+        const res = await request(app).get("/api/books/shelf").set("Authorization", member);
+
+        expect(res.statusCode).toBe(200);
+        expect(booksModel.findImportedIds).toHaveBeenCalledWith(SHELF_IDS);
+        expect(res.body.map((b) => b.gutenbergId)).toEqual(SHELF_IDS);
+        for (const b of res.body) {
+            expect(Object.keys(b).sort()).toEqual(["author", "gutenbergId", "imported", "title"]);
+            expect(typeof b.title).toBe("string");
+            expect(typeof b.author).toBe("string");
+            expect(b.imported).toBe(b.gutenbergId === 84 || b.gutenbergId === 1342);
+        }
+        expect(res.body.find((b) => b.gutenbergId === 1342)).toEqual({
+            gutenbergId: 1342, title: "Pride and Prejudice", author: "Jane Austen", imported: true,
+        });
+    });
+
+    test("never calls Gutendex / Project Gutenberg", async () => {
+        booksModel.findImportedIds.mockResolvedValue([]);
+        const res = await request(app).get("/api/books/shelf").set("Authorization", owner);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.every((b) => b.imported === false)).toBe(true);
+        for (const fn of ["searchBooks", "getBookMeta", "fetchBookText"]) {
+            expect(bookFetch[fn]).not.toHaveBeenCalled();
+        }
+    });
+
+    test("500 on a DB error", async () => {
+        booksModel.findImportedIds.mockRejectedValue(new Error("db down"));
+        const res = await request(app).get("/api/books/shelf").set("Authorization", member);
+        expect(res.statusCode).toBe(500);
+        expect(res.body).toEqual({ error: "Server error" });
+    });
+});
+
+// -----------------------------------------------------------------------------
+// GET /api/books/search
+// -----------------------------------------------------------------------------
 describe("GET /api/books/search", () => {
     test("401 without a token", async () => {
         const res = await request(app).get("/api/books/search?q=pride");
@@ -196,6 +245,21 @@ describe("PUT /api/rooms/:id/book", () => {
         expect(bookFetch.getBookMeta).not.toHaveBeenCalled();
         expect(booksModel.importBook).not.toHaveBeenCalled();
         expect(booksModel.setRoomBook).toHaveBeenCalledWith(5, 1342, 1);
+    });
+
+    test("200 when the owner switches the room to another shelf book (책 바꾸기)", async () => {
+        const frank = { ...bookRow, id: 84, title: "Frankenstein", author: "Shelley, Mary Wollstonecraft", author_death_year: 1851 };
+        booksModel.getRoomBook.mockResolvedValue(roomBook);   // the room already reads 1342
+        booksModel.findById.mockResolvedValue(frank);
+        booksModel.setRoomBook.mockResolvedValue({ ...roomBook, book_id: 84 });
+
+        const res = await put(owner, { gutenbergId: 84 });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.gutenbergId).toBe(84);
+        expect(booksModel.findById).toHaveBeenCalledWith(84);
+        expect(bookFetch.getBookMeta).not.toHaveBeenCalled();
+        expect(booksModel.setRoomBook).toHaveBeenCalledWith(5, 84, 1);
     });
 
     test("200 for a new book: imports it, then assigns it", async () => {

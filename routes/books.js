@@ -3,10 +3,11 @@ const controller = require("../controllers/booksController");
 const { authenticate } = require("../middleware/authMiddleware");
 
 // Router mounted at /api/books — the shared book catalogue.
-// GET /api/books   GET /api/books/search?q=
+// GET /api/books   GET /api/books/shelf   GET /api/books/search?q=
 const booksRouter = express.Router();
 booksRouter.use(authenticate);
 booksRouter.get("/", controller.listBooks);
+booksRouter.get("/shelf", controller.getShelf);
 booksRouter.get("/search", controller.searchBooks);
 
 // Router mounted at /api/rooms — the book a room is reading.
