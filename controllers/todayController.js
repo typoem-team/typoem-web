@@ -1,25 +1,23 @@
 // GET /api/rooms/:id/today - Assigns TODAY'S POEM
 // 1. Returns today's poem + its full-poem memos + its line annotations + its poem marks for an authenticated room member.
+// 1b. Opening today's poem records today as read for the reading streak.
 // 2. If the room has no poem for today, fetches a fresh (room-unseen) poem live from PoetryDB, caches it, assigns it to the room for today, and returns it.
 
 // Source order: live PoetryDB -> data/poems.json fallback pool -> 503 (never a duplicate).
 // Never assigns a poem this room has already seen (any date); on exhaustion -> 503.
 
+const { today, isValidDate } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 const poemsModel = require("../models/poemsModel");
 const roomsModel = require("../models/roomsModel");
 const memosModel = require("../models/memosModel");
 const poemMarksModel = require("../models/poemMarksModel");
+const streakModel = require("../models/streakModel");
 
 // helpers copied from memosController/roomsController (for consistency)
 function parseId(raw) {
     const id = Number(raw);
     if (!Number.isInteger(id) || id <= 0) return null;
     return id;
-}
-// today's date as YYYY-MM-DD (UTC).
-// Should be same with memosController.today()
-function today() {
-    return new Date().toISOString().slice(0, 10);
 }
 
 const LIVE_RETRIES = 5;
@@ -108,10 +106,18 @@ async function getToday(req, res) {
             poem_id = await poemsModel.assignPoemToRoom(room_id, poem_id, date); // race-safe; returns winner on clash
         }
 
-        const poem = await poemsModel.findPoemWithLines(poem_id);
-        const memos = await memosModel.listForRoomPoem(room_id, poem_id, req.user.id);
-        const annotations = await poemsModel.listAnnotationsForRoomPoem(room_id, poem_id);
-        const poem_marks = await poemMarksModel.listForRoomPoem(room_id, poem_id);
+        // independent reads -> run in parallel (saves DB round trips).
+        // Opening today's poem also counts as reading it today (streak check-in).
+        // A failed check-in must never break the poem itself, so it only logs.
+        const [poem, memos, annotations, poem_marks] = await Promise.all([
+            poemsModel.findPoemWithLines(poem_id),
+            memosModel.listForRoomPoem(room_id, poem_id, req.user.id),
+            poemsModel.listAnnotationsForRoomPoem(room_id, poem_id),
+            poemMarksModel.listForRoomPoem(room_id, poem_id),
+            Promise.resolve()
+                .then(() => streakModel.checkIn(req.user.id, date))
+                .catch((err) => console.error("Streak check-in failed:", err)),
+        ]);
 
         res.set("Cache-Control", "no-store"); // GET has side effects + data changes; don't cache
         return res.status(200).json({
@@ -147,4 +153,48 @@ async function getHistory(req, res) {
     }
 }
 
-module.exports = { getToday, getHistory };
+// GET /api/rooms/:id/history/:date  - one past day's poem, READ-ONLY.
+// Same shape as /today, but never assigns a poem: 404 if the room had none that day.
+// Writing (memos, annotations, marks) stays limited to today's poem elsewhere.
+async function getPoemOnDate(req, res) {
+    try {
+        const room_id = parseId(req.params.id);
+        if (!room_id) return res.status(400).json({ error: "invalid room id" });
+
+        const date = req.params.date;
+        if (!isValidDate(date)) return res.status(400).json({ error: "date must be YYYY-MM-DD" });
+        if (date > today()) return res.status(400).json({ error: "date is in the future" });
+
+        const room = await roomsModel.findById(room_id);
+        if (!room) return res.status(404).json({ error: "Room not found" });
+
+        const isMember = await roomsModel.isMember(room_id, req.user.id);
+        if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
+
+        const poem_id = await poemsModel.getTodayPoemId(room_id, date); // poem assigned on `date`
+        if (!poem_id) return res.status(404).json({ error: "No poem for this room on that date" });
+
+        const [poem, memos, annotations, poem_marks] = await Promise.all([
+            poemsModel.findPoemWithLines(poem_id),
+            memosModel.listForRoomPoem(room_id, poem_id, req.user.id),
+            poemsModel.listAnnotationsForRoomPoem(room_id, poem_id),
+            poemMarksModel.listForRoomPoem(room_id, poem_id),
+        ]);
+
+        res.set("Cache-Control", "no-store");
+        return res.status(200).json({
+            room: { id: room.id, name: room.name },
+            date,
+            readOnly: true,
+            poem,
+            memos,
+            annotations,
+            poem_marks,
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+}
+
+module.exports = { getToday, getHistory, getPoemOnDate };

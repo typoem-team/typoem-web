@@ -61,9 +61,15 @@ async function updateMemo(id, content, viewer_id) {
     return await findById(id, viewer_id);
 }
 
-// delete a memo.
+// delete a memo together with its likes.
+// memo_likes references memos without ON DELETE CASCADE, so deleting a memo that
+// has likes failed the foreign key check (500). One batch = one atomic round trip.
 async function deleteMemo(id) {
-    return await getDb().run(`DELETE FROM memos WHERE id = ?`, [id]);
+    const [, del] = await getDb().batch([
+        { sql: `DELETE FROM memo_likes WHERE memo_id = ?`, args: [id] },
+        { sql: `DELETE FROM memos WHERE id = ?`, args: [id] },
+    ]);
+    return del;
 }
 
 // toggle a like on a memo for a user.

@@ -59,6 +59,24 @@ describe('POST /api/auth/register', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+  test('201 — a 2-character nickname is allowed', async () => {
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'dana', nickname: '지섭', password: 'password123' });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ username: 'dana', nickname: '지섭' });
+  });
+
+  test('400 — a 1-character nickname is too short', async () => {
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send({ username: 'erin', nickname: 'E', password: 'password123' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/2-20/);
+  });
+
   test('400 — username too short', async () => {
     const res = await request(app)
       .post('/api/auth/register')

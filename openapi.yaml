@@ -39,6 +39,17 @@ components:
       bearerFormat: JWT
 
   schemas:
+    StreakSummary:
+      type: object
+      properties:
+        current: { type: integer, example: 3, description: Days in a row (Korea calendar) }
+        longest: { type: integer, example: 5 }
+        checkedInToday: { type: boolean, example: true }
+        week:
+          type: array
+          description: Checked dates in this Mon..Sun week, ascending
+          items: { type: string, format: date }
+          example: ['2026-11-09', '2026-11-10', '2026-11-11']
     User:
       type: object
       properties:
@@ -766,7 +777,7 @@ paths:
                   example: jiseop
                 nickname:
                   type: string
-                  minLength: 3
+                  minLength: 2
                   maxLength: 20
                   example: Jiseop
                 password:
@@ -2534,3 +2545,83 @@ paths:
           description: Can only delete your own mark
         '404':
           description: Mark not found
+  /api/rooms/{id}/history/{date}:
+    get:
+      tags: [Rooms]
+      summary: Read one past day's poem (read-only)
+      description: >
+        Same body as /today for the poem the room had on `date` (Korea calendar date),
+        plus `readOnly: true`. Never assigns a poem. Members only.
+      security:
+        - bearerAuth: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer }, example: 5 }
+        - { name: date, in: path, required: true, schema: { type: string, format: date }, example: '2026-11-02' }
+      responses:
+        '200': { description: The poem, memos, annotations and poem marks of that day }
+        '400': { description: Invalid room id, malformed date, or a future date }
+        '401': { description: Missing or invalid token }
+        '403': { description: Not a member of this room }
+        '404': { description: Room not found, or no poem for that date }
+  /api/streak:
+    get:
+      tags: [Streak]
+      summary: My reading streak
+      description: >
+        Consecutive Korea-calendar days with a check-in. If today is not checked yet,
+        a streak that reached yesterday is still counted.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Streak summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StreakSummary' }
+        '401': { description: Missing or invalid token }
+  /api/streak/checkin:
+    post:
+      tags: [Streak]
+      summary: Mark today as read ("다 읽었어요")
+      description: Idempotent — checking in again on the same day changes nothing.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Streak summary after the check-in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StreakSummary' }
+        '401': { description: Missing or invalid token }
+  /api/rooms/{id}/streaks:
+    get:
+      tags: [Streak]
+      summary: Every member's reading streak (friends view)
+      security:
+        - bearerAuth: []
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer }, example: 5 }
+      responses:
+        '200':
+          description: Members in join order with their streaks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date: { type: string, format: date, example: '2026-11-11' }
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer, example: 1 }
+                        username: { type: string, example: alice }
+                        nickname: { type: string, example: Alice }
+                        current: { type: integer, example: 3 }
+                        longest: { type: integer, example: 5 }
+                        checkedInToday: { type: boolean, example: true }
+        '400': { description: Invalid room id }
+        '401': { description: Missing or invalid token }
+        '403': { description: Not a member of this room }
+        '404': { description: Room not found }

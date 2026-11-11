@@ -17,6 +17,7 @@ const vocabRouter = require('./routes/vocab');
 const { booksRouter, roomBooksRouter } = require('./routes/books');
 const { roomBookMarksRouter, bookMarksRouter } = require('./routes/bookMarks');
 const { roomPoemMarksRouter, poemMarksRouter } = require('./routes/poemMarks');
+const streakRouter = require('./routes/streak');
 
 const app = express();
 
@@ -32,6 +33,20 @@ app.use(cors({
     return cb(null, false);
   },
 }));
+
+// Timing log for API requests: "API GET /api/rooms/1/today 200 840ms (db 7q 610ms)"
+// Shows in Render logs so we can see what makes the app feel slow.
+const { requestStats } = require('./db');
+app.use('/api', (req, res, next) => {
+  if (process.env.NODE_ENV === 'test') return next();
+  const stats = { queries: 0, dbMs: 0 };
+  const started = Date.now();
+  res.on('finish', () => {
+    const ms = Date.now() - started;
+    console.log(`API ${req.method} ${req.originalUrl} ${res.statusCode} ${ms}ms (db ${stats.queries}q ${stats.dbMs}ms)`);
+  });
+  requestStats.run(stats, next);
+});
 
 app.use(express.json());
 
@@ -58,6 +73,7 @@ app.use('/api/annotations', annotationsRouter);
 app.use('/api/dictionary', dictionaryRouter);
 app.use('/api/public', publicRouter);   
 app.use('/api/vocab', vocabRouter);
+app.use('/api/streak', streakRouter);
 app.use('/api/books', booksRouter);
 
 
