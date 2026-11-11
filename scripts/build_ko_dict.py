@@ -8,8 +8,38 @@ POS = {'noun':'명사','verb':'동사','adj':'형용사','adv':'부사','prep':'
 MAX_SENSES, MAX_LEN = 3, 90
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-def clean_gloss(g):
+# Grammar notes that Wiktionary puts in front of or inside a meaning. They mean nothing to
+# a reader ("(타동사)", "(불가산)", "(부록: 영어 수사)", "[주로 수동태로]"), so they are
+# dropped. Notes about the field ("(법률)", "(식물)") or the register ("(격식)") stay.
+GRAMMAR = re.compile(
+    r'(?:타동사|자동사|비자동사|능격 동사|타|자|불가산|가산(?: 명사)?|목적어 없이|한정적 형용사|서술적|'
+    r'진행형으로는 쓰이지 않음|단수 취급|VN|(?:pl|sing)\.|부록:.*|자동사 또는 타동사.*|'
+    r'(?:주로|흔히|대개|보통|종종|언제나)?\s*(?:명사 앞에(?:서 그것을 수식하는|만|는 안)?\s*(?:씀)?|수동태로|'
+    r'(?:단수|복수)(?:형)?(?:으로|로)?(?:서|만)?(?:\s*사용됨?)?))')
+NOTE_GROUP = re.compile(r'\(([^()]*)\)|\[([^\[\]]*)\]')
+
+def strip_notes(g):
+    def fix(m):
+        inner = m.group(1) if m.group(1) is not None else m.group(2)
+        open_, close = ('(', ')') if m.group(1) is not None else ('[', ']')
+        toks = [t.strip() for t in re.split(r'[,/;]', inner)]
+        keep = [t for t in toks if t and not GRAMMAR.fullmatch(t)]
+        if len(keep) == len([t for t in toks if t]):      # nothing to drop: leave it alone
+            return m.group(0)
+        return f"{open_}{', '.join(keep)}{close}" if keep else ''
+    g = NOTE_GROUP.sub(fix, g)
     g = re.sub(r'\s+', ' ', g).strip()
+    PH = r'(?:somebody|someone|something)'                  # English placeholders: "~ somebody/something 적시다"
+    if re.search(PH, g):
+        g = re.sub(r'~?\s*\b' + PH + r'(?:/' + PH + r')*\b', '', g)
+        g = re.sub(r'(?:\s*\|\s*)+', ' ', g)
+        g = re.sub(r'\s+', ' ', g).strip()
+    g = re.sub(r'^«[^»]*[A-Za-z][^»]*»\s*', '', g)          # leading usage pattern: "«[V -ing] keep doing something »"
+    g = re.sub(r'^~\s+', '', g)                            # "~ (…라고) 생각하다" -> "(…라고) 생각하다"
+    return re.sub(r'\s+([,.;])', r'\1', g)
+
+def clean_gloss(g):
+    g = strip_notes(re.sub(r'\s+', ' ', g).strip())
     # drop (...) groups that have no Hangul, innermost first: "(With the source of or at.)"
     prev = None
     while prev != g:
