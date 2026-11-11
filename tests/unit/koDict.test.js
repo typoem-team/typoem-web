@@ -164,3 +164,16 @@ describe('top missing poem words (hand-written)', () => {
     }
   );
 });
+
+describe('more frequent poem and book words (hand-written)', () => {
+  const koDict = require('../../lib/koDict');
+  test.each(['frantic', 'clasped', 'flickering', 'shrinking', 'reproach', 'tidings', 'jolly', 'churchyard',
+    'thereon', 'methought', 'withdrew', 'stuck', 'overcame', 'enabled', 'hurriedly', 'tresses'])(
+    '%s has a Korean meaning',
+    (w) => {
+      const r = koDict.lookup(w);
+      expect(r).toBeTruthy();
+      expect(r.entries.length).toBeGreaterThan(0);
+    }
+  );
+});
