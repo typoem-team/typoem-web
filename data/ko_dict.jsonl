@@ -1,7 +1,7 @@
-{"word": "'neath", "ko": [{"pos": "시어", "ko": ["beneath의 줄임말. ~아래에"], "own": true}]}
-{"word": "'tis", "ko": [{"pos": "시어", "ko": ["it is의 줄임말. ~이다"], "own": true}]}
-{"word": "'twas", "ko": [{"pos": "시어", "ko": ["it was의 줄임말. ~였다"], "own": true}]}
-{"word": "'twixt", "ko": [{"pos": "시어", "ko": ["betwixt의 줄임말. ~사이에"], "own": true}]}
+{"word": "'neath", "ko": [{"pos": "시어", "ko": ["beneath의 줄임말. ~아래에"], "own": true, "exact": true}]}
+{"word": "'tis", "ko": [{"pos": "시어", "ko": ["it is의 줄임말. ~이다"], "own": true, "exact": true}]}
+{"word": "'twas", "ko": [{"pos": "시어", "ko": ["it was의 줄임말. ~였다"], "own": true, "exact": true}]}
+{"word": "'twixt", "ko": [{"pos": "시어", "ko": ["betwixt의 줄임말. ~사이에"], "own": true, "exact": true}]}
 {"word": "a", "ko": [{"pos": "article", "ko": ["(부정관사) 어떤, 한. 뒤에 오는 낱말이 모음으로 시작될 때에는 'an'을 쓴다."]}, {"pos": "명사", "ko": ["라틴어(로마자) 알파벳의 첫째 소문자."]}]}
 {"word": "a bad workman always blames his tools", "ko": [{"pos": "unknown", "ko": ["못난 일꾼이 늘 연장 탓한다. 이와 비슷한 한국어 속담에는 «쟁기질 못하는 놈이 소 탓한다», «선무당이 장구 탓한다»를 들 수 있다."]}]}
 {"word": "a bird in the hand is worth two in the bush", "ko": [{"pos": "unknown", "ko": ["손 안에 한 마리 새가 숲 속의 두 마리보다 낫다. 비록 적지만 현실적으로 바로 쓸 수 있는 것이 막연히 많은 것을 바라는 것보다 알뜰하다는 말."]}]}
@@ -284,6 +284,7 @@
 {"word": "acquisitive", "ko": [{"pos": "unknown", "ko": ["얻을려고 하는."]}]}
 {"word": "acquit", "ko": [{"pos": "동사", "ko": ["무죄를 선언하다, 혐의를 벗기다, 면제하다.", "(의무, 채무) 이행하다, 갚다."]}]}
 {"word": "acquittal", "ko": [{"pos": "unknown", "ko": ["무죄, 방면, 불기소.", "(의무 등의) 면제."]}]}
+{"word": "acre", "ko": [{"pos": "명사", "ko": ["에이커 (약 4,047㎡의 땅 넓이 단위)."], "own": true}]}
 {"word": "acreage", "ko": [{"pos": "명사", "ko": ["에이커 크기.", "에이커로 측정한 토지의 면적."]}]}
 {"word": "acrid", "ko": [{"pos": "unknown", "ko": ["(냄새·맛 등이) 매운, 쓴;(살갗에) 아리는"]}]}
 {"word": "acrimonious", "ko": [{"pos": "unknown", "ko": ["통렬한, 신랄한."]}]}
@@ -476,6 +477,7 @@
 {"word": "afghani", "ko": [{"pos": "unknown", "ko": ["아프가니(아프가니스탄의 화폐 단위)."]}]}
 {"word": "afghanistan", "ko": [{"pos": "명사", "ko": ["나라 이름 '아프가니스탄'."]}]}
 {"word": "aficionado", "ko": [{"pos": "unknown", "ko": ["팬, 열광하는 사람."]}]}
+{"word": "afloat", "ko": [{"pos": "부사", "ko": ["물 위에 떠서; 떠도는."], "own": true}]}
 {"word": "aforementioned", "ko": [{"pos": "unknown", "ko": ["앞에 서술된 것처럼"]}]}
 {"word": "afraid", "ko": [{"pos": "unknown", "ko": ["두렵다, 무섭다.", "미안하지만. 유감스럽게도."]}]}
 {"word": "africa", "ko": [{"pos": "명사", "ko": ["대륙 '아프리카'."]}]}
@@ -682,6 +684,7 @@
 {"word": "alongside", "ko": [{"pos": "전치사", "ko": ["~의 옆에."]}]}
 {"word": "aloof", "ko": [{"pos": "부사", "ko": ["멀리 떨어져서, 초연하게."]}]}
 {"word": "aloofly", "ko": [{"pos": "부사", "ko": ["냉담하게."]}]}
+{"word": "aloud", "ko": [{"pos": "부사", "ko": ["소리 내어, 큰 소리로."], "own": true}]}
 {"word": "alpaca", "ko": [{"pos": "unknown", "ko": ["알파카."]}]}
 {"word": "alpenstock", "ko": [{"pos": "unknown", "ko": ["등산지팡이."]}]}
 {"word": "alpha", "ko": [{"pos": "unknown", "ko": ["그리스어 알파벳 'Α / α'의 이름. (부록: 그리스어 알파벳)"]}]}
@@ -716,6 +719,7 @@
 {"word": "amalgamate", "ko": [{"pos": "동사", "ko": ["혼합하다, (회사) 합병하다.", "아말감으로 만들다."]}]}
 {"word": "amalgamation", "ko": [{"pos": "unknown", "ko": ["(회사 등의) 합동, 합병"]}]}
 {"word": "amanda", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
+{"word": "amaranth", "ko": [{"pos": "명사", "ko": ["아마란스 (시들지 않는 꽃으로 상상된 것; 비름속 식물)."], "own": true}]}
 {"word": "amarillo", "ko": [{"pos": "명사", "ko": ["아마리요(미국 텍사스 주의 도시)."]}]}
 {"word": "amass", "ko": [{"pos": "동사", "ko": ["모으다, 쌓다, 축적하다."]}]}
 {"word": "amaterasu", "ko": [{"pos": "명사", "ko": ["아마테라스(일본 신화에 등장하는 여신)."]}]}
@@ -758,6 +762,7 @@
 {"word": "amiably", "ko": [{"pos": "unknown", "ko": ["상냥하게, 친절하게."]}]}
 {"word": "amicable", "ko": [{"pos": "unknown", "ko": ["우호적인;평화적인, 타협적인, 유쾌한"]}]}
 {"word": "amid", "ko": [{"pos": "unknown", "ko": ["~중에, ~의 한복판에"]}, {"pos": "명사", "ko": ["우정"]}, {"pos": "전치사", "ko": ["~의 한복판에"]}]}
+{"word": "amidst", "ko": [{"pos": "전치사", "ko": ["~한가운데에, ~사이에 (amid)."], "own": true}]}
 {"word": "amigo", "ko": [{"pos": "unknown", "ko": ["친구.", "멕시코인(주로 캘리포니아에서 사용됨)."]}]}
 {"word": "amiss", "ko": [{"pos": "부사", "ko": ["서투르게, 부적절하게."]}]}
 {"word": "amity", "ko": [{"pos": "unknown", "ko": ["우호, 친목, 친선 (관계), 친교"]}]}
@@ -862,6 +867,7 @@
 {"word": "angle for", "ko": [{"pos": "unknown", "ko": ["낚다, 옭아매다."]}]}
 {"word": "angola", "ko": [{"pos": "명사", "ko": ["앙골라."]}]}
 {"word": "angrez", "ko": [{"pos": "명사", "ko": ["영국인.", "백인."]}]}
+{"word": "angrily", "ko": [{"pos": "부사", "ko": ["화가 나서, 성내어."], "own": true}]}
 {"word": "angry", "ko": [{"pos": "unknown", "ko": ["화난, 성난.", "(비유) 격한."]}]}
 {"word": "anguish", "ko": [{"pos": "동사", "ko": ["괴롭히다."]}]}
 {"word": "anhydrous", "ko": [{"pos": "unknown", "ko": ["물이 없는."]}]}
@@ -897,7 +903,7 @@
 {"word": "anodyne", "ko": [{"pos": "unknown", "ko": ["진정제, 진통제."]}]}
 {"word": "anomalous", "ko": [{"pos": "unknown", "ko": ["변칙적인, 이례적인, 예외적인, 앞뒤가 일관하지 않은, 모순된, 상반하는 (문법) 변칙의"]}]}
 {"word": "anomaly", "ko": [{"pos": "unknown", "ko": ["변칙, 예외, 이례;변태;예외적인 것[사람];(생물) 이형(異形)"]}]}
-{"word": "anon", "ko": [{"pos": "고어", "ko": ["곧, 이윽고"], "own": true}]}
+{"word": "anon", "ko": [{"pos": "고어", "ko": ["곧, 이윽고"], "own": true, "exact": true}]}
 {"word": "anonymity", "ko": [{"pos": "unknown", "ko": ["익명."]}]}
 {"word": "anonymous", "ko": [{"pos": "unknown", "ko": ["익명의"]}]}
 {"word": "anonymously", "ko": [{"pos": "unknown", "ko": ["익명으로."]}]}
@@ -976,6 +982,7 @@
 {"word": "anya", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "anybody", "ko": [{"pos": "unknown", "ko": ["(부정문, 의문문에서) 막연히 어떤 사람, 누구."]}]}
 {"word": "anyhow", "ko": [{"pos": "unknown", "ko": ["어쨌든, 여하튼, 하여간"]}]}
+{"word": "anymore", "ko": [{"pos": "부사", "ko": ["(부정문에서) 더 이상, 이제는."], "own": true}]}
 {"word": "anyone", "ko": [{"pos": "unknown", "ko": ["(의문문) 누구, (부정문) 아무."]}]}
 {"word": "anything", "ko": [{"pos": "부사", "ko": ["어떻든, 아무튼."]}]}
 {"word": "anytime", "ko": [{"pos": "unknown", "ko": ["언제라도."]}]}
@@ -1164,6 +1171,7 @@
 {"word": "armor", "ko": [{"pos": "unknown", "ko": ["갑옷."]}]}
 {"word": "armorial bearing", "ko": [{"pos": "명사", "ko": ["(문장학) 방패에 그려진 디자인이나 이미지로 구성된 문장."]}]}
 {"word": "armory", "ko": [{"pos": "unknown", "ko": ["무기 제조 공장, 무기고."]}]}
+{"word": "armour", "ko": [{"pos": "명사", "ko": ["갑옷, 갑주."], "own": true}]}
 {"word": "armpit", "ko": [{"pos": "unknown", "ko": ["겨드랑이. (부록: 신체 부분의 영어 이름)", "불쾌한 장소."]}]}
 {"word": "arms", "ko": [{"pos": "unknown", "ko": ["(집합적) 무기, 병기."]}]}
 {"word": "army", "ko": [{"pos": "unknown", "ko": ["넓은 뜻으로 군대. 좁은 뜻으로 육군.", "(특정 목적을 위한 사람들) 부대, 집단"]}]}
@@ -1192,7 +1200,7 @@
 {"word": "arsewipe", "ko": [{"pos": "unknown", "ko": ["(영국/속어) 화장실휴지."]}]}
 {"word": "arson", "ko": [{"pos": "unknown", "ko": ["방화."]}]}
 {"word": "arsonist", "ko": [{"pos": "unknown", "ko": ["방화범."]}]}
-{"word": "art", "ko": [{"pos": "명사", "ko": ["(넓은 뜻으로) 예술, (좁은 뜻으로) 미술.", "기술, 기예.", "대학의 예술 (미술) 학과."]}, {"pos": "고어", "ko": ["are의 2인칭 단수형. thou art = 너는 ~이다"], "own": true}]}
+{"word": "art", "ko": [{"pos": "명사", "ko": ["(넓은 뜻으로) 예술, (좁은 뜻으로) 미술.", "기술, 기예.", "대학의 예술 (미술) 학과."]}, {"pos": "고어", "ko": ["are의 2인칭 단수형. thou art = 너는 ~이다"], "own": true, "exact": true}]}
 {"word": "artefact", "ko": [{"pos": "명사", "ko": ["artifact의 다른 표기.", "주로 영국에서 많이 쓰인다."]}]}
 {"word": "arterial", "ko": [{"pos": "unknown", "ko": ["<도로 등이> 동맥과 같은; 근간(根幹)의"]}]}
 {"word": "artery", "ko": [{"pos": "unknown", "ko": ["동맥, 씨줄"]}]}
@@ -1258,6 +1266,7 @@
 {"word": "ask out", "ko": [{"pos": "unknown", "ko": ["부르다, 초대하다."]}]}
 {"word": "asked", "ko": [{"pos": "동사", "ko": ["ask의 과거형 및 과거분사형."]}]}
 {"word": "askew", "ko": [{"pos": "형용사", "ko": ["비스듬한, 비뚤은."]}]}
+{"word": "asleep", "ko": [{"pos": "형용사", "ko": ["잠들어, 자고 있는."], "own": true}]}
 {"word": "asocial", "ko": [{"pos": "unknown", "ko": ["사회적이지 않은."]}]}
 {"word": "asparagus", "ko": [{"pos": "unknown", "ko": ["아스파라거스."]}]}
 {"word": "aspect", "ko": [{"pos": "unknown", "ko": ["국면.", "(문법) 상.", "방향."]}]}
@@ -1373,6 +1382,7 @@
 {"word": "attendance", "ko": [{"pos": "unknown", "ko": ["출석.", "출석자, 출석자수."]}]}
 {"word": "attendee", "ko": [{"pos": "unknown", "ko": ["출석자."]}]}
 {"word": "attending", "ko": [{"pos": "형용사", "ko": ["참석하는, 참석하는; 참석하고 있는; 수행원.", "교육병원에서 의사로 근무하는.", "동반자, 동반자."]}, {"pos": "명사", "ko": ["(캐나다, 미국) 병원 소속 의사, 특히 환자 진료를 총괄하는 원장을 가리킨다."]}, {"pos": "동사", "ko": ["attend의 현재 분사와 동명사"]}]}
+{"word": "attention", "ko": [{"pos": "명사", "ko": ["주의, 관심."], "own": true}]}
 {"word": "attentive", "ko": [{"pos": "unknown", "ko": ["주의깊은.", "공손한."]}]}
 {"word": "attest", "ko": [{"pos": "동사", "ko": ["증언하다; (진실임을) 입증하다."]}]}
 {"word": "attestation", "ko": [{"pos": "unknown", "ko": ["증명서; 선서"]}]}
@@ -1405,7 +1415,8 @@
 {"word": "audrey", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "augean stables", "ko": [{"pos": "명사", "ko": ["아우게이아스왕의 외양간."]}]}
 {"word": "auger", "ko": [{"pos": "unknown", "ko": ["나사 송곳"]}]}
-{"word": "aught", "ko": [{"pos": "고어", "ko": ["무엇이든, 아무것"], "own": true}]}
+{"word": "aught", "ko": [{"pos": "고어", "ko": ["무엇이든, 아무것"], "own": true, "exact": true}]}
+{"word": "augment", "ko": [{"pos": "동사", "ko": ["늘리다, 증대시키다."], "own": true}]}
 {"word": "augmentation", "ko": [{"pos": "unknown", "ko": ["증가, 확장. (값, 비율) 상승."]}]}
 {"word": "augur", "ko": [{"pos": "동사", "ko": ["앞일을 점 치다, 예언하다."]}]}
 {"word": "august", "ko": [{"pos": "명사", "ko": ["팔월. (부록: 영어 요일과 달)"]}]}
@@ -1467,6 +1478,7 @@
 {"word": "avalanche", "ko": [{"pos": "unknown", "ko": ["눈사태."]}]}
 {"word": "avalokitesvara", "ko": [{"pos": "명사", "ko": ["(불교) 관세음(觀世音)"]}]}
 {"word": "avatar", "ko": [{"pos": "unknown", "ko": ["인도 신화에 나오는 신 가운데 특히 비슈누의 화신 이름. 아바타.", "(컴퓨터) 인터넷의 사이트, 프로그램 또는 컴퓨터 게임에서 사용자를 대신하는 그래픽 그림."]}]}
+{"word": "avenger", "ko": [{"pos": "명사", "ko": ["복수하는 사람, 복수자."], "own": true}]}
 {"word": "avenue", "ko": [{"pos": "명사", "ko": ["큰 거리.", "(어떤 목적을 이루어낼 수 있는) 수단, 방법"]}]}
 {"word": "aver", "ko": [{"pos": "동사", "ko": ["단언하다, 주장하다."]}]}
 {"word": "average", "ko": [{"pos": "unknown", "ko": ["평균."]}]}
@@ -1485,6 +1497,7 @@
 {"word": "avulsion", "ko": [{"pos": "unknown", "ko": ["뜯음, 찢음."]}]}
 {"word": "await", "ko": [{"pos": "unknown", "ko": ["기다리다."]}]}
 {"word": "awake", "ko": [{"pos": "형용사", "ko": ["깨어 있는."]}, {"pos": "동사", "ko": ["(잠에서) 깨다."]}, {"pos": "동사", "ko": ["깨우다, 일으키다."]}]}
+{"word": "awaken", "ko": [{"pos": "동사", "ko": ["깨우다, 깨어나다; 일깨우다."], "own": true}]}
 {"word": "award", "ko": [{"pos": "명사", "ko": ["상, 상금, 상패.", "(중재 재판 따위의) 심판, 판정, 재정."]}, {"pos": "동사", "ko": ["수여하다."]}]}
 {"word": "aware", "ko": [{"pos": "형용사", "ko": ["알고 있는, 인식하는"]}]}
 {"word": "awareness", "ko": [{"pos": "명사", "ko": ["인식."]}]}
@@ -1518,6 +1531,7 @@
 {"word": "babushka", "ko": [{"pos": "unknown", "ko": ["(머리에 쓰는) 스카프.", "할머니"]}]}
 {"word": "baby", "ko": [{"pos": "unknown", "ko": ["아기, 어린아이, 유아.", "남자, 소년, 녀석"]}]}
 {"word": "babylonian", "ko": [{"pos": "형용사", "ko": ["바빌로니아의."]}]}
+{"word": "babylonish", "ko": [{"pos": "형용사", "ko": ["(고어) 바빌론의."], "own": true}]}
 {"word": "babysit", "ko": [{"pos": "동사", "ko": ["집을 지키며 아이를 보다."]}]}
 {"word": "babysitter", "ko": [{"pos": "unknown", "ko": ["집을 지키며 아이를 보는 사람."]}]}
 {"word": "bachelor", "ko": [{"pos": "unknown", "ko": ["남성 독신자.", "(미국) 학사 학위."]}]}
@@ -1546,6 +1560,7 @@
 {"word": "bacteriology", "ko": [{"pos": "unknown", "ko": ["세균학."]}]}
 {"word": "bacterium", "ko": [{"pos": "명사", "ko": ["(생물학) 세균 (박테리아)."]}]}
 {"word": "bactria", "ko": [{"pos": "명사", "ko": ["박트리아."]}]}
+{"word": "bad", "ko": [{"pos": "형용사", "ko": ["나쁜, 불량한; 심한."], "own": true}]}
 {"word": "bad mind", "ko": [{"pos": "unknown", "ko": ["(카리브해) 악의."]}]}
 {"word": "bade", "ko": [{"pos": "동사", "ko": ["bid (명하다)의 과거"]}]}
 {"word": "badge", "ko": [{"pos": "unknown", "ko": ["옷깃에 꽃을 수 있도록 만든 작은 표식. 휘장, 배지."]}]}
@@ -1602,6 +1617,7 @@
 {"word": "band", "ko": [{"pos": "명사", "ko": ["보강이나 결합에 사용되는 얇은 천 조각.", "주변과 다른 재질, 색상 등으로 이루어진 긴 조각.", "(건축) 장식 조각."]}, {"pos": "동사", "ko": ["(타동사) 밴드로 고정하다."]}, {"pos": "명사", "ko": ["앙상블처럼 함께 연주하는 음악가들의 그룹. 때로는 전문 녹음 아티스트를 위해 일하는 그룹이기도 하다. 음악 밴드"]}, {"pos": "동사", "ko": ["(자동사) 공동의 목적을 위해 함께 모이다. 연합하다."]}, {"pos": "동사", "ko": ["(구식) bind의 과거형과 과거분사"]}, {"pos": "동사", "ko": ["bandy의 구식 형태."]}]}
 {"word": "bandage", "ko": [{"pos": "동사", "ko": ["포대를 하다."]}]}
 {"word": "bandage up", "ko": [{"pos": "unknown", "ko": ["붕대를 감다."]}]}
+{"word": "bane", "ko": [{"pos": "명사", "ko": ["(고어·시어) 파멸의 원인, 골칫거리; 독."], "own": true}]}
 {"word": "baneful", "ko": [{"pos": "unknown", "ko": ["파멸시키는, 치명적인."]}]}
 {"word": "bang away", "ko": [{"pos": "unknown", "ko": ["끊임없이 노력하다.", "계속 공격하다."]}]}
 {"word": "bang into", "ko": [{"pos": "unknown", "ko": ["...에 꽝 부딪히다.", "...와 우연히 마주치다."]}]}
@@ -1619,6 +1635,7 @@
 {"word": "bankroll", "ko": [{"pos": "명사", "ko": ["이 낱말은 한국어 뜻풀이가 필요합니다. 뜻풀이를 추가한 다음, 이 틀을 지워 주세요."]}, {"pos": "동사", "ko": ["이 낱말은 한국어 뜻풀이가 필요합니다. 뜻풀이를 추가한 다음, 이 틀을 지워 주세요."]}]}
 {"word": "bankrupt", "ko": [{"pos": "명사", "ko": ["파산자."]}, {"pos": "동사", "ko": ["파산시키다."]}]}
 {"word": "bankruptcy", "ko": [{"pos": "명사", "ko": ["파산."]}]}
+{"word": "banner", "ko": [{"pos": "명사", "ko": ["깃발, 군기; 현수막."], "own": true}]}
 {"word": "banteng", "ko": [{"pos": "unknown", "ko": ["밴팅. 동남아시아 산 들소."]}]}
 {"word": "baptism", "ko": [{"pos": "unknown", "ko": ["세례.", "입회식, 명명식.", "첫시련."]}]}
 {"word": "bar", "ko": [{"pos": "동사", "ko": ["~에게 (~하는 것을) 금(지)하다"]}, {"pos": "전치사", "ko": ["...을 제외하고"]}]}
@@ -1635,6 +1652,7 @@
 {"word": "barber", "ko": [{"pos": "동사", "ko": ["(속어) 말하다."]}]}
 {"word": "barberry", "ko": [{"pos": "unknown", "ko": ["매자나무속."]}]}
 {"word": "barcelona", "ko": [{"pos": "명사", "ko": ["바르셀로나."]}]}
+{"word": "bard", "ko": [{"pos": "명사", "ko": ["(고대의) 음유시인; (시어) 시인."], "own": true}]}
 {"word": "bare", "ko": [{"pos": "형용사", "ko": ["벌거벗은."]}, {"pos": "동사", "ko": ["(타동사) 벗기다."]}]}
 {"word": "bare hands", "ko": [{"pos": "명사", "ko": ["맨손."]}]}
 {"word": "barefaced", "ko": [{"pos": "unknown", "ko": ["철면피의, 뻔뻔스럽다."]}]}
@@ -1734,6 +1752,8 @@
 {"word": "beat", "ko": [{"pos": "동사", "ko": ["치다, 때리다, 쳐부수다."]}, {"pos": "동사", "ko": ["들먹이다, 두들거리다.", "이기다.", "휘젓다."]}]}
 {"word": "beat box", "ko": [{"pos": "unknown", "ko": ["비트박스."]}]}
 {"word": "beaten track", "ko": [{"pos": "unknown", "ko": ["[the ~] 밟아 다져진 길; 보통의 방법, 상도(常道)"]}]}
+{"word": "beau", "ko": [{"pos": "명사", "ko": ["(고어) 멋쟁이; 애인, 구혼자."], "own": true}]}
+{"word": "beauteous", "ko": [{"pos": "형용사", "ko": ["(시어) 아름다운."], "own": true}]}
 {"word": "beautiful", "ko": [{"pos": "형용사", "ko": ["아름답다. 예쁘다"]}]}
 {"word": "beauty", "ko": [{"pos": "unknown", "ko": ["아름다움, 미(美). 혹은 미모.", "미인(美人). 외모가 아름다운 여성. 아름다운 것.", "아름다운 점. 멋진 점. 장점."]}]}
 {"word": "beauty is in the eye of the beholder", "ko": [{"pos": "unknown", "ko": ["아름다움은 그것을 보는 사람 눈에 달려있다."]}]}
@@ -1834,6 +1854,8 @@
 {"word": "bequest", "ko": [{"pos": "명사", "ko": ["유증. 유산."]}]}
 {"word": "berber", "ko": [{"pos": "명사", "ko": ["베르베르인"]}]}
 {"word": "bereave", "ko": [{"pos": "unknown", "ko": ["(병/사고/죽음 등이) 가까운 사람을 빼앗다.", "(소유물 등을) 빼앗다."]}]}
+{"word": "bereavement", "ko": [{"pos": "명사", "ko": ["(가까운 사람과의) 사별, 상(喪)."], "own": true}]}
+{"word": "bereft", "ko": [{"pos": "형용사", "ko": ["(~을) 잃은, 빼앗긴."], "own": true}]}
 {"word": "bering sea", "ko": [{"pos": "명사", "ko": ["베링 해."]}]}
 {"word": "berkelium", "ko": [{"pos": "unknown", "ko": ["버클륨."]}]}
 {"word": "berlin", "ko": [{"pos": "명사", "ko": ["독일의 수도 베를린."]}]}
@@ -1863,7 +1885,7 @@
 {"word": "better safe than sorry", "ko": [{"pos": "unknown", "ko": ["후회보다 안전이 낫다. 어떤 일을 서둘러서 망치고 나서 후회하는 것보다 느리지만 성공적으로 마무리하는 것이 낫다는 말. «돌다리도 두들겨 보고 건너라»라는 한국어 속담도 무엇보다도 안전을 강조하고 있다."]}]}
 {"word": "betty", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "between", "ko": [{"pos": "전치사", "ko": ["분리되는 위치나 간격 (두 가지), 또는 양이나 정도에서 중간.", "함께", "자신감 있게 공유한다."]}]}
-{"word": "betwixt", "ko": [{"pos": "고어", "ko": ["~사이에"], "own": true}]}
+{"word": "betwixt", "ko": [{"pos": "고어", "ko": ["~사이에"], "own": true, "exact": true}]}
 {"word": "beverage", "ko": [{"pos": "unknown", "ko": ["마시는 것."]}]}
 {"word": "beverly", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "bewilder", "ko": [{"pos": "unknown", "ko": ["당황하게 하다."]}]}
@@ -1885,6 +1907,7 @@
 {"word": "bidden", "ko": [{"pos": "동사", "ko": ["bid (명하다)의 과거분사"]}]}
 {"word": "bielsko-biala", "ko": [{"pos": "명사", "ko": ["비엘스코비아와(폴란드의 도시)."]}]}
 {"word": "biennial", "ko": [{"pos": "unknown", "ko": ["2년에 한 번의, 2년마다의"]}]}
+{"word": "bier", "ko": [{"pos": "명사", "ko": ["상여, 관을 얹는 대."], "own": true}]}
 {"word": "big", "ko": [{"pos": "형용사", "ko": ["크다.", "(비격식) 열성적인"]}]}
 {"word": "big bang", "ko": [{"pos": "명사", "ko": ["빅뱅."]}]}
 {"word": "big game", "ko": [{"pos": "unknown", "ko": ["빅게임."]}]}
@@ -1989,6 +2012,7 @@
 {"word": "blender", "ko": [{"pos": "명사", "ko": ["(요리 기구) 전기 믹서, 믹서, 믹서기; 분쇄기"]}]}
 {"word": "bless", "ko": [{"pos": "동사", "ko": ["(신이나 성직자가 기도, 연설에서) 축복하다.", "위험, 불행으로부터 지키다, 보호하다."]}]}
 {"word": "blessing", "ko": [{"pos": "unknown", "ko": ["축복."]}]}
+{"word": "blest", "ko": [{"pos": "형용사", "ko": ["(시어) 축복받은 (blessed)."], "own": true}]}
 {"word": "blimey", "ko": [{"pos": "감탄사", "ko": ["아이쿠, 어렵쇼."]}]}
 {"word": "blind", "ko": [{"pos": "동사", "ko": ["눈을 멀게 하다, 눈부시게 하다."]}, {"pos": "명사", "ko": ["빛을 가리는 물건, 차양, 덧문.", "(비유) 속임수, 책략."]}]}
 {"word": "blindness", "ko": [{"pos": "unknown", "ko": ["눈이 멀음. (비유) 맹목, 무분별, 문맹."]}]}
@@ -2031,6 +2055,7 @@
 {"word": "blunder", "ko": [{"pos": "동사", "ko": ["실수하다."]}]}
 {"word": "blunt", "ko": [{"pos": "동사", "ko": ["(칼날, 연장) 무디게 하다."]}, {"pos": "동사", "ko": ["무뎌지다, 둔해지다."]}, {"pos": "형용사", "ko": ["무딘. (비유) 무뚝뚝한, 둔한."]}]}
 {"word": "blur", "ko": [{"pos": "unknown", "ko": ["흐릿해지다; 흐릿하게 만들다."]}]}
+{"word": "blush", "ko": [{"pos": "동사", "ko": ["얼굴을 붉히다."], "own": true}, {"pos": "명사", "ko": ["홍조, 얼굴이 붉어짐."], "own": true}]}
 {"word": "boak", "ko": [{"pos": "동사", "ko": ["트림하다."]}]}
 {"word": "boar", "ko": [{"pos": "unknown", "ko": ["멧돼지. 수퇘지"]}]}
 {"word": "board", "ko": [{"pos": "명사", "ko": ["판자, 널빤지", "위원회, 이사회", "(배[船]의) 측면."]}]}
@@ -2069,6 +2094,7 @@
 {"word": "bona fide", "ko": [{"pos": "unknown", "ko": ["[주로 명사 앞에 씀] (라틴어에서) 진실된, 진짜의"]}]}
 {"word": "bonanza", "ko": [{"pos": "unknown", "ko": ["금맥, 행운, 노다지"]}]}
 {"word": "bond", "ko": [{"pos": "동사", "ko": ["~ 유대감을[이] 형성하다[되다]"]}]}
+{"word": "bondage", "ko": [{"pos": "명사", "ko": ["속박, 노예 상태."], "own": true}]}
 {"word": "bone", "ko": [{"pos": "unknown", "ko": ["동물의 뼈."]}]}
 {"word": "bone marrow", "ko": [{"pos": "명사", "ko": ["골수(骨髓)"]}]}
 {"word": "bonfire", "ko": [{"pos": "unknown", "ko": ["화톳불, 모닥불."]}]}
@@ -2130,6 +2156,7 @@
 {"word": "bovine spongiform encephalopathy", "ko": [{"pos": "unknown", "ko": ["소해면상뇌증(~海綿狀腦症), 광우병."]}]}
 {"word": "bow", "ko": [{"pos": "명사", "ko": ["활."]}, {"pos": "동사", "ko": ["허리를 굽히다, 또는 그렇게 절하다.", "굽다"]}, {"pos": "동사", "ko": ["굽히다.", "굴복시키다", "굽실거리다."]}, {"pos": "명사", "ko": ["절, 인사."]}, {"pos": "명사", "ko": ["(종종 복수) 뱃머리."]}]}
 {"word": "bow-tie", "ko": [{"pos": "unknown", "ko": ["나비넥타이"]}]}
+{"word": "bower", "ko": [{"pos": "명사", "ko": ["(나무 그늘의) 정자, 나무 그늘 쉼터; (시어) 은신처."], "own": true}]}
 {"word": "bowl", "ko": [{"pos": "unknown", "ko": ["(basin보다 깊고 cup보다 큰) 사발;공기, 주발, 볼"]}]}
 {"word": "bowling alley", "ko": [{"pos": "unknown", "ko": ["볼링장."]}]}
 {"word": "box", "ko": [{"pos": "동사", "ko": ["상자에 넣다.", "손이나 주먹으로 때림."]}]}
@@ -2168,6 +2195,7 @@
 {"word": "brassy", "ko": [{"pos": "unknown", "ko": ["놋쇠의. (비유) 저속한."]}]}
 {"word": "brave", "ko": [{"pos": "unknown", "ko": ["용감한."]}]}
 {"word": "bravely", "ko": [{"pos": "unknown", "ko": ["용감하게, 씩씩하게."]}]}
+{"word": "bravery", "ko": [{"pos": "명사", "ko": ["용기, 용감함; (고어) 화려한 차림."], "own": true}]}
 {"word": "bravura", "ko": [{"pos": "형용사", "ko": ["훌륭한."]}]}
 {"word": "brawn", "ko": [{"pos": "unknown", "ko": ["근육, 근력."]}]}
 {"word": "brayden", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
@@ -2216,6 +2244,7 @@
 {"word": "brich", "ko": [{"pos": "unknown", "ko": ["불이행"]}]}
 {"word": "brick", "ko": [{"pos": "unknown", "ko": ["불가산가산벽돌 (한 개); 불가산 [집합적] 벽돌"]}]}
 {"word": "brick and mortar", "ko": [{"pos": "명사", "ko": ["재래식의 소매 (온라인 판매와 대조하여)"]}]}
+{"word": "bridal", "ko": [{"pos": "형용사", "ko": ["신부의, 결혼식의."], "own": true}]}
 {"word": "bride", "ko": [{"pos": "unknown", "ko": ["(결혼식에서) 신부."]}]}
 {"word": "bridegroom", "ko": [{"pos": "unknown", "ko": ["(결혼식에서) 신랑."]}]}
 {"word": "bridesmaid", "ko": [{"pos": "unknown", "ko": ["(신부의) 들러리."]}]}
@@ -2245,6 +2274,7 @@
 {"word": "broadcast", "ko": [{"pos": "동사", "ko": ["방송하다."]}, {"pos": "명사", "ko": ["방송, 방송 프로그램."]}, {"pos": "형용사", "ko": ["방송의, 전파된, 확산된."]}]}
 {"word": "broadcasting", "ko": [{"pos": "unknown", "ko": ["방송."]}]}
 {"word": "broadway", "ko": [{"pos": "명사", "ko": ["브로드웨이(뉴욕의 거리 이름)."]}]}
+{"word": "brocade", "ko": [{"pos": "명사", "ko": ["(금은실로 무늬를 넣은) 비단, 수놓은 직물."], "own": true}]}
 {"word": "broccoli", "ko": [{"pos": "unknown", "ko": ["모란채, 브로콜리."]}]}
 {"word": "brochure", "ko": [{"pos": "unknown", "ko": ["소책자."]}]}
 {"word": "brody", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
@@ -2289,6 +2319,7 @@
 {"word": "bucket", "ko": [{"pos": "unknown", "ko": ["양동이, 물통, 버킷."]}]}
 {"word": "buckwheat", "ko": [{"pos": "unknown", "ko": ["메밀."]}]}
 {"word": "bucolic", "ko": [{"pos": "unknown", "ko": ["농촌의, 전원적인."]}]}
+{"word": "bud", "ko": [{"pos": "명사", "ko": ["싹, 꽃봉오리."], "own": true}, {"pos": "동사", "ko": ["싹이 트다."], "own": true}]}
 {"word": "buddhism", "ko": [{"pos": "명사", "ko": ["불교."]}]}
 {"word": "buddhist", "ko": [{"pos": "명사", "ko": ["불교 신자, 불교도."]}]}
 {"word": "buddy", "ko": [{"pos": "unknown", "ko": ["친구, 동무. 주로 일상 생활에서 쓰는 말."]}]}
@@ -2297,6 +2328,7 @@
 {"word": "buff", "ko": [{"pos": "unknown", "ko": ["갈색과 노란색의 중간, 담황색.", "담황색의 가죽."]}]}
 {"word": "buffalo", "ko": [{"pos": "명사", "ko": ["버팔로."]}]}
 {"word": "buffer", "ko": [{"pos": "unknown", "ko": ["완충기, 완충장치"]}]}
+{"word": "buffet", "ko": [{"pos": "동사", "ko": ["(바람·파도가) 세게 치다, 마구 때리다."], "own": true}]}
 {"word": "buffy", "ko": [{"pos": "unknown", "ko": ["(색깔) 약간 밤색이면서 누렇다."]}]}
 {"word": "bug", "ko": [{"pos": "unknown", "ko": ["벌레."]}]}
 {"word": "bugger off", "ko": [{"pos": "구", "ko": ["(속어) 꺼지다."]}]}
@@ -2499,7 +2531,7 @@
 {"word": "canoe", "ko": [{"pos": "명사", "ko": ["카누."]}, {"pos": "동사", "ko": ["카누를 타다."]}]}
 {"word": "canon", "ko": [{"pos": "unknown", "ko": ["규범, 전형, 기준.", "(종교) 교리, 계율, 법규.", "(종교 음악) 카논."]}]}
 {"word": "canonical", "ko": [{"pos": "형용사", "ko": ["(성경이) 정본에 속하는; (문학 작품이) 고전으로 여겨지는"]}]}
-{"word": "canst", "ko": [{"pos": "고어", "ko": ["can의 2인칭 단수형. thou canst = 너는 ~할 수 있다"], "own": true}]}
+{"word": "canst", "ko": [{"pos": "고어", "ko": ["can의 2인칭 단수형. thou canst = 너는 ~할 수 있다"], "own": true, "exact": true}]}
 {"word": "cantankerous", "ko": [{"pos": "unknown", "ko": ["성미가 급한, 심술궂은."]}]}
 {"word": "cantonese", "ko": [{"pos": "명사", "ko": ["광둥 사람.", "광둥어."]}]}
 {"word": "canvas", "ko": [{"pos": "unknown", "ko": ["베로 짠 천. (미술) 캔버스. 화포. 드물게는 유화.", "(비유) 배경, 상황."]}]}
@@ -2571,6 +2603,7 @@
 {"word": "carmen", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "carnation", "ko": [{"pos": "unknown", "ko": ["(식물) 카네이션."]}]}
 {"word": "carnet", "ko": [{"pos": "unknown", "ko": ["카르네 ((자동차가 유럽 각국의 국경을 통과할 때의 무관세 허가증)); (버스·지하철 등의) 회수권; 캠프장 사용 허가서; [항공] 국제 항공 연맹이 비행기의 승무원에게 발행하는 카드"]}]}
+{"word": "carnival", "ko": [{"pos": "명사", "ko": ["카니발, 축제 (사육제)."], "own": true}]}
 {"word": "carnivore", "ko": [{"pos": "unknown", "ko": ["육식 동물"]}]}
 {"word": "carol", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "caroline", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
@@ -2745,6 +2778,7 @@
 {"word": "chameleon", "ko": [{"pos": "unknown", "ko": ["카멜레온."]}]}
 {"word": "chamois", "ko": [{"pos": "unknown", "ko": ["(동물) 알프스에 서식하는 영양."]}]}
 {"word": "champagne", "ko": [{"pos": "unknown", "ko": ["샴페인."]}]}
+{"word": "champion", "ko": [{"pos": "명사", "ko": ["챔피언, 우승자; 옹호자."], "own": true}, {"pos": "동사", "ko": ["옹호하다."], "own": true}]}
 {"word": "championship", "ko": [{"pos": "unknown", "ko": ["운동 경기의 선수권, 우승"]}]}
 {"word": "chance", "ko": [{"pos": "명사", "ko": ["기회, 호기, 계기.", "우연."]}]}
 {"word": "change", "ko": [{"pos": "동사", "ko": ["(자) 바뀌다, 변화하다, 변하다. 변이하다", "(타) 바꾸다, 변화시키다, 변경하다, 고치다."]}, {"pos": "명사", "ko": ["변화, 변천; 변경."]}]}
@@ -2868,6 +2902,7 @@
 {"word": "chlorite", "ko": [{"pos": "명사", "ko": ["(불가산) 녹니석(綠泥石)"]}]}
 {"word": "chocolate", "ko": [{"pos": "unknown", "ko": ["(색깔) 초콜릿색."]}]}
 {"word": "choice", "ko": [{"pos": "unknown", "ko": ["고르기, 선택, 선정.", "선발된 것."]}]}
+{"word": "choke", "ko": [{"pos": "동사", "ko": ["숨이 막히다, 질식시키다; (감정이) 목이 메다."], "own": true}]}
 {"word": "chokecherry", "ko": [{"pos": "unknown", "ko": ["<식물> 산벚나무의 일종 <북미산>;그 떫은 열매"]}]}
 {"word": "cholera", "ko": [{"pos": "unknown", "ko": ["(질병) 콜레라."]}]}
 {"word": "choleric", "ko": [{"pos": "unknown", "ko": ["화를 잘 내는, 성마른, 담즙질의."]}]}
@@ -2914,6 +2949,7 @@
 {"word": "cinder", "ko": [{"pos": "unknown", "ko": ["(목재나 석탄 따위의) 타고 남은 것."]}]}
 {"word": "cindy", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "cinema", "ko": [{"pos": "unknown", "ko": ["영화."]}]}
+{"word": "cinereous", "ko": [{"pos": "형용사", "ko": ["재 빛깔의, 회색의."], "own": true}]}
 {"word": "cinnamon", "ko": [{"pos": "unknown", "ko": ["계피."]}]}
 {"word": "cintamani", "ko": [{"pos": "unknown", "ko": ["여의주."]}]}
 {"word": "circa", "ko": [{"pos": "unknown", "ko": ["대략, 약."]}]}
@@ -2952,11 +2988,13 @@
 {"word": "claire", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "clamp", "ko": [{"pos": "동사", "ko": ["(죔쇠 등으로) 죄다; (불법 주차한 차바퀴에) 죔쇠를 채워 움직이지 못하게 하다;(…에게) 강제로 시키다, 부담시키다"]}]}
 {"word": "clandestine", "ko": [{"pos": "형용사", "ko": ["남몰래 하는, 비밀스럽게."]}]}
+{"word": "clang", "ko": [{"pos": "명사", "ko": ["쨍그랑 (쇠붙이가 부딪는 소리)."], "own": true}, {"pos": "동사", "ko": ["쨍그랑 울리다."], "own": true}]}
 {"word": "clap", "ko": [{"pos": "동사", "ko": ["박수[손뼉]를 치다, 박수하다."]}]}
 {"word": "clarence", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "claret", "ko": [{"pos": "unknown", "ko": ["프랑스 보르도 지방에서 나는 단맛없는 적 포도주. 또는 이와 비슷한 포도주.", "1.의 포도주 색깔."]}]}
 {"word": "clarification", "ko": [{"pos": "명사", "ko": ["해명"]}]}
 {"word": "clarion", "ko": [{"pos": "형용사", "ko": ["클라리온의. (비유) 맑고 높은 소리가 나는."]}]}
+{"word": "clash", "ko": [{"pos": "동사", "ko": ["충돌하다, 부딪치다; (소리가) 쨍 울리다."], "own": true}, {"pos": "명사", "ko": ["충돌, 대립."], "own": true}]}
 {"word": "class", "ko": [{"pos": "동사", "ko": ["(어떤 무리를) 나누다, 분류하다."]}]}
 {"word": "classic", "ko": [{"pos": "명사", "ko": ["(일반적) 고전. 또는 고전 작품.", "[the Classic] 메소아메리카 문명의 고전기"]}]}
 {"word": "classical", "ko": [{"pos": "unknown", "ko": ["(문학, 예술) 고전적."]}]}
@@ -3337,6 +3375,7 @@
 {"word": "conflict", "ko": [{"pos": "동사", "ko": ["갈등하다, 대결하다, 충돌하다.", "(진술이 서로 달라) 상충하다"]}, {"pos": "명사", "ko": ["갈등, 대결, 충돌. 분쟁"]}]}
 {"word": "conform", "ko": [{"pos": "동사", "ko": ["따르다, 순응하다.", "일치하다, 들어 맞다."]}, {"pos": "동사", "ko": ["일치시키다."]}]}
 {"word": "conformity", "ko": [{"pos": "unknown", "ko": ["일치, 적합."]}]}
+{"word": "confound", "ko": [{"pos": "동사", "ko": ["당황하게 하다, 혼란시키다; (계획을) 좌절시키다."], "own": true}]}
 {"word": "confront", "ko": [{"pos": "동사", "ko": ["직면하다."]}]}
 {"word": "confrontation", "ko": [{"pos": "unknown", "ko": ["대치, 대립"]}]}
 {"word": "confrontational", "ko": [{"pos": "unknown", "ko": ["대립을 일삼는"]}]}
@@ -3371,6 +3410,7 @@
 {"word": "connote", "ko": [{"pos": "동사", "ko": ["단어가 (어떤 의미를) 함축하다"]}]}
 {"word": "conquer", "ko": [{"pos": "unknown", "ko": ["정복하다."]}]}
 {"word": "conqueror", "ko": [{"pos": "unknown", "ko": ["정복자."]}]}
+{"word": "conquest", "ko": [{"pos": "명사", "ko": ["정복; 정복한 것."], "own": true}]}
 {"word": "conscience", "ko": [{"pos": "unknown", "ko": ["양심.", "의식."]}]}
 {"word": "conscientious", "ko": [{"pos": "unknown", "ko": ["양심적인, 세심한."]}]}
 {"word": "conscientiously", "ko": [{"pos": "unknown", "ko": ["양심적으로."]}]}
@@ -3379,6 +3419,7 @@
 {"word": "consciousness", "ko": [{"pos": "unknown", "ko": ["알아차리는 것, 의식, 자각."]}]}
 {"word": "conscript", "ko": [{"pos": "형용사", "ko": ["징집된."]}, {"pos": "동사", "ko": ["징병하다, 징용하다."]}]}
 {"word": "conscription", "ko": [{"pos": "unknown", "ko": ["징병.", "징용."]}]}
+{"word": "consecrate", "ko": [{"pos": "동사", "ko": ["(신에게) 바치다, 신성하게 하다."], "own": true}]}
 {"word": "consecutive", "ko": [{"pos": "형용사", "ko": ["(주로 명사 앞에 씀) 연이은"]}]}
 {"word": "consecutively", "ko": [{"pos": "unknown", "ko": ["연속하여"]}]}
 {"word": "consense", "ko": [{"pos": "명사", "ko": ["의견의 일치, 합의."]}]}
@@ -3413,6 +3454,8 @@
 {"word": "conspire", "ko": [{"pos": "unknown", "ko": ["공모하다, 음모를 꾸미다; (…와) 기맥을 통하다"]}]}
 {"word": "constance", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "constancy", "ko": [{"pos": "명사", "ko": ["불변성"]}]}
+{"word": "constant", "ko": [{"pos": "형용사", "ko": ["끊임없는; 변함없는."], "own": true}]}
+{"word": "constantly", "ko": [{"pos": "부사", "ko": ["끊임없이, 변함없이."], "own": true}]}
 {"word": "constellation", "ko": [{"pos": "unknown", "ko": ["별자리."]}]}
 {"word": "constipation", "ko": [{"pos": "unknown", "ko": ["변비"]}]}
 {"word": "constituency", "ko": [{"pos": "unknown", "ko": ["(특정 인물・상품 등의) 지지층(고객층)"]}]}
@@ -3597,6 +3640,7 @@
 {"word": "corrupt", "ko": [{"pos": "동사", "ko": ["해치다, 훼손하다.", "부정하다.", "타락시키다."]}, {"pos": "형용사", "ko": ["부정한, 부패한, 뇌물이 통하는, 오직(汚職)의"]}]}
 {"word": "corruption", "ko": [{"pos": "명사", "ko": ["부정부패, 매수.", "(언어의) 순수성 상실, 전와(轉訛)."]}]}
 {"word": "corsage", "ko": [{"pos": "unknown", "ko": ["코르사주."]}]}
+{"word": "corse", "ko": [{"pos": "명사", "ko": ["(고어·시어) 시체."], "own": true}]}
 {"word": "coruscate", "ko": [{"pos": "unknown", "ko": ["반짝반짝 빛나다."]}]}
 {"word": "cory", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "cos", "ko": [{"pos": "unknown", "ko": ["[[> cosine ]] 수학 용어."]}]}
@@ -3619,7 +3663,7 @@
 {"word": "could", "ko": [{"pos": "동사", "ko": ["가능성이 있음을 나타낼 때 씀", "[허가·부탁을 나타내는 의문문에서] …하여 주시겠습니까, …하여도 괜찮겠습니까"]}]}
 {"word": "could have sworn", "ko": [{"pos": "동사", "ko": ["맹세컨대, 장담컨대, 확언컨대, 확실히 말해서"]}]}
 {"word": "couldn't", "ko": [{"pos": "unknown", "ko": ["«could»와 «not»을 붙여 줄여 쓴 말."]}]}
-{"word": "couldst", "ko": [{"pos": "고어", "ko": ["could의 2인칭 단수형"], "own": true}]}
+{"word": "couldst", "ko": [{"pos": "고어", "ko": ["could의 2인칭 단수형"], "own": true, "exact": true}]}
 {"word": "counselor", "ko": [{"pos": "명사", "ko": ["상담원, 카운슬러"]}]}
 {"word": "count", "ko": [{"pos": "동사", "ko": ["세다, 셈하다, 계산하다.", "포함되다, 무리에 들어가다, 가치가 있다."]}, {"pos": "명사", "ko": ["셈, 계산, 집계."]}]}
 {"word": "countable", "ko": [{"pos": "unknown", "ko": ["셀 수 있는."]}]}
@@ -3644,6 +3688,7 @@
 {"word": "court of first instance", "ko": [{"pos": "명사", "ko": ["제1심 법원"]}]}
 {"word": "courtesy", "ko": [{"pos": "명사", "ko": ["(불가산) 공손함, 정중함. 공손한 태도. 예의.", "(가산) 공손한 몸짓. 공손한 표시."]}]}
 {"word": "courtney", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
+{"word": "courtship", "ko": [{"pos": "명사", "ko": ["구애, 연애 기간."], "own": true}]}
 {"word": "cousin", "ko": [{"pos": "unknown", "ko": ["남자 사촌. (부록: 영어 가족과 친척)"]}]}
 {"word": "covenant", "ko": [{"pos": "동사", "ko": ["(자동사) (…와) 계약하다; (...와) 서약하다."]}]}
 {"word": "cover", "ko": [{"pos": "동사", "ko": ["덮다, 씌우다.", "덮어서 가리다, 감추다.", "보호하다, 방어하다, 엄호하다."]}, {"pos": "명사", "ko": ["덮개, 뚜껑.", "(책의) 겉, 표지. 포장, 포장지.", "은신처, 엄호."]}]}
@@ -3664,6 +3709,7 @@
 {"word": "crack down", "ko": [{"pos": "unknown", "ko": ["(무력이나 공권력을 사용하여) 통제하다, 단속하다, 탄압하다."]}]}
 {"word": "crackdown", "ko": [{"pos": "unknown", "ko": ["(무력이나 공권력을 사용한) 통제, 단속, 탄압."]}]}
 {"word": "cracking", "ko": [{"pos": "명사", "ko": ["한국어."]}]}
+{"word": "crackle", "ko": [{"pos": "동사", "ko": ["탁탁 소리 나다."], "own": true}, {"pos": "명사", "ko": ["탁탁 하는 소리."], "own": true}]}
 {"word": "cracow", "ko": [{"pos": "명사", "ko": ["크라쿠프(폴란드의 도시)."]}]}
 {"word": "cradle", "ko": [{"pos": "명사", "ko": ["요람; (비유적) 요람"]}]}
 {"word": "craft", "ko": [{"pos": "명사", "ko": ["기술, 기능, 공예.", "직업", "조합"]}]}
@@ -3913,6 +3959,7 @@
 {"word": "damp", "ko": [{"pos": "형용사", "ko": ["습한"]}, {"pos": "명사", "ko": ["습기"]}]}
 {"word": "dampen", "ko": [{"pos": "동사", "ko": ["꺾다; 기세나 흐름을 막다", "적시다"]}]}
 {"word": "dampness", "ko": [{"pos": "unknown", "ko": ["습기."]}]}
+{"word": "damson", "ko": [{"pos": "명사", "ko": ["다임슨 (작은 자두의 일종)."], "own": true}]}
 {"word": "dan", "ko": [{"pos": "unknown", "ko": ["(태권도, 유도 등의) 단(段).", "검은띠보유자."]}]}
 {"word": "dance", "ko": [{"pos": "동사", "ko": ["춤추다."]}]}
 {"word": "dance-off", "ko": [{"pos": "명사", "ko": ["춤 대결, 춤 겨루기"]}]}
@@ -3981,6 +4028,7 @@
 {"word": "deafness", "ko": [{"pos": "unknown", "ko": ["귀가 먹음. (비유) 귀를 기울이지 않음."]}]}
 {"word": "deal", "ko": [{"pos": "명사", "ko": ["흥정, 협상, 거래."]}, {"pos": "동사", "ko": ["흥정하다, 거래하다.", "(…에 대하여) 행동하다, 대우하다, 대하다"]}]}
 {"word": "dear", "ko": [{"pos": "unknown", "ko": ["사랑하는, 사랑스러운, 귀여운.", "(편지) 친애하는."]}]}
+{"word": "dearth", "ko": [{"pos": "명사", "ko": ["부족, 결핍."], "own": true}]}
 {"word": "death", "ko": [{"pos": "unknown", "ko": ["죽음, 사망."]}]}
 {"word": "death mask", "ko": [{"pos": "unknown", "ko": ["데스마스크."]}]}
 {"word": "debase", "ko": [{"pos": "unknown", "ko": ["(가치・품위를) 저하시키다[떨어뜨리다]"]}]}
@@ -4015,6 +4063,7 @@
 {"word": "decent", "ko": [{"pos": "unknown", "ko": ["사람들이나 행동이 품위 있는, 예의 바른"]}]}
 {"word": "deception", "ko": [{"pos": "unknown", "ko": ["속임;사기"]}]}
 {"word": "deceptive", "ko": [{"pos": "unknown", "ko": ["기만적인, 현혹하는"]}]}
+{"word": "decide", "ko": [{"pos": "동사", "ko": ["결정하다, 결심하다."], "own": true}]}
 {"word": "deciduous", "ko": [{"pos": "unknown", "ko": ["떨어지는.", "(식물학) 낙엽성의.", "(비유) 덧 없는, 낙엽과도 같은."]}]}
 {"word": "decimal fraction", "ko": [{"pos": "unknown", "ko": ["소수."]}]}
 {"word": "decimal number", "ko": [{"pos": "unknown", "ko": ["십진수."]}]}
@@ -4046,6 +4095,7 @@
 {"word": "deductible", "ko": [{"pos": "명사", "ko": ["공제 조항(이 있는 보험 증권); 공제 금액", "본인부담금"]}]}
 {"word": "deduction", "ko": [{"pos": "명사", "ko": ["추정, 추론.", "(논리) 연역, 연역법.", "(불가산/가산) 공제, 공제액"]}]}
 {"word": "dee", "ko": [{"pos": "명사", "ko": ["라틴 문자 D의 이름."]}]}
+{"word": "deed", "ko": [{"pos": "명사", "ko": ["행위, 행동; 업적.", "(법률) 증서."], "own": true}]}
 {"word": "deek", "ko": [{"pos": "unknown", "ko": ["(조디 방언) 보다."]}]}
 {"word": "deem", "ko": [{"pos": "동사", "ko": ["[보통 진행형으로는 쓰이지 않음] (격식) (…로) 여기다, 생각하다, 간주하다."]}]}
 {"word": "deep", "ko": [{"pos": "형용사", "ko": ["깊은, 깊숙한", "(비유) 몰두한", "(정도가) 심한"]}, {"pos": "명사", "ko": ["(수준이나 정도의) 깊이, 심오함"]}]}
@@ -4100,6 +4150,7 @@
 {"word": "dehydrate", "ko": [{"pos": "unknown", "ko": ["탈수하다"]}]}
 {"word": "deism", "ko": [{"pos": "unknown", "ko": ["(종교) 신을 믿음; 이신론"]}]}
 {"word": "deity", "ko": [{"pos": "명사", "ko": ["신(神). ̣"]}]}
+{"word": "dejected", "ko": [{"pos": "형용사", "ko": ["낙담한, 풀이 죽은."], "own": true}]}
 {"word": "delay", "ko": [{"pos": "명사", "ko": ["미룸, 연기, 지체."]}, {"pos": "동사", "ko": ["미루다, 연기하다, 지체하다, 늦다."]}]}
 {"word": "delectable", "ko": [{"pos": "형용사", "ko": ["맛있는"]}]}
 {"word": "delegate", "ko": [{"pos": "동사", "ko": ["(타동사) 대표로 파견하다.", "(타동사) (권한, 업무를) 위임하다."]}, {"pos": "명사", "ko": ["대표, 사절, 파견 위원, 대리인.", "(미국 주 의회) 의원."]}]}
@@ -4118,9 +4169,13 @@
 {"word": "delighted", "ko": [{"pos": "unknown", "ko": ["기뻐하는, 기쁜, 즐거운."]}]}
 {"word": "delineation", "ko": [{"pos": "명사", "ko": ["획정"]}]}
 {"word": "delinquent", "ko": [{"pos": "형용사", "ko": ["의무를 게을리하는, 태만한.", "(요금, 세금) 연체된, 체납된."]}, {"pos": "명사", "ko": ["범죄자"]}]}
+{"word": "delirium", "ko": [{"pos": "명사", "ko": ["(열병 등으로 인한) 헛소리, 정신 착란; 극도의 흥분."], "own": true}]}
 {"word": "deliver", "ko": [{"pos": "동사", "ko": ["㉶ 자유의 몸이 되다, 해방되다; ㉹ 놓아주다, 해방하다, 해방시키다, 석방하다, (억눌림에서) 구조하다.", "출산에 관련하여", "출산에 관련하여"]}]}
 {"word": "deliverable", "ko": [{"pos": "unknown", "ko": ["[주로 복수로] (회사가 고객에게 약속한) 상품[제품]"]}]}
+{"word": "deliverance", "ko": [{"pos": "명사", "ko": ["구출, 해방, 구원."], "own": true}]}
+{"word": "deliverer", "ko": [{"pos": "명사", "ko": ["구원자, 구출한 사람."], "own": true}]}
 {"word": "delivery", "ko": [{"pos": "unknown", "ko": ["넘겨줌, 인도.", "(증명서, 서류) 교부, 발행.", "(상품) 출하, 납품."]}]}
+{"word": "dell", "ko": [{"pos": "명사", "ko": ["(나무가 우거진) 작은 골짜기."], "own": true}]}
 {"word": "della", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "delta", "ko": [{"pos": "unknown", "ko": ["그리스어 알파벳 'Δ / δ'의 이름. (부록: 그리스어 알파벳)"]}]}
 {"word": "delude", "ko": [{"pos": "동사", "ko": ["속이다, 현혹하다"]}]}
@@ -4233,6 +4288,7 @@
 {"word": "desist", "ko": [{"pos": "unknown", "ko": ["~ (격식) (…을) 그만두다"]}]}
 {"word": "desk", "ko": [{"pos": "명사", "ko": ["책상.", "(공항, 호텔 등의) 계산대, 접수처."]}]}
 {"word": "desman", "ko": [{"pos": "명사", "ko": ["데스만."]}]}
+{"word": "desolate", "ko": [{"pos": "형용사", "ko": ["황량한, 쓸쓸한; 외로운."], "own": true}, {"pos": "동사", "ko": ["황폐하게 하다."], "own": true}]}
 {"word": "despair", "ko": [{"pos": "동사", "ko": ["절망하다.", "단념하다, 체념하다."]}]}
 {"word": "desperate", "ko": [{"pos": "unknown", "ko": ["자포자기의, 발악하는, 절망적인, 가망이 없는", "[주로 명사 앞에 씀] 필사적인, 모든 것을 건", "(상황이) 극심한, 심한, 대단히 위험 한"]}]}
 {"word": "desperation", "ko": [{"pos": "명사", "ko": ["절망"]}]}
@@ -4297,6 +4353,7 @@
 {"word": "dexterous", "ko": [{"pos": "unknown", "ko": ["솜씨, 손재주가 있는, 교묘한, 능란한."]}]}
 {"word": "diabetes", "ko": [{"pos": "명사", "ko": ["당뇨병"]}]}
 {"word": "diabolic", "ko": [{"pos": "unknown", "ko": ["악마의. (비유) 사악한"]}]}
+{"word": "diadem", "ko": [{"pos": "명사", "ko": ["왕관; 왕위의 표지."], "own": true}]}
 {"word": "diagnosis", "ko": [{"pos": "unknown", "ko": ["(질병의) 진단, 진찰.", "무엇의 사전 분석, 예상."]}]}
 {"word": "diagnostic", "ko": [{"pos": "명사", "ko": ["질병의 진단, 진찰. 명사로 쓰일 때에는 대개 복수형을 쓴다."]}]}
 {"word": "diagram", "ko": [{"pos": "unknown", "ko": ["도표"]}]}
@@ -4323,7 +4380,7 @@
 {"word": "didactic", "ko": [{"pos": "unknown", "ko": ["교육적인. 교훈적인"]}]}
 {"word": "diddle", "ko": [{"pos": "동사", "ko": ["속이다, 등치다, 사기하다"]}]}
 {"word": "didn't", "ko": [{"pos": "unknown", "ko": ["«did not»을 붙여서 줄여 쓴 말."]}]}
-{"word": "didst", "ko": [{"pos": "고어", "ko": ["did의 2인칭 단수형. thou didst = 너는 ~했다"], "own": true}]}
+{"word": "didst", "ko": [{"pos": "고어", "ko": ["did의 2인칭 단수형. thou didst = 너는 ~했다"], "own": true, "exact": true}]}
 {"word": "die", "ko": [{"pos": "동사", "ko": ["(자동사) 죽다."]}, {"pos": "명사", "ko": ["주사위."]}]}
 {"word": "diesel engine", "ko": [{"pos": "unknown", "ko": ["디젤엔진."]}]}
 {"word": "diet", "ko": [{"pos": "명사", "ko": ["음식물, 식품.", "식이요법 (다이어트)."]}, {"pos": "동사", "ko": ["식이요법을 시키다."]}]}
@@ -4335,6 +4392,7 @@
 {"word": "difficulty", "ko": [{"pos": "unknown", "ko": ["어려움, 곤란.", "(복수로서) 경제적 곤란, 곤궁, 궁핍."]}]}
 {"word": "diffident", "ko": [{"pos": "형용사", "ko": ["자신 없는, 소심한, 수줍은."]}]}
 {"word": "diffraction", "ko": [{"pos": "unknown", "ko": ["회절."]}]}
+{"word": "diffuse", "ko": [{"pos": "동사", "ko": ["퍼뜨리다, 확산시키다."], "own": true}, {"pos": "형용사", "ko": ["널리 퍼진."], "own": true}]}
 {"word": "diffusion", "ko": [{"pos": "unknown", "ko": ["확산."]}]}
 {"word": "dig", "ko": [{"pos": "동사", "ko": ["파다, 채굴하다."]}, {"pos": "동사", "ko": ["파다."]}]}
 {"word": "digest", "ko": [{"pos": "unknown", "ko": ["(음식을) 소화하다[소화시키다]; 소화되다"]}]}
@@ -4530,6 +4588,7 @@
 {"word": "disturb", "ko": [{"pos": "unknown", "ko": ["방해하다."]}]}
 {"word": "disturbing", "ko": [{"pos": "unknown", "ko": ["불안하게 하는;불온한, 교란시키는;방해가 되는"]}]}
 {"word": "ditch", "ko": [{"pos": "동사", "ko": ["도랑을 파다.", "(열차) 탈선시키다", "팽개치다, 벗어버리다"]}]}
+{"word": "ditty", "ko": [{"pos": "명사", "ko": ["짧고 단순한 노래."], "own": true}]}
 {"word": "dive", "ko": [{"pos": "동사", "ko": ["뛰어들다, 뛰어내리다.", "(수영) 다이빙하다.", "잠수하다."]}, {"pos": "명사", "ko": ["뛰어 듦."]}]}
 {"word": "diver", "ko": [{"pos": "unknown", "ko": ["다이버, 잠수부."]}]}
 {"word": "diverge", "ko": [{"pos": "unknown", "ko": ["(길·선 등이) 분기(分岐)하다, 갈라지다"]}]}
@@ -4615,10 +4674,10 @@
 {"word": "dorsal", "ko": [{"pos": "unknown", "ko": ["(해부·동물) 등 (부분) 의;등 모양의"]}]}
 {"word": "dose", "ko": [{"pos": "명사", "ko": ["(의학) 복용량."]}, {"pos": "동사", "ko": ["(의학) 복용량을 관리하다."]}]}
 {"word": "dosimeter", "ko": [{"pos": "unknown", "ko": ["선량계."]}]}
-{"word": "dost", "ko": [{"pos": "고어", "ko": ["do의 2인칭 단수형. thou dost = 너는 ~한다"], "own": true}]}
+{"word": "dost", "ko": [{"pos": "고어", "ko": ["do의 2인칭 단수형. thou dost = 너는 ~한다"], "own": true, "exact": true}]}
 {"word": "dot", "ko": [{"pos": "동사", "ko": ["점을 찍다."]}]}
 {"word": "dotage", "ko": [{"pos": "명사", "ko": ["망령, 맹목적 애정"]}]}
-{"word": "doth", "ko": [{"pos": "고어", "ko": ["does의 옛 형태. 그는 ~한다"], "own": true}]}
+{"word": "doth", "ko": [{"pos": "고어", "ko": ["does의 옛 형태. 그는 ~한다"], "own": true, "exact": true}]}
 {"word": "dotted", "ko": [{"pos": "unknown", "ko": ["점의, 점선의."]}]}
 {"word": "double", "ko": [{"pos": "부사", "ko": ["두 배로, 이중으로."]}, {"pos": "명사", "ko": ["두 배, 갑절, 이중.", "(스포츠, 복수형으로) 복식.", "혼동할 정도로 닮은 사람."]}, {"pos": "동사", "ko": ["두 배로 받다, 배로 늘리다.", "겹치다, 겹으로 하다, 이중으로 하다."]}, {"pos": "동사", "ko": ["두 배가 되다, 배로 늘다.", "겸용하다."]}]}
 {"word": "double-click", "ko": [{"pos": "unknown", "ko": ["더블클릭."]}]}
@@ -4630,6 +4689,7 @@
 {"word": "doujinshi", "ko": [{"pos": "unknown", "ko": ["동인지."]}]}
 {"word": "dove", "ko": [{"pos": "명사", "ko": ["(조류) 비둘기."]}]}
 {"word": "dowager", "ko": [{"pos": "unknown", "ko": ["(죽은 남편의 작위(爵位)나 재산을 승계받은) 귀족 미망인, 과부."]}]}
+{"word": "dower", "ko": [{"pos": "명사", "ko": ["(고어) 지참금; 타고난 재능."], "own": true}]}
 {"word": "down", "ko": [{"pos": "전치사", "ko": ["...의 아래에.", "...의 아래로, 밑으로."]}, {"pos": "부사", "ko": ["아래쪽에, 밑쪽에, 하강적인.", "무엇을 죽 따라서.", "(돈이 얼마가) 없어져[줄어]"]}]}
 {"word": "down payment", "ko": [{"pos": "unknown", "ko": ["(할부금의) 착수금, 계약금"]}]}
 {"word": "down quark", "ko": [{"pos": "unknown", "ko": ["다운쿼크."]}]}
@@ -4675,6 +4735,7 @@
 {"word": "dreadful", "ko": [{"pos": "형용사", "ko": ["끔찍한, 지독한."]}]}
 {"word": "dreadfully", "ko": [{"pos": "unknown", "ko": ["무섭게.", "심하게.", "매우 많이."]}]}
 {"word": "dream", "ko": [{"pos": "명사", "ko": ["꿈."]}, {"pos": "동사", "ko": ["(자동사, 타동사) 꿈꾸다."]}]}
+{"word": "drear", "ko": [{"pos": "형용사", "ko": ["(시어) 쓸쓸한, 음산한 (dreary)."], "own": true}]}
 {"word": "dreary", "ko": [{"pos": "unknown", "ko": ["황량한."]}]}
 {"word": "drench", "ko": [{"pos": "unknown", "ko": ["[흔히 수동태로] ~ somebody/something 흠뻑 적시다"]}]}
 {"word": "dress", "ko": [{"pos": "동사", "ko": ["옷을 입히다.", "장식하다.", "손질하다, 매만지다"]}, {"pos": "동사", "ko": ["옷을 입다."]}, {"pos": "명사", "ko": ["옷, 의복.", "정장, 예복."]}]}
@@ -4695,9 +4756,11 @@
 {"word": "drone", "ko": [{"pos": "명사", "ko": ["숫벌, 수벌", "드론"]}]}
 {"word": "drool", "ko": [{"pos": "동사", "ko": ["침을 흘리다."]}]}
 {"word": "drooling", "ko": [{"pos": "unknown", "ko": ["침흘림"]}]}
+{"word": "droop", "ko": [{"pos": "동사", "ko": ["축 늘어지다, 시들다; 기운이 없다."], "own": true}]}
 {"word": "drop", "ko": [{"pos": "동사", "ko": ["물이 떨어지다, 듣다.", "떨어뜨리다, 낙하시키다.", "(물체가) 떨어지다."]}]}
 {"word": "droplet", "ko": [{"pos": "명사", "ko": ["작은 물방울."]}]}
 {"word": "drought", "ko": [{"pos": "unknown", "ko": ["가뭄."]}]}
+{"word": "drown", "ko": [{"pos": "동사", "ko": ["물에 빠져 죽다, 익사시키다; (소리를) 묻어 버리다."], "own": true}]}
 {"word": "drug", "ko": [{"pos": "동사", "ko": ["(독)약을 섞다, 타다."]}]}
 {"word": "drug trafficking", "ko": [{"pos": "명사", "ko": ["마약 밀매."]}]}
 {"word": "drugstore", "ko": [{"pos": "unknown", "ko": ["의사의 처방 없이 살 수 있는 약, 화장품, 잡지 따위를 파는 상점."]}]}
@@ -4753,6 +4816,7 @@
 {"word": "durex", "ko": [{"pos": "명사", "ko": ["콘돔제품(영국).", "접착테이프제품(오스트레일리아)."]}]}
 {"word": "during", "ko": [{"pos": "unknown", "ko": ["(시간) 동안에, 사이에."]}]}
 {"word": "dusk", "ko": [{"pos": "unknown", "ko": ["어스름, 황혼."]}]}
+{"word": "dusky", "ko": [{"pos": "형용사", "ko": ["어스레한, 거무스름한."], "own": true}]}
 {"word": "dust", "ko": [{"pos": "동사", "ko": ["(먼지를) 떨다.", "(먼지를) 덮어 쓰다.", "먼지를 떨듯이 사라지다."]}]}
 {"word": "dustin", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "dustpan", "ko": [{"pos": "unknown", "ko": ["쓰레받이."]}]}
@@ -4782,8 +4846,8 @@
 {"word": "dzo", "ko": [{"pos": "unknown", "ko": ["조."]}]}
 {"word": "e", "ko": [{"pos": "unknown", "ko": ["라틴어(로마자) 알파벳의 다섯째 소문자."]}]}
 {"word": "e pluribus unum", "ko": [{"pos": "unknown", "ko": ["여럿에서 하나. 여럿이 모여 하나가 되자는 통일과 협동의 정신을 강조한 말. 1956까지 미국의 비공식 표어였으나 그 이후 «In God We Trust»로 바뀌었다."]}]}
-{"word": "e'en", "ko": [{"pos": "시어", "ko": ["even의 줄임말. ~조차, 바로"], "own": true}]}
-{"word": "e'er", "ko": [{"pos": "시어", "ko": ["ever의 줄임말. 언제나, 한 번이라도"], "own": true}]}
+{"word": "e'en", "ko": [{"pos": "시어", "ko": ["even의 줄임말. ~조차, 바로"], "own": true, "exact": true}]}
+{"word": "e'er", "ko": [{"pos": "시어", "ko": ["ever의 줄임말. 언제나, 한 번이라도"], "own": true, "exact": true}]}
 {"word": "e-learning", "ko": [{"pos": "unknown", "ko": ["인터넷, TV 방송 따위와 같은 전자 통신 매체를 통하여 배우는 일."]}]}
 {"word": "e-mail", "ko": [{"pos": "unknown", "ko": ["전자 우편, 이메일."]}]}
 {"word": "ea", "ko": [{"pos": "명사", "ko": ["각각.", "개수를 세는 단위. 주로 송장(送狀) 등에 쓰인다."]}]}
@@ -4933,6 +4997,7 @@
 {"word": "elegance", "ko": [{"pos": "unknown", "ko": ["우아."]}]}
 {"word": "elegant", "ko": [{"pos": "형용사", "ko": ["우아하다, 멋지다, 근사하다."]}]}
 {"word": "elegantly", "ko": [{"pos": "unknown", "ko": ["우아하게, 고상하게."]}]}
+{"word": "elegy", "ko": [{"pos": "명사", "ko": ["비가(悲歌), 애가; 조시(弔詩)."], "own": true}]}
 {"word": "element", "ko": [{"pos": "unknown", "ko": ["요소, 분자, 성분", "(화학) 원소.", "무엇의 바탕이 되는 것, 초보."]}]}
 {"word": "elementary", "ko": [{"pos": "unknown", "ko": ["기본이 되는, 기초의, 초보의."]}]}
 {"word": "elementary school", "ko": [{"pos": "unknown", "ko": ["미국 교육제도의 초등교육기관 (한국의 초등학교에 해당)."]}]}
@@ -5010,6 +5075,7 @@
 {"word": "empty vessels make the most sound", "ko": [{"pos": "unknown", "ko": ["빈 수레가 요란하다"]}]}
 {"word": "emu", "ko": [{"pos": "명사", "ko": ["에뮤."]}]}
 {"word": "enact", "ko": [{"pos": "unknown", "ko": ["[흔히 수동태로] (법률) (법을) 제정하다"]}]}
+{"word": "enanguished", "ko": [{"pos": "형용사", "ko": ["고뇌에 찬."], "own": true}]}
 {"word": "enantiodromia", "ko": [{"pos": "명사", "ko": ["[명사] (심리학)칼 융의 언급에 따르면 '한 힘의 과잉이 필연적으로 물리적 균형과 마찬가지로 반대편의 힘를 만들어내는 원리'."]}]}
 {"word": "encamp", "ko": [{"pos": "unknown", "ko": ["야영하다[시키다]"]}]}
 {"word": "encampment", "ko": [{"pos": "unknown", "ko": ["야영(함)", "야영지, 진지;[집합적] 야영자"]}]}
@@ -5115,6 +5181,7 @@
 {"word": "entropy", "ko": [{"pos": "unknown", "ko": ["엔트로피."]}]}
 {"word": "entrust", "ko": [{"pos": "동사", "ko": ["~ A | ~ B with A (일을) 맡기다"]}]}
 {"word": "entry", "ko": [{"pos": "명사", "ko": ["(불가산) 들어감. 입장", "(불가산) 참가, 출전, 응모.", "입구."]}]}
+{"word": "entwine", "ko": [{"pos": "동사", "ko": ["엮다, 휘감다, 서로 얽히게 하다."], "own": true}]}
 {"word": "enumerate", "ko": [{"pos": "동사", "ko": ["(타동사) 하나하나 세다, 열거하다."]}]}
 {"word": "enunciate", "ko": [{"pos": "동사", "ko": ["또렷이 발음하다, 의견을 발표하다."]}]}
 {"word": "envelope", "ko": [{"pos": "unknown", "ko": ["봉투, 편지봉투."]}]}
@@ -5131,6 +5198,7 @@
 {"word": "epicene", "ko": [{"pos": "unknown", "ko": ["양성"]}]}
 {"word": "epicycle", "ko": [{"pos": "unknown", "ko": ["(천문학)주전원(周轉圓), 큰 원의 둘레에 중심이 놓여 있는 원, 프톨레마이오스 천문학에서 행성의 공전을 나타내는 데 쓰임", "(수학)주전원:다른 원의 바깥쪽 또는 안쪽을 도는 원."]}]}
 {"word": "epidemic", "ko": [{"pos": "명사", "ko": [". 유행 [전염] 병; (사상 등의) 보급, 유행"]}]}
+{"word": "epigrammatist", "ko": [{"pos": "명사", "ko": ["경구(짧은 풍자시) 작가."], "own": true}]}
 {"word": "episcopal", "ko": [{"pos": "형용사", "ko": ["(종교) 주교의"]}]}
 {"word": "episode", "ko": [{"pos": "unknown", "ko": ["에피소드."]}]}
 {"word": "epistemologically", "ko": [{"pos": "부사", "ko": ["인식론적으로"]}]}
@@ -5159,7 +5227,7 @@
 {"word": "erase", "ko": [{"pos": "동사", "ko": ["지워서 없애다, 삭제하다, 제거하다"]}]}
 {"word": "eraser", "ko": [{"pos": "unknown", "ko": ["지우개. 지우는 사람 또는 그런 기계."]}]}
 {"word": "erbium", "ko": [{"pos": "unknown", "ko": ["(명사) 에르븀. 원자번호 68번. 희토류원소."]}]}
-{"word": "ere", "ko": [{"pos": "고어·시어", "ko": ["~하기 전에, ~보다 앞서"], "own": true}]}
+{"word": "ere", "ko": [{"pos": "고어·시어", "ko": ["~하기 전에, ~보다 앞서"], "own": true, "exact": true}]}
 {"word": "erect", "ko": [{"pos": "동사", "ko": ["세우다, 건설하다, (성기) 발기하다."]}]}
 {"word": "ergative", "ko": [{"pos": "unknown", "ko": ["능격(能格)의 (자・타동사로 다 쓰이면서 타동사일 때의 목적어와 자동사일 때의 주어가 같은 동사)"]}]}
 {"word": "ergonomic", "ko": [{"pos": "unknown", "ko": ["인체공학의."]}]}
@@ -5261,7 +5329,7 @@
 {"word": "evening", "ko": [{"pos": "동사", "ko": ["편편하게 하다, 고르다. (비유) 균형을 잡다."]}]}
 {"word": "evenings", "ko": [{"pos": "unknown", "ko": ["저녁에."]}]}
 {"word": "event", "ko": [{"pos": "unknown", "ko": ["사건, 일어난 일, 행사."]}]}
-{"word": "eventide", "ko": [{"pos": "시어", "ko": ["저녁, 해질녘"], "own": true}]}
+{"word": "eventide", "ko": [{"pos": "시어", "ko": ["저녁, 해질녘"], "own": true, "exact": true}]}
 {"word": "eventual", "ko": [{"pos": "형용사", "ko": ["사건과 관계된", "최후의, 궁극적인, 피할 수 없는"]}]}
 {"word": "eventually", "ko": [{"pos": "unknown", "ko": ["최후에는, 마침내, 결국."]}]}
 {"word": "ever", "ko": [{"pos": "unknown", "ko": ["지금까지, 여지껏.", "예전에, 언젠가.", "(부정문에서) 전혀."]}]}
@@ -5498,10 +5566,11 @@
 {"word": "factual", "ko": [{"pos": "unknown", "ko": ["사실에 기반을 둔, 사실을 담은"]}]}
 {"word": "faculty", "ko": [{"pos": "명사", "ko": ["능력, 재능", "(대학의) 학부."]}]}
 {"word": "fad", "ko": [{"pos": "명사", "ko": ["일시적 유행"]}]}
+{"word": "fade", "ko": [{"pos": "동사", "ko": ["(색·빛이) 바래다, 희미해지다; 시들다, 서서히 사라지다."], "own": true}]}
 {"word": "faeces", "ko": [{"pos": "unknown", "ko": ["배설물, 찌꺼기."]}]}
 {"word": "fail", "ko": [{"pos": "동사", "ko": ["(…하지) 못하다[않다], 게을리하다;[not과 함께] 꼭 …하다"]}, {"pos": "동사", "ko": ["(구어) (시험에서) (교사가) (학생을) 낙제시키다, (학생에게) 낙제점을 매기다."]}]}
 {"word": "failure", "ko": [{"pos": "명사", "ko": ["실패", "낙제, 낙방", "도산"]}]}
-{"word": "fain", "ko": [{"pos": "고어", "ko": ["기꺼이, 즐거이"], "own": true}]}
+{"word": "fain", "ko": [{"pos": "고어", "ko": ["기꺼이, 즐거이"], "own": true, "exact": true}]}
 {"word": "faint", "ko": [{"pos": "unknown", "ko": ["실신하다."]}]}
 {"word": "fair", "ko": [{"pos": "명사", "ko": ["시장, (서민) 축제.", "전시회, 전람회."]}]}
 {"word": "fair to middling", "ko": [{"pos": "형용사", "ko": ["특별히 좋지도 나쁘지도 않은 상태인"]}]}
@@ -5545,12 +5614,14 @@
 {"word": "faraway", "ko": [{"pos": "unknown", "ko": ["먼."]}]}
 {"word": "fardel", "ko": [{"pos": "unknown", "ko": ["꾸러미."]}]}
 {"word": "fare", "ko": [{"pos": "명사", "ko": ["운임"]}]}
+{"word": "farewell", "ko": [{"pos": "감탄사", "ko": ["안녕히 가세요."], "own": true}, {"pos": "명사", "ko": ["작별, 작별 인사."], "own": true}]}
 {"word": "farm", "ko": [{"pos": "동사", "ko": ["농사짓다, 경작하다, 농장일을 하다."]}]}
 {"word": "farmer", "ko": [{"pos": "unknown", "ko": ["농부, 농장 주인."]}]}
 {"word": "farmstead", "ko": [{"pos": "unknown", "ko": ["(건물을 포함한) 농장."]}]}
 {"word": "farmyard", "ko": [{"pos": "unknown", "ko": ["농가의 정원."]}]}
 {"word": "fart", "ko": [{"pos": "명사", "ko": ["방귀의 속어."]}, {"pos": "동사", "ko": ["방귀를 뀌다."]}]}
 {"word": "farthel", "ko": [{"pos": "unknown", "ko": ["꾸러미."]}]}
+{"word": "farthing", "ko": [{"pos": "명사", "ko": ["파딩 (옛 영국의 최소 단위 동전, 1/4 페니); 아주 적은 돈."], "own": true}]}
 {"word": "fascinate", "ko": [{"pos": "동사", "ko": ["매혹시키다, 뇌쇄하다."]}]}
 {"word": "fascinating", "ko": [{"pos": "unknown", "ko": ["매력적인."]}]}
 {"word": "fascination", "ko": [{"pos": "unknown", "ko": ["매력.", "매혹."]}]}
@@ -5602,10 +5673,12 @@
 {"word": "fed", "ko": [{"pos": "동사", "ko": ["'feed'의 과거 및 과거분사."]}]}
 {"word": "federal", "ko": [{"pos": "unknown", "ko": ["연방제의."]}]}
 {"word": "federative", "ko": [{"pos": "unknown", "ko": ["연합의.", "연방의."]}]}
+{"word": "fee", "ko": [{"pos": "명사", "ko": ["요금, 수수료."], "own": true}]}
 {"word": "feeble", "ko": [{"pos": "unknown", "ko": ["허약한, 약한.", "희미한."]}]}
 {"word": "feed", "ko": [{"pos": "동사", "ko": ["(타) 먹이다, 양육하다.", "(자) (동물이) 먹이를먹다.", "(타) (가족 등을) 먹여 살리다. 부양하다."]}]}
 {"word": "feeder", "ko": [{"pos": "unknown", "ko": ["[형용사나 명사와 함께 쓰여] …을[…하게] 먹는 동물[식물]"]}]}
 {"word": "feel", "ko": [{"pos": "동사", "ko": ["느끼다.", "감지하다, 느껴 알다."]}, {"pos": "동사", "ko": ["(사람이) …한 느낌[기분]이 들다.", "더듬다."]}, {"pos": "명사", "ko": ["감촉.", "(사물이나 장소 등이 주는) 느낌, 분위기."]}]}
+{"word": "feel'st", "ko": [{"pos": "고어", "ko": ["feel의 2인칭 단수형. thou feel'st = 너는 느낀다"], "own": true, "exact": true}]}
 {"word": "feeling", "ko": [{"pos": "명사", "ko": ["느낌, 감각.", "촉감, 감촉.", "감정, 기분"]}, {"pos": "형용사", "ko": ["느낌이 있는, 감정적인, 다정한."]}]}
 {"word": "feldspar", "ko": [{"pos": "unknown", "ko": ["장석"]}]}
 {"word": "felicitate", "ko": [{"pos": "unknown", "ko": ["축하하다."]}]}
@@ -5701,9 +5774,11 @@
 {"word": "fingertip", "ko": [{"pos": "unknown", "ko": ["손가락 끝."]}]}
 {"word": "finish", "ko": [{"pos": "동사", "ko": ["끝내다, 끝마치다, 종결하다."]}, {"pos": "동사", "ko": ["끝나다."]}, {"pos": "명사", "ko": ["끝, 마무리, 종결.", "(스포츠) 결승점."]}]}
 {"word": "finished", "ko": [{"pos": "unknown", "ko": ["(일·제품 등을) 끝마친, 완료한, 완성된"]}]}
+{"word": "finite", "ko": [{"pos": "형용사", "ko": ["한정된, 유한한."], "own": true}]}
 {"word": "finland", "ko": [{"pos": "명사", "ko": ["나라 이름 '핀란드'."]}]}
 {"word": "finnish", "ko": [{"pos": "명사", "ko": ["핀란드어"]}]}
 {"word": "fir", "ko": [{"pos": "unknown", "ko": ["전나무."]}]}
+{"word": "fir'd", "ko": [{"pos": "시어", "ko": ["fired의 줄임말. 불을 붙였다, 격앙시켰다"], "own": true, "exact": true}]}
 {"word": "fire", "ko": [{"pos": "명사", "ko": ["불. 또는 화재."]}, {"pos": "동사", "ko": ["불을 놓다, 켜다.", "해고하다.", "발사하다."]}]}
 {"word": "fire hydrant", "ko": [{"pos": "unknown", "ko": ["소화전."]}]}
 {"word": "fire insurance", "ko": [{"pos": "unknown", "ko": ["화재보험."]}]}
@@ -5759,7 +5834,9 @@
 {"word": "fledgling", "ko": [{"pos": "unknown", "ko": ["미숙한, 경험이 없는."]}]}
 {"word": "flee", "ko": [{"pos": "동사", "ko": ["(자) 달아나다, 도망가다.", "(타) 도망치다, 피하다.; (나라 등을) 저버리다."]}]}
 {"word": "fleecily", "ko": [{"pos": "부사", "ko": ["푹신푹신하게"]}]}
+{"word": "fleeting", "ko": [{"pos": "형용사", "ko": ["(덧없이) 빨리 지나가는, 순식간의."], "own": true}]}
 {"word": "fleetingly", "ko": [{"pos": "unknown", "ko": ["순식간에."]}]}
+{"word": "flesh", "ko": [{"pos": "명사", "ko": ["살, 육체; 과육."], "own": true}]}
 {"word": "flesh-footed shearwater", "ko": [{"pos": "unknown", "ko": ["붉은발슴새."]}]}
 {"word": "flexible", "ko": [{"pos": "unknown", "ko": ["유연한, 융통성이 있는."]}]}
 {"word": "flexor digitorum communis", "ko": [{"pos": "명사", "ko": ["가락굽힘근, 손가락굽힘근, 발가락굽힘근, 지굴근 등으로 번역되는 4개의 근육", "손과 발에 있는 깊은손가락굽힘근, 얕은손가락굽힘근, 짧은발가락굽힘근, 긴발가락굽힘근의 4개 근육"]}]}
@@ -5774,6 +5851,7 @@
 {"word": "float", "ko": [{"pos": "동사", "ko": ["(물 위에) 뜨다, 떠오르다"]}, {"pos": "동사", "ko": ["(경제) <통화를> 변동 환율제로 하다."]}]}
 {"word": "floccinaucinihilipilification", "ko": [{"pos": "unknown", "ko": ["재물에 대해 무가치하게 생각함,경시함"]}]}
 {"word": "floccinaucinihilipilificationism", "ko": [{"pos": "unknown", "ko": ["가치없는 일로 평가하다."]}]}
+{"word": "flock", "ko": [{"pos": "명사", "ko": ["(양·새의) 떼, 무리."], "own": true}, {"pos": "동사", "ko": ["떼 지어 모이다."], "own": true}]}
 {"word": "flood", "ko": [{"pos": "unknown", "ko": ["홍수."]}]}
 {"word": "floor", "ko": [{"pos": "unknown", "ko": ["마루, 복도.", "건물의 층."]}]}
 {"word": "floppy disk", "ko": [{"pos": "unknown", "ko": ["(컴퓨터) 플로피디스크"]}]}
@@ -5799,6 +5877,7 @@
 {"word": "flush", "ko": [{"pos": "동사", "ko": ["(얼굴) 붉히다, 흥분시키다.", "한꺼번에 쏟다, 붓다."]}, {"pos": "동사", "ko": ["붉어지다, 붉게 물들다."]}]}
 {"word": "fluster", "ko": [{"pos": "동사", "ko": ["혼란하게 하다, 흥분시키다."]}]}
 {"word": "flute", "ko": [{"pos": "동사", "ko": ["플루트를 연주하다."]}]}
+{"word": "flutter", "ko": [{"pos": "동사", "ko": ["펄럭이다, 퍼덕이다, 팔랑거리다."], "own": true}]}
 {"word": "fluvial", "ko": [{"pos": "unknown", "ko": ["(지리) 강의."]}]}
 {"word": "fly", "ko": [{"pos": "동사", "ko": ["날다, 비행하다.", "(비유) 도망치다."]}, {"pos": "동사", "ko": ["날리다."]}, {"pos": "명사", "ko": ["비행.", "파리."]}]}
 {"word": "fly agaric", "ko": [{"pos": "unknown", "ko": ["파리버섯."]}]}
@@ -5806,6 +5885,7 @@
 {"word": "foal", "ko": [{"pos": "명사", "ko": ["망아지."]}, {"pos": "동사", "ko": ["망아지를 낳다."]}]}
 {"word": "foam", "ko": [{"pos": "unknown", "ko": ["거품."]}]}
 {"word": "focus", "ko": [{"pos": "동사", "ko": ["집중하다."]}, {"pos": "명사", "ko": ["초점, 집중, 요점."]}]}
+{"word": "foe", "ko": [{"pos": "명사", "ko": ["적, 원수."], "own": true}]}
 {"word": "fog", "ko": [{"pos": "unknown", "ko": ["안개."]}]}
 {"word": "foggily", "ko": [{"pos": "부사", "ko": ["자욱하게."]}]}
 {"word": "foist", "ko": [{"pos": "unknown", "ko": ["떠맡기다."]}]}
@@ -5898,8 +5978,9 @@
 {"word": "formulation", "ko": [{"pos": "unknown", "ko": ["말이나 글로 조리 있게 표현함. 또는 그와 같은 문장이나 말."]}]}
 {"word": "fornicate", "ko": [{"pos": "동사", "ko": ["간통하다."]}]}
 {"word": "forsake", "ko": [{"pos": "동사", "ko": ["버리다, 저버리다, 등지다.", "단념하다, (습관 따위를) 끊다."]}]}
-{"word": "forsooth", "ko": [{"pos": "고어", "ko": ["참으로, 정말로"], "own": true}]}
+{"word": "forsooth", "ko": [{"pos": "고어", "ko": ["참으로, 정말로"], "own": true, "exact": true}]}
 {"word": "forsythia", "ko": [{"pos": "명사", "ko": ["(식물) 개나리, 또는 개나리꽃."]}]}
+{"word": "forth", "ko": [{"pos": "부사", "ko": ["앞으로, 밖으로; (시간) 이후로."], "own": true}]}
 {"word": "forthwith", "ko": [{"pos": "부사", "ko": ["(격식) 곧, 당장"]}]}
 {"word": "fortieth", "ko": [{"pos": "unknown", "ko": ["(서수사) 마흔째. (부록: 영어 수사)"]}]}
 {"word": "fortification", "ko": [{"pos": "unknown", "ko": ["요새.", "강화."]}]}
@@ -5934,7 +6015,9 @@
 {"word": "fraction", "ko": [{"pos": "unknown", "ko": ["부분, 일부"]}]}
 {"word": "fracture", "ko": [{"pos": "동사", "ko": ["부수다, 골절시키다."]}, {"pos": "동사", "ko": ["부러지다, 깨지다."]}]}
 {"word": "fragile", "ko": [{"pos": "unknown", "ko": ["깨지기 쉬운, 불안정한.", "(체질적으로) 약한."]}]}
+{"word": "fragment", "ko": [{"pos": "명사", "ko": ["조각, 파편; (글의) 단편."], "own": true}]}
 {"word": "fragrant", "ko": [{"pos": "unknown", "ko": ["향기로운, 방향성의."]}]}
+{"word": "frail", "ko": [{"pos": "형용사", "ko": ["허약한, 연약한; 덧없는."], "own": true}]}
 {"word": "frame", "ko": [{"pos": "동사", "ko": ["뼈대를 만들다."]}]}
 {"word": "france", "ko": [{"pos": "고유명사", "ko": ["나라 이름 '프랑스'."]}]}
 {"word": "frances", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
@@ -5953,6 +6036,7 @@
 {"word": "fraudulent gambling", "ko": [{"pos": "unknown", "ko": ["사기도박."]}]}
 {"word": "fraudulently", "ko": [{"pos": "부사", "ko": ["부정하게, 사기적으로"]}]}
 {"word": "fraught", "ko": [{"pos": "unknown", "ko": ["with something (좋지 않은 것들[이]) 투성이의[가득한]"]}]}
+{"word": "fray", "ko": [{"pos": "동사", "ko": ["(천·밧줄 끝이) 닳아 해지다; (신경이) 곤두서다."], "own": true}]}
 {"word": "freaking", "ko": [{"pos": "unknown", "ko": ["겁나게."]}]}
 {"word": "freckle", "ko": [{"pos": "unknown", "ko": ["주근깨."]}]}
 {"word": "fred", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
@@ -5997,6 +6081,7 @@
 {"word": "fritz", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "frivolity", "ko": [{"pos": "명사", "ko": ["진지하지 못하고 우스꽝스러운 것, 또는 그런 행동."]}]}
 {"word": "frivolous", "ko": [{"pos": "형용사", "ko": ["경솔한", "(소문, 잡담, 유행 따위에서) 가볍고 가치가 거의 없는."]}]}
+{"word": "fro", "ko": [{"pos": "부사", "ko": ["(to and fro) 이리저리, 왔다 갔다."], "own": true}]}
 {"word": "frog", "ko": [{"pos": "unknown", "ko": ["(양서류 동물) 개구리."]}]}
 {"word": "from", "ko": [{"pos": "unknown", "ko": ["(출처・기원) … 출신의[에서 나온]", "...에서, 에서부터.", "...으로부터."]}]}
 {"word": "front", "ko": [{"pos": "형용사", "ko": ["앞의, 정면의, 전방의."]}]}
@@ -6034,11 +6119,13 @@
 {"word": "fulfil", "ko": [{"pos": "동사", "ko": ["fulfill의 영국식 표기. (의무/역할 등을) 완수하다, 달성하다, 다하다, 실행하다, 실현시키다."]}]}
 {"word": "fulfill", "ko": [{"pos": "동사", "ko": ["(의무 등을) 수행하다; 끝내다; (명령·조건·계획·약속 등을) 완수하다, 지키다"]}]}
 {"word": "fulfillment", "ko": [{"pos": "unknown", "ko": ["(의무·직무 등의) 이행, 수행, 완수; 실천; 실현, 달성; (예언의) 성취"]}]}
+{"word": "fulfilment", "ko": [{"pos": "명사", "ko": ["(꿈·약속의) 이행, 달성; 성취감."], "own": true}]}
 {"word": "full", "ko": [{"pos": "unknown", "ko": ["가득하다, 꽉차다.", "완전한. 소리·음 등이 큰, 풍부한, 빛이 강렬한, 색이 짙은.", "배부른, 양이 찬;(가슴이) 벅찬, 흐뭇한"]}]}
 {"word": "full moon", "ko": [{"pos": "unknown", "ko": ["보름달, 만월."]}]}
 {"word": "full up", "ko": [{"pos": "unknown", "ko": ["많이, 가득."]}]}
 {"word": "full-fledged", "ko": [{"pos": "unknown", "ko": ["깃털이 다 난;완전히 성장한, 자격을 제대로 갖춘"]}]}
 {"word": "fullness", "ko": [{"pos": "unknown", "ko": ["충분, 완전, 만족.", "(색깔이나 소리의) 풍부함."]}]}
+{"word": "fully", "ko": [{"pos": "부사", "ko": ["충분히, 완전히."], "own": true}]}
 {"word": "fulminate", "ko": [{"pos": "동사", "ko": ["괴성과 함께 폭발하다.", "천둥, 번개가 치다."]}, {"pos": "명사", "ko": ["(화학) 뇌홍: 폭발성이 높은 질산수은 화합물."]}]}
 {"word": "fumble", "ko": [{"pos": "동사", "ko": ["(스포츠) 공을 놓치다. 헛발질을 하다."]}]}
 {"word": "fun", "ko": [{"pos": "명사", "ko": ["재미"]}]}
@@ -6094,6 +6181,7 @@
 {"word": "gale", "ko": [{"pos": "명사", "ko": ["강풍."]}]}
 {"word": "galicia", "ko": [{"pos": "명사", "ko": ["갈리시아(에스파냐의 지방이름).", "갈리치아(우크라이나와 폴란드의 역사적 지방이름)."]}]}
 {"word": "gall", "ko": [{"pos": "명사", "ko": ["영어권 국가의 성의 하나."]}]}
+{"word": "gallant", "ko": [{"pos": "형용사", "ko": ["(고어) 용감한, 씩씩한; (여성에게) 정중한."], "own": true}, {"pos": "명사", "ko": ["멋쟁이 신사."], "own": true}]}
 {"word": "gallery", "ko": [{"pos": "unknown", "ko": ["그림 전시실, 화랑, 갤러리."]}]}
 {"word": "gallium", "ko": [{"pos": "명사", "ko": ["화학 원소 이름 '갈륨'."]}]}
 {"word": "galvanise", "ko": [{"pos": "동사", "ko": ["자극하다.", "아연도금을 하다."]}]}
@@ -6206,6 +6294,7 @@
 {"word": "gerald", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "geranium", "ko": [{"pos": "unknown", "ko": ["(식물) 제라늄."]}]}
 {"word": "geriatric", "ko": [{"pos": "unknown", "ko": ["노인의학의."]}]}
+{"word": "germ", "ko": [{"pos": "명사", "ko": ["세균; (생각·계획의) 싹, 시초."], "own": true}]}
 {"word": "german", "ko": [{"pos": "형용사", "ko": ["게르만의, 독일의."]}, {"pos": "명사", "ko": ["독일인.", "독일어."]}]}
 {"word": "german cockroach", "ko": [{"pos": "명사", "ko": ["독일바퀴벌레."]}]}
 {"word": "german democratic republic", "ko": [{"pos": "unknown", "ko": ["1949 - 1990년까지 존재하였던 이른바 '동독'의 공식 영어 번역 이름 '독일 민주 공화국'."]}]}
@@ -6243,6 +6332,7 @@
 {"word": "ghostwriter", "ko": [{"pos": "unknown", "ko": ["돈을 받고 글을 대신 써 주는 사람."]}]}
 {"word": "gianna", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "giant", "ko": [{"pos": "형용사", "ko": ["아주 크다, 거대한, 특대의."]}]}
+{"word": "gibbon", "ko": [{"pos": "명사", "ko": ["긴팔원숭이."], "own": true}]}
 {"word": "gif", "ko": [{"pos": "abbrev", "ko": ["256 색을 바탕으로 만든 그래픽 파일 형태. JPEG에 비해 그림의 질이 떨어지는 반면, 애니메이션 그래픽이 가능하다."]}]}
 {"word": "gift", "ko": [{"pos": "unknown", "ko": ["선물, 선사품, 경품. (법률) 증여"]}]}
 {"word": "gigantic", "ko": [{"pos": "unknown", "ko": ["매우 큰, 거대한."]}]}
@@ -6290,11 +6380,14 @@
 {"word": "glasgow kiss", "ko": [{"pos": "명사", "ko": ["(영국) 박치기."]}]}
 {"word": "glass", "ko": [{"pos": "동사", "ko": ["유리를 끼우다.", "(유리에) 비치다, 반사하다."]}]}
 {"word": "glasses", "ko": [{"pos": "unknown", "ko": ["'glass'의 복수형.", "(복수형으로 쓰며) 안경."]}]}
+{"word": "glassy", "ko": [{"pos": "형용사", "ko": ["유리 같은; (물결 없이) 잔잔한; 생기 없는."], "own": true}]}
 {"word": "glaze", "ko": [{"pos": "동사", "ko": ["유리창에 유리를 끼우다.", "유약이나 광약을 발라 윤을 내다."]}, {"pos": "동사", "ko": ["윤이 나다."]}]}
 {"word": "gleam", "ko": [{"pos": "unknown", "ko": ["빛나다.", "빛남."]}]}
 {"word": "gleaming", "ko": [{"pos": "unknown", "ko": ["반짝이는."]}]}
 {"word": "glenda", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "glenn", "ko": [{"pos": "고유명사", "ko": ["남자 이름."]}]}
+{"word": "glide", "ko": [{"pos": "동사", "ko": ["미끄러지듯 움직이다, 활공하다."], "own": true}]}
+{"word": "glimmer", "ko": [{"pos": "동사", "ko": ["희미하게 빛나다."], "own": true}, {"pos": "명사", "ko": ["희미한 빛."], "own": true}]}
 {"word": "glitter", "ko": [{"pos": "unknown", "ko": ["빛나다."]}]}
 {"word": "gloat", "ko": [{"pos": "동사", "ko": ["만족스럽게 바라보다.", "(남의 불행에) 은근히 흡족해 하다."]}]}
 {"word": "glob", "ko": [{"pos": "unknown", "ko": ["(액체, 페인트 같은 물질의) 방울."]}]}
@@ -6305,6 +6398,7 @@
 {"word": "globalize", "ko": [{"pos": "동사", "ko": ["(경제, 통신) 세계화하다."]}]}
 {"word": "globe", "ko": [{"pos": "unknown", "ko": ["공처럼 둥근 것, 구, 공.", "지구. 또는 공처럼 생긴 것으로 상상한 천체"]}]}
 {"word": "globule", "ko": [{"pos": "unknown", "ko": ["(액체나 용액의) 작은 방울, 소구체, 구상체"]}]}
+{"word": "gloom", "ko": [{"pos": "명사", "ko": ["어둠, 침침함; 우울, 침울."], "own": true}]}
 {"word": "gloomy", "ko": [{"pos": "unknown", "ko": ["우울한, 울적한."]}]}
 {"word": "gloria", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "glorify", "ko": [{"pos": "동사", "ko": ["찬미하다, 숭상하다.", "(부정적 뜻) 부풀려 미화하다, 지나치게 찬미하다."]}]}
@@ -6312,6 +6406,7 @@
 {"word": "glory", "ko": [{"pos": "동사", "ko": ["기뻐하다"]}]}
 {"word": "gloss", "ko": [{"pos": "명사", "ko": ["광택(光澤)."]}, {"pos": "명사", "ko": ["주석(註釋)."]}]}
 {"word": "glove", "ko": [{"pos": "동사", "ko": ["장갑을 끼다."]}]}
+{"word": "glow", "ko": [{"pos": "동사", "ko": ["(은은하게) 빛나다, 타오르다; (얼굴이) 달아오르다."], "own": true}, {"pos": "명사", "ko": ["(은은한) 빛; 홍조."], "own": true}]}
 {"word": "glowworm", "ko": [{"pos": "unknown", "ko": ["(곤충) 개똥벌레, 반딧불이."]}]}
 {"word": "glue", "ko": [{"pos": "unknown", "ko": ["(붙이는데 사용되는) 풀."]}]}
 {"word": "gluttonous", "ko": [{"pos": "형용사", "ko": ["과식하는, 많이 먹는, 게걸스러운"]}]}
@@ -6587,7 +6682,7 @@
 {"word": "hacker", "ko": [{"pos": "unknown", "ko": ["해커."]}]}
 {"word": "hackneyed", "ko": [{"pos": "unknown", "ko": ["진부한, 평범한."]}]}
 {"word": "hadn't", "ko": [{"pos": "unknown", "ko": ["«had»와 «not»을 붙여 줄여 쓴 말."]}]}
-{"word": "hadst", "ko": [{"pos": "고어", "ko": ["had의 2인칭 단수형"], "own": true}]}
+{"word": "hadst", "ko": [{"pos": "고어", "ko": ["had의 2인칭 단수형"], "own": true, "exact": true}]}
 {"word": "haematology", "ko": [{"pos": "unknown", "ko": ["혈액학."]}]}
 {"word": "hafnium", "ko": [{"pos": "unknown", "ko": ["하프늄."]}]}
 {"word": "hafta", "ko": [{"pos": "unknown", "ko": ["~해야 한다."]}]}
@@ -6609,6 +6704,7 @@
 {"word": "half-line", "ko": [{"pos": "unknown", "ko": ["반선."]}]}
 {"word": "half-sister", "ko": [{"pos": "명사", "ko": ["half sister의 다른 표기"]}]}
 {"word": "hall", "ko": [{"pos": "unknown", "ko": ["손님 접대 또는 전시를 위한 방, 홀."]}]}
+{"word": "hallow", "ko": [{"pos": "동사", "ko": ["신성하게 하다, 성스럽게 여기다."], "own": true}]}
 {"word": "hallucination", "ko": [{"pos": "명사", "ko": ["환각."]}]}
 {"word": "halo", "ko": [{"pos": "명사", "ko": ["후광, 원모양의 빛"]}]}
 {"word": "halogen", "ko": [{"pos": "unknown", "ko": ["할로젠."]}]}
@@ -6687,7 +6783,7 @@
 {"word": "hardy", "ko": [{"pos": "unknown", "ko": ["튼튼한, 억센, 대담한."]}]}
 {"word": "hare", "ko": [{"pos": "unknown", "ko": ["산토끼, 토끼."]}]}
 {"word": "harebrained", "ko": [{"pos": "unknown", "ko": ["경솔한, 무모한."]}]}
-{"word": "hark", "ko": [{"pos": "고어", "ko": ["들어라, 귀 기울여라"], "own": true}]}
+{"word": "hark", "ko": [{"pos": "고어", "ko": ["들어라, 귀 기울여라"], "own": true, "exact": true}]}
 {"word": "harlot", "ko": [{"pos": "unknown", "ko": ["몸 파는 여자를 낮잡는 말, 논다니."]}]}
 {"word": "harm", "ko": [{"pos": "명사", "ko": ["해, 위해, 손해."]}, {"pos": "동사", "ko": ["해하다."]}]}
 {"word": "harmful", "ko": [{"pos": "형용사", "ko": ["해로운."]}]}
@@ -6710,7 +6806,7 @@
 {"word": "harvest", "ko": [{"pos": "unknown", "ko": ["추수, 수확."]}]}
 {"word": "hasn't", "ko": [{"pos": "unknown", "ko": ["«has not»을 줄인 말."]}]}
 {"word": "hassium", "ko": [{"pos": "unknown", "ko": ["하슘."]}]}
-{"word": "hast", "ko": [{"pos": "고어", "ko": ["have의 2인칭 단수형. thou hast = 너는 가지고 있다"], "own": true}]}
+{"word": "hast", "ko": [{"pos": "고어", "ko": ["have의 2인칭 단수형. thou hast = 너는 가지고 있다"], "own": true, "exact": true}]}
 {"word": "haste", "ko": [{"pos": "명사", "ko": ["서두름."]}]}
 {"word": "haste makes waste", "ko": [{"pos": "unknown", "ko": ["서두르는 일은 낭패 본다. 한국어 속담: 급한 길은 에워가라"]}]}
 {"word": "hasten", "ko": [{"pos": "동사", "ko": ["서두르다."]}, {"pos": "동사", "ko": ["재촉하다."]}]}
@@ -6722,7 +6818,7 @@
 {"word": "hatching", "ko": [{"pos": "명사", "ko": ["음영, 명암; 음영(명암) 새겨넣기", "(알에서 새끼가) 부화"]}]}
 {"word": "hatchling", "ko": [{"pos": "명사", "ko": ["(새, 공룡, 드래곤, 악어, 거북이, 물고기, 곤충 등의 알에서 갓 부화한) 어린 새끼, 해츨링"]}]}
 {"word": "hate", "ko": [{"pos": "동사", "ko": ["싫어하다, 미워하다, 혐오하다, 증오하다."]}, {"pos": "명사", "ko": ["싫어함, 혐오, 증오."]}]}
-{"word": "hath", "ko": [{"pos": "고어", "ko": ["has의 옛 형태. 그는 가지고 있다"], "own": true}]}
+{"word": "hath", "ko": [{"pos": "고어", "ko": ["has의 옛 형태. 그는 가지고 있다"], "own": true, "exact": true}]}
 {"word": "hatless", "ko": [{"pos": "형용사", "ko": ["모자를 안 쓴."]}]}
 {"word": "hatred", "ko": [{"pos": "unknown", "ko": ["증오, 증오심."]}]}
 {"word": "haul", "ko": [{"pos": "동사", "ko": ["끌다."]}]}
@@ -6852,6 +6948,7 @@
 {"word": "hereinafter", "ko": [{"pos": "unknown", "ko": ["이하에서"]}]}
 {"word": "hereof", "ko": [{"pos": "unknown", "ko": ["(법률) 이것의, 이 문서의"]}]}
 {"word": "heresy", "ko": [{"pos": "unknown", "ko": ["한 종교에서 적대시하는 종교 집단이나 이론. 이단."]}]}
+{"word": "heretic", "ko": [{"pos": "명사", "ko": ["이단자."], "own": true}]}
 {"word": "heretical", "ko": [{"pos": "unknown", "ko": ["(종교) 이교도의, 이단의."]}]}
 {"word": "hereto", "ko": [{"pos": "unknown", "ko": ["(법률) 이것에, 여기에"]}]}
 {"word": "heretofore", "ko": [{"pos": "unknown", "ko": ["(격식) 지금까지는, 이전에는"]}]}
@@ -6923,11 +7020,12 @@
 {"word": "histrionic", "ko": [{"pos": "unknown", "ko": ["연기의, 연극과 같은. (비유) 꾸민 듯한."]}]}
 {"word": "hit", "ko": [{"pos": "동사", "ko": ["치다, 때리다.", "맞히다, 명중하다.", "타격을 주다."]}, {"pos": "명사", "ko": ["타격.", "(야구) 안타.", "대 인기인[인기 작품], 히트"]}]}
 {"word": "hit the something", "ko": [{"pos": "구", "ko": ["열심히 하다. 무언가를 몰입해서 한다는 뉘앙스가 강함", "벼락치기를 하다."]}]}
-{"word": "hither", "ko": [{"pos": "고어", "ko": ["이리로, 여기로"], "own": true}]}
+{"word": "hither", "ko": [{"pos": "고어", "ko": ["이리로, 여기로"], "own": true, "exact": true}]}
 {"word": "hitherto", "ko": [{"pos": "unknown", "ko": ["(격식) 지금까지; 그때까지"]}]}
 {"word": "hiv", "ko": [{"pos": "abbrev", "ko": ["인간 면역 결핍 바이러스."]}]}
 {"word": "hk", "ko": [{"pos": "명사", "ko": ["홍콩."]}]}
 {"word": "hm", "ko": [{"pos": "unknown", "ko": ["의심스럽거나, 탐탁하지 않을 때 내뱉는 감탄사. 음"]}]}
+{"word": "hoar", "ko": [{"pos": "형용사", "ko": ["(시어) 백발의, 흰 서리가 내린 (hoary)."], "own": true}]}
 {"word": "hoarfrost", "ko": [{"pos": "unknown", "ko": ["서리."]}]}
 {"word": "hoary", "ko": [{"pos": "unknown", "ko": ["머리가 흰, 백발의..", "(비유) 오래된, 고풍이 풍기는."]}]}
 {"word": "hoax", "ko": [{"pos": "명사", "ko": ["거짓말"]}]}
@@ -7016,6 +7114,7 @@
 {"word": "horoscope", "ko": [{"pos": "unknown", "ko": ["점성술."]}]}
 {"word": "horror", "ko": [{"pos": "unknown", "ko": ["공포, 전율, 소름끼침."]}]}
 {"word": "hors d'oeuvre", "ko": [{"pos": "명사", "ko": ["전채(前菜) 요리."]}]}
+{"word": "horse", "ko": [{"pos": "명사", "ko": ["말."], "own": true}]}
 {"word": "horsefly", "ko": [{"pos": "unknown", "ko": ["(곤충) 등에."]}]}
 {"word": "horseman", "ko": [{"pos": "unknown", "ko": ["기수(騎手)."]}]}
 {"word": "horsepower", "ko": [{"pos": "unknown", "ko": ["마력."]}]}
@@ -7068,11 +7167,13 @@
 {"word": "hub", "ko": [{"pos": "unknown", "ko": ["중심 공항"]}]}
 {"word": "hub of the universe", "ko": [{"pos": "명사", "ko": ["‘의 ’이라는 뜻으로, 의 도시인 을 이르는 말."]}]}
 {"word": "huddle", "ko": [{"pos": "동사", "ko": ["떼지어 모이다, 집결하다."]}, {"pos": "동사", "ko": ["마구 쌓다, 걸치다."]}, {"pos": "명사", "ko": ["뒤죽박죽, 소동.", "비밀 회의."]}]}
+{"word": "hue", "ko": [{"pos": "명사", "ko": ["색조, 빛깔."], "own": true}]}
 {"word": "hug", "ko": [{"pos": "동사", "ko": ["끌어안다, 포옹하다."]}, {"pos": "명사", "ko": ["끌어안음, 포옹."]}]}
 {"word": "huge", "ko": [{"pos": "unknown", "ko": ["몹시 크다, 거대하다. (비유) 대단하다, 엄청나다."]}]}
 {"word": "hugo", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "huh", "ko": [{"pos": "unknown", "ko": ["어리둥절할 때 하는 말. 어허, 어휴.", "놀라움이나 기쁨을 표시하는 말. 그래."]}]}
 {"word": "hull", "ko": [{"pos": "unknown", "ko": ["선체."]}]}
+{"word": "hum", "ko": [{"pos": "동사", "ko": ["웅웅거리다, 콧노래를 부르다."], "own": true}, {"pos": "명사", "ko": ["웅웅거리는 소리."], "own": true}]}
 {"word": "human", "ko": [{"pos": "형용사", "ko": ["사람의, 인간적인."]}, {"pos": "명사", "ko": ["인간 ('human being'의 줄인 말)."]}]}
 {"word": "human being", "ko": [{"pos": "unknown", "ko": ["사람, 인간."]}]}
 {"word": "human rights", "ko": [{"pos": "unknown", "ko": ["인권."]}]}
@@ -7113,12 +7214,14 @@
 {"word": "hurt", "ko": [{"pos": "명사", "ko": ["상처."]}, {"pos": "동사", "ko": ["아프다."]}, {"pos": "동사", "ko": ["상처를 입히다."]}]}
 {"word": "husband", "ko": [{"pos": "unknown", "ko": ["결혼한 여자의 배우자: 남편. (부록: 영어 가족과 친척)"]}]}
 {"word": "husbandry", "ko": [{"pos": "unknown", "ko": ["(낙농·양계 등을 포함하는) 농업, 경작;축산"]}]}
+{"word": "hush", "ko": [{"pos": "동사", "ko": ["조용히 시키다; 잠잠해지다."], "own": true}, {"pos": "명사", "ko": ["고요, 침묵."], "own": true}, {"pos": "감탄사", "ko": ["쉿."], "own": true}]}
 {"word": "husky", "ko": [{"pos": "unknown", "ko": ["쉰 목소리의.", "껍질의, (비유) 속이 없는.", "튼튼한."]}]}
 {"word": "hussy", "ko": [{"pos": "unknown", "ko": ["말괄량이."]}]}
 {"word": "huswife", "ko": [{"pos": "unknown", "ko": ["가정주부."]}]}
 {"word": "hut", "ko": [{"pos": "unknown", "ko": ["(통나무) 오두막, (캠프장의) 산장"]}]}
 {"word": "hyacinth", "ko": [{"pos": "unknown", "ko": ["히아신스."]}]}
 {"word": "hybrid", "ko": [{"pos": "형용사", "ko": ["잡종의."]}]}
+{"word": "hydra", "ko": [{"pos": "명사", "ko": ["(그리스 신화) 머리가 여럿 달린 뱀 히드라; 뿌리 뽑기 힘든 재앙."], "own": true}]}
 {"word": "hydrocarbon", "ko": [{"pos": "unknown", "ko": ["탄화수소."]}]}
 {"word": "hydrochloric acid", "ko": [{"pos": "명사", "ko": ["(화학) 염산"]}]}
 {"word": "hydrogen", "ko": [{"pos": "명사", "ko": ["화학 원소 이름 '수소'."]}]}
@@ -7145,6 +7248,9 @@
 {"word": "hysteria", "ko": [{"pos": "unknown", "ko": ["히스테리"]}]}
 {"word": "i", "ko": [{"pos": "unknown", "ko": ["라틴어(로마자) 알파벳의 아홉째 소문자."]}]}
 {"word": "i love you", "ko": [{"pos": "구", "ko": ["사랑해, 사랑합니다."]}]}
+{"word": "i'd", "ko": [{"pos": "줄임말", "ko": ["I would / I had의 줄임말."], "own": true}]}
+{"word": "i'll", "ko": [{"pos": "줄임말", "ko": ["I will의 줄임말. 나는 ~할 것이다."], "own": true}]}
+{"word": "i'm", "ko": [{"pos": "줄임말", "ko": ["I am의 줄임말. 나는 ~이다."], "own": true}]}
 {"word": "iaea", "ko": [{"pos": "abbrev", "ko": ["국제원자력기구."]}]}
 {"word": "ian", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "iana", "ko": [{"pos": "abbrev", "ko": ["인터넷의 IP 주소를 배부하고 관리하는 곳."]}]}
@@ -7238,7 +7344,9 @@
 {"word": "immolate", "ko": [{"pos": "동사", "ko": ["불태워 죽이다."]}]}
 {"word": "immoral", "ko": [{"pos": "unknown", "ko": ["부도덕한."]}]}
 {"word": "immortal", "ko": [{"pos": "unknown", "ko": ["죽지 않는, 불사의, 불멸의.", "무한의, 영원의, 초월적인, 신적인."]}]}
+{"word": "immortality", "ko": [{"pos": "명사", "ko": ["불멸, 영생."], "own": true}]}
 {"word": "immortalize", "ko": [{"pos": "unknown", "ko": ["불멸 [불후] 하게 하다, (…에게) 영원성을 부여하다."]}]}
+{"word": "immovably", "ko": [{"pos": "부사", "ko": ["꼼짝 않고, 확고하게."], "own": true}]}
 {"word": "immune", "ko": [{"pos": "명사", "ko": ["면역자, 면제자."]}]}
 {"word": "immunity", "ko": [{"pos": "명사", "ko": ["면역 (면역성); 면제, 면책 특권"]}]}
 {"word": "immunodeficiency", "ko": [{"pos": "unknown", "ko": ["(의학) 면역 결핍."]}]}
@@ -7259,6 +7367,7 @@
 {"word": "impel", "ko": [{"pos": "동사", "ko": ["재촉하다, 강요하다."]}]}
 {"word": "impending", "ko": [{"pos": "unknown", "ko": ["보통 불쾌한 일이 곧 닥칠, 임박한."]}]}
 {"word": "imperative", "ko": [{"pos": "형용사", "ko": ["절실한, 필요하다."]}]}
+{"word": "imperfect", "ko": [{"pos": "형용사", "ko": ["불완전한, 결함이 있는."], "own": true}]}
 {"word": "imperial", "ko": [{"pos": "unknown", "ko": ["제국의, 황제의."]}]}
 {"word": "imperialism", "ko": [{"pos": "unknown", "ko": ["(정치) 제국주의."]}]}
 {"word": "imperialist", "ko": [{"pos": "unknown", "ko": ["제국주의를 추종하는 사람. 제국주의자."]}]}
@@ -7694,6 +7803,7 @@
 {"word": "intermeddle", "ko": [{"pos": "unknown", "ko": ["간섭하다, 참견하다, 주제넘게 나서다"]}]}
 {"word": "intermittent", "ko": [{"pos": "unknown", "ko": ["간헐적인, 간간이 일어나는"]}]}
 {"word": "intermittently", "ko": [{"pos": "unknown", "ko": ["간헐적으로"]}]}
+{"word": "intermitting", "ko": [{"pos": "형용사", "ko": ["간헐적인, 끊겼다 이어지는."], "own": true}]}
 {"word": "intern", "ko": [{"pos": "명사", "ko": ["강제로든 자발적으로든 수용소에 갇힌 사람."]}, {"pos": "동사", "ko": ["(타동사) 재판 없이 누군가를 투옥하다.", "(타동사, 프로그래밍) 내면화하다."]}, {"pos": "형용사", "ko": ["(고어)"]}, {"pos": "명사", "ko": ["자신이 선택한 분야에서 경험을 쌓기 위해 일하는 학생 또는 최근 졸업생.", "의대 교육의 마지막 단계로 병원에서 일하는 의대생 또는 최근 졸업생."]}, {"pos": "동사", "ko": ["(자동사) 교육 과정을 이수하기 위한 목적으로, 보통 급여나 기타 법적 고용 권리가 거의 또는 전혀 없는 상태에서 인턴으로 일하다."]}]}
 {"word": "internal", "ko": [{"pos": "unknown", "ko": ["안의, 내부의."]}]}
 {"word": "internal medicine", "ko": [{"pos": "unknown", "ko": ["내과, 내과학."]}]}
@@ -7968,6 +8078,7 @@
 {"word": "josiah", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "journal", "ko": [{"pos": "unknown", "ko": ["언론."]}]}
 {"word": "journey", "ko": [{"pos": "unknown", "ko": ["여행."]}]}
+{"word": "jove", "ko": [{"pos": "명사", "ko": ["(로마 신화) 주피터, 신들의 왕."], "own": true}]}
 {"word": "jovian", "ko": [{"pos": "명사", "ko": ["요비아누스:로마의 황제(363-364)"]}]}
 {"word": "joy", "ko": [{"pos": "동사", "ko": ["기쁨을 느끼다."]}]}
 {"word": "joyce", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
@@ -8069,6 +8180,7 @@
 {"word": "kbit", "ko": [{"pos": "abbrev", "ko": ["킬로 바이트 (1,024 바이트)."]}]}
 {"word": "kbs", "ko": [{"pos": "abbrev", "ko": ["대한민국의 지상파 방송국 중 하나. (한국방송공사)", "일본의 지상파 방송국 중 하나. (교토 방송)", "켈로그 생물시험소."]}]}
 {"word": "keel", "ko": [{"pos": "동사", "ko": ["뒤집히다, 전복하다."]}]}
+{"word": "keen", "ko": [{"pos": "형용사", "ko": ["날카로운, 예리한; 열렬한; (바람이) 살을 에는."], "own": true}]}
 {"word": "keen on", "ko": [{"pos": "unknown", "ko": ["~에 열중해 있다.", "~을 좋아하다."]}]}
 {"word": "keep", "ko": [{"pos": "동사", "ko": ["«[V -ing] keep doing something » ~을 계속하다[반복하다]", "(타동사) 어떤 사물의 상태를 장악하다.", "(타동사) 어떤 사물의 상태를 장악하다."]}]}
 {"word": "keeper", "ko": [{"pos": "unknown", "ko": ["지키는 사람."]}]}
@@ -8256,7 +8368,9 @@
 {"word": "language", "ko": [{"pos": "명사", "ko": ["언어, 말", "용어. 술어. 전문어.", "표현. 말씨. 말투."]}]}
 {"word": "language barrier", "ko": [{"pos": "unknown", "ko": ["언어장벽."]}]}
 {"word": "language isolate", "ko": [{"pos": "명사", "ko": ["비교언어학적으로 친족 관계가 아직 밝혀지지 않은 언어. 고립된 언어."]}]}
+{"word": "languid", "ko": [{"pos": "형용사", "ko": ["나른한, 힘없는."], "own": true}]}
 {"word": "languish", "ko": [{"pos": "동사", "ko": ["기력을 잃다, 쇠약해지다.", "(식물) 시들다."]}]}
+{"word": "languor", "ko": [{"pos": "명사", "ko": ["나른함, 무기력."], "own": true}]}
 {"word": "langur", "ko": [{"pos": "unknown", "ko": ["랑구르."]}]}
 {"word": "lantern", "ko": [{"pos": "unknown", "ko": ["불을 밝히는 초롱, 랜턴."]}]}
 {"word": "lanthanum", "ko": [{"pos": "unknown", "ko": ["(원소) 란탄 (=란타늄). 원자 기호: La, 원자 번호: 57."]}]}
@@ -8353,6 +8467,7 @@
 {"word": "learn", "ko": [{"pos": "동사", "ko": ["배우다, 익히다, 학습하다, 공부하다.", "수강하다.", "교훈으로 하다."]}]}
 {"word": "learned", "ko": [{"pos": "unknown", "ko": ["학식이 있는.", "학문적인."]}]}
 {"word": "learning", "ko": [{"pos": "형용사", "ko": ["배우는, 학습의."]}]}
+{"word": "lease", "ko": [{"pos": "명사", "ko": ["임대차 계약; 임대 기간."], "own": true}, {"pos": "동사", "ko": ["임대하다."], "own": true}]}
 {"word": "leasehold", "ko": [{"pos": "명사", "ko": ["토지 임차권"]}]}
 {"word": "leash", "ko": [{"pos": "명사", "ko": ["(동물을 매는) 가죽끈. 밧줄."]}]}
 {"word": "least", "ko": [{"pos": "부사", "ko": ["최소한도로."]}]}
@@ -8393,6 +8508,7 @@
 {"word": "legume", "ko": [{"pos": "명사", "ko": ["(식물학) 식용으로 사용되는 콩과 식물(완두콩 또는 콩)의 열매나 씨앗.", "(식물학) 쌍떡잎식물의 허브, 관목, 열매가 콩과 또는 로멘트인 나무로 이루어진 대과(큰 과, large family)(Fabaceae, 동의어 Leguminosae(콩과)) 중 하나로, 뿌리에 질소 고정 박테리아가 포함된 결절이 있고 중요한 식량 및 마초 식물(완두콩, 콩 또는 클로버 등)이 포함된다.", "(식물학) 완두콩과 같이 두 조각으로 갈라지거나 뚜껑이 열리며 한 봉합 부위에 씨앗이 붙어 있는 꼬투리."]}]}
 {"word": "legwork", "ko": [{"pos": "명사", "ko": ["(비격식, 불가산) 발품을 많이 팔아야 하는 일, 업무; 탐문 수사."]}]}
 {"word": "leisure", "ko": [{"pos": "명사", "ko": ["여가, 한가함, 레저."]}, {"pos": "형용사", "ko": ["한가한."]}]}
+{"word": "leman", "ko": [{"pos": "명사", "ko": ["(고어) 애인, 정부(情婦)."], "own": true}]}
 {"word": "lemma", "ko": [{"pos": "명사", "ko": ["올림말(표제어).", "(활용하는 낱말의) 기본형.", "<수학> 보조 정리. 부명제."]}]}
 {"word": "lemming", "ko": [{"pos": "명사", "ko": ["레밍, 나그네쥐."]}]}
 {"word": "lemon", "ko": [{"pos": "unknown", "ko": ["(식물) 레몬 나무. 또는 그 열매 레몬."]}]}
@@ -8455,6 +8571,7 @@
 {"word": "liam", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "liancourt rocks", "ko": [{"pos": "명사", "ko": ["'독도'."]}]}
 {"word": "liar", "ko": [{"pos": "unknown", "ko": ["거짓말쟁이."]}]}
+{"word": "libation", "ko": [{"pos": "명사", "ko": ["(신에게 바치는) 헌주(獻酒), 술."], "own": true}]}
 {"word": "libel", "ko": [{"pos": "unknown", "ko": ["(문서에 의한) 명예훼손"]}]}
 {"word": "libelous", "ko": [{"pos": "unknown", "ko": ["중상[비방]하는, 명예 훼손의; 중상하기 좋아하는."]}]}
 {"word": "liberal", "ko": [{"pos": "명사", "ko": ["자유주의자."]}]}
@@ -8528,6 +8645,7 @@
 {"word": "linguist", "ko": [{"pos": "unknown", "ko": ["언어학자."]}]}
 {"word": "linguistics", "ko": [{"pos": "unknown", "ko": ["언어학."]}]}
 {"word": "lining", "ko": [{"pos": "명사", "ko": ["안감", "불가산 (인체 부위의) 내벽", "복공. 터널 굴착 후 용수나 벽 붕괴를 막기 위해 콘크리트로 벽을 보호하는 것."]}]}
+{"word": "link", "ko": [{"pos": "명사", "ko": ["연결, 고리."], "own": true}, {"pos": "동사", "ko": ["연결하다."], "own": true}]}
 {"word": "linoleum", "ko": [{"pos": "unknown", "ko": ["리놀륨."]}]}
 {"word": "linux", "ko": [{"pos": "abbrev", "ko": ["Unix의 컴퓨터 작동 시스템."]}]}
 {"word": "lion", "ko": [{"pos": "명사", "ko": ["(동물) 사자."]}]}
@@ -8577,11 +8695,12 @@
 {"word": "liza", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "lizard", "ko": [{"pos": "unknown", "ko": ["(동물) 도마뱀."]}]}
 {"word": "llama", "ko": [{"pos": "명사", "ko": ["(동물) 라마, 야마"]}]}
-{"word": "lo", "ko": [{"pos": "고어", "ko": ["보라!, 보아라"], "own": true}]}
+{"word": "lo", "ko": [{"pos": "고어", "ko": ["보라!, 보아라"], "own": true, "exact": true}]}
 {"word": "load", "ko": [{"pos": "동사", "ko": ["(짐, 사람) 싣다, 채우다, 적재하다.", "(컴퓨터) 그림이나 음악 파일을 메모리에 싣다.", "(군사) 탄약 장전하다."]}]}
 {"word": "loaf", "ko": [{"pos": "동사", "ko": ["어슬렁거리다, 빈둥거리다."]}]}
 {"word": "loan", "ko": [{"pos": "명사", "ko": ["대출"]}]}
 {"word": "loan translation", "ko": [{"pos": "unknown", "ko": ["번역차용."]}]}
+{"word": "loath", "ko": [{"pos": "형용사", "ko": ["(~하기를) 몹시 싫어하는, 꺼리는."], "own": true}]}
 {"word": "loathe", "ko": [{"pos": "동사", "ko": ["몹시 싫어하다; 지긋지긋하도록 싫다; 지겨워하다, 질색하다."]}]}
 {"word": "loathsome", "ko": [{"pos": "unknown", "ko": ["싫어한."]}]}
 {"word": "lobby", "ko": [{"pos": "unknown", "ko": ["로비."]}]}
@@ -8681,6 +8800,7 @@
 {"word": "luis", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "luke", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "lukewarm", "ko": [{"pos": "unknown", "ko": ["미지근한."]}]}
+{"word": "lull", "ko": [{"pos": "동사", "ko": ["(달래어) 재우다, 진정시키다; 안심시키다."], "own": true}]}
 {"word": "lullaby", "ko": [{"pos": "unknown", "ko": ["자장가."]}]}
 {"word": "lumberjack", "ko": [{"pos": "unknown", "ko": ["나무꾼."]}]}
 {"word": "lump", "ko": [{"pos": "동사", "ko": ["덩이로 만들다."]}, {"pos": "동사", "ko": ["한 덩어리가 되다."]}, {"pos": "형용사", "ko": ["한 덩어리의, 고형의."]}]}
@@ -8698,6 +8818,7 @@
 {"word": "luser", "ko": [{"pos": "unknown", "ko": ["컴퓨터 속어: 컴퓨터에 서투른 이용자를 경멸하는 말", "컴퓨터 속어: IRC에서 서버의 규칙에 따르지 않거나 공격적인 이용자를 경멸하는 말"]}]}
 {"word": "lust", "ko": [{"pos": "unknown", "ko": ["욕망. 특히 성욕."]}]}
 {"word": "lustful", "ko": [{"pos": "형용사", "ko": ["쾌락을 주는, 욕정적인, 음탕한."]}]}
+{"word": "lute", "ko": [{"pos": "명사", "ko": ["류트 (기타와 비슷한 옛 현악기)."], "own": true}]}
 {"word": "lutetium", "ko": [{"pos": "unknown", "ko": ["루테튬."]}]}
 {"word": "lutsk", "ko": [{"pos": "명사", "ko": ["루츠크(우크라이나의 도시)."]}]}
 {"word": "luxemburg", "ko": [{"pos": "명사", "ko": ["나라 이름 '룩셈부르크'."]}]}
@@ -8709,6 +8830,7 @@
 {"word": "lymphatic", "ko": [{"pos": "형용사", "ko": ["림프의, 림프액의"]}]}
 {"word": "lynn", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "lynx", "ko": [{"pos": "명사", "ko": ["스라소니."]}]}
+{"word": "lyre", "ko": [{"pos": "명사", "ko": ["리라 (고대 그리스의 현악기)."], "own": true}]}
 {"word": "lyric", "ko": [{"pos": "형용사", "ko": ["서정시의, 서정시를 쓴.", "서정적인."]}]}
 {"word": "lyrics", "ko": [{"pos": "명사", "ko": ["노래 가사."]}]}
 {"word": "m", "ko": [{"pos": "unknown", "ko": ["라틴어(로마자) 알파벳의 열셋째 소문자."]}]}
@@ -8739,6 +8861,7 @@
 {"word": "maddie", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "madeline", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "madison", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
+{"word": "madly", "ko": [{"pos": "부사", "ko": ["미친 듯이, 격렬하게."], "own": true}]}
 {"word": "madness", "ko": [{"pos": "unknown", "ko": ["미친 것."]}]}
 {"word": "magazine", "ko": [{"pos": "명사", "ko": ["잡지."]}]}
 {"word": "magdalen", "ko": [{"pos": "명사", "ko": ["신약 성서에 나오는 여자 이름 막달라마리아."]}]}
@@ -8856,6 +8979,7 @@
 {"word": "manor", "ko": [{"pos": "unknown", "ko": ["장원, 영지.", "저택.", "(영국/속어) 경찰관의 관할구역."]}]}
 {"word": "manor house", "ko": [{"pos": "unknown", "ko": ["영주의 저택."]}]}
 {"word": "mansion", "ko": [{"pos": "unknown", "ko": ["비교적 큰 집.", "다세대 주택. 또는 고급 아파트(맨션)."]}]}
+{"word": "mantle", "ko": [{"pos": "명사", "ko": ["망토, 외투; 덮개."], "own": true}, {"pos": "동사", "ko": ["덮다."], "own": true}]}
 {"word": "manual", "ko": [{"pos": "명사", "ko": ["기계나 장치를 어떻게 다루는지 설명한 책자."]}]}
 {"word": "manufacture", "ko": [{"pos": "동사", "ko": ["제작하다, 제조하다, 생산하다.", "가공하다, 제품화하다, 성형하다.", "제조업에 종사하다."]}]}
 {"word": "manufacturer", "ko": [{"pos": "명사", "ko": ["제조업자, 제조자"]}]}
@@ -8922,6 +9046,7 @@
 {"word": "martial law", "ko": [{"pos": "unknown", "ko": ["계엄, 계엄령"]}]}
 {"word": "martian", "ko": [{"pos": "명사", "ko": ["화성인"]}, {"pos": "형용사", "ko": ["화성의"]}]}
 {"word": "martin", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
+{"word": "martyr", "ko": [{"pos": "명사", "ko": ["순교자; 희생자."], "own": true}]}
 {"word": "martyrdom", "ko": [{"pos": "명사", "ko": ["순교 (殉敎)"]}]}
 {"word": "marvel", "ko": [{"pos": "동사", "ko": ["놀라다, 경탄하다."]}]}
 {"word": "marvellous", "ko": [{"pos": "unknown", "ko": ["놀라운."]}]}
@@ -9113,7 +9238,7 @@
 {"word": "methanogen", "ko": [{"pos": "unknown", "ko": ["메탄 생성 미생물 (메탄을 생성하는 미생물)"]}]}
 {"word": "methanogenesis", "ko": [{"pos": "unknown", "ko": ["메탄 생성 미생물이 메탄을 생성하는 과정"]}]}
 {"word": "methanol", "ko": [{"pos": "unknown", "ko": ["메탄올."]}]}
-{"word": "methinks", "ko": [{"pos": "고어", "ko": ["내 생각에는, 내게는 ~로 여겨진다"], "own": true}]}
+{"word": "methinks", "ko": [{"pos": "고어", "ko": ["내 생각에는, 내게는 ~로 여겨진다"], "own": true, "exact": true}]}
 {"word": "method", "ko": [{"pos": "unknown", "ko": ["방법, 방식."]}]}
 {"word": "methodology", "ko": [{"pos": "unknown", "ko": ["방법론."]}]}
 {"word": "meticulous", "ko": [{"pos": "unknown", "ko": ["작은 것에 지나치게 집중하는, 소심한, 꼼꼼한"]}]}
@@ -9152,6 +9277,7 @@
 {"word": "midwife", "ko": [{"pos": "unknown", "ko": ["조산부."]}]}
 {"word": "midwinter", "ko": [{"pos": "unknown", "ko": ["한겨울."]}]}
 {"word": "might", "ko": [{"pos": "명사", "ko": ["힘."]}]}
+{"word": "mighty", "ko": [{"pos": "형용사", "ko": ["강력한, 힘센; 거대한."], "own": true}]}
 {"word": "migrant", "ko": [{"pos": "형용사", "ko": ["이주하는, 이주성의."]}]}
 {"word": "migrate", "ko": [{"pos": "동사", "ko": ["이주하다, 이민하다."]}]}
 {"word": "migration", "ko": [{"pos": "unknown", "ko": ["이주."]}]}
@@ -9171,6 +9297,7 @@
 {"word": "milk bar", "ko": [{"pos": "unknown", "ko": ["편의점."]}]}
 {"word": "milky", "ko": [{"pos": "unknown", "ko": ["우유의, 우유빛의."]}]}
 {"word": "milky way", "ko": [{"pos": "unknown", "ko": ["우리은하."]}]}
+{"word": "mill", "ko": [{"pos": "명사", "ko": ["방앗간, 제분소; 공장."], "own": true}]}
 {"word": "millenary", "ko": [{"pos": "명사", "ko": ["천년의 세월."]}]}
 {"word": "millennial", "ko": [{"pos": "unknown", "ko": ["천년의, 천년동안."]}]}
 {"word": "millennium", "ko": [{"pos": "unknown", "ko": ["천년의 기간.", "(기독교) 천년 왕국."]}]}
@@ -9214,6 +9341,7 @@
 {"word": "miraculous", "ko": [{"pos": "unknown", "ko": ["기적적인"]}]}
 {"word": "mirage", "ko": [{"pos": "unknown", "ko": ["신기루."]}]}
 {"word": "mirror", "ko": [{"pos": "unknown", "ko": ["거울."]}]}
+{"word": "mirth", "ko": [{"pos": "명사", "ko": ["(즐거운) 웃음, 명랑함."], "own": true}]}
 {"word": "misadventure", "ko": [{"pos": "명사", "ko": ["불운, 사고"]}]}
 {"word": "misanthrope", "ko": [{"pos": "unknown", "ko": ["사람을 싫어하는, 미워하는."]}]}
 {"word": "misappropriate", "ko": [{"pos": "동사", "ko": ["(특히 자기에게 맡겨진 남의 돈・재산을) 유용하다; 도용하다"]}]}
@@ -9236,6 +9364,7 @@
 {"word": "mishap", "ko": [{"pos": "unknown", "ko": ["사고, 실수, 문제."]}]}
 {"word": "mislead", "ko": [{"pos": "동사", "ko": ["잘못된 방향으로 이끌다, 오도하다."]}]}
 {"word": "misleading", "ko": [{"pos": "unknown", "ko": ["오도(誤導)의, 오인을 유발하는"]}]}
+{"word": "misname", "ko": [{"pos": "동사", "ko": ["잘못된 이름으로 부르다."], "own": true}]}
 {"word": "misogyny", "ko": [{"pos": "명사", "ko": ["여성증오."]}]}
 {"word": "misology", "ko": [{"pos": "unknown", "ko": ["논리를 혐오함."]}]}
 {"word": "mispresent", "ko": [{"pos": "동사", "ko": ["잘못 알려주다, 잘못 제시하다"]}]}
@@ -9250,6 +9379,7 @@
 {"word": "mistake", "ko": [{"pos": "명사", "ko": ["잘못, 실수, 착각, 착오."]}, {"pos": "동사", "ko": ["잘못하다, 실수하다.", "(타동사) 착각하다, 혼동하다."]}]}
 {"word": "mistakenly", "ko": [{"pos": "unknown", "ko": ["실수로, 잘못하여, 착오로."]}]}
 {"word": "mistletoe", "ko": [{"pos": "unknown", "ko": ["겨우살이."]}]}
+{"word": "mistress", "ko": [{"pos": "명사", "ko": ["여주인; 정부(情婦); (고어) 여선생."], "own": true}]}
 {"word": "misunderstand", "ko": [{"pos": "동사", "ko": ["오해하다."]}]}
 {"word": "misunderstanding", "ko": [{"pos": "unknown", "ko": ["오해."]}]}
 {"word": "misuse", "ko": [{"pos": "명사", "ko": ["오용"]}, {"pos": "동사", "ko": ["남용[오용/악용]하다"]}]}
@@ -9292,6 +9422,7 @@
 {"word": "moment", "ko": [{"pos": "명사", "ko": ["순간, 때, 기회.", "계기."]}]}
 {"word": "momentous", "ko": [{"pos": "unknown", "ko": ["뜻 있는, 중대한."]}]}
 {"word": "mommy", "ko": [{"pos": "명사", "ko": ["엄마"]}]}
+{"word": "monarch", "ko": [{"pos": "명사", "ko": ["군주, 왕."], "own": true}]}
 {"word": "monarchy", "ko": [{"pos": "unknown", "ko": ["(정치) 왕이 다스리는 정치 형태, 왕정."]}]}
 {"word": "monastery", "ko": [{"pos": "unknown", "ko": ["수도원 (주로 남자의);수(도)사 단체"]}]}
 {"word": "monastic", "ko": [{"pos": "형용사", "ko": ["수도원(修道院)의"]}]}
@@ -9339,7 +9470,7 @@
 {"word": "moreover", "ko": [{"pos": "unknown", "ko": ["게다가, 더군다나, 더욱이."]}]}
 {"word": "morgan", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "morgue", "ko": [{"pos": "unknown", "ko": ["영안실"]}]}
-{"word": "morn", "ko": [{"pos": "시어", "ko": ["아침"], "own": true}]}
+{"word": "morn", "ko": [{"pos": "시어", "ko": ["아침"], "own": true, "exact": true}]}
 {"word": "morning", "ko": [{"pos": "명사", "ko": ["아침. (부록: 영어 시간의 단위와 표현)"]}]}
 {"word": "morning glory", "ko": [{"pos": "unknown", "ko": ["(식물) 나팔꽃."]}]}
 {"word": "morning sickness", "ko": [{"pos": "unknown", "ko": ["입덧."]}]}
@@ -9360,6 +9491,7 @@
 {"word": "mosquito hawk", "ko": [{"pos": "unknown", "ko": ["(미국 남부) 잠자리."]}]}
 {"word": "moss", "ko": [{"pos": "unknown", "ko": ["(식물) 이끼."]}]}
 {"word": "mossie", "ko": [{"pos": "unknown", "ko": ["참새."]}]}
+{"word": "mossy", "ko": [{"pos": "형용사", "ko": ["이끼가 낀, 이끼 같은."], "own": true}]}
 {"word": "most", "ko": [{"pos": "부사", "ko": ["두 음절 이상인 형용사 또는 부사의 앞에서 최상급을 나타내는 부사. 가장 최. (부록: 영어 비교급)"]}, {"pos": "명사", "ko": [". 대부분, 대다수. 언제나 정관사와 함께"]}]}
 {"word": "most of all", "ko": [{"pos": "unknown", "ko": ["무엇보다도."]}]}
 {"word": "mostly", "ko": [{"pos": "부사", "ko": ["대부분, 대개, 대체로, 거의."]}]}
@@ -9405,6 +9537,7 @@
 {"word": "mt", "ko": [{"pos": "unknown", "ko": ["해양성열대기단"]}]}
 {"word": "mtsat", "ko": [{"pos": "abbrev", "ko": ["일본에서 GMS에 이어 쏘아 올린 정지기상위성."]}]}
 {"word": "mu", "ko": [{"pos": "unknown", "ko": ["그리스어 알파벳 'Μ / μ'의 이름. (부록: 그리스어 알파벳)"]}]}
+{"word": "much", "ko": [{"pos": "한정사", "ko": ["(양이) 많은."], "own": true}, {"pos": "부사", "ko": ["매우, 몹시; 훨씬."], "own": true}, {"pos": "대명사", "ko": ["많은 것, 많은 양."], "own": true}]}
 {"word": "muck", "ko": [{"pos": "동사", "ko": ["거름을 주다.", "쓸데없는 말을 주절대다.", "(일상어) 비꼬아 놀리다."]}]}
 {"word": "mud", "ko": [{"pos": "unknown", "ko": ["진흙."]}]}
 {"word": "muddy", "ko": [{"pos": "unknown", "ko": ["진흙으로 덮여있는.", "혼탁한."]}]}
@@ -9424,6 +9557,7 @@
 {"word": "multimillionaire", "ko": [{"pos": "unknown", "ko": ["천만장자."]}]}
 {"word": "multiple", "ko": [{"pos": "unknown", "ko": ["다수의, 많은 부분 [요소] 으로 된;다수의, 다양한"]}]}
 {"word": "multistory", "ko": [{"pos": "unknown", "ko": ["고층의."]}]}
+{"word": "multitude", "ko": [{"pos": "명사", "ko": ["다수, 군중."], "own": true}]}
 {"word": "mum", "ko": [{"pos": "명사", "ko": ["엄마."]}]}
 {"word": "mummification", "ko": [{"pos": "unknown", "ko": ["미라로 만듬."]}]}
 {"word": "mummify", "ko": [{"pos": "동사", "ko": ["미라로 만들다."]}, {"pos": "동사", "ko": ["미라가 되다."]}]}
@@ -9480,6 +9614,7 @@
 {"word": "myriad", "ko": [{"pos": "unknown", "ko": ["무수한"]}]}
 {"word": "myriapodologist", "ko": [{"pos": "명사", "ko": ["다지류학자."]}]}
 {"word": "myrmecologist", "ko": [{"pos": "명사", "ko": ["개미학자."]}]}
+{"word": "myrtle", "ko": [{"pos": "명사", "ko": ["도금양 (상록 관목; 사랑과 아름다움의 상징)."], "own": true}]}
 {"word": "myself", "ko": [{"pos": "unknown", "ko": ["일인칭 단수 재귀대명사 '나 자신'. (부록: 영어 인칭대명사)"]}]}
 {"word": "mysore", "ko": [{"pos": "명사", "ko": ["마이소르(인도의 도시)."]}]}
 {"word": "mysterious", "ko": [{"pos": "unknown", "ko": ["신비한, 불가사의한, 이상한, 기이한, 미지의."]}]}
@@ -9548,7 +9683,7 @@
 {"word": "natural resource", "ko": [{"pos": "unknown", "ko": ["천연자원."]}]}
 {"word": "natural science", "ko": [{"pos": "unknown", "ko": ["자연과학."]}]}
 {"word": "nature", "ko": [{"pos": "unknown", "ko": ["자연", "성질, 천성, 본성", "[단수;보통 수식어와 함께 of ~ 의 형태로] 종류"]}]}
-{"word": "naught", "ko": [{"pos": "unknown", "ko": ["(영국/아일랜드/오스트레일리아/뉴질랜드) 없음, 영.", "(영국/아일랜드/오스트레일리아/뉴질랜드) 제로"]}, {"pos": "고어", "ko": ["아무것도 아님, 무(無)"], "own": true}]}
+{"word": "naught", "ko": [{"pos": "unknown", "ko": ["(영국/아일랜드/오스트레일리아/뉴질랜드) 없음, 영.", "(영국/아일랜드/오스트레일리아/뉴질랜드) 제로"]}, {"pos": "고어", "ko": ["아무것도 아님, 무(無)"], "own": true, "exact": true}]}
 {"word": "naughty", "ko": [{"pos": "unknown", "ko": ["말괄량이의, 품행이 나쁜.", "논다니의, 화냥 끼가 있는."]}]}
 {"word": "nausea", "ko": [{"pos": "명사", "ko": ["멀미."]}]}
 {"word": "nautical mile", "ko": [{"pos": "unknown", "ko": ["(단위) 해리."]}]}
@@ -9557,10 +9692,10 @@
 {"word": "navigation", "ko": [{"pos": "unknown", "ko": ["(배, 비행기) 항해, 운항. (비유) 이리저리 둘러봄."]}]}
 {"word": "navigator", "ko": [{"pos": "unknown", "ko": ["배나 비행기를 조정하는 사람."]}]}
 {"word": "navy", "ko": [{"pos": "unknown", "ko": ["해군", "군함"]}]}
-{"word": "nay", "ko": [{"pos": "고어", "ko": ["아니, 아니오 / 아니, 오히려"], "own": true}]}
+{"word": "nay", "ko": [{"pos": "고어", "ko": ["아니, 아니오 / 아니, 오히려"], "own": true, "exact": true}]}
 {"word": "nazism", "ko": [{"pos": "명사", "ko": ["나치즘."]}]}
 {"word": "ne", "ko": [{"pos": "고유명사", "ko": ["(미국) Nebraska (“네브레스카”)의 두문자어 형태", "(미국) New England (“뉴잉글랜드”)의 두문자어 형태", "(나이지리아) Niger East (“니제르와 인접한 나이지리아의 지역권”)의 두문자어 형태"]}, {"pos": "명사", "ko": ["northeast (“북동”)의 두문자어 형태", "norepinephrine (“노르에피네프린”)의 두문자어 형태", "northern epilepsy syndrome (“북부간질”)의 두문자어 형태"]}]}
-{"word": "ne'er", "ko": [{"pos": "시어", "ko": ["never의 줄임말. 결코 ~않다"], "own": true}]}
+{"word": "ne'er", "ko": [{"pos": "시어", "ko": ["never의 줄임말. 결코 ~않다"], "own": true, "exact": true}]}
 {"word": "near", "ko": [{"pos": "부사", "ko": ["가까이, 접근하여, 곁에."]}, {"pos": "전치사", "ko": ["...에 가까이에, 접근하여."]}, {"pos": "형용사", "ko": ["(시간, 거리) 가깝다.", "(관계) 친하다, 친밀하다."]}]}
 {"word": "near miss", "ko": [{"pos": "unknown", "ko": ["매우 근소하지만 애석하게 빗나간 것."]}]}
 {"word": "nearby", "ko": [{"pos": "부사", "ko": ["가까이."]}]}
@@ -9668,6 +9803,7 @@
 {"word": "nikolas", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "nil", "ko": [{"pos": "unknown", "ko": ["영(零). 제로."]}]}
 {"word": "nile tilapia", "ko": [{"pos": "명사", "ko": ["나일틸라피아."]}]}
+{"word": "nimble", "ko": [{"pos": "형용사", "ko": ["재빠른, 민첩한."], "own": true}]}
 {"word": "nimby", "ko": [{"pos": "명사", "ko": ["Not In My Back Yard: 내 뒷 마당에선 안돼. 지역적 배타적 이기주의를 상징하는 약자이다."]}]}
 {"word": "nincompoop", "ko": [{"pos": "명사", "ko": ["멍청이."]}]}
 {"word": "nine", "ko": [{"pos": "unknown", "ko": ["숫자 9 (아홉), 구. (부록: 영어 수사)"]}]}
@@ -9683,6 +9819,7 @@
 {"word": "nitrogen", "ko": [{"pos": "명사", "ko": ["화학 원소 이름 '질소'."]}]}
 {"word": "nitrogenous", "ko": [{"pos": "unknown", "ko": ["질소의, 질소를 함유한."]}]}
 {"word": "nnn", "ko": [{"pos": "abbrev", "ko": ["일본 뉴스 네트워크."]}]}
+{"word": "no", "ko": [{"pos": "감탄사", "ko": ["아니, 아니요."], "own": true}, {"pos": "한정사", "ko": ["(하나도) ~없는; ~이 아닌."], "own": true}]}
 {"word": "no more than", "ko": [{"pos": "unknown", "ko": ["단지 …에 지나지 않다, …일 뿐"]}]}
 {"word": "no smoke without fire", "ko": [{"pos": "proverb", "ko": ["아니 땐 굴뚝에 연기 날까."]}]}
 {"word": "no smoking", "ko": [{"pos": "unknown", "ko": ["금연."]}]}
@@ -9730,6 +9867,7 @@
 {"word": "nonspecific", "ko": [{"pos": "unknown", "ko": ["특이하지 않은."]}]}
 {"word": "noodle", "ko": [{"pos": "unknown", "ko": ["국수, 면."]}]}
 {"word": "noon", "ko": [{"pos": "동사", "ko": ["점심 먹다."]}]}
+{"word": "noontide", "ko": [{"pos": "명사", "ko": ["(시어) 정오."], "own": true}]}
 {"word": "nor", "ko": [{"pos": "unknown", "ko": ["neither 또는 not과 함께 '...도...않다'."]}]}
 {"word": "nor'easter", "ko": [{"pos": "unknown", "ko": ["북동풍."]}]}
 {"word": "nora", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
@@ -9764,6 +9902,7 @@
 {"word": "notion", "ko": [{"pos": "명사", "ko": ["개념, 관념, 생각"]}]}
 {"word": "notorious", "ko": [{"pos": "unknown", "ko": ["부정적인 면에서 세상에 잘 알려진, 악명, 악평이 높은, 소문이 자자한."]}]}
 {"word": "notwithstanding", "ko": [{"pos": "부사", "ko": ["~에도 불구하고"]}]}
+{"word": "nought", "ko": [{"pos": "명사", "ko": ["(고어) 무(無), 아무것도 아님; 영(0)."], "own": true}]}
 {"word": "noun", "ko": [{"pos": "명사", "ko": ["(문법) 명사"]}]}
 {"word": "nourishment", "ko": [{"pos": "unknown", "ko": ["음식, 영양.", "영양섭취, 육성."]}]}
 {"word": "nova", "ko": [{"pos": "unknown", "ko": ["신성(新星)."]}]}
@@ -9827,7 +9966,7 @@
 {"word": "nynorsk", "ko": [{"pos": "고유명사", "ko": ["노르웨이어의 두 가지 주요 문어체 표준어(언어 변형) 중 하나."]}]}
 {"word": "o", "ko": [{"pos": "unknown", "ko": ["라틴어(로마자) 알파벳의 열다섯째 소문자."]}]}
 {"word": "o'clock", "ko": [{"pos": "unknown", "ko": ["(시간) 정각에. (부록: 영어 시간의 단위와 표현)"]}]}
-{"word": "o'er", "ko": [{"pos": "시어", "ko": ["over의 줄임말. ~위에, ~너머로"], "own": true}]}
+{"word": "o'er", "ko": [{"pos": "시어", "ko": ["over의 줄임말. ~위에, ~너머로"], "own": true, "exact": true}]}
 {"word": "oak", "ko": [{"pos": "unknown", "ko": ["(식물) 참나무 (오크)."]}]}
 {"word": "oak tree", "ko": [{"pos": "unknown", "ko": ["참나무"]}]}
 {"word": "oar", "ko": [{"pos": "unknown", "ko": ["노."]}]}
@@ -9839,6 +9978,7 @@
 {"word": "obese", "ko": [{"pos": "형용사", "ko": ["지나치게 살찐."]}]}
 {"word": "obesity", "ko": [{"pos": "unknown", "ko": ["(의학) 비만, 비만증, 비대."]}]}
 {"word": "obey", "ko": [{"pos": "동사", "ko": ["따르다, 복종하다.", "(법) 준수하다, 이행하다."]}]}
+{"word": "obit", "ko": [{"pos": "명사", "ko": ["부고 (obituary)."], "own": true}]}
 {"word": "object", "ko": [{"pos": "명사", "ko": ["목적, 목표.", "객체, 대상, 목표물.", "(문법) 목적어."]}, {"pos": "동사", "ko": ["반대하다. 거절하다."]}]}
 {"word": "objectify", "ko": [{"pos": "동사", "ko": ["누가 보아도 알 수 있도록 대상화하다, 객관화하다."]}]}
 {"word": "objection", "ko": [{"pos": "unknown", "ko": ["반대, 거부, 항의, 이의."]}]}
@@ -9914,7 +10054,7 @@
 {"word": "offset", "ko": [{"pos": "명사", "ko": ["상쇄하는 것, 상계", "오프셋 인쇄."]}, {"pos": "동사", "ko": ["상쇄하다, 상계하다."]}]}
 {"word": "offshore", "ko": [{"pos": "형용사", "ko": ["앞바다의, 연안의"]}]}
 {"word": "offspring", "ko": [{"pos": "unknown", "ko": ["자식.", "후손.", "(동물) 새끼, (동식물) 자손."]}]}
-{"word": "oft", "ko": [{"pos": "시어", "ko": ["자주, 흔히 (often)"], "own": true}]}
+{"word": "oft", "ko": [{"pos": "시어", "ko": ["자주, 흔히 (often)"], "own": true, "exact": true}]}
 {"word": "often", "ko": [{"pos": "부사", "ko": ["자주, 종종."]}]}
 {"word": "oh", "ko": [{"pos": "unknown", "ko": ["놀라움을 나타내는 감탄사.", "의아스러움, 경이로움을 나타내는 감탄사.", "확인을 나타내는 감탄사."]}]}
 {"word": "oi", "ko": [{"pos": "unknown", "ko": ["남을 낮잡으며 부를 때 쓰는 말. 어이."]}]}
@@ -9985,7 +10125,9 @@
 {"word": "onomatopoeic", "ko": [{"pos": "unknown", "ko": ["의성의; 의성어의; 성유법의"]}]}
 {"word": "onset", "ko": [{"pos": "명사", "ko": ["(고어) 공격; 특히 군대의 공격.", "(의학) 질병이나 상태의 초기 단계로, 증상이 처음 나타나는 단계.", "(음운론) 음절의 핵에 앞서는 음절의 초기 부분."]}, {"pos": "동사", "ko": ["(폐어) 공격하다; 시작하다."]}]}
 {"word": "onsite", "ko": [{"pos": "unknown", "ko": ["현지의, 현장의"]}]}
+{"word": "onto", "ko": [{"pos": "전치사", "ko": ["~위로, ~위에."], "own": true}]}
 {"word": "onus", "ko": [{"pos": "unknown", "ko": ["[sing.] 보통 the onus (격식) 책임"]}]}
+{"word": "onward", "ko": [{"pos": "부사", "ko": ["앞으로, 전방으로."], "own": true}, {"pos": "형용사", "ko": ["전진하는."], "own": true}]}
 {"word": "oona", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
 {"word": "ooze", "ko": [{"pos": "동사", "ko": ["새어 나오다. 스며 나오다."]}]}
 {"word": "op", "ko": [{"pos": "unknown", "ko": ["opus의 약자,작품번호"]}]}
@@ -10097,6 +10239,7 @@
 {"word": "otter", "ko": [{"pos": "명사", "ko": ["수달, 해달 등의 수달아과 동물."]}]}
 {"word": "otto", "ko": [{"pos": "unknown", "ko": ["남성 이름"]}]}
 {"word": "ouch", "ko": [{"pos": "감탄사", "ko": ["(고통) 아야."]}]}
+{"word": "ought", "ko": [{"pos": "조동사", "ko": ["~해야 한다, ~하는 것이 좋다."], "own": true}]}
 {"word": "our", "ko": [{"pos": "대명사", "ko": ["일인칭 복수 소유 대명사 '우리의'. (부록: 영어 인칭대명사)"]}]}
 {"word": "ours", "ko": [{"pos": "대명사", "ko": ["일인칭 복수 소유 대명사 '우리 것'. (부록: 영어 인칭대명사)"]}]}
 {"word": "ourselves", "ko": [{"pos": "unknown", "ko": ["일인칭 복수 재귀대명사 '우리 자신'. (부록: 영어 인칭대명사)"]}]}
@@ -10129,6 +10272,7 @@
 {"word": "outstanding", "ko": [{"pos": "unknown", "ko": ["(보수・업무・문제 등이) 아직 처리되지 않은, 미지불된, 미해결된", "(주식이) 의결권이 있는"]}]}
 {"word": "outweigh", "ko": [{"pos": "동사", "ko": ["보다 더 크다[대단하다]"]}]}
 {"word": "outwith", "ko": [{"pos": "unknown", "ko": ["(스코틀랜드, 잉글랜드 북부 회화체) ~의 바깥쪽에."]}]}
+{"word": "outworn", "ko": [{"pos": "형용사", "ko": ["낡아빠진, 시대에 뒤떨어진."], "own": true}]}
 {"word": "oven", "ko": [{"pos": "unknown", "ko": ["(주방 기기) 굽거나 찌는 가마, 오븐."]}]}
 {"word": "over", "ko": [{"pos": "형용사", "ko": ["끝난, 완료된", "헤어진, 인연을 끊은", "(접두사적 용법) 지나친, 너무, 초(超)~"]}, {"pos": "전치사", "ko": ["...의 위에, 표면에.", "...의 전체에,...에 널리.", "(수량, 정도)...보다 더 많은,... 넘어서, 이상으로"]}, {"pos": "부사", "ko": ["넘어서, 끝나서, 지나서, 건너서", "이쪽으로", "온통으로, 넘쳐나게."]}]}
 {"word": "over the moon", "ko": [{"pos": "unknown", "ko": ["기쁨에 넘친, 소름이 끼칠 정도로 즐거운 느낌."]}]}
@@ -10326,6 +10470,7 @@
 {"word": "passage", "ko": [{"pos": "동사", "ko": ["어디를 지나가다, 옆으로 스쳐 지나가다.."]}]}
 {"word": "passenger", "ko": [{"pos": "unknown", "ko": ["(차, 배, 비행기의) 승객, (지역의) 통행인."]}]}
 {"word": "passing off", "ko": [{"pos": "unknown", "ko": ["사칭"]}]}
+{"word": "passion", "ko": [{"pos": "명사", "ko": ["열정, 격정; 격한 감정."], "own": true}]}
 {"word": "passive", "ko": [{"pos": "명사", "ko": ["(문법) 수동태."]}]}
 {"word": "passport", "ko": [{"pos": "unknown", "ko": ["여권."]}]}
 {"word": "password", "ko": [{"pos": "동사", "ko": ["비밀번호로 보호하다."]}]}
@@ -10345,6 +10490,7 @@
 {"word": "paternity", "ko": [{"pos": "unknown", "ko": ["저작자임; 기원(起源)"]}]}
 {"word": "path", "ko": [{"pos": "명사", "ko": ["길.", "경로, 과정(過程).", "(기하학) 한 점에서 다른 점으로 이르는 길."]}]}
 {"word": "pathetic", "ko": [{"pos": "형용사", "ko": ["강한 느낌의, 감동적인.", "불쌍한, 애처로운"]}]}
+{"word": "patience", "ko": [{"pos": "명사", "ko": ["인내, 참을성."], "own": true}]}
 {"word": "patiently", "ko": [{"pos": "unknown", "ko": ["끈기 있게, 참을성 있게"]}]}
 {"word": "patina", "ko": [{"pos": "unknown", "ko": ["(일부 금속의 표면에 생기는) 녹청, 동록."]}]}
 {"word": "patricia", "ko": [{"pos": "명사", "ko": ["여자 이름."]}]}
@@ -10381,6 +10527,7 @@
 {"word": "peacemaking", "ko": [{"pos": "unknown", "ko": ["반대하는 그룹 또는 두 사람을 화해시키는 행동."]}]}
 {"word": "peach", "ko": [{"pos": "unknown", "ko": ["(식물) 복숭아나무. 또는 그 열매 복숭아"]}]}
 {"word": "peacock", "ko": [{"pos": "명사", "ko": ["(조류) 공작."]}]}
+{"word": "peak", "ko": [{"pos": "명사", "ko": ["봉우리, 산꼭대기; 절정."], "own": true}]}
 {"word": "peal", "ko": [{"pos": "동사", "ko": ["종 따위가 크게 울리다.", "천둥이 치다."]}]}
 {"word": "peanut", "ko": [{"pos": "unknown", "ko": ["땅콩."]}]}
 {"word": "pear", "ko": [{"pos": "unknown", "ko": ["(식물) 배나무. 또는 그 열매 배."]}]}
@@ -10547,6 +10694,7 @@
 {"word": "petrol station", "ko": [{"pos": "unknown", "ko": ["주유소."]}]}
 {"word": "petroleum ether", "ko": [{"pos": "unknown", "ko": ["석유에테르."]}]}
 {"word": "petty", "ko": [{"pos": "unknown", "ko": ["(폐어, 단 관용구적 용법을 제외하고) 작은, ~에 준하는.", "중요하지 않는.", "편협한, 마음이 좁은."]}]}
+{"word": "pewit", "ko": [{"pos": "명사", "ko": ["댕기물떼새."], "own": true}]}
 {"word": "peyton", "ko": [{"pos": "명사", "ko": ["남자 이름."]}]}
 {"word": "phablet", "ko": [{"pos": "unknown", "ko": ["패블릿."]}]}
 {"word": "phalange", "ko": [{"pos": "unknown", "ko": ["손가락뼈."]}]}
@@ -10720,10 +10868,13 @@
 {"word": "plot", "ko": [{"pos": "unknown", "ko": ["몰래 꾸미다, 계획하다, 음모하다"]}]}
 {"word": "plough", "ko": [{"pos": "동사", "ko": ["갈다."]}]}
 {"word": "plow", "ko": [{"pos": "동사", "ko": ["쟁기질하다, 땅을 일구다, 갈다.", "투자하다."]}]}
+{"word": "plowman", "ko": [{"pos": "명사", "ko": ["쟁기질하는 사람, 농부."], "own": true}]}
 {"word": "plowshare", "ko": [{"pos": "명사", "ko": ["쟁기날"]}]}
 {"word": "ploy", "ko": [{"pos": "unknown", "ko": ["계책, 술책"]}]}
+{"word": "pluck", "ko": [{"pos": "동사", "ko": ["(꽃·열매를) 따다, 뜯다; (현악기를) 뜯다."], "own": true}, {"pos": "명사", "ko": ["용기, 담력."], "own": true}]}
 {"word": "plug", "ko": [{"pos": "unknown", "ko": ["플러그.", "(프로그램에 끼우는) 짤막한 광고, 선전"]}]}
 {"word": "plum", "ko": [{"pos": "unknown", "ko": ["자두."]}]}
+{"word": "plume", "ko": [{"pos": "명사", "ko": ["(큰) 깃털, 깃 장식."], "own": true}]}
 {"word": "plummet", "ko": [{"pos": "명사", "ko": ["급락, 곤두박질"]}]}
 {"word": "plump", "ko": [{"pos": "unknown", "ko": ["포동포동한, 토실토실한, 둥그스름한"]}]}
 {"word": "plunder", "ko": [{"pos": "동사", "ko": ["(특히 전시(戰時)에 어떤 장소를) 약탈[강탈]하다"]}]}
@@ -10743,6 +10894,7 @@
 {"word": "pocket money", "ko": [{"pos": "unknown", "ko": ["용돈."]}]}
 {"word": "podium", "ko": [{"pos": "명사", "ko": ["(오케스트라의) 지휘대;연단, 연설대;성서대"]}]}
 {"word": "poem", "ko": [{"pos": "unknown", "ko": ["(문학) 시 (詩)."]}]}
+{"word": "poesy", "ko": [{"pos": "명사", "ko": ["(고어·시어) 시, 시가."], "own": true}]}
 {"word": "poet", "ko": [{"pos": "unknown", "ko": ["(문학) 시인."]}]}
 {"word": "poetic", "ko": [{"pos": "unknown", "ko": ["시적인, 시의. 또는 시인적인."]}]}
 {"word": "poetical", "ko": [{"pos": "unknown", "ko": ["시(詩)의."]}]}
@@ -10768,11 +10920,13 @@
 {"word": "police station", "ko": [{"pos": "unknown", "ko": ["경찰서."]}]}
 {"word": "policeman", "ko": [{"pos": "unknown", "ko": ["경찰(관), 경관."]}]}
 {"word": "policewoman", "ko": [{"pos": "unknown", "ko": ["여자 경찰관 (여경)."]}]}
+{"word": "policy", "ko": [{"pos": "명사", "ko": ["정책, 방침; 보험 증권."], "own": true}]}
 {"word": "polio", "ko": [{"pos": "명사", "ko": ["소아마비"]}]}
 {"word": "polish", "ko": [{"pos": "동사", "ko": ["닦다, 닦아서 윤을 내다."]}, {"pos": "동사", "ko": ["윤이 나다."]}, {"pos": "명사", "ko": ["광, 윤.", "윤 내는 것 (왁스 따위), 광택제."]}]}
 {"word": "polite", "ko": [{"pos": "형용사", "ko": ["예의 바르다, 공손한."]}]}
 {"word": "politely", "ko": [{"pos": "unknown", "ko": ["공손히, 정중히, 예의상."]}]}
 {"word": "politeness", "ko": [{"pos": "unknown", "ko": ["예의, 공손함."]}]}
+{"word": "politic", "ko": [{"pos": "형용사", "ko": ["(고어) 현명한, 신중한; 약삭빠른."], "own": true}]}
 {"word": "political", "ko": [{"pos": "unknown", "ko": ["정치의, 정치적인."]}]}
 {"word": "political party", "ko": [{"pos": "unknown", "ko": ["정당."]}]}
 {"word": "politician", "ko": [{"pos": "unknown", "ko": ["정치인, 정치가."]}]}
@@ -10786,6 +10940,7 @@
 {"word": "polydactyly", "ko": [{"pos": "명사", "ko": ["다지증(多指症)."]}]}
 {"word": "polyhedron", "ko": [{"pos": "unknown", "ko": ["다면체."]}]}
 {"word": "pomegranate", "ko": [{"pos": "unknown", "ko": ["석류."]}]}
+{"word": "pomp", "ko": [{"pos": "명사", "ko": ["화려함, 성대한 의식."], "own": true}]}
 {"word": "pond", "ko": [{"pos": "명사", "ko": ["연못, 못."]}]}
 {"word": "pond lily", "ko": [{"pos": "unknown", "ko": ["(식물) 수련."]}]}
 {"word": "ponder", "ko": [{"pos": "동사", "ko": ["잘 생각하다, 숙고하다."]}]}
@@ -10819,6 +10974,7 @@
 {"word": "portable", "ko": [{"pos": "unknown", "ko": ["들고 다닐 수 있는, 휴대용의, 간편한."]}]}
 {"word": "portion", "ko": [{"pos": "unknown", "ko": ["일부, 일정 양, 몫."]}]}
 {"word": "portmanteau", "ko": [{"pos": "unknown", "ko": ["손가방."]}]}
+{"word": "portray", "ko": [{"pos": "동사", "ko": ["묘사하다, 그리다; (역을) 연기하다."], "own": true}]}
 {"word": "portugal", "ko": [{"pos": "고유명사", "ko": ["서남유럽의 나라 이름 '포르투갈'."]}]}
 {"word": "portuguese", "ko": [{"pos": "형용사", "ko": ["포르투갈의"]}]}
 {"word": "pos", "ko": [{"pos": "명사", "ko": ["part of speech (“품사”)의 두문자어 형태.", "point of sale system (“포스기, 포스 시스템”)의 두문자어 형태.", "proprietary operating system (“유료 운영체제”)의 두문자어 형태."]}]}
@@ -10988,6 +11144,7 @@
 {"word": "presume", "ko": [{"pos": "동사", "ko": ["을 추정하다, 상상하다; …이라고 생각하다, 여기다."]}]}
 {"word": "presumption", "ko": [{"pos": "unknown", "ko": ["(불가산/가산) (법률) (증거는 없지만 사실일 것이라고)추정·간주(함)"]}]}
 {"word": "preta", "ko": [{"pos": "unknown", "ko": ["아귀."]}]}
+{"word": "pretence", "ko": [{"pos": "명사", "ko": ["겉치레, 가식; 구실."], "own": true}]}
 {"word": "pretend", "ko": [{"pos": "동사", "ko": ["체하다, 가장하다.", "주장하다, 자부하다."]}]}
 {"word": "pretension", "ko": [{"pos": "명사", "ko": ["주장"]}]}
 {"word": "preterite", "ko": [{"pos": "명사", "ko": ["(문법) 과거형"]}]}
@@ -11037,7 +11194,7 @@
 {"word": "prisoner", "ko": [{"pos": "unknown", "ko": ["수감자, 죄수."]}]}
 {"word": "prisoner of war", "ko": [{"pos": "unknown", "ko": ["전쟁포로."]}]}
 {"word": "pristine", "ko": [{"pos": "unknown", "ko": ["자연[원래] 그대로의, 오염되지 않은"]}]}
-{"word": "prithee", "ko": [{"pos": "고어", "ko": ["부디, 제발 (I pray thee의 줄임말)"], "own": true}]}
+{"word": "prithee", "ko": [{"pos": "고어", "ko": ["부디, 제발 (I pray thee의 줄임말)"], "own": true, "exact": true}]}
 {"word": "privacy", "ko": [{"pos": "unknown", "ko": ["프라이버시, 사생활.", "비밀."]}]}
 {"word": "private", "ko": [{"pos": "명사", "ko": ["(군사) 육군 이등병."]}]}
 {"word": "privateer", "ko": [{"pos": "명사", "ko": ["사나포선(私拿捕船), 사략선(私掠船)"]}]}
@@ -11445,6 +11602,8 @@
 {"word": "raw", "ko": [{"pos": "unknown", "ko": ["(음식이) 조리되지 않은 [9세기부터]", "가공하지 않은, 처리되지 않은, 원료 그대로의 [10세기부터]", "경험이 없는. 미숙한"]}]}
 {"word": "ray", "ko": [{"pos": "unknown", "ko": ["광선.", "가오리."]}]}
 {"word": "raymond", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
+{"word": "raz'd", "ko": [{"pos": "시어", "ko": ["razed의 줄임말. 무너뜨렸다"], "own": true, "exact": true}]}
+{"word": "raze", "ko": [{"pos": "동사", "ko": ["무너뜨리다, 완전히 파괴하다."], "own": true}]}
 {"word": "razor", "ko": [{"pos": "unknown", "ko": ["면도칼;(전기) 면도기;날카로운 사람"]}]}
 {"word": "re-", "ko": [{"pos": "unknown", "ko": ["다시 또는 반복, 되돌리다의 뜻을 더하는 접두사."]}]}
 {"word": "reach", "ko": [{"pos": "동사", "ko": ["이르다, 도착하다, 도달하다."]}, {"pos": "동사", "ko": ["무엇을 잡으려 손을 내밀다, 뻗다."]}]}
@@ -11562,6 +11721,7 @@
 {"word": "redevelop", "ko": [{"pos": "unknown", "ko": ["재개발하다."]}]}
 {"word": "redevelopment", "ko": [{"pos": "unknown", "ko": ["재개발."]}]}
 {"word": "redo", "ko": [{"pos": "동사", "ko": ["다시 하다.", "개장하다."]}]}
+{"word": "redouble", "ko": [{"pos": "동사", "ko": ["배가하다, 더욱 강화하다."], "own": true}]}
 {"word": "redress", "ko": [{"pos": "unknown", "ko": ["(격식) (부당하거나 잘못된 것을) 바로잡다[시정하다]"]}]}
 {"word": "reduce", "ko": [{"pos": "unknown", "ko": ["줄이다.", "(…으로) 바꾸다, 변형시키다"]}]}
 {"word": "reduction", "ko": [{"pos": "unknown", "ko": ["감소."]}]}
@@ -11670,6 +11830,7 @@
 {"word": "remedy", "ko": [{"pos": "명사", "ko": ["치료.", "~ (법률) (권리 침해에 대한 법적) 구제 방법"]}, {"pos": "동사", "ko": ["치료하다."]}]}
 {"word": "remember", "ko": [{"pos": "동사", "ko": ["(타) 기억하다, 상기하다.", "(자) 기억하고 있다. 기억이 나다."]}]}
 {"word": "remembered", "ko": [{"pos": "동사", "ko": ["remember의 과거, 과거분사 형태."]}]}
+{"word": "remembrance", "ko": [{"pos": "명사", "ko": ["기억, 추억; 기념."], "own": true}]}
 {"word": "remiges", "ko": [{"pos": "명사", "ko": ["새의 날개깃, 비행깃."]}]}
 {"word": "remind", "ko": [{"pos": "동사", "ko": ["일깨우다, 상기시키다, 연상시키다."]}]}
 {"word": "reminiscence", "ko": [{"pos": "명사", "ko": ["회고, 기억"]}]}
@@ -11714,6 +11875,7 @@
 {"word": "repercussion", "ko": [{"pos": "unknown", "ko": ["[pl.] (간접적) 영향; (사건·행동 등의 오래 남는) 영향"]}]}
 {"word": "repetition", "ko": [{"pos": "unknown", "ko": ["(말・행동의) 반복[되풀이]"]}]}
 {"word": "repetitive", "ko": [{"pos": "unknown", "ko": ["(지루할・단조로운 정도로) 반복적인"]}]}
+{"word": "repine", "ko": [{"pos": "동사", "ko": ["(고어) 불평하다, 한탄하다."], "own": true}]}
 {"word": "replace", "ko": [{"pos": "unknown", "ko": ["교체하다, 대체하다, 바꾸다."]}]}
 {"word": "replacement", "ko": [{"pos": "unknown", "ko": ["교체", "대체"]}]}
 {"word": "replenish", "ko": [{"pos": "unknown", "ko": ["(격식) (원래처럼) 다시 채우다, 보충하다."]}]}
@@ -11855,6 +12017,7 @@
 {"word": "returnable", "ko": [{"pos": "unknown", "ko": ["(격식) 반환할(환불받을) 수 있는; 돌려보내야(반납해야) 하는"]}]}
 {"word": "reunion", "ko": [{"pos": "unknown", "ko": ["재결합, 재회, 상봉. (학교) 동창회."]}]}
 {"word": "reveal", "ko": [{"pos": "unknown", "ko": ["폭로하다, 누설하다."]}]}
+{"word": "reveller", "ko": [{"pos": "명사", "ko": ["술 마시며 즐기는 사람, 흥청대는 사람."], "own": true}]}
 {"word": "revenge", "ko": [{"pos": "동사", "ko": ["복수하다, 보복하다, 앙갚음하다."]}]}
 {"word": "revenue", "ko": [{"pos": "unknown", "ko": ["세입.", "총이익."]}]}
 {"word": "revere", "ko": [{"pos": "unknown", "ko": ["(경건한 마음으로) 숭배하다, 경외하다, 존경하다."]}]}
@@ -11892,6 +12055,7 @@
 {"word": "rho", "ko": [{"pos": "unknown", "ko": ["그리스어 알파벳 'Ρ / ρ'의 이름. (부록: 그리스어 알파벳)"]}]}
 {"word": "rhodium", "ko": [{"pos": "unknown", "ko": ["로듐."]}]}
 {"word": "rhombus", "ko": [{"pos": "unknown", "ko": ["마름모."]}]}
+{"word": "rhyme", "ko": [{"pos": "명사", "ko": ["운, 압운; 운문."], "own": true}, {"pos": "동사", "ko": ["운이 맞다."], "own": true}]}
 {"word": "rhythm", "ko": [{"pos": "unknown", "ko": ["(음악) 박자, 음율, 리듬.", "(시) 운율."]}]}
 {"word": "rhythmical", "ko": [{"pos": "unknown", "ko": ["주기적인.", "리드미컬하다."]}]}
 {"word": "rib", "ko": [{"pos": "unknown", "ko": ["갈비, 갈비뼈", "어떤 물체의 뼈대를 이루는 것 중 갈비뼈와 비슷한 것.", "갈비 부위의 고기 덩어리."]}]}
@@ -11941,6 +12105,7 @@
 {"word": "ripe", "ko": [{"pos": "unknown", "ko": ["무르익은, 성숙한."]}]}
 {"word": "ripen", "ko": [{"pos": "동사", "ko": ["익다(열매나 이삭이 여물다.)"]}]}
 {"word": "ripoff", "ko": [{"pos": "명사", "ko": ["도둑, 강도, 사기"]}]}
+{"word": "ripple", "ko": [{"pos": "명사", "ko": ["잔물결, 파문."], "own": true}, {"pos": "동사", "ko": ["잔물결을 일으키다."], "own": true}]}
 {"word": "rise", "ko": [{"pos": "동사", "ko": ["(자동사) 일어나다, 일어서다.", "(자동사) 오르다, 떠오르다, 타오르다, 피어 오르다.", "(자동사) 돋다, 치솟다."]}, {"pos": "명사", "ko": ["(수량 등의) 증가."]}]}
 {"word": "risk", "ko": [{"pos": "명사", "ko": ["위험."]}, {"pos": "동사", "ko": ["(타동사) 위험하게 하다.", "(타동사) 위험을 무릅쓰고 하다."]}]}
 {"word": "risky", "ko": [{"pos": "형용사", "ko": ["위험한."]}]}
@@ -12011,6 +12176,7 @@
 {"word": "rookie", "ko": [{"pos": "unknown", "ko": ["(특히 미국) 초심자, 초보자"]}]}
 {"word": "room", "ko": [{"pos": "unknown", "ko": ["(건물의) 방, 실."]}]}
 {"word": "roommate", "ko": [{"pos": "명사", "ko": ["방을 같이 쓰는 사람, 동숙자."]}]}
+{"word": "roomy", "ko": [{"pos": "형용사", "ko": ["널찍한, 공간이 넉넉한."], "own": true}]}
 {"word": "rooster", "ko": [{"pos": "명사", "ko": ["수탉."]}]}
 {"word": "root", "ko": [{"pos": "동사", "ko": ["뿌리를 내리게 하다.", "뿌리를 뽑다."]}]}
 {"word": "rope", "ko": [{"pos": "동사", "ko": ["줄이나 끈, 밧줄 따위로 묶다."]}]}
@@ -12031,6 +12197,8 @@
 {"word": "route", "ko": [{"pos": "명사", "ko": ["교통로, 도로망. 또는 도로.", "사람들이 이동하거나 지나가는 경로 또는 길.", "정기적인 정류장 일정 또는 이러한 정류장 사이를 이동하는 경로(예: 배송 또는 승객 운송)."]}, {"pos": "동사", "ko": ["(타동사) 특정 경로로 향하게 하거나 방향을 바꾸다.", "(인터넷) 두 개의 근거리 통신망을 연결하여 인터넷을 형성하다.", "(컴퓨터, 타동사) 라우터를 통해 (정보를) 전송하다."]}, {"pos": "동사", "ko": ["root의 비표준 표기법"]}]}
 {"word": "router", "ko": [{"pos": "명사", "ko": ["한 장소에서 다른 장소로 물건을 이동시키거나 지시하는 사람.", "(통신) 개방형 시스템 상호 연결 3계층(네트워크 계층) 정보에 해당하는 방식으로 정보 패킷을 전송하는 모든 장치. 일반적으로 인터넷 프로토콜 라우터를 지칭할 때 사용된다.", "(인터넷) 근거리 통신망들을 연결하여 더 큰 인터넷을 형성하는 장치로, 최소한 목적지 IP 주소를 가진 데이터그램들을 선택적으로 해당 데이터그램을 목적지까지 전달할 수 있는 네트워크로 전달하는 기능을 수행한다. 네트워크 게이트웨이라고도 한다."]}, {"pos": "명사", "ko": ["목공에서 홈을 파는 데 사용되는 전동 공구."]}, {"pos": "동사", "ko": ["라우터 전동 공구를 사용하여 속을 비우거나 잘라내는 것."]}]}
 {"word": "routine", "ko": [{"pos": "unknown", "ko": ["보통으로 하는 일, 일상사. 정해진 일, 과정."]}, {"pos": "unknown", "ko": ["일상적인, 통상적인."]}]}
+{"word": "rov'd", "ko": [{"pos": "시어", "ko": ["roved의 줄임말. 돌아다녔다"], "own": true, "exact": true}]}
+{"word": "rove", "ko": [{"pos": "동사", "ko": ["(정처 없이) 돌아다니다, 방랑하다."], "own": true}]}
 {"word": "row", "ko": [{"pos": "명사", "ko": ["가로줄, 열."]}, {"pos": "동사", "ko": ["노[배]를 젓다."]}, {"pos": "명사", "ko": ["싸움, 말다툼, 논쟁."]}, {"pos": "동사", "ko": ["말다툼하다."]}]}
 {"word": "roy", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
 {"word": "royal", "ko": [{"pos": "unknown", "ko": ["왕실의"]}]}
@@ -12058,6 +12226,7 @@
 {"word": "rumble", "ko": [{"pos": "동사", "ko": ["우르릉거리는 소리를 내다."]}]}
 {"word": "rumen", "ko": [{"pos": "unknown", "ko": ["반추위 (반추 동물의 제1위);제1위의 반추 내용물"]}]}
 {"word": "ruminant", "ko": [{"pos": "unknown", "ko": ["반추 동물"]}]}
+{"word": "ruminate", "ko": [{"pos": "동사", "ko": ["되새김질하다; 곰곰이 생각하다."], "own": true}]}
 {"word": "rummage", "ko": [{"pos": "unknown", "ko": ["야단법석, 소동, 소란."]}]}
 {"word": "rumor", "ko": [{"pos": "unknown", "ko": ["소문, 뜬소문."]}]}
 {"word": "rumour", "ko": [{"pos": "명사", "ko": ["소문. 미국식 표기는 'rumor'."]}]}
@@ -12067,6 +12236,7 @@
 {"word": "runner", "ko": [{"pos": "unknown", "ko": ["달리는 사람."]}]}
 {"word": "rupee", "ko": [{"pos": "unknown", "ko": ["화폐 단위 루피."]}]}
 {"word": "rural", "ko": [{"pos": "unknown", "ko": ["(도시에 대하여) 시골의, 전원의, 촌스러운, 시골티 나는"]}]}
+{"word": "rush", "ko": [{"pos": "동사", "ko": ["돌진하다, 서두르다."], "own": true}, {"pos": "명사", "ko": ["돌진, 쇄도."], "own": true}]}
 {"word": "rush hour", "ko": [{"pos": "unknown", "ko": ["'러시아워'."]}]}
 {"word": "russ", "ko": [{"pos": "unknown", "ko": ["남자이름 Russell의 애칭."]}]}
 {"word": "russell", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
@@ -12076,6 +12246,7 @@
 {"word": "russophobia", "ko": [{"pos": "unknown", "ko": ["러시아혐오증."]}]}
 {"word": "rust", "ko": [{"pos": "unknown", "ko": ["녹."]}]}
 {"word": "rustic", "ko": [{"pos": "unknown", "ko": ["시골 풍의, 전원적인."]}]}
+{"word": "rustle", "ko": [{"pos": "동사", "ko": ["바스락거리다, 살랑거리다."], "own": true}, {"pos": "명사", "ko": ["바스락거리는 소리."], "own": true}]}
 {"word": "rusty", "ko": [{"pos": "unknown", "ko": ["녹슨, (비유) 무딘."]}]}
 {"word": "rutabaga", "ko": [{"pos": "unknown", "ko": ["무."]}]}
 {"word": "ruth", "ko": [{"pos": "unknown", "ko": ["여자 이름."]}]}
@@ -12097,7 +12268,9 @@
 {"word": "sacramentary", "ko": [{"pos": "형용사", "ko": ["(개신교의) 성례의, 성례에 관한. (가톨릭의) 성사의, 성사에 관한", "성찬식의, 성찬식에 관한"]}, {"pos": "명사", "ko": ["미사의 의식 및 성사에 관한 내용을 담은 가톨릭의 고서(古書)."]}]}
 {"word": "sacred", "ko": [{"pos": "형용사", "ko": ["성스럽다, 신성하다."]}]}
 {"word": "sacrifice", "ko": [{"pos": "명사", "ko": ["희생.", "제물."]}, {"pos": "동사", "ko": ["희생하다."]}]}
+{"word": "sacrilege", "ko": [{"pos": "명사", "ko": ["신성모독."], "own": true}]}
 {"word": "sad", "ko": [{"pos": "unknown", "ko": ["슬프다, 우울하다."]}]}
+{"word": "sadden", "ko": [{"pos": "동사", "ko": ["슬프게 하다."], "own": true}]}
 {"word": "saddle", "ko": [{"pos": "unknown", "ko": ["(말 위의) 안장(鞍裝)."]}]}
 {"word": "sadie", "ko": [{"pos": "unknown", "ko": ["여자 이름."]}]}
 {"word": "sadly", "ko": [{"pos": "부사", "ko": ["슬프게."]}]}
@@ -12118,7 +12291,7 @@
 {"word": "sailor", "ko": [{"pos": "unknown", "ko": ["뱃사람, 선원."]}]}
 {"word": "saint", "ko": [{"pos": "unknown", "ko": ["(종교) 성인, 성자.", "죽은 사람의 영혼."]}]}
 {"word": "saint petersburg", "ko": [{"pos": "unknown", "ko": ["상트페테르부르크."]}]}
-{"word": "saith", "ko": [{"pos": "고어", "ko": ["says의 옛 형태. 그는 말한다"], "own": true}]}
+{"word": "saith", "ko": [{"pos": "고어", "ko": ["says의 옛 형태. 그는 말한다"], "own": true, "exact": true}]}
 {"word": "sakhalin stickleback", "ko": [{"pos": "unknown", "ko": ["두만가시고기."]}]}
 {"word": "salad", "ko": [{"pos": "unknown", "ko": ["샐러드."]}]}
 {"word": "salamander", "ko": [{"pos": "unknown", "ko": ["(동물) 도롱뇽.", "(전설) 불도마뱀."]}]}
@@ -12254,6 +12427,8 @@
 {"word": "scold", "ko": [{"pos": "동사", "ko": ["꾸짖다."]}]}
 {"word": "scope", "ko": [{"pos": "명사", "ko": ["기회, 여지, 능력", "시야."]}]}
 {"word": "score", "ko": [{"pos": "명사", "ko": ["점수, 성적.", "(스포츠) 득점, 스코어 (외래어)."]}, {"pos": "동사", "ko": ["득점을 올리다."]}]}
+{"word": "scorn", "ko": [{"pos": "명사", "ko": ["경멸, 멸시."], "own": true}, {"pos": "동사", "ko": ["경멸하다."], "own": true}]}
+{"word": "scorner", "ko": [{"pos": "명사", "ko": ["경멸하는 사람."], "own": true}]}
 {"word": "scorpion", "ko": [{"pos": "unknown", "ko": ["전갈."]}]}
 {"word": "scotland", "ko": [{"pos": "고유명사", "ko": ["스코틀랜드"]}]}
 {"word": "scott", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
@@ -12414,6 +12589,7 @@
 {"word": "serum", "ko": [{"pos": "unknown", "ko": ["혈청(血淸)", "(의학) 면역 혈청; 병을 예방하기 위한 백신."]}]}
 {"word": "servant", "ko": [{"pos": "unknown", "ko": ["종, 하인, 심부름꾼."]}]}
 {"word": "serve", "ko": [{"pos": "동사", "ko": ["(사람을) 섬기다, 봉사하다, 모시다;(예배·신앙·헌신 등으로) (신을) 섬기다;(임금·나라)를 위해 일하다, …를 위해 진력하다.", "~ | ~ | ~ (어떤 사람・조직・국가 등을 위해) 일[봉사]하다, 근무[복무]하다"]}]}
+{"word": "service", "ko": [{"pos": "명사", "ko": ["서비스, 봉사; 근무; (종교) 예배."], "own": true}]}
 {"word": "service ceiling", "ko": [{"pos": "unknown", "ko": ["(항공)실용 상승한도(實用 上昇限度)."]}]}
 {"word": "serviceman", "ko": [{"pos": "unknown", "ko": ["군인."]}]}
 {"word": "servile", "ko": [{"pos": "unknown", "ko": ["노예의, 하인의, 노예 근성의."]}]}
@@ -12467,7 +12643,7 @@
 {"word": "shake", "ko": [{"pos": "동사", "ko": ["(타동사) 흔들다.", "(자동사) 흔들리다, 흔들거리다, 진동하다.", "(자동사) 떨다."]}, {"pos": "명사", "ko": ["나무의 갈라진 금, 균열, 틈새."]}]}
 {"word": "shall", "ko": [{"pos": "동사", "ko": ["미래 시제에 쓰는 조동사.", "I와 we를 주어로 하는 의문문에서 제의・제안・조언 요청을 나타냄", "[명령·규정·지시] …하여야 한다, …로 정하다."]}]}
 {"word": "shallow", "ko": [{"pos": "동사", "ko": ["얕게 하다."]}, {"pos": "동사", "ko": ["얕아지다."]}]}
-{"word": "shalt", "ko": [{"pos": "고어", "ko": ["shall의 2인칭 단수형. thou shalt = 너는 ~할 것이다 / ~해야 한다"], "own": true}]}
+{"word": "shalt", "ko": [{"pos": "고어", "ko": ["shall의 2인칭 단수형. thou shalt = 너는 ~할 것이다 / ~해야 한다"], "own": true, "exact": true}]}
 {"word": "sham", "ko": [{"pos": "형용사", "ko": ["가짜인, 엉터리인"]}]}
 {"word": "shame", "ko": [{"pos": "동사", "ko": ["창피를 주다, 망신시키다."]}]}
 {"word": "shameful", "ko": [{"pos": "unknown", "ko": ["부끄러운, 창피스러운."]}]}
@@ -12494,6 +12670,7 @@
 {"word": "she'd", "ko": [{"pos": "unknown", "ko": ["«she»와 «had» 또는 «should» «would»를 붙여 줄여 쓴 말."]}]}
 {"word": "she'll", "ko": [{"pos": "unknown", "ko": ["«she»와 «shall» 또는 «will»을 붙여 줄여 쓴 말."]}]}
 {"word": "she's", "ko": [{"pos": "unknown", "ko": ["«she»와 is 또는 has를 붙여서 줄여 쓴 말."]}]}
+{"word": "sheaf", "ko": [{"pos": "명사", "ko": ["(곡식의) 단, 다발."], "own": true}]}
 {"word": "shear", "ko": [{"pos": "명사", "ko": ["가위 (scissors보다 큼)."]}, {"pos": "동사", "ko": ["털을 깎다."]}]}
 {"word": "sheath", "ko": [{"pos": "명사", "ko": ["칼집"]}]}
 {"word": "shed", "ko": [{"pos": "동사", "ko": ["(빛·소리·냄새 등을) 발산하다.", "(영향·사상 등을) 주다, 미치다."]}, {"pos": "동사", "ko": ["(잎·씨 등이) 떨어지다; 탈피[탈모, 탈각, 깃털갈이]하다."]}]}
@@ -12559,7 +12736,7 @@
 {"word": "shoulder", "ko": [{"pos": "동사", "ko": ["(책임 등을) 떠맡다, 짊어지다; (일 등을) 떠맡다"]}]}
 {"word": "shoulder blade", "ko": [{"pos": "unknown", "ko": ["어깨뼈."]}]}
 {"word": "shouldn't", "ko": [{"pos": "unknown", "ko": ["«should»와 «not»을 붙여 줄여 쓴 말."]}]}
-{"word": "shouldst", "ko": [{"pos": "고어", "ko": ["should의 2인칭 단수형"], "own": true}]}
+{"word": "shouldst", "ko": [{"pos": "고어", "ko": ["should의 2인칭 단수형"], "own": true, "exact": true}]}
 {"word": "shout", "ko": [{"pos": "동사", "ko": ["외치다, 고함치다"]}]}
 {"word": "shove", "ko": [{"pos": "unknown", "ko": ["(비격식) 아무렇게나 놓다[넣다]"]}]}
 {"word": "shovel", "ko": [{"pos": "unknown", "ko": ["삽."]}]}
@@ -12706,6 +12883,7 @@
 {"word": "slander", "ko": [{"pos": "동사", "ko": ["비방하다, 중상모략하다, 헐뜯다."]}]}
 {"word": "slanderous", "ko": [{"pos": "형용사", "ko": ["중상(中傷)적인"]}]}
 {"word": "slang", "ko": [{"pos": "명사", "ko": ["속어, 슬랭."]}]}
+{"word": "slant", "ko": [{"pos": "동사", "ko": ["기울다, 비스듬하다."], "own": true}, {"pos": "명사", "ko": ["경사, 기울기."], "own": true}]}
 {"word": "slash", "ko": [{"pos": "동사", "ko": ["칼로 자르다.", "빨리 줄이다."]}]}
 {"word": "slash and burn", "ko": [{"pos": "동사", "ko": ["화전을 일구다."]}]}
 {"word": "slate", "ko": [{"pos": "unknown", "ko": ["석판.", "후보자 명부."]}]}
@@ -12811,6 +12989,7 @@
 {"word": "society", "ko": [{"pos": "unknown", "ko": ["(종교·자선·문화·정치 등 공통된 목적을 갖는) 회, 모임, 협회, 학회, 조합, 단체, 연구회", "U 사회 (집단);C 지역 사회, 공동체", "(국가 형태로 본) 사회, 국가 사회"]}]}
 {"word": "sociology", "ko": [{"pos": "unknown", "ko": ["사회학."]}]}
 {"word": "sock", "ko": [{"pos": "동사", "ko": ["쥐어박다, 때리다."]}]}
+{"word": "sod", "ko": [{"pos": "명사", "ko": ["잔디, 뗏장; 흙."], "own": true}]}
 {"word": "sodium", "ko": [{"pos": "unknown", "ko": ["화학 원소 이름 '나트륨'."]}]}
 {"word": "sofa", "ko": [{"pos": "unknown", "ko": ["소파."]}]}
 {"word": "soft", "ko": [{"pos": "unknown", "ko": ["부드럽다, 유연하다, 보드럽다.", "(비유) 순하다, 온화하다, 연약하다."]}]}
@@ -12907,6 +13086,7 @@
 {"word": "soviet", "ko": [{"pos": "unknown", "ko": ["구 소련의 한 위원회의 명칭."]}]}
 {"word": "soviet union", "ko": [{"pos": "unknown", "ko": ["소비에트 연방."]}]}
 {"word": "sow", "ko": [{"pos": "명사", "ko": ["암퇘지."]}, {"pos": "동사", "ko": ["(씨를) 뿌리다."]}]}
+{"word": "sower", "ko": [{"pos": "명사", "ko": ["씨 뿌리는 사람."], "own": true}]}
 {"word": "soy", "ko": [{"pos": "명사", "ko": ["삶은 콩을 소금물에 담가 장기간 발효 및 숙성시켜 만든, 동아시아에서 흔히 볼 수 있는 액상 소스이다. 간장.", "(불가산 명사, 주로 명사 수식어로 사용) 대두, 또는 대두에서 추출한 단백질"]}, {"pos": "형용사", "ko": ["(인터넷 속어, 경멸적) '소이 보이'의 특징을 지닌; 나약하고 남성적이지 않은 등의."]}, {"pos": "동사", "ko": ["(자동사, 인터넷 속어, 경멸적, 드물게 쓰임) 'soy out'('소이 보이'처럼 행동하다)의 동의어."]}, {"pos": "명사", "ko": ["(스코틀랜드, 고어) 비단."]}]}
 {"word": "soy sauce", "ko": [{"pos": "명사", "ko": ["간장."]}]}
 {"word": "soya", "ko": [{"pos": "명사", "ko": ["(영국) soy의 다른 형태."]}]}
@@ -12924,6 +13104,7 @@
 {"word": "spaghetti", "ko": [{"pos": "unknown", "ko": ["(음식) 이탈리아의 국수, 스파게티."]}]}
 {"word": "spain", "ko": [{"pos": "고유명사", "ko": ["나라 이름 '스페인'. 또는 오늘날 한국에서 새롭게 부르는 '에스파냐'."]}]}
 {"word": "span", "ko": [{"pos": "명사", "ko": ["기간."]}, {"pos": "동사", "ko": ["(기간에) 걸치다."]}]}
+{"word": "spangle", "ko": [{"pos": "명사", "ko": ["(옷 장식의) 반짝이, 스팽글."], "own": true}, {"pos": "동사", "ko": ["반짝이로 장식하다."], "own": true}]}
 {"word": "spanish", "ko": [{"pos": "명사", "ko": ["에스파냐인, 스페인인.", "에스파냐어, 스페인어."]}]}
 {"word": "spare", "ko": [{"pos": "동사", "ko": ["절약하다, 아끼다.", "무엇을 위해 마련하다, 할애하다.", "용서해 주다, (자비, 인정) 베풀다."]}, {"pos": "동사", "ko": ["(목적어 없이) 절약하다."]}, {"pos": "형용사", "ko": ["남는, 여분의.", "예비의.", "부족한, 빈약한"]}, {"pos": "명사", "ko": ["예비 또는 비축해 둔 것, 여분"]}]}
 {"word": "spark", "ko": [{"pos": "unknown", "ko": ["(비유적으로) 활기, 생기(생명)(를 발산하는 것); (재능 등의) 번득임"]}]}
@@ -13018,10 +13199,12 @@
 {"word": "spousal", "ko": [{"pos": "형용사", "ko": ["결혼의, 혼례의"]}]}
 {"word": "spouse", "ko": [{"pos": "명사", "ko": ["배우자."]}]}
 {"word": "spout", "ko": [{"pos": "unknown", "ko": ["(비격식 못마땅함) 지껄이다; (지겹도록) 반복하다"]}]}
+{"word": "spray", "ko": [{"pos": "명사", "ko": ["물보라, 분무."], "own": true}, {"pos": "동사", "ko": ["뿌리다."], "own": true}]}
 {"word": "spread", "ko": [{"pos": "동사", "ko": ["퍼지다, 전달되다, 확산되다."]}, {"pos": "명사", "ko": ["전달, 확산, 전파."]}]}
 {"word": "spree", "ko": [{"pos": "unknown", "ko": ["무분별한 행위"]}]}
 {"word": "spring", "ko": [{"pos": "명사", "ko": ["샘, 원천.", "탄력.", "용수철, 스프링."]}, {"pos": "동사", "ko": ["(자동사) 튀어오르다.", "(타동사) 튀어오르게 하다, 폭파시키다."]}]}
 {"word": "sprinkle", "ko": [{"pos": "동사", "ko": ["(가루, 물 따위) 뿌리다, 끼얹다."]}, {"pos": "동사", "ko": ["뿌려지다, 빗줄기가 뿌리다."]}]}
+{"word": "sprite", "ko": [{"pos": "명사", "ko": ["요정, 정령."], "own": true}]}
 {"word": "sprout", "ko": [{"pos": "동사", "ko": ["싹이 트다."]}]}
 {"word": "spruce", "ko": [{"pos": "unknown", "ko": ["가문비나무."]}]}
 {"word": "spunk", "ko": [{"pos": "동사", "ko": ["(속어) 사정하다 (싸다)."]}]}
@@ -13088,6 +13271,7 @@
 {"word": "stare", "ko": [{"pos": "동사", "ko": ["눈을 동그랗게 뜨고 처다보다. 뚫어지게 들여다 보다."]}, {"pos": "명사", "ko": ["응시(凝視)"]}]}
 {"word": "starfish", "ko": [{"pos": "unknown", "ko": ["(동물) 불가사리."]}]}
 {"word": "starling", "ko": [{"pos": "unknown", "ko": ["(조류) 찌르레기."]}]}
+{"word": "starry", "ko": [{"pos": "형용사", "ko": ["별이 총총한, 별 같은."], "own": true}]}
 {"word": "starship", "ko": [{"pos": "unknown", "ko": ["우주선."]}]}
 {"word": "start", "ko": [{"pos": "동사", "ko": ["(자) 떠나다, 출발하다, 시작되다.", "(타) 출발시키다, 시작하다. (차의) 시동을 걸다, (말을 먼저) 꺼내다.", "놀라게 하다."]}, {"pos": "명사", "ko": ["출발, 개시.", "출발점, 첫발."]}]}
 {"word": "start from scratch", "ko": [{"pos": "unknown", "ko": ["처음부터 다시 시작하다, 개시하다."]}]}
@@ -13171,6 +13355,7 @@
 {"word": "sting", "ko": [{"pos": "동사", "ko": ["쏘다."]}, {"pos": "명사", "ko": ["쏘인 상처."]}]}
 {"word": "stingy", "ko": [{"pos": "unknown", "ko": ["구두쇠의, 인색한."]}]}
 {"word": "stink", "ko": [{"pos": "동사", "ko": ["고약한 냄새가 나다."]}]}
+{"word": "stintless", "ko": [{"pos": "형용사", "ko": ["아낌없는."], "own": true}]}
 {"word": "stipend", "ko": [{"pos": "unknown", "ko": ["장학금, 보조금."]}]}
 {"word": "stipendiary", "ko": [{"pos": "unknown", "ko": ["장학금을 받는."]}]}
 {"word": "stipulate", "ko": [{"pos": "동사", "ko": ["<계약서·조항 등이> 규정하다, 명기하다(明記-), 명문화하다, 조건으로서 요구하다."]}]}
@@ -13187,6 +13372,7 @@
 {"word": "stomach", "ko": [{"pos": "명사", "ko": ["(신체 기관) 위, 위장, 배."]}, {"pos": "동사", "ko": ["(타동사) 즐기다, 참다, 견디다", "먹을[넘길] 수 있다"]}]}
 {"word": "stone", "ko": [{"pos": "형용사", "ko": ["돌의, 석조의."]}, {"pos": "동사", "ko": ["투석하다.", "돌을 깔다."]}]}
 {"word": "stone age", "ko": [{"pos": "unknown", "ko": ["(역사, 고고학) 석기 시대"]}]}
+{"word": "stony", "ko": [{"pos": "형용사", "ko": ["돌투성이의; 냉혹한, 무표정한."], "own": true}]}
 {"word": "stoop", "ko": [{"pos": "동사", "ko": ["허리가 굽다. 새우등이다. 꾸부리다."]}]}
 {"word": "stop", "ko": [{"pos": "동사", "ko": ["멈추다, 정지하다."]}, {"pos": "동사", "ko": ["[문형: stop + -ing ] 멈추다, 정지시키다, 그만두다."]}, {"pos": "명사", "ko": ["멈춤, 정지, 스톱.", "역, 계류지; 지나가거나 들리는 곳."]}]}
 {"word": "stop by", "ko": [{"pos": "동사", "ko": ["들르다."]}]}
@@ -13240,6 +13426,7 @@
 {"word": "strict", "ko": [{"pos": "unknown", "ko": ["엄격한.", "엄밀한"]}]}
 {"word": "strictly", "ko": [{"pos": "unknown", "ko": ["엄격히, 엄밀히."]}]}
 {"word": "stride", "ko": [{"pos": "unknown", "ko": ["(성큼성큼 걷는) 걸음[발(걸음)]"]}]}
+{"word": "strife", "ko": [{"pos": "명사", "ko": ["다툼, 투쟁, 불화."], "own": true}]}
 {"word": "strike", "ko": [{"pos": "동사", "ko": ["치다, 때리다.", "(재난 등이) 덮치다."]}, {"pos": "명사", "ko": ["파업."]}]}
 {"word": "strike off", "ko": [{"pos": "동사", "ko": ["(명단에서) 제명하다."]}]}
 {"word": "strike while the iron is hot", "ko": [{"pos": "proverb", "ko": ["쇠는 달았을 때 두들겨라."]}]}
@@ -13256,6 +13443,7 @@
 {"word": "structural linguistics", "ko": [{"pos": "unknown", "ko": ["구조 언어학."]}]}
 {"word": "structure", "ko": [{"pos": "명사", "ko": ["구조, 구성, 조직", "구조물, 건조물. 건물"]}, {"pos": "동사", "ko": ["구성하다."]}]}
 {"word": "struggle", "ko": [{"pos": "동사", "ko": ["힘들여 하다, 노력하다, 무엇을 위해 싸우다.", "(살기 위해) 버둥거리다, 허덕이다"]}]}
+{"word": "strum", "ko": [{"pos": "동사", "ko": ["(현악기를) 가볍게 튕기다, 손가락으로 치다."], "own": true}]}
 {"word": "strychnine", "ko": [{"pos": "unknown", "ko": ["스트리키니네."]}]}
 {"word": "sts", "ko": [{"pos": "unknown", "ko": ["강한열대폭풍."]}]}
 {"word": "stubborn", "ko": [{"pos": "형용사", "ko": ["완고한"]}]}
@@ -13427,6 +13615,7 @@
 {"word": "suppose", "ko": [{"pos": "동사", "ko": ["가정하다", "추측하다, 헤아리다,...겠다."]}]}
 {"word": "supposed", "ko": [{"pos": "unknown", "ko": ["<한정적 용법> 상상된, 가정의, 생각되고 있던, 소문이 난"]}]}
 {"word": "supposedly", "ko": [{"pos": "부사", "ko": ["아마, 아마도, 추정하건대"]}]}
+{"word": "supposition", "ko": [{"pos": "명사", "ko": ["가정, 추측."], "own": true}]}
 {"word": "suppress", "ko": [{"pos": "동사", "ko": ["(반란·폭동 등을) 억압하다, 진압하다.", "가라앉히다"]}]}
 {"word": "suppression", "ko": [{"pos": "unknown", "ko": ["(반란 등의) 억압, 진압, 탄압"]}]}
 {"word": "suppuration", "ko": [{"pos": "unknown", "ko": ["고름."]}]}
@@ -13681,6 +13870,7 @@
 {"word": "temperate", "ko": [{"pos": "unknown", "ko": ["온난한, 온화한"]}]}
 {"word": "temperate zone", "ko": [{"pos": "unknown", "ko": ["온대."]}]}
 {"word": "temperature", "ko": [{"pos": "unknown", "ko": ["온도, 기온.", "체온, 열"]}]}
+{"word": "tempest", "ko": [{"pos": "명사", "ko": ["(격렬한) 폭풍우; 대소동."], "own": true}]}
 {"word": "temple", "ko": [{"pos": "unknown", "ko": ["절, 사찰. 유대교의 수도원 등 종교적으로 신성시하는 장소.", "(신체 부위) 관자놀이."]}]}
 {"word": "temporary", "ko": [{"pos": "unknown", "ko": ["일시적인."]}]}
 {"word": "tempt", "ko": [{"pos": "동사", "ko": ["꾀다, 유혹하다.", "(관심, 주의) 끌다."]}]}
@@ -13752,6 +13942,7 @@
 {"word": "thanksgiving day", "ko": [{"pos": "unknown", "ko": ["(미국의 명절) 추수감사절."]}]}
 {"word": "that", "ko": [{"pos": "대명사", "ko": ["저것.", "그 사람, 그이; 그것(앞에서 말한 사람이나 사물・말하는 이나 듣는 이가 이미 알고 있는 사람이나 사물을 가리킴)"]}, {"pos": "형용사", "ko": ["그 (어떤 것), 저 (어떤 것)."]}, {"pos": "부사", "ko": ["그렇게, 그처럼."]}, {"pos": "접속사", "ko": ["명사절을 이끄는 접속사."]}]}
 {"word": "that's", "ko": [{"pos": "unknown", "ko": ["«that»과 is 또는 has를 붙여서 줄여 쓴 말."]}]}
+{"word": "thaw", "ko": [{"pos": "동사", "ko": ["(얼음·눈이) 녹다."], "own": true}, {"pos": "명사", "ko": ["해빙."], "own": true}]}
 {"word": "the", "ko": [{"pos": "부사", "ko": ["비교급 앞에서 쓰는 부사."]}]}
 {"word": "the apple does not fall far from the tree", "ko": [{"pos": "unknown", "ko": ["아이는 부모의 특성을 닮는다."]}]}
 {"word": "the early bird catches the worm", "ko": [{"pos": "unknown", "ko": ["일찍 (일어나는) 새가 벌레를 잡는다. 부지런한 사람은 성공할 수 있다는 속뜻."]}]}
@@ -13761,7 +13952,7 @@
 {"word": "the pond", "ko": [{"pos": "unknown", "ko": ["대서양"]}]}
 {"word": "theater", "ko": [{"pos": "unknown", "ko": ["연극장, 극장, 무대."]}]}
 {"word": "theatrical", "ko": [{"pos": "unknown", "ko": ["극장의."]}]}
-{"word": "thee", "ko": [{"pos": "고어", "ko": ["너를, 너에게, 그대에게. thou의 목적격"], "own": true}]}
+{"word": "thee", "ko": [{"pos": "고어", "ko": ["너를, 너에게, 그대에게. thou의 목적격"], "own": true, "exact": true}]}
 {"word": "theft", "ko": [{"pos": "unknown", "ko": ["도둑질, 절도."]}]}
 {"word": "their", "ko": [{"pos": "대명사", "ko": ["삼인칭 복수 소유대명사 '그들의', 그녀들의', '그것들의'. (부록: 영어 인칭대명사)"]}]}
 {"word": "theirs", "ko": [{"pos": "unknown", "ko": ["삼인칭 복수 소유 대명사 '그들의 것'. (부록: 영어 인칭대명사)"]}]}
@@ -13772,7 +13963,7 @@
 {"word": "themselves", "ko": [{"pos": "unknown", "ko": ["삼인칭 남성, 여성, 사물 복수 재귀대명사 '그들, 그녀들, 그것들 자신'. (부록: 영어 인칭대명사)"]}]}
 {"word": "then", "ko": [{"pos": "명사", "ko": ["그때, 당시."]}, {"pos": "형용사", "ko": ["당시의."]}]}
 {"word": "then and not till then", "ko": [{"pos": "부사", "ko": ["그때 비로소."]}]}
-{"word": "thence", "ko": [{"pos": "고어", "ko": ["거기서부터, 그러므로"], "own": true}]}
+{"word": "thence", "ko": [{"pos": "고어", "ko": ["거기서부터, 그러므로"], "own": true, "exact": true}]}
 {"word": "theo", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
 {"word": "theodore", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
 {"word": "theological", "ko": [{"pos": "unknown", "ko": ["신학의.", "신학적인."]}]}
@@ -13815,7 +14006,7 @@
 {"word": "thief", "ko": [{"pos": "unknown", "ko": ["도둑."]}]}
 {"word": "thigh", "ko": [{"pos": "unknown", "ko": ["넓적다리. (부록: 신체 부분의 영어 이름)"]}]}
 {"word": "thin", "ko": [{"pos": "unknown", "ko": ["두께가 얇다.", "사람이 마르다."]}]}
-{"word": "thine", "ko": [{"pos": "고어", "ko": ["너의 것, 그대의 (것). 모음 앞에서는 thy 대신 씀"], "own": true}]}
+{"word": "thine", "ko": [{"pos": "고어", "ko": ["너의 것, 그대의 (것). 모음 앞에서는 thy 대신 씀"], "own": true, "exact": true}]}
 {"word": "thing", "ko": [{"pos": "명사", "ko": ["가산 (사실・사건・상황・행동 등을 가리키는) 것, 일; 말; 생각"]}]}
 {"word": "things", "ko": [{"pos": "명사", "ko": ["thing의 복수형", "소지품. 짐."]}]}
 {"word": "think", "ko": [{"pos": "동사", "ko": ["(진행형으로는 쓰이지 않음) ~ (…라고) 생각하다, (생각에) …일 것 같다; (…라고) 믿다", "~ (이성적으로) 생각하다, 사고하다", "(…할) 생각(계획)을 하다"]}]}
@@ -13829,11 +14020,11 @@
 {"word": "thirtieth", "ko": [{"pos": "unknown", "ko": ["(서수사) 서른째. (부록: 영어 수사)"]}]}
 {"word": "thirty", "ko": [{"pos": "unknown", "ko": ["숫자 30 (서른), 삼십. (부록: 영어 수사)"]}]}
 {"word": "this", "ko": [{"pos": "대명사", "ko": ["(사물을 나타낼 때) 이, 이것", "(사람을 나타낼 때) 저.", "지금."]}, {"pos": "형용사", "ko": ["[서로 이미 알고 있는 것이나 사람을 가리켜] 이.", "지금의, 현재의, 금(今)…"]}]}
-{"word": "thither", "ko": [{"pos": "unknown", "ko": ["yonder의 동의어"]}, {"pos": "고어", "ko": ["저리로, 그곳으로"], "own": true}]}
+{"word": "thither", "ko": [{"pos": "unknown", "ko": ["yonder의 동의어"]}, {"pos": "고어", "ko": ["저리로, 그곳으로"], "own": true, "exact": true}]}
 {"word": "tho", "ko": [{"pos": "unknown", "ko": ["~이지만, ~에도 불구하고."]}]}
 {"word": "thomas", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
 {"word": "thorn", "ko": [{"pos": "unknown", "ko": ["가시."]}]}
-{"word": "thou", "ko": [{"pos": "대명사", "ko": ["이인칭 단수 주격, 여격, 목적격 인칭 대명사, '너', '당신'."]}, {"pos": "고어", "ko": ["너, 그대. 주어로 쓰는 말 (you의 옛 형태)"], "own": true}]}
+{"word": "thou", "ko": [{"pos": "대명사", "ko": ["이인칭 단수 주격, 여격, 목적격 인칭 대명사, '너', '당신'."]}, {"pos": "고어", "ko": ["너, 그대. 주어로 쓰는 말 (you의 옛 형태)"], "own": true, "exact": true}]}
 {"word": "though", "ko": [{"pos": "접속사", "ko": ["~에도 불구하고, ~이지만."]}]}
 {"word": "thought", "ko": [{"pos": "명사", "ko": ["생각하는 일 또는 생각하는 것. 사고, 고려, 착상."]}]}
 {"word": "thoughtful", "ko": [{"pos": "unknown", "ko": ["생각이 깊은, 사려깊은."]}]}
@@ -13842,14 +14033,16 @@
 {"word": "thousandfold", "ko": [{"pos": "unknown", "ko": ["천 배의"]}]}
 {"word": "thousandth", "ko": [{"pos": "명사", "ko": ["(서수사) 천째. (부록: 영어 수사)", "천분의 일. 1/1000. 0.1%"]}]}
 {"word": "thousandths", "ko": [{"pos": "명사", "ko": ["thousandth의 복수형"]}]}
+{"word": "thrall", "ko": [{"pos": "명사", "ko": ["노예, 속박된 사람."], "own": true}]}
 {"word": "thread", "ko": [{"pos": "명사", "ko": ["실."]}, {"pos": "동사", "ko": ["(좁은 공간을) 요리조리 빠져나가다[빠져나가게 하다]"]}]}
 {"word": "threat", "ko": [{"pos": "명사", "ko": ["위협, 협박."]}]}
 {"word": "threaten", "ko": [{"pos": "동사", "ko": ["위협하다, 협박하다."]}]}
 {"word": "three", "ko": [{"pos": "수사", "ko": ["셋, 삼."]}]}
 {"word": "threshold", "ko": [{"pos": "명사", "ko": ["문턱", "출발점, 임계치, 관건"]}]}
-{"word": "thrice", "ko": [{"pos": "고어", "ko": ["세 번, 세 배로"], "own": true}]}
+{"word": "thrice", "ko": [{"pos": "고어", "ko": ["세 번, 세 배로"], "own": true, "exact": true}]}
 {"word": "thrift", "ko": [{"pos": "명사", "ko": ["절약, 검약."]}]}
 {"word": "thrifty", "ko": [{"pos": "unknown", "ko": ["검소한"]}]}
+{"word": "thrill", "ko": [{"pos": "동사", "ko": ["오싹하게 하다, 흥분시키다."], "own": true}, {"pos": "명사", "ko": ["전율, 짜릿함."], "own": true}]}
 {"word": "thrive", "ko": [{"pos": "동사", "ko": ["(사람, 동식물이) 잘 자라다, 성장하다, 무성해지다.", "번창하다."]}]}
 {"word": "throat", "ko": [{"pos": "unknown", "ko": ["목구멍, 인후."]}]}
 {"word": "throne", "ko": [{"pos": "unknown", "ko": ["왕이 앉는 자리, 왕좌. (비유) 왕위, 왕권."]}]}
@@ -13871,8 +14064,8 @@
 {"word": "thus", "ko": [{"pos": "unknown", "ko": ["(결과문에서) 그러므로, 그래서, 결국은."]}]}
 {"word": "thus far", "ko": [{"pos": "unknown", "ko": ["지금까지, 여태, 그때까지."]}]}
 {"word": "thwart", "ko": [{"pos": "동사", "ko": ["(계획 등을) 좌절시키다"]}]}
-{"word": "thy", "ko": [{"pos": "고어", "ko": ["너의, 그대의. 자음 앞에서 씀 (your의 옛 형태)"], "own": true}]}
-{"word": "thyself", "ko": [{"pos": "고어", "ko": ["너 자신, 그대 자신"], "own": true}]}
+{"word": "thy", "ko": [{"pos": "고어", "ko": ["너의, 그대의. 자음 앞에서 씀 (your의 옛 형태)"], "own": true, "exact": true}]}
+{"word": "thyself", "ko": [{"pos": "고어", "ko": ["너 자신, 그대 자신"], "own": true, "exact": true}]}
 {"word": "tibia", "ko": [{"pos": "unknown", "ko": ["(해부학) 정강이뼈.", "(곤충학) 곤충 다리의 낱낱."]}]}
 {"word": "tick", "ko": [{"pos": "명사", "ko": ["진드기."]}]}
 {"word": "ticket", "ko": [{"pos": "unknown", "ko": ["표. (자동차, 항공기의) 승차권. (전시 또는 공연장의) 입장권, 티켓."]}]}
@@ -13913,10 +14106,11 @@
 {"word": "tire", "ko": [{"pos": "동사", "ko": ["피로하게 하다, 싫증나게 하다."]}, {"pos": "동사", "ko": ["피로하다, 지치다."]}, {"pos": "명사", "ko": ["(미국, 캐나다 철자) (자전거, 자동차 따위의) 타이어, 바퀴의 테."]}]}
 {"word": "tired", "ko": [{"pos": "unknown", "ko": ["피곤한, 지친.", "(비유) 소모된."]}]}
 {"word": "tiresome", "ko": [{"pos": "unknown", "ko": ["지루한, 피곤한."]}]}
-{"word": "tis", "ko": [{"pos": "시어", "ko": ["it is의 줄임말. ~이다"], "own": true}]}
+{"word": "tis", "ko": [{"pos": "시어", "ko": ["it is의 줄임말. ~이다"], "own": true, "exact": true}]}
 {"word": "tissue", "ko": [{"pos": "명사", "ko": ["(생물) 조직."]}]}
 {"word": "tit", "ko": [{"pos": "명사", "ko": ["박새."]}]}
 {"word": "titanium", "ko": [{"pos": "unknown", "ko": ["화학 원소 이름 '타이타늄'."]}]}
+{"word": "tithe", "ko": [{"pos": "명사", "ko": ["십일조; 10분의 1 세금."], "own": true}]}
 {"word": "titillate", "ko": [{"pos": "unknown", "ko": ["간질이다."]}]}
 {"word": "titivate", "ko": [{"pos": "unknown", "ko": ["정장하다"]}]}
 {"word": "title", "ko": [{"pos": "동사", "ko": ["제목을 붙이다."]}]}
@@ -14032,6 +14226,7 @@
 {"word": "trajectory", "ko": [{"pos": "명사", "ko": ["궤도, 궤적"]}]}
 {"word": "tram", "ko": [{"pos": "명사", "ko": ["(교통) 전차. 또는 전차 선로."]}]}
 {"word": "tramcar", "ko": [{"pos": "unknown", "ko": ["(교통) 도시의 전차."]}]}
+{"word": "trample", "ko": [{"pos": "동사", "ko": ["짓밟다."], "own": true}]}
 {"word": "tramway", "ko": [{"pos": "unknown", "ko": ["(교통 수단) 전차."]}]}
 {"word": "trance", "ko": [{"pos": "unknown", "ko": ["정신이 혼미한 상태. 또는 경직된 심리 상태. 흔히 약물이나 심리 요법으로 이런 상태에 빠질 수 있다.", "유럽의 테크노에서 비롯된 전자 음의 박자(비트)가 반복되는 춤 음악의 하나."]}]}
 {"word": "tranquil", "ko": [{"pos": "unknown", "ko": ["조용한, 평온한."]}]}
@@ -14093,6 +14288,7 @@
 {"word": "tree frog", "ko": [{"pos": "명사", "ko": ["청개구리."]}]}
 {"word": "tree ring", "ko": [{"pos": "unknown", "ko": ["나이테."]}]}
 {"word": "treetop", "ko": [{"pos": "unknown", "ko": ["나무꼭대기, 우듬지"]}]}
+{"word": "tremble", "ko": [{"pos": "동사", "ko": ["떨다, 떨리다."], "own": true}]}
 {"word": "tremendous", "ko": [{"pos": "형용사", "ko": ["엄청난, 굉장한."]}]}
 {"word": "trend", "ko": [{"pos": "명사", "ko": ["경향, 트렌드."]}, {"pos": "동사", "ko": ["경향이 있다. 경향을 띠다. 경향을 취하다; 유행하다."]}]}
 {"word": "trevor", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
@@ -14107,6 +14303,7 @@
 {"word": "tribunal", "ko": [{"pos": "unknown", "ko": ["법정, 심판 위원회"]}]}
 {"word": "tributary", "ko": [{"pos": "명사", "ko": ["(강의) 지류(支流)"]}]}
 {"word": "tribute", "ko": [{"pos": "unknown", "ko": ["공물(특히 과거 속국이 종주국에 바치던 것)"]}]}
+{"word": "trice", "ko": [{"pos": "명사", "ko": ["(in a trice) 순식간에."], "own": true}]}
 {"word": "trichina", "ko": [{"pos": "명사", "ko": ["이 낱말은 한국어 뜻풀이가 필요합니다. 뜻풀이를 추가한 다음, 이 틀을 지워 주세요."]}]}
 {"word": "trick", "ko": [{"pos": "unknown", "ko": ["속임수, 책략, 계교, 사기.", "눈가림, 장난."]}]}
 {"word": "trickle", "ko": [{"pos": "동사", "ko": ["조금씩 흐르다.", "조금씩 흘리다.", "조금씩 오다."]}]}
@@ -14124,6 +14321,7 @@
 {"word": "tristan", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
 {"word": "triton", "ko": [{"pos": "unknown", "ko": ["트리톤. 그리스 신화에 나오는 바다의 신. 바다의 주신 포세이돈의 아들.", "도롱뇽, 영원.", "트리튬의 원자핵."]}]}
 {"word": "triumph", "ko": [{"pos": "동사", "ko": ["승리하다."]}]}
+{"word": "triumphantly", "ko": [{"pos": "부사", "ko": ["의기양양하게, 승리감에 차서."], "own": true}]}
 {"word": "trivial", "ko": [{"pos": "unknown", "ko": ["사소한"]}]}
 {"word": "troika", "ko": [{"pos": "unknown", "ko": ["트로이카."]}]}
 {"word": "troll", "ko": [{"pos": "명사", "ko": ["(신조어) 부정적이거나 선동적인 글 및 댓글을 인터넷에 게재하는 사람"]}]}
@@ -14132,6 +14330,7 @@
 {"word": "trouble", "ko": [{"pos": "동사", "ko": ["괴롭히다.", "폐를 끼치다, 성가시게 하다, 난처하게 하다."]}, {"pos": "동사", "ko": ["걱정하다", "애쓰다."]}]}
 {"word": "troubleshooting", "ko": [{"pos": "명사", "ko": ["고장의 수리"]}]}
 {"word": "troublesome", "ko": [{"pos": "unknown", "ko": ["(오랫동안) 골칫거리인, 고질적인"]}]}
+{"word": "troublous", "ko": [{"pos": "형용사", "ko": ["(고어) 어지러운, 불안한."], "own": true}]}
 {"word": "troupe", "ko": [{"pos": "unknown", "ko": ["극단."]}]}
 {"word": "trousers", "ko": [{"pos": "명사", "ko": ["바지 가랑이가 두 쪽이므로 언제나 복수형으로 쓴다."]}]}
 {"word": "trout", "ko": [{"pos": "명사", "ko": ["송어.", "(비하 표현) 불쾌한 노파."]}]}
@@ -14188,12 +14387,13 @@
 {"word": "turquoise", "ko": [{"pos": "unknown", "ko": ["터키석."]}]}
 {"word": "turret", "ko": [{"pos": "명사", "ko": ["작은 탑"]}]}
 {"word": "turtle", "ko": [{"pos": "unknown", "ko": ["(동물) 거북이.", "(동물) 산비둘기 (일종)."]}]}
+{"word": "tutelar", "ko": [{"pos": "형용사", "ko": ["수호하는, 보호하는."], "own": true}]}
 {"word": "tutor", "ko": [{"pos": "unknown", "ko": ["가정교사.", "(학교) 지도 선생, 교수.", "(법) 후견인."]}]}
 {"word": "tutorial", "ko": [{"pos": "명사", "ko": ["교습, 학습 지도.", "학습 프로그램."]}]}
 {"word": "tutti-frutti", "ko": [{"pos": "unknown", "ko": ["여러 가지 과일과 견과류를 섞어 만든 빙과 (아이스크림)."]}]}
 {"word": "tuvalu", "ko": [{"pos": "unknown", "ko": ["나라 이름 투발루."]}]}
 {"word": "tv", "ko": [{"pos": "unknown", "ko": ["소문자 대신 주로 대문자 TV로 쓰인다."]}]}
-{"word": "twas", "ko": [{"pos": "시어", "ko": ["it was의 줄임말. ~였다"], "own": true}]}
+{"word": "twas", "ko": [{"pos": "시어", "ko": ["it was의 줄임말. ~였다"], "own": true, "exact": true}]}
 {"word": "tweak", "ko": [{"pos": "동사", "ko": ["잡아당기다.", "비틀다.", "변경하다."]}]}
 {"word": "twelfth", "ko": [{"pos": "unknown", "ko": ["(서수사) 열두째. (부록: 영어 수사)"]}]}
 {"word": "twelve", "ko": [{"pos": "수사", "ko": ["수 12 (열둘), 십이. (부록: 영어 수사)"]}]}
@@ -14220,6 +14420,9 @@
 {"word": "typo", "ko": [{"pos": "명사", "ko": ["오자(誤字).", "철자 오류."]}]}
 {"word": "typologist", "ko": [{"pos": "명사", "ko": ["예형론자."]}]}
 {"word": "tyrannosaurus", "ko": [{"pos": "unknown", "ko": ["백악기에 존재했던 티라노사우루스속의 공룡."]}]}
+{"word": "tyranny", "ko": [{"pos": "명사", "ko": ["폭정, 독재."], "own": true}]}
+{"word": "tyrant", "ko": [{"pos": "명사", "ko": ["폭군, 독재자."], "own": true}]}
+{"word": "tyrian", "ko": [{"pos": "형용사", "ko": ["(고대 도시) 티루스의; 자줏빛의."], "own": true}]}
 {"word": "u", "ko": [{"pos": "unknown", "ko": ["라틴어(로마자) 알파벳의 스물한째 소문자."]}]}
 {"word": "ubud", "ko": [{"pos": "명사", "ko": ["인도네시아 발리의 여행지 마을 이름 '우붓'."]}]}
 {"word": "udmurt", "ko": [{"pos": "고유명사", "ko": ["우드무르트어"]}]}
@@ -14259,12 +14462,14 @@
 {"word": "unanimously", "ko": [{"pos": "부사", "ko": ["만장일치로"]}]}
 {"word": "unavailable", "ko": [{"pos": "unknown", "ko": ["(어떤 사람과) 만날[이야기를 나눌] 수 없는"]}]}
 {"word": "unavoidable", "ko": [{"pos": "형용사", "ko": ["어쩔 수 없는, 불가피한"]}]}
+{"word": "unbar", "ko": [{"pos": "동사", "ko": ["빗장을 벗기다, 열다."], "own": true}]}
 {"word": "unbecoming", "ko": [{"pos": "unknown", "ko": ["어울리지 않는."]}]}
 {"word": "unbeknownst", "ko": [{"pos": "형용사", "ko": ["~가 모르는"]}]}
 {"word": "unbelievable", "ko": [{"pos": "unknown", "ko": ["믿을 수 없는."]}]}
 {"word": "unblemished", "ko": [{"pos": "unknown", "ko": ["흠집 없는"]}]}
 {"word": "unboxing", "ko": [{"pos": "명사", "ko": ["(내용물을 담고 있는) 상자 개봉."]}]}
 {"word": "unburden", "ko": [{"pos": "동사", "ko": ["(마음의) 부담을 없애다 [덜다], (마음을) 편하게 하다, (고민·비밀을) 털어놓다"]}]}
+{"word": "unburnt", "ko": [{"pos": "형용사", "ko": ["타지 않은."], "own": true}]}
 {"word": "uncertain", "ko": [{"pos": "unknown", "ko": ["불확실한, 불명백한."]}]}
 {"word": "uncharacteristic", "ko": [{"pos": "unknown", "ko": ["특징이 없는.", "(누구)답지 않은, 유례없는."]}]}
 {"word": "unchurch", "ko": [{"pos": "unknown", "ko": ["(교회에서) 제명하다."]}]}
@@ -14347,12 +14552,14 @@
 {"word": "unfettered", "ko": [{"pos": "unknown", "ko": ["(격식) 제한받지 않는, 규제가 없는"]}]}
 {"word": "unfinished", "ko": [{"pos": "unknown", "ko": ["끝나지 않은, 미완성의."]}]}
 {"word": "unfinished symphony", "ko": [{"pos": "명사", "ko": ["(슈베르트의) 미완성 교향곡."]}]}
+{"word": "unfold", "ko": [{"pos": "동사", "ko": ["펼치다, 펼쳐지다; (이야기가) 전개되다."], "own": true}]}
 {"word": "unforgettable", "ko": [{"pos": "unknown", "ko": ["잊을 수 없는."]}]}
 {"word": "unforgivingly", "ko": [{"pos": "부사", "ko": ["이 낱말은 한국어 뜻풀이가 필요합니다. 뜻풀이를 추가한 다음, 이 틀을 지워 주세요."]}]}
 {"word": "unfortunate", "ko": [{"pos": "형용사", "ko": ["불운한, 불행한."]}, {"pos": "명사", "ko": ["불운한 사람."]}]}
 {"word": "unfortunately", "ko": [{"pos": "unknown", "ko": ["불행하게도, 유감스럽게도"]}]}
 {"word": "unfounded", "ko": [{"pos": "unknown", "ko": ["근거가 없는."]}]}
 {"word": "unfriend", "ko": [{"pos": "unknown", "ko": ["네트워크 웹사이트인 페이스북에서 주로 사용하는 이 용어는 '친구 목록에서 삭제한다.'는 의미로 친구라는 'friend'에 부정을 의미하는 접두사 'un'을 붙였다."]}]}
+{"word": "ungentle", "ko": [{"pos": "형용사", "ko": ["(고어) 거친, 상냥하지 않은."], "own": true}]}
 {"word": "ungirdled", "ko": [{"pos": "unknown", "ko": ["끈이 풀린"]}]}
 {"word": "ungrammatical", "ko": [{"pos": "형용사", "ko": ["비문법적인."]}]}
 {"word": "ungrammatically", "ko": [{"pos": "unknown", "ko": ["비문법적으로."]}]}
@@ -14411,9 +14618,11 @@
 {"word": "unpreparedly", "ko": [{"pos": "unknown", "ko": ["unprepared의 부사형."]}]}
 {"word": "unqualified", "ko": [{"pos": "unknown", "ko": ["무자격의, 적임이 아닌.", "무제한의, 무조건의."]}]}
 {"word": "unquestioned", "ko": [{"pos": "unknown", "ko": ["아무 의심 없이 받아들여지는, 의심받지 않는"]}]}
+{"word": "unquiet", "ko": [{"pos": "형용사", "ko": ["불안한, 평온하지 않은."], "own": true}]}
 {"word": "unravel", "ko": [{"pos": "동사", "ko": ["(매듭, 뜨개질 한 것)을 풀다."]}]}
 {"word": "unreasonable", "ko": [{"pos": "unknown", "ko": ["비이성적인, 불합리한."]}]}
 {"word": "unrecorded", "ko": [{"pos": "unknown", "ko": ["기록되지 않은."]}]}
+{"word": "unrelenting", "ko": [{"pos": "형용사", "ko": ["수그러들지 않는, 가차 없는."], "own": true}]}
 {"word": "unrest", "ko": [{"pos": "unknown", "ko": ["(사회적인) 불안, 불온 (상태)"]}]}
 {"word": "unrestricted", "ko": [{"pos": "unknown", "ko": ["제한되지 않은, 구속되지 않은, 자유의."]}]}
 {"word": "unrevoked", "ko": [{"pos": "형용사", "ko": ["취소[폐지, 철회]되지 않은, 아직 효력을 잃지 않은"]}]}
@@ -14424,15 +14633,17 @@
 {"word": "unseemly", "ko": [{"pos": "unknown", "ko": ["(구식 또는 격식) 행동 등이 꼴사나운, 부적절한"]}]}
 {"word": "unsettled", "ko": [{"pos": "unknown", "ko": ["고정되지 않은, 변하기 쉬운."]}]}
 {"word": "unsolicited", "ko": [{"pos": "unknown", "ko": ["청하지 않은"]}]}
+{"word": "unspeakable", "ko": [{"pos": "형용사", "ko": ["말로 다 할 수 없는, 형언할 수 없는."], "own": true}]}
 {"word": "unstable", "ko": [{"pos": "형용사", "ko": ["불안정한.", "(화학·물리) (화합물이) 분해하기 쉬운."]}]}
 {"word": "unsubstantiated", "ko": [{"pos": "unknown", "ko": ["(격식) 근거 없는, 입증되지 않은"]}]}
 {"word": "unsure", "ko": [{"pos": "unknown", "ko": ["확실하지 않은, 불확실한"]}]}
 {"word": "unsuspecting", "ko": [{"pos": "unknown", "ko": ["의심하지 않는, 수상히 여기지 않는, 신용하는"]}]}
 {"word": "unsustainability", "ko": [{"pos": "명사", "ko": ["지속 불가능성."]}]}
 {"word": "unsustainable", "ko": [{"pos": "unknown", "ko": ["(동일한 수준・정도 등으로) 지속 불가능한"]}]}
+{"word": "unswerving", "ko": [{"pos": "형용사", "ko": ["흔들리지 않는, 변함없는."], "own": true}]}
 {"word": "until", "ko": [{"pos": "접속사", "ko": ["(시간절) 때까지.", "(상황절) 할 때까지."]}]}
 {"word": "untimely", "ko": [{"pos": "unknown", "ko": ["시기를 틀린."]}]}
-{"word": "unto", "ko": [{"pos": "고어", "ko": ["~에게, ~까지 (to의 옛 형태)"], "own": true}]}
+{"word": "unto", "ko": [{"pos": "고어", "ko": ["~에게, ~까지 (to의 옛 형태)"], "own": true, "exact": true}]}
 {"word": "untroubled", "ko": [{"pos": "unknown", "ko": ["곤혹되지 않은, 온화한."]}]}
 {"word": "untrust", "ko": [{"pos": "형용사", "ko": ["신뢰할 수 없는."]}]}
 {"word": "ununtrium", "ko": [{"pos": "unknown", "ko": ["우눈트륨. 즉 니호늄의 임시 원소명"]}]}
@@ -14450,6 +14661,7 @@
 {"word": "up-to-date", "ko": [{"pos": "형용사", "ko": ["최신 정보의"]}]}
 {"word": "upas", "ko": [{"pos": "unknown", "ko": ["유퍼스나무."]}]}
 {"word": "upbeat", "ko": [{"pos": "unknown", "ko": ["(비격식) 긍정적인, 낙관적인"]}]}
+{"word": "upbraid", "ko": [{"pos": "동사", "ko": ["(고어) 꾸짖다, 비난하다."], "own": true}]}
 {"word": "upcountry", "ko": [{"pos": "명사", "ko": ["내륙 지방, 산간벽지"]}]}
 {"word": "update", "ko": [{"pos": "동사", "ko": ["갱신하다.", "~ somebody | ~ something 가장 최근의 정보를 알려주다/덧붙이다.", "소프트웨어 업데이트를 갱신할 수 있다."]}]}
 {"word": "upgrade", "ko": [{"pos": "동사", "ko": ["미리 내놓은 물건의 부품이나 성능을 개선하여 높이다."]}]}
@@ -14534,6 +14746,7 @@
 {"word": "vainly", "ko": [{"pos": "unknown", "ko": ["헛되게."]}]}
 {"word": "vakil", "ko": [{"pos": "명사", "ko": ["(인디아의) 변호사"]}]}
 {"word": "valdez", "ko": [{"pos": "unknown", "ko": ["밸디즈 (알래스카 주의 도시)."]}]}
+{"word": "vale", "ko": [{"pos": "명사", "ko": ["(시어) 골짜기, 계곡."], "own": true}]}
 {"word": "valediction", "ko": [{"pos": "명사", "ko": ["작별, 고별."]}]}
 {"word": "valentina", "ko": [{"pos": "unknown", "ko": ["여자 이름 발렌티나."]}]}
 {"word": "valiant", "ko": [{"pos": "unknown", "ko": ["(특히 문예체) 용맹한; 단호한."]}]}
@@ -14558,6 +14771,7 @@
 {"word": "vanilla", "ko": [{"pos": "unknown", "ko": ["바닐라."]}]}
 {"word": "vanish", "ko": [{"pos": "unknown", "ko": ["사라지다."]}]}
 {"word": "vanity", "ko": [{"pos": "unknown", "ko": ["헛된 욕심, 허영, 허영심."]}]}
+{"word": "vanquish", "ko": [{"pos": "동사", "ko": ["정복하다, 완전히 이기다."], "own": true}]}
 {"word": "vanuatu", "ko": [{"pos": "unknown", "ko": ["나라 이름 바누아투."]}]}
 {"word": "vapor", "ko": [{"pos": "명사", "ko": ["끓는 물에서 나는 김, 증기.", "부질없는 공상, 허황된 생각, 망상", "[the ~s] 우울증"]}, {"pos": "동사", "ko": ["발산시키다, 증발[기화]시키다"]}, {"pos": "동사", "ko": ["증발하다", "허풍떨다, 허세부리다"]}]}
 {"word": "variable", "ko": [{"pos": "명사", "ko": ["변수, 변환 값."]}]}
@@ -14605,7 +14819,7 @@
 {"word": "verifiable", "ko": [{"pos": "unknown", "ko": ["증명할 수 있는; 입증[검증]할 수 있는"]}]}
 {"word": "verification", "ko": [{"pos": "unknown", "ko": ["확인, 조회; 입증, 증명, 검증; 검사"]}]}
 {"word": "verify", "ko": [{"pos": "동사", "ko": ["확인하다, 입증하다."]}]}
-{"word": "verily", "ko": [{"pos": "부사", "ko": ["진정(眞正)으로"]}, {"pos": "고어", "ko": ["참으로, 진실로"], "own": true}]}
+{"word": "verily", "ko": [{"pos": "부사", "ko": ["진정(眞正)으로"]}, {"pos": "고어", "ko": ["참으로, 진실로"], "own": true, "exact": true}]}
 {"word": "verity", "ko": [{"pos": "unknown", "ko": ["진리."]}]}
 {"word": "vermin", "ko": [{"pos": "unknown", "ko": ["(농작물・가축 등에게) 해를 입히는 야생 동물[조류]"]}]}
 {"word": "vernacular", "ko": [{"pos": "명사", "ko": ["사투리. 지방어."]}]}
@@ -14741,6 +14955,7 @@
 {"word": "wagtail", "ko": [{"pos": "unknown", "ko": ["할미새."]}]}
 {"word": "wah lau", "ko": [{"pos": "unknown", "ko": ["오, 안돼!"]}]}
 {"word": "wahine", "ko": [{"pos": "unknown", "ko": ["폴리네시아 또는 마오리족여성."]}]}
+{"word": "wail", "ko": [{"pos": "동사", "ko": ["통곡하다, 울부짖다."], "own": true}, {"pos": "명사", "ko": ["울부짖음."], "own": true}]}
 {"word": "waist", "ko": [{"pos": "unknown", "ko": ["허리. (부록: 신체 부분의 영어 이름)"]}]}
 {"word": "wait", "ko": [{"pos": "동사", "ko": ["(자) (볼 일을) 기다리다, 대기하다, 기대하다.", "(타) (기회, 차례를) 기다리다."]}, {"pos": "명사", "ko": ["기다림, 대기"]}]}
 {"word": "waiter", "ko": [{"pos": "명사", "ko": ["호텔, 식당, 술집 따위에서 심부름하는 종업원. 웨이터."]}]}
@@ -14803,7 +15018,7 @@
 {"word": "wasn't", "ko": [{"pos": "unknown", "ko": ["«was»와 «not»을 붙여 줄여 쓴 말."]}]}
 {"word": "wasp", "ko": [{"pos": "unknown", "ko": ["(곤충) 말벌. 땅벌.", "(곤충) 벌목에서, 꿀벌, 뒤영벌, 호박벌, 잎벌 따위를 제외한 이름."]}]}
 {"word": "wassail", "ko": [{"pos": "unknown", "ko": ["향연, 술잔치."]}]}
-{"word": "wast", "ko": [{"pos": "고어", "ko": ["was의 2인칭 단수형. thou wast = 너는 ~였다"], "own": true}]}
+{"word": "wast", "ko": [{"pos": "고어", "ko": ["was의 2인칭 단수형. thou wast = 너는 ~였다"], "own": true, "exact": true}]}
 {"word": "waste", "ko": [{"pos": "동사", "ko": ["헛되이 쓰다, 낭비하다, 허비하다.", "소모하다."]}, {"pos": "동사", "ko": ["쇠약해지다, 써서 사라지다."]}, {"pos": "명사", "ko": ["폐기물, 소모품."]}]}
 {"word": "wasteland", "ko": [{"pos": "unknown", "ko": ["불모지."]}]}
 {"word": "watch", "ko": [{"pos": "동사", "ko": ["바라보다, 지켜보다, 관람하다.", "주시하다, 감시하다."]}, {"pos": "동사", "ko": ["주의하다, 망보다, 경계하다."]}, {"pos": "명사", "ko": ["(손목) 시계.", "파수, 경계."]}]}
@@ -14825,6 +15040,7 @@
 {"word": "waterski", "ko": [{"pos": "unknown", "ko": ["(스포츠) 수상스키."]}]}
 {"word": "waterway", "ko": [{"pos": "unknown", "ko": ["수로, 항로, 운하.", "(갑판의) 배수구."]}]}
 {"word": "waterwheel", "ko": [{"pos": "명사", "ko": ["물레방아, 물레바퀴."]}]}
+{"word": "watery", "ko": [{"pos": "형용사", "ko": ["물의, 물기가 많은; 눈물 어린; 묽은."], "own": true}]}
 {"word": "wave", "ko": [{"pos": "명사", "ko": ["파도."]}, {"pos": "동사", "ko": ["흔들다."]}]}
 {"word": "wavelength", "ko": [{"pos": "unknown", "ko": ["파장."]}]}
 {"word": "waver", "ko": [{"pos": "unknown", "ko": ["동요하다.", "주저하다, 망설이다."]}]}
@@ -14834,6 +15050,7 @@
 {"word": "way", "ko": [{"pos": "명사", "ko": ["방법, 방식, 해결책.", "길."]}]}
 {"word": "wayfarer", "ko": [{"pos": "unknown", "ko": ["도보 여행자."]}]}
 {"word": "wayne", "ko": [{"pos": "unknown", "ko": ["남자 이름."]}]}
+{"word": "wayward", "ko": [{"pos": "형용사", "ko": ["제멋대로의, 고집 센."], "own": true}]}
 {"word": "wc", "ko": [{"pos": "unknown", "ko": ["화장실."]}]}
 {"word": "we", "ko": [{"pos": "대명사", "ko": ["일인칭 복수 주격 인칭 대명사 '우리'. (부록: 영어 인칭대명사)"]}]}
 {"word": "we'd", "ko": [{"pos": "unknown", "ko": ["«we»와 «had» 또는 «should» 또는 «would»를 붙여 줄여 쓴 말."]}]}
@@ -14848,6 +15065,7 @@
 {"word": "wear", "ko": [{"pos": "동사", "ko": ["(옷을) 입다."]}]}
 {"word": "wear and tear", "ko": [{"pos": "unknown", "ko": ["(일상적인 사용에 의한) 마모[마손]"]}]}
 {"word": "wearisome", "ko": [{"pos": "unknown", "ko": ["지겨운, 지루한."]}]}
+{"word": "weary", "ko": [{"pos": "형용사", "ko": ["지친, 피곤한; 싫증난."], "own": true}, {"pos": "동사", "ko": ["지치게 하다."], "own": true}]}
 {"word": "weasel", "ko": [{"pos": "명사", "ko": ["(동물) 족제비."]}]}
 {"word": "weather", "ko": [{"pos": "unknown", "ko": ["날씨, 일기.", "(종종 the ~) 사나운[거친, 고약한] 날씨, 악천후"]}]}
 {"word": "weave", "ko": [{"pos": "동사", "ko": ["(타동사) 실로 천을 짜다, 끈으로 이리저리 엮다.", "(타동사) 짜서 만들다, 끼워 넣다."]}, {"pos": "명사", "ko": ["실로 엮기, 천을 짜는 일."]}]}
@@ -14857,7 +15075,9 @@
 {"word": "wedding", "ko": [{"pos": "unknown", "ko": ["결혼, 결혼하는 것."]}]}
 {"word": "wedding cake", "ko": [{"pos": "unknown", "ko": ["웨딩케이크."]}]}
 {"word": "wedding ring", "ko": [{"pos": "unknown", "ko": ["결혼반지."]}]}
+{"word": "wedge", "ko": [{"pos": "명사", "ko": ["쐐기."], "own": true}, {"pos": "동사", "ko": ["쐐기로 고정하다; 밀어 넣다."], "own": true}]}
 {"word": "wednesday", "ko": [{"pos": "unknown", "ko": ["수요일. (부록: 영어 요일과 달)"]}]}
+{"word": "weed", "ko": [{"pos": "명사", "ko": ["잡초."], "own": true}, {"pos": "동사", "ko": ["잡초를 뽑다."], "own": true}]}
 {"word": "week", "ko": [{"pos": "명사", "ko": ["주 (週), 주일. (부록: 영어 요일과 달)", "(토요일과 일요일을 제외한 5일의) 평일[주중]"]}]}
 {"word": "weekday", "ko": [{"pos": "unknown", "ko": ["평일."]}]}
 {"word": "weekend", "ko": [{"pos": "unknown", "ko": ["주말. (부록: 영어 요일과 달)"]}]}
@@ -14876,9 +15096,11 @@
 {"word": "well-being", "ko": [{"pos": "unknown", "ko": ["만족스럽고 건강하여 행복한 상태. 한국어에는 아직 알맞는 번역이 없으나"]}]}
 {"word": "well-known", "ko": [{"pos": "unknown", "ko": ["잘 알려진, 유명한."]}]}
 {"word": "wench", "ko": [{"pos": "unknown", "ko": ["(옛말) 여자, 소녀."]}]}
+{"word": "wend", "ko": [{"pos": "동사", "ko": ["(고어) (길을) 가다, 나아가다."], "own": true}]}
+{"word": "were't", "ko": [{"pos": "고어", "ko": ["were it의 줄임말"], "own": true, "exact": true}]}
 {"word": "weren't", "ko": [{"pos": "unknown", "ko": ["«were»와 «not»을 붙여 줄여 쓴 말."]}]}
 {"word": "werewolf", "ko": [{"pos": "unknown", "ko": ["늑대인간."]}]}
-{"word": "wert", "ko": [{"pos": "고어", "ko": ["were의 2인칭 단수형. thou wert = 너는 ~였다"], "own": true}]}
+{"word": "wert", "ko": [{"pos": "고어", "ko": ["were의 2인칭 단수형. thou wert = 너는 ~였다"], "own": true, "exact": true}]}
 {"word": "west", "ko": [{"pos": "형용사", "ko": ["서쪽의."]}, {"pos": "부사", "ko": ["서쪽에."]}]}
 {"word": "western", "ko": [{"pos": "명사", "ko": ["카우보이 등이 활약하는 영화·극, 소설 및 음악의 통칭. 서부극, 서부물 (物).", "(드물게) 서부 사람, 서쪽 나라 사람, 서양인.", "(드물게) 서유럽 사람."]}]}
 {"word": "wet", "ko": [{"pos": "형용사", "ko": ["젖은, 축축한."]}, {"pos": "동사", "ko": ["(타동사) 적시다.", "(자동사) 젖다."]}]}
@@ -14903,20 +15125,22 @@
 {"word": "wheelchair", "ko": [{"pos": "unknown", "ko": ["휠체어."]}]}
 {"word": "wheeler-dealer", "ko": [{"pos": "unknown", "ko": ["재주가 있는 상인, 사업가."]}]}
 {"word": "when", "ko": [{"pos": "부사", "ko": ["시간을 묻는 의문부사.", "시간을 받아주는 관계부사."]}, {"pos": "접속사", "ko": ["...할 때,...일 때", "...하자"]}]}
-{"word": "whence", "ko": [{"pos": "고어", "ko": ["어디에서, 그곳으로부터"], "own": true}]}
+{"word": "whence", "ko": [{"pos": "고어", "ko": ["어디에서, 그곳으로부터"], "own": true, "exact": true}]}
 {"word": "whenever", "ko": [{"pos": "unknown", "ko": ["할 때는 언제나, …할 때에는 반드시;…할 때마다"]}]}
 {"word": "where", "ko": [{"pos": "unknown", "ko": ["(의문대명사) 어디.", "(관계대명사) 어디."]}]}
 {"word": "where are you", "ko": [{"pos": "구", "ko": ["어디 있어?"]}]}
 {"word": "where's", "ko": [{"pos": "unknown", "ko": ["«where»와 «does» 또는 «has» 또는 «is»를 붙여 줄여 쓴 말."]}]}
-{"word": "wherefore", "ko": [{"pos": "고어", "ko": ["왜, 무슨 까닭으로 / 그러므로"], "own": true}]}
+{"word": "wherefore", "ko": [{"pos": "고어", "ko": ["왜, 무슨 까닭으로 / 그러므로"], "own": true, "exact": true}]}
 {"word": "wherein", "ko": [{"pos": "부사", "ko": ["(관계사) 거기서 …하는 바의"]}]}
+{"word": "whereto", "ko": [{"pos": "고어", "ko": ["어디로, 무엇을 향해"], "own": true, "exact": true}]}
 {"word": "wherever", "ko": [{"pos": "unknown", "ko": ["한 모든 경우에[언제나]"]}]}
 {"word": "whether", "ko": [{"pos": "unknown", "ko": ["선택 간접의문문을 이끄는 접속부사."]}]}
 {"word": "which", "ko": [{"pos": "한정사", "ko": ["(의문) (언급되었거나 암시된 것 중에서) 어느 것의.", "(관계) 어느 것"]}, {"pos": "대명사", "ko": ["(의문: 여럿 가운데 선택하는 것을 물을 때) 어느 것. 누구", "(관계대명사) 선행사를 받는 그것."]}]}
 {"word": "whichever", "ko": [{"pos": "unknown", "ko": ["어느 쪽이든 …한 것; 누구든 …한 사람"]}]}
 {"word": "while", "ko": [{"pos": "접속사", "ko": ["~ 하는 사이에, ~하고 있는 동안에, ~과 동시에, ~하는 한, 그런데 한편, ~인데, 그런데, ~이라 하나"]}, {"pos": "동사", "ko": ["~을 한가로이(마음 편히, 즐겁게) 보내다. (지루함 따위)를 넘기다."]}]}
-{"word": "whilom", "ko": [{"pos": "고어", "ko": ["예전에, 한때"], "own": true}]}
+{"word": "whilom", "ko": [{"pos": "고어", "ko": ["예전에, 한때"], "own": true, "exact": true}]}
 {"word": "whilst", "ko": [{"pos": "unknown", "ko": ["동안"]}]}
+{"word": "whim", "ko": [{"pos": "명사", "ko": ["일시적인 기분, 변덕."], "own": true}]}
 {"word": "whine", "ko": [{"pos": "동사", "ko": ["비난하다, 좋지 않게 말하다, 투정하다, 헐뜯다."]}]}
 {"word": "whip", "ko": [{"pos": "unknown", "ko": ["채찍질하다."]}]}
 {"word": "whirl", "ko": [{"pos": "unknown", "ko": ["회전하다."]}]}
@@ -14937,7 +15161,7 @@
 {"word": "whiteboard", "ko": [{"pos": "unknown", "ko": ["흰색 칠판."]}]}
 {"word": "whiten", "ko": [{"pos": "unknown", "ko": ["하얗게 하다, 표백하다.", "하얘지다."]}]}
 {"word": "whiteness", "ko": [{"pos": "unknown", "ko": ["하양."]}]}
-{"word": "whither", "ko": [{"pos": "고어", "ko": ["어디로, 그곳으로"], "own": true}]}
+{"word": "whither", "ko": [{"pos": "고어", "ko": ["어디로, 그곳으로"], "own": true, "exact": true}]}
 {"word": "whitney", "ko": [{"pos": "고유명사", "ko": ["중세 영어에서 유래한 거주 성씨.", "성에서 옮겨온 여성 이름이며, 1980년대와 1990년대에 휘트니 휴스턴의 명성으로 인해 유행했다.", "성에서 유래한 남성 이름."]}]}
 {"word": "whiz kid", "ko": [{"pos": "unknown", "ko": ["똑똑한, 아이, 영재 아동."]}]}
 {"word": "who", "ko": [{"pos": "대명사", "ko": ["(의문대명사) 누구.", "(관계대명사) 그 사람."]}]}
@@ -14981,7 +15205,7 @@
 {"word": "willing", "ko": [{"pos": "unknown", "ko": ["기꺼이 무엇을 하는."]}]}
 {"word": "willow", "ko": [{"pos": "unknown", "ko": ["버드나무."]}]}
 {"word": "willy-nilly", "ko": [{"pos": "unknown", "ko": ["싫든 좋든."]}]}
-{"word": "wilt", "ko": [{"pos": "고어", "ko": ["will의 2인칭 단수형. thou wilt = 너는 ~할 것이다"], "own": true}]}
+{"word": "wilt", "ko": [{"pos": "고어", "ko": ["will의 2인칭 단수형. thou wilt = 너는 ~할 것이다"], "own": true, "exact": true}]}
 {"word": "wiman joseon", "ko": [{"pos": "unknown", "ko": ["위만조선."]}]}
 {"word": "wimple", "ko": [{"pos": "명사", "ko": ["(수녀의) 쓰개"]}]}
 {"word": "win", "ko": [{"pos": "동사", "ko": ["이기다, 승리하다."]}, {"pos": "명사", "ko": ["우승.", "이득, 당첨."]}]}
@@ -15031,6 +15255,7 @@
 {"word": "wizardry", "ko": [{"pos": "unknown", "ko": ["마법, 마술.", "비범한 재능."]}]}
 {"word": "wlan", "ko": [{"pos": "unknown", "ko": ["(컴퓨터) 무선 지역 통신망."]}]}
 {"word": "wma", "ko": [{"pos": "unknown", "ko": ["마이크로소프트 회사에서 윈도우즈의 미디어 사용 수단으로서 개발한 음악 저장 형식. 특징은 압축 파일이므로 용량이 적은 대신 음질이 다소 떨어진다."]}]}
+{"word": "woe", "ko": [{"pos": "명사", "ko": ["(깊은) 슬픔, 비애; 재앙."], "own": true}]}
 {"word": "wolf", "ko": [{"pos": "명사", "ko": ["(동물) 늑대.", "(동물) 유라시아늑대"]}]}
 {"word": "woman", "ko": [{"pos": "명사", "ko": ["여자, 여성, 여인."]}]}
 {"word": "woman doctor", "ko": [{"pos": "unknown", "ko": ["여의사."]}]}
@@ -15044,7 +15269,9 @@
 {"word": "wonder", "ko": [{"pos": "동사", "ko": ["놀라다, 경탄하다.", "이 아닐까 생각하다. 의아하게 여기다."]}]}
 {"word": "wonder goal", "ko": [{"pos": "명사", "ko": ["원더골."]}]}
 {"word": "wonderful", "ko": [{"pos": "unknown", "ko": ["(이제는 드물게 씀)경탄스럽다, 경이롭다. 불가사의하다.", "멋지다, 훌륭하다, 신나다."]}]}
-{"word": "wont", "ko": [{"pos": "고어", "ko": ["~하는 버릇이 있는, ~하곤 하는 / 습관"], "own": true}]}
+{"word": "wondrous", "ko": [{"pos": "형용사", "ko": ["(시어) 놀라운, 경이로운."], "own": true}]}
+{"word": "wont", "ko": [{"pos": "고어", "ko": ["~하는 버릇이 있는, ~하곤 하는 / 습관"], "own": true, "exact": true}]}
+{"word": "woo", "ko": [{"pos": "동사", "ko": ["(고어) 구애하다; (지지를) 얻으려 하다."], "own": true}]}
 {"word": "wood", "ko": [{"pos": "unknown", "ko": ["(재련한) 나무, 목재."]}]}
 {"word": "woodcock", "ko": [{"pos": "unknown", "ko": ["멧도요."]}]}
 {"word": "wooded", "ko": [{"pos": "unknown", "ko": ["나무들로 덮여 있는."]}]}
@@ -15086,8 +15313,9 @@
 {"word": "worthy", "ko": [{"pos": "unknown", "ko": ["가치 있는, … 할 만하다."]}]}
 {"word": "wot", "ko": [{"pos": "unknown", "ko": ["알다.", "시들다.", "wit의 1, 3인칭 현재형."]}]}
 {"word": "would", "ko": [{"pos": "동사", "ko": ["일[할] 것이다(상상하는 일의 결과에 대해 말할 때 씀)", "[조건절의 내용을 언외(言外)에 함축시켜 표현을 완곡하게 하여] …일 것이다, …일 것입니다.", "[Would you...?로 정중한 의뢰나 권유를 나타내어] …하여 주시겠습니까"]}]}
+{"word": "would'st", "ko": [{"pos": "고어", "ko": ["would의 2인칭 단수형"], "own": true, "exact": true}]}
 {"word": "wouldn't", "ko": [{"pos": "unknown", "ko": ["«would»와 «not»을 붙여 줄여 쓴 말."]}]}
-{"word": "wouldst", "ko": [{"pos": "고어", "ko": ["would의 2인칭 단수형"], "own": true}]}
+{"word": "wouldst", "ko": [{"pos": "고어", "ko": ["would의 2인칭 단수형"], "own": true, "exact": true}]}
 {"word": "wound", "ko": [{"pos": "명사", "ko": ["부상, 상처."]}, {"pos": "동사", "ko": ["부상시키다, 상처를 입히다."]}]}
 {"word": "wrap", "ko": [{"pos": "동사", "ko": ["(타동사) 싸다, 감싸다, 두르다, 포장하다"]}]}
 {"word": "wrath", "ko": [{"pos": "unknown", "ko": ["몹시 큰 화, 분노, 격분.", "벌, 재앙."]}]}
@@ -15096,6 +15324,7 @@
 {"word": "wreath", "ko": [{"pos": "동사", "ko": ["(꽃, 잎을) 엮어서 둥글게 만들다. 화환으로 장식하다."]}]}
 {"word": "wrench", "ko": [{"pos": "명사", "ko": ["렌치; 스패너를 미국식 영어로 일컫는 말.", "첼라, 워터펌프플라이어; 영연방 지역에서 배관공이 사용하는 소켓의 너비 조정이 가능한 스패너만을 특정지어 일컫는 말.", "비틀기, 뒤틀기; 과격하게 돌리거나 쥐어 짬."]}, {"pos": "동사", "ko": ["뒤틀다, 비틀다.", "렌치를 돌리다, 렌치를 비틀다; 렌치를 사용하다."]}]}
 {"word": "wring", "ko": [{"pos": "동사", "ko": ["짜다."]}]}
+{"word": "wrinkle", "ko": [{"pos": "명사", "ko": ["주름."], "own": true}, {"pos": "동사", "ko": ["주름지다, 주름을 잡다."], "own": true}]}
 {"word": "wrist", "ko": [{"pos": "unknown", "ko": ["손목. (부록: 신체 부분의 영어 이름)"]}]}
 {"word": "write", "ko": [{"pos": "동사", "ko": ["(타동사) 글을 쓰다, 필기하다, 적다.", "«write » 편지를 쓰다[(써서) 보내다], 편지하다"]}]}
 {"word": "write down", "ko": [{"pos": "동사", "ko": ["적어두다, 기록하다.", "(회계) 감가상각하다."]}]}
@@ -15136,8 +15365,8 @@
 {"word": "yard", "ko": [{"pos": "unknown", "ko": ["영어 야드법에서 기본 단위로서 1 야드는 0.9144 미터. (부록: 영어 도량형)"]}]}
 {"word": "yaroslavl", "ko": [{"pos": "unknown", "ko": ["야로슬라블(러시아의 주와 도시 이름)."]}]}
 {"word": "yawn", "ko": [{"pos": "동사", "ko": ["하품하다."]}, {"pos": "명사", "ko": ["하품."]}]}
-{"word": "ye", "ko": [{"pos": "고어", "ko": ["너희, 그대들"], "own": true}]}
-{"word": "yea", "ko": [{"pos": "고어", "ko": ["그렇다, 예 / 참으로"], "own": true}]}
+{"word": "ye", "ko": [{"pos": "고어", "ko": ["너희, 그대들"], "own": true, "exact": true}]}
+{"word": "yea", "ko": [{"pos": "고어", "ko": ["그렇다, 예 / 참으로"], "own": true, "exact": true}]}
 {"word": "yeah", "ko": [{"pos": "감탄사", "ko": ["기쁨, 즐거움을 나타내는 감탄사."]}]}
 {"word": "year", "ko": [{"pos": "명사", "ko": ["(시간의 단위) 해, 년.", "(복수로 쓸 때) 나이, 연령"]}]}
 {"word": "year-to-year", "ko": [{"pos": "형용사", "ko": ["매년."]}]}
@@ -15151,6 +15380,7 @@
 {"word": "yemen", "ko": [{"pos": "unknown", "ko": ["예멘."]}]}
 {"word": "yen", "ko": [{"pos": "unknown", "ko": ["(일본의 화폐 단위) 엔"]}]}
 {"word": "yenisei", "ko": [{"pos": "unknown", "ko": ["예니세이 강(러시아의 강)."]}]}
+{"word": "yes", "ko": [{"pos": "감탄사", "ko": ["예, 네; 그래."], "own": true}]}
 {"word": "yesterday", "ko": [{"pos": "명사", "ko": ["어제."]}]}
 {"word": "yet", "ko": [{"pos": "접속사", "ko": ["(양보) 그럼에도, 그렇지만."]}]}
 {"word": "yiddish", "ko": [{"pos": "명사", "ko": ["이디시어, 이디쉬어"]}, {"pos": "형용사", "ko": ["이디시의, 아슈케나지 유대인의."]}]}
@@ -15162,8 +15392,8 @@
 {"word": "yoke", "ko": [{"pos": "명사", "ko": ["겨리, 멍에"]}]}
 {"word": "yokohama", "ko": [{"pos": "unknown", "ko": ["요코하마 시."]}]}
 {"word": "yolk", "ko": [{"pos": "명사", "ko": ["노른자"]}]}
-{"word": "yon", "ko": [{"pos": "고어", "ko": ["저쪽의, 저기 (있는)"], "own": true}]}
-{"word": "yonder", "ko": [{"pos": "부사", "ko": ["(미국 남부 컴브리아 지방 외 지역에서 사용되는 고어 또는 방언) 멀리 떨어져 있지만 특정 장소를 가리키는 곳에.", "(고어 또는 방언) thither의 동의어: 멀리 떨어져 있지만 특정 장소를 가리키는 곳."]}, {"pos": "명사", "ko": ["(문학적 표현) 드넓은 공간, 특히 하늘이나 길이 없는 숲."]}, {"pos": "고어", "ko": ["저쪽의, 저기에 (있는)"], "own": true}]}
+{"word": "yon", "ko": [{"pos": "고어", "ko": ["저쪽의, 저기 (있는)"], "own": true, "exact": true}]}
+{"word": "yonder", "ko": [{"pos": "부사", "ko": ["(미국 남부 컴브리아 지방 외 지역에서 사용되는 고어 또는 방언) 멀리 떨어져 있지만 특정 장소를 가리키는 곳에.", "(고어 또는 방언) thither의 동의어: 멀리 떨어져 있지만 특정 장소를 가리키는 곳."]}, {"pos": "명사", "ko": ["(문학적 표현) 드넓은 공간, 특히 하늘이나 길이 없는 숲."]}, {"pos": "고어", "ko": ["저쪽의, 저기에 (있는)"], "own": true, "exact": true}]}
 {"word": "yonks", "ko": [{"pos": "unknown", "ko": ["기대한 것보다 더 오랫동안(아일랜드, 오스트레일리아).", "오랫동안(영국)."]}]}
 {"word": "you", "ko": [{"pos": "대명사", "ko": ["이인칭 단수 및 복수 주격, 여격, 목적격 인칭 대명사 '너', '당신'. (부록: 영어 인칭대명사)"]}]}
 {"word": "you don't dip your pen in company ink", "ko": [{"pos": "proverb", "ko": ["직장에서는 애정 관계를 피해라."]}]}
@@ -15194,6 +15424,7 @@
 {"word": "zakat", "ko": [{"pos": "명사", "ko": ["자카트."]}]}
 {"word": "zambia", "ko": [{"pos": "unknown", "ko": ["나라 이름 잠비아."]}]}
 {"word": "zara", "ko": [{"pos": "unknown", "ko": ["여자 이름."]}]}
+{"word": "zeal", "ko": [{"pos": "명사", "ko": ["열의, 열정."], "own": true}]}
 {"word": "zealous", "ko": [{"pos": "형용사", "ko": ["열성적인."]}]}
 {"word": "zebra", "ko": [{"pos": "명사", "ko": ["(동물) 얼룩말.", "(속어) 흑인과 백인 사이의 혼혈을 낮잡아 이르는 말."]}]}
 {"word": "zebrafish", "ko": [{"pos": "명사", "ko": ["제브라피쉬, 지브라피쉬, 제브라 다니오. 다니오 레리오 종의 작은 줄무늬 물고기로, 원래는 인도가 원산지이지만, 현재는 수족관 관상용 물고기와 유전 실험 대상으로 흔히 사용된다."]}]}
