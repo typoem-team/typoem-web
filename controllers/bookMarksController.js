@@ -11,8 +11,7 @@
 const model = require("../models/bookMarksModel");
 const booksModel = require("../models/booksModel");
 const roomsModel = require("../models/roomsModel");
-
-const KINDS = ["highlight", "note"];
+const { checkMarkBody, noteContent } = require("../lib/markInput");
 
 // helper: parse ':id' path param and validate (same as roomsController)
 function parseId(raw) {
@@ -26,18 +25,6 @@ function parseIndex(raw) {
     if (typeof raw !== "string" || !/^\d+$/.test(raw)) return null;
     const n = Number(raw);
     return Number.isSafeInteger(n) ? n : null;
-}
-
-// helper: non-negative integer in a JSON body
-function isIndex(n) {
-    return Number.isSafeInteger(n) && n >= 0;
-}
-
-// helper: trimmed string of min..max characters, else null
-function textOf(raw, min, max) {
-    if (typeof raw !== "string") return null;
-    const t = raw.trim();
-    return t.length >= min && t.length <= max ? t : null;
 }
 
 // helper: room exists + caller is a member + room has a book (same messages as booksController)
@@ -88,31 +75,23 @@ async function listMarks(req, res) {
 }
 
 // [POST] /api/rooms/:id/book/marks
-// body { kind, chapterIdx, startPara, startWord, endPara, endWord, quote, content? }
+// body { kind, color?, chapterIdx, startPara, startWord, endPara, endWord, quote, content? }
+// highlight: color required, content ignored; note: content required, color ignored
 async function createMark(req, res) {
     try {
         const ctx = await loadRoomBook(req, res);
         if (!ctx) return;
 
         const body = req.body || {};
-        const { kind, chapterIdx, startPara, startWord, endPara, endWord } = body;
+        const { chapterIdx, startPara, startWord, endPara, endWord } = body;
 
-        if (!KINDS.includes(kind)) return res.status(400).json({ error: "kind must be 'highlight' or 'note'" });
-        if (![chapterIdx, startPara, startWord, endPara, endWord].every(isIndex)) {
-            return res.status(400).json({ error: "chapterIdx, startPara, startWord, endPara, endWord must be non-negative integers" });
-        }
-        if (startPara > endPara || (startPara === endPara && startWord > endWord)) {
-            return res.status(400).json({ error: "start must not be after end" });
-        }
-        const quote = textOf(body.quote, 1, 1000);
-        if (quote === null) return res.status(400).json({ error: "quote must be 1-1000 characters" });
-
-        // a note needs content; a highlight never stores any
-        let content = null;
-        if (kind === "note") {
-            content = textOf(body.content, 1, 500);
-            if (content === null) return res.status(400).json({ error: "content must be 1-500 characters" });
-        }
+        const checked = checkMarkBody(body, {
+            intFields: ["chapterIdx", "startPara", "startWord", "endPara", "endWord"],
+            start: ["startPara", "startWord"],
+            end: ["endPara", "endWord"],
+        });
+        if (checked.error) return res.status(400).json({ error: checked.error });
+        const { kind, color, quote, content } = checked;
 
         // both ends must be paragraphs of chapter chapterIdx in the room's book
         const found = await model.findParagraphChapters(ctx.rb.book_id, [startPara, endPara]);
@@ -126,6 +105,7 @@ async function createMark(req, res) {
             book_id: ctx.rb.book_id,
             user_id: req.user.id,
             kind,
+            color,
             chapter_idx: chapterIdx,
             start_para: startPara,
             start_word: startWord,
@@ -158,7 +138,7 @@ async function updateMark(req, res) {
             return res.status(400).json({ error: "Only notes can be edited" });
         }
 
-        const content = textOf((req.body || {}).content, 1, 500);
+        const content = noteContent((req.body || {}).content);
         if (content === null) return res.status(400).json({ error: "content must be 1-500 characters" });
 
         const updated = await model.updateContent(mark_id, content);

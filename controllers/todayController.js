@@ -1,5 +1,5 @@
 // GET /api/rooms/:id/today - Assigns TODAY'S POEM
-// 1. Returns today's poem + its full-poem memos + its line annotations for an authenticated room member.
+// 1. Returns today's poem + its full-poem memos + its line annotations + its poem marks for an authenticated room member.
 // 2. If the room has no poem for today, fetches a fresh (room-unseen) poem live from PoetryDB, caches it, assigns it to the room for today, and returns it.
 
 // Source order: live PoetryDB -> data/poems.json fallback pool -> 503 (never a duplicate).
@@ -8,6 +8,7 @@
 const poemsModel = require("../models/poemsModel");
 const roomsModel = require("../models/roomsModel");
 const memosModel = require("../models/memosModel");
+const poemMarksModel = require("../models/poemMarksModel");
 
 // helpers copied from memosController/roomsController (for consistency)
 function parseId(raw) {
@@ -110,6 +111,7 @@ async function getToday(req, res) {
         const poem = await poemsModel.findPoemWithLines(poem_id);
         const memos = await memosModel.listForRoomPoem(room_id, poem_id, req.user.id);
         const annotations = await poemsModel.listAnnotationsForRoomPoem(room_id, poem_id);
+        const poem_marks = await poemMarksModel.listForRoomPoem(room_id, poem_id);
 
         res.set("Cache-Control", "no-store"); // GET has side effects + data changes; don't cache
         return res.status(200).json({
@@ -117,7 +119,8 @@ async function getToday(req, res) {
             date,
             poem,
             memos,
-            annotations,
+            annotations,      // line_annotations (older app builds)
+            poem_marks,       // word-range highlights + notes (v1.1)
         });
     } catch (err) {
         console.error(err);

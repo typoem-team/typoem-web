@@ -32,7 +32,7 @@ const CHAPTER_OF = { 0: 0, 1: 0, 2: 1, 3: 1, 4: 1 };
 
 const markRow = (over = {}) => ({
     id: 7, room_id: 5, book_id: 1342, user_id: 1, author_nickname: "Alice",
-    kind: "highlight", chapter_idx: 1, start_para: 2, start_word: 3, end_para: 3, end_word: 0,
+    kind: "highlight", color: "yellow", chapter_idx: 1, start_para: 2, start_word: 3, end_para: 3, end_word: 0,
     quote: "a truth universally acknowledged", content: null, created_at: "2026-11-11 00:00:00",
     ...over,
 });
@@ -137,7 +137,7 @@ describe("GET /api/rooms/:id/book/marks", () => {
 // -----------------------------------------------------------------------------
 describe("POST /api/rooms/:id/book/marks", () => {
     const highlight = {
-        kind: "highlight", chapterIdx: 1, startPara: 2, startWord: 3, endPara: 3, endWord: 0,
+        kind: "highlight", color: "pink", chapterIdx: 1, startPara: 2, startWord: 3, endPara: 3, endWord: 0,
         quote: "  a truth universally acknowledged  ",
     };
     const note = { ...highlight, kind: "note", content: "  so ironic  " };
@@ -174,18 +174,25 @@ describe("POST /api/rooms/:id/book/marks", () => {
 
         expect(res.statusCode).toBe(201);
         expect(marksModel.createMark).toHaveBeenCalledWith({
-            room_id: 5, book_id: 1342, user_id: 1, kind: "highlight", chapter_idx: 1,
+            room_id: 5, book_id: 1342, user_id: 1, kind: "highlight", color: "pink", chapter_idx: 1,
             start_para: 2, start_word: 3, end_para: 3, end_word: 0,
             quote: "a truth universally acknowledged", content: null,
         });
         expect(marksModel.findParagraphChapters).toHaveBeenCalledWith(1342, [2, 3]);
-        expect(res.body).toMatchObject({ id: 7, kind: "highlight", content: null, author_nickname: "Alice" });
+        expect(res.body).toMatchObject({ id: 7, kind: "highlight", color: "pink", content: null, author_nickname: "Alice" });
     });
 
-    test("201 note: content trimmed and stored", async () => {
-        const res = await post(alice, note);
+    test("201 note: content trimmed and stored, color ignored -> null", async () => {
+        const res = await post(alice, note); // note still carries color: "pink" from the highlight fixture
         expect(res.statusCode).toBe(201);
-        expect(marksModel.createMark).toHaveBeenCalledWith(expect.objectContaining({ kind: "note", content: "so ironic" }));
+        expect(marksModel.createMark).toHaveBeenCalledWith(expect.objectContaining({ kind: "note", color: null, content: "so ironic" }));
+        expect(res.body).toMatchObject({ kind: "note", color: null });
+    });
+
+    test.each(["yellow", "pink", "blue", "green"])("201 highlight in %s", async (color) => {
+        const res = await post(alice, { ...highlight, color });
+        expect(res.statusCode).toBe(201);
+        expect(marksModel.createMark).toHaveBeenCalledWith(expect.objectContaining({ color }));
     });
 
     test("201 single word (start == end)", async () => {
@@ -211,6 +218,10 @@ describe("POST /api/rooms/:id/book/marks", () => {
         ["missing quote", { ...highlight, quote: undefined }, "quote must be 1-1000 characters"],
         ["blank quote", { ...highlight, quote: "   " }, "quote must be 1-1000 characters"],
         ["quote too long", { ...highlight, quote: "a".repeat(1001) }, "quote must be 1-1000 characters"],
+        ["highlight without color", { ...highlight, color: undefined }, "color must be one of yellow, pink, blue, green"],
+        ["highlight with null color", { ...highlight, color: null }, "color must be one of yellow, pink, blue, green"],
+        ["highlight with an unknown color", { ...highlight, color: "red" }, "color must be one of yellow, pink, blue, green"],
+        ["highlight with a capitalised color", { ...highlight, color: "Yellow" }, "color must be one of yellow, pink, blue, green"],
         ["note without content", { ...note, content: undefined }, "content must be 1-500 characters"],
         ["note with blank content", { ...note, content: "  " }, "content must be 1-500 characters"],
         ["note content too long", { ...note, content: "a".repeat(501) }, "content must be 1-500 characters"],

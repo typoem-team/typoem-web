@@ -354,6 +354,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LineAnnotation'
+        poem_marks:
+          type: array
+          description: Word-range highlights and notes on this poem in this room, oldest first.
+          items:
+            $ref: '#/components/schemas/PoemMark'
 
     Book:
       type: object
@@ -575,6 +580,12 @@ components:
         kind:
           type: string
           enum: [highlight, note]
+        color:
+          type: string
+          nullable: true
+          enum: [yellow, pink, blue, green, null]
+          description: Highlight colour; always null for a note.
+          example: "yellow"
         chapter_idx:
           type: integer
           example: 0
@@ -601,6 +612,62 @@ components:
           nullable: true
           description: The note text; always null for a highlight.
           example: "The irony starts in line one."
+        created_at:
+          type: string
+          example: "2026-11-11 09:00:00"
+
+    PoemMark:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9
+        room_id:
+          type: integer
+          example: 1
+        poem_id:
+          type: integer
+          example: 30
+        user_id:
+          type: integer
+          example: 2
+        author_nickname:
+          type: string
+          example: "Bob"
+        kind:
+          type: string
+          enum: [highlight, note]
+        color:
+          type: string
+          nullable: true
+          enum: [yellow, pink, blue, green, null]
+          description: Highlight colour; always null for a note.
+          example: "blue"
+        start_line:
+          type: integer
+          description: poem_lines.line_number of the first line (1-based).
+          example: 2
+        start_word:
+          type: integer
+          description: 0-based word in start_line (inclusive), split like room.js wrapWords().
+          example: 1
+        end_line:
+          type: integer
+          example: 3
+        end_word:
+          type: integer
+          description: 0-based word in end_line (inclusive).
+          example: 0
+        quote:
+          type: string
+          example: "the woods are lovely"
+        content:
+          type: string
+          nullable: true
+          description: >
+            The note text; always null for a highlight. Notes copied from line
+            annotations may be up to 1000 characters.
+          example: "dark and deep"
         created_at:
           type: string
           example: "2026-11-11 09:00:00"
@@ -2126,9 +2193,10 @@ paths:
       summary: Highlight or annotate a range of the room's book
       description: >
         Both ends must be paragraphs of chapterIdx, and (startPara, startWord)
-        must not come after (endPara, endWord). A note needs content (1-500
-        characters); a highlight's content is ignored and stored as null.
-        The same range may be marked more than once.
+        must not come after (endPara, endWord). A highlight needs a color
+        (yellow, pink, blue, green); its content is ignored and stored as null.
+        A note needs content (1-500 characters); its color is ignored and stored
+        as null. The same range may be marked more than once.
       security:
         - bearerAuth: []
       parameters:
@@ -2149,6 +2217,10 @@ paths:
                 kind:
                   type: string
                   enum: [highlight, note]
+                color:
+                  type: string
+                  enum: [yellow, pink, blue, green]
+                  description: Required for a highlight; ignored for a note.
                 chapterIdx:
                   type: integer
                   minimum: 0
@@ -2247,6 +2319,188 @@ paths:
           schema:
             type: integer
             example: 7
+      responses:
+        '204':
+          description: Mark deleted
+        '400':
+          description: Invalid mark id
+        '401':
+          description: Missing or invalid token
+        '403':
+          description: Can only delete your own mark
+        '404':
+          description: Mark not found
+  /api/rooms/{id}/poems/{poemId}/marks:
+    get:
+      tags: [Poem marks]
+      summary: List highlights and notes on a poem of the room
+      description: >
+        Any poem this room has been given (on any date). Oldest first.
+        Sent with `Cache-Control: no-store`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: poemId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 30
+      responses:
+        '200':
+          description: Marks on the poem
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PoemMark'
+        '400':
+          description: Invalid room id or poem id
+        '401':
+          description: Missing or invalid token
+        '403':
+          description: Not a member of this room
+        '404':
+          description: Room not found, or the room was never given this poem
+    post:
+      tags: [Poem marks]
+      summary: Highlight or annotate a word range of today's poem
+      description: >
+        Only the room's poem of today (same UTC date as line annotations).
+        Both lines must exist in the poem, and (startLine, startWord) must not
+        come after (endLine, endWord). A highlight needs a color; a note needs
+        content (1-500 characters). The other field is ignored and stored as null.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: poemId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 30
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, startLine, startWord, endLine, endWord, quote]
+              properties:
+                kind:
+                  type: string
+                  enum: [highlight, note]
+                color:
+                  type: string
+                  enum: [yellow, pink, blue, green]
+                  description: Required for a highlight; ignored for a note.
+                startLine:
+                  type: integer
+                  minimum: 1
+                  example: 2
+                startWord:
+                  type: integer
+                  minimum: 0
+                  example: 1
+                endLine:
+                  type: integer
+                  minimum: 1
+                  example: 3
+                endWord:
+                  type: integer
+                  minimum: 0
+                  example: 0
+                quote:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  example: "the woods are lovely"
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  example: "dark and deep"
+      responses:
+        '201':
+          description: Mark created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoemMark'
+        '400':
+          description: Invalid input or range
+        '401':
+          description: Missing or invalid token
+        '403':
+          description: Not a member of this room
+        '404':
+          description: Room not found, or the poem is not this room's poem today
+  /api/poem-marks/{id}:
+    patch:
+      tags: [Poem marks]
+      summary: Edit my note's content
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 9
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  example: "Edited thought."
+      responses:
+        '200':
+          description: Note updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoemMark'
+        '400':
+          description: Invalid id or content, or the mark is a highlight
+        '401':
+          description: Missing or invalid token
+        '403':
+          description: Can only edit your own mark
+        '404':
+          description: Mark not found
+    delete:
+      tags: [Poem marks]
+      summary: Delete my highlight or note
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 9
       responses:
         '204':
           description: Mark deleted

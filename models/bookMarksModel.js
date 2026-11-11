@@ -5,7 +5,7 @@
 const { getDb } = require("../db");
 
 const MARK_COLUMNS = `m.id, m.room_id, m.book_id, m.user_id, u.nickname AS author_nickname,
-                m.kind, m.chapter_idx, m.start_para, m.start_word, m.end_para, m.end_word,
+                m.kind, m.color, m.chapter_idx, m.start_para, m.start_word, m.end_para, m.end_word,
                 m.quote, m.content, m.created_at`;
 
 // helper: which chapter each of these paragraph idxs is in (for range validation)
@@ -43,12 +43,13 @@ async function findById(id) {
 }
 
 // create a mark and return the full inserted row
-async function createMark({ room_id, book_id, user_id, kind, chapter_idx, start_para, start_word, end_para, end_word, quote, content }) {
+// color: highlight colour, null for a note
+async function createMark({ room_id, book_id, user_id, kind, color, chapter_idx, start_para, start_word, end_para, end_word, quote, content }) {
     const result = await getDb().run(
         `INSERT INTO book_marks
-           (room_id, book_id, user_id, kind, chapter_idx, start_para, start_word, end_para, end_word, quote, content)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [room_id, book_id, user_id, kind, chapter_idx, start_para, start_word, end_para, end_word, quote, content ?? null]
+           (room_id, book_id, user_id, kind, color, chapter_idx, start_para, start_word, end_para, end_word, quote, content)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [room_id, book_id, user_id, kind, color ?? null, chapter_idx, start_para, start_word, end_para, end_word, quote, content ?? null]
     );
     return await findById(result.lastID);
 }
