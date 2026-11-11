@@ -155,7 +155,7 @@
   function koSenses(entry) {
     return (entry.ko || [])
       .flatMap((g) => String(g).split(' / '))
-      .map((t) => t.trim())
+      .map((t) => t.replace(/\s*;\s*/g, ', ').trim())   // ";" looks like a glitch: show ","
       .filter(Boolean)
       .slice(0, 5);
   }
