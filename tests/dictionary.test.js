@@ -78,3 +78,56 @@ describe('slimify', () => {
     expect(result.definitions).toEqual([]);
   });
 });
+// ---- getDictionary: Korean meanings are added, and used when English fails ----
+describe('getDictionary with Korean meanings', () => {
+  const wordCache = require('../models/wordCacheModel');
+  const { getDictionary } = require('../controllers/dictionaryController');
+
+  function makeRes() {
+    const res = { statusCode: 200, body: null };
+    res.status = (c) => { res.statusCode = c; return res; };
+    res.json = (b) => { res.body = b; return res; };
+    return res;
+  }
+
+  afterEach(() => { jest.restoreAllMocks(); });
+
+  test('cache hit also returns ko', async () => {
+    jest.spyOn(wordCache, 'findByWord').mockResolvedValue({
+      word: 'poem', phonetic: null, definitions: JSON.stringify([{ partOfSpeech: 'noun', definition: 'x', example: null }]),
+    });
+    const res = makeRes();
+    await getDictionary({ params: { word: 'poem' } }, res);
+    expect(res.body.ko.length).toBeGreaterThan(0);
+    expect(res.body.koFrom).toBeNull();
+    expect(res.body.definitions).toHaveLength(1);
+  });
+
+  test('English source down but Korean exists -> 200 with ko only', async () => {
+    jest.spyOn(wordCache, 'findByWord').mockResolvedValue(undefined);
+    jest.spyOn(global, 'fetch').mockRejectedValue(new Error('timeout'));
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const res = makeRes();
+    await getDictionary({ params: { word: 'poem' } }, res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.definitions).toEqual([]);
+    expect(res.body.ko.length).toBeGreaterThan(0);
+  });
+
+  test('English source down and no Korean -> still 502', async () => {
+    jest.spyOn(wordCache, 'findByWord').mockResolvedValue(undefined);
+    jest.spyOn(global, 'fetch').mockRejectedValue(new Error('timeout'));
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const res = makeRes();
+    await getDictionary({ params: { word: 'xqzvtyw' } }, res);
+    expect(res.statusCode).toBe(502);
+  });
+
+  test('inflected word reports koFrom', async () => {
+    jest.spyOn(wordCache, 'findByWord').mockResolvedValue(undefined);
+    jest.spyOn(global, 'fetch').mockResolvedValue({ status: 404, ok: false });
+    const res = makeRes();
+    await getDictionary({ params: { word: 'poems' } }, res);
+    expect(res.body.koFrom).toBe('poem');
+  });
+});

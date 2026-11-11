@@ -1271,6 +1271,42 @@ html[lang="en"] .landing-invite {
   padding-top: 0;
 }
 
+/* Korean meanings (from the local ko dictionary), shown above the English list */
+.dict-ko-list {
+  list-style: none;
+  font-family: var(--ko);
+  font-size: 15.5px;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.dict-ko-list li {
+  padding: 4px 0;
+}
+
+.d-ko-from {
+  font-family: var(--ko);
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-bottom: 4px;
+}
+
+.d-ko-src {
+  font-family: var(--ko);
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-top: 6px;
+}
+
+.d-en-label {
+  font-family: var(--ko);
+  font-size: 11.5px;
+  color: var(--ink-2);
+  margin: 14px 0 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hair);
+}
+
 .d-pos {
   display: inline-block;
   font-family: var(--ko);

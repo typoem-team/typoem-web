@@ -153,6 +153,28 @@ components:
                 type: string
                 nullable: true
                 example: She is very clever at solving puzzles.
+        ko:
+          type: array
+          description: >
+            Korean meanings from the local dictionary file (data/ko_dict.jsonl).
+            Empty when the word is not in it. When the English source is down but
+            Korean meanings exist, the response is 200 with definitions = [].
+          items:
+            type: object
+            properties:
+              pos:
+                type: string
+                example: 명사
+              ko:
+                type: array
+                items:
+                  type: string
+                example: ["(문학) 시 (詩)."]
+        koFrom:
+          type: string
+          nullable: true
+          description: Base form the Korean meanings were found under (e.g. "be" for "was"); null when the word itself matched.
+          example: null
         cached:
           type: boolean
           description: True if the entry was served from word_cache instead of the external API.

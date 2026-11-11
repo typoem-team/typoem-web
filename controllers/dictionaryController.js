@@ -1,5 +1,6 @@
 // controllers/dictionaryController.js
 const wordCache = require("../models/wordCacheModel");
+const koDict = require("../lib/koDict");
 
 const DICT_API = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
@@ -37,6 +38,15 @@ function slimify(apiData) {
   return { word: entry.word, phonetic, definitions };
 }
 
+// Korean meanings are read from a local file, so they are added to every answer
+// and never stored in word_cache. `ko` is [] when the word is not in the file;
+// `koFrom` is the base form that was matched ("be" for "was"), otherwise null.
+function koFields(word) {
+  const found = koDict.lookup(word);
+  if (!found) return { ko: [], koFrom: null };
+  return { ko: found.entries, koFrom: found.word === word ? null : found.word };
+}
+
 async function getDictionary(req, res) {
   const word = String(req.params.word || "").toLowerCase().trim();
 
@@ -44,6 +54,12 @@ async function getDictionary(req, res) {
   if (!word || !/^[a-z'-]+$/.test(word)) {
     return res.status(400).json({ error: "invalid word" });
   }
+
+  const kor = koFields(word);
+
+  // If the English source fails or has no entry but we have Korean meanings,
+  // answer with those instead of an error.
+  const koOnly = () => res.json({ word, phonetic: null, definitions: [], ...kor, cached: false });
 
   try {
     // 1. Check the cache first (a hit means no external call is needed)
@@ -54,6 +70,7 @@ async function getDictionary(req, res) {
         word: cached.word,
         phonetic: cached.phonetic,
         definitions: JSON.parse(cached.definitions),
+        ...kor,
         cached: true,
       });
     }
@@ -67,10 +84,12 @@ async function getDictionary(req, res) {
       });
     } catch (err) {
       console.error("Dictionary fetch failed:", err);
+      if (kor.ko.length) return koOnly();
       return res.status(502).json({ error: "dictionary service unavailable" });
     }
 
     if (apiRes.status === 404) {
+      if (kor.ko.length) return koOnly();
       return res.status(404).json({ error: "word not found" });
     }
     if (!apiRes.ok) {
@@ -79,6 +98,7 @@ async function getDictionary(req, res) {
       console.error(
         `Dictionary upstream error: status=${apiRes.status} word=${word} body=${body.slice(0, 200).replace(/\s+/g, " ")}`
       );
+      if (kor.ko.length) return koOnly();
       return res.status(502).json({ error: "dictionary service unavailable" });
     }
 
@@ -87,6 +107,7 @@ async function getDictionary(req, res) {
 
     // If there are no definitions, treat it as not found and do not cache it
     if (slim.definitions.length === 0) {
+      if (kor.ko.length) return koOnly();
       return res.status(404).json({ error: "word not found" });
     }
 
@@ -95,7 +116,7 @@ async function getDictionary(req, res) {
     //    if two requests look up the same new word at once.
     await wordCache.upsert(word, slim.phonetic, slim.definitions);
 
-    return res.json({ ...slim, cached: false });
+    return res.json({ ...slim, ...kor, cached: false });
   } catch (err) {
     console.error("Dictionary error:", err);
     return res.status(500).json({ error: "internal server error" });
