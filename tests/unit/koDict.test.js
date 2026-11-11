@@ -177,3 +177,28 @@ describe('more frequent poem and book words (hand-written)', () => {
     }
   );
 });
+
+describe('most common sense comes first (ko_first.json)', () => {
+  const koDict = require('../../lib/koDict');
+  const first = (w) => koDict.lookup(w).entries[0];
+  test.each([
+    ['are', 'be'], ['felt', 'feel'], ['fell', 'fall'], ['drew', 'draw'], ['led', 'lead'],
+  ])('%s starts with the verb form of %s', (w, base) => {
+    expect(first(w).pos).toBe('동사');
+    expect(first(w).ko[0]).toContain(base);
+  });
+  test.each([['old', '형용사'], ['green', '형용사'], ['love', '명사'], ['face', '명사'], ['even', '부사']])(
+    '%s starts with %s', (w, pos) => {
+      expect(first(w).pos).toBe(pos);
+    }
+  );
+  test('names and abbreviations are dropped when asked', () => {
+    const joined = JSON.stringify(koDict.lookup('drew').entries) + JSON.stringify(koDict.lookup('led').entries);
+    expect(joined).not.toContain('남자 이름');
+    expect(joined).not.toContain('발광다이오드');
+  });
+  test('the old Wiktionary senses are still kept after the first ones', () => {
+    expect(koDict.lookup('old').entries.length).toBeGreaterThan(1);
+  });
+});
+
