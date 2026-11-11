@@ -189,8 +189,17 @@ function confirmRoomAction(isOwner) {
   });
 }
 
+// 공유 창이 없는 환경(대부분의 PC 브라우저)에선 공유하기가 복사와 똑같아서 숨긴다.
+// 앱은 navigator.share가 늦게 생기므로 시트를 열 때와 페이지가 다 뜬 뒤에 다시 확인한다.
+function syncShareButton() {
+  $('invite-share').hidden = typeof navigator.share !== 'function';
+}
+syncShareButton();
+window.addEventListener('load', syncShareButton);
+
 $('invite-open').addEventListener('click', () => {
   drawRoomAction();              // reset a half-finished confirm
+  syncShareButton();
   UI.openSheet('sheet-invite');
   UI.haptic();
 });
