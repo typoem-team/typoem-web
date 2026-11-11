@@ -37,9 +37,10 @@ beforeAll(async () => {
 
 const KO = JSON.stringify([{ pos: "형용사", ko: ["영리한"], own: true }]);
 
-test("start-up adds definition_ko to an existing vocab table and keeps its rows", async () => {
+test("start-up adds definition_ko and definition_pos to an existing vocab table and keeps its rows", async () => {
   const cols = (await db.all("PRAGMA table_info(vocab)")).map((c) => c.name);
   expect(cols).toContain("definition_ko");
+  expect(cols).toContain("definition_pos");
   const rows = await vocabModel.listForUser(1);
   expect(rows).toHaveLength(1);
   expect(rows[0]).toMatchObject({ word: "brook", definition: "a small stream", definition_ko: null });
@@ -69,4 +70,18 @@ test("a new word can be saved with Korean meanings only", async () => {
   await vocabModel.add(1, "thee", null, "", KO);
   const row = (await vocabModel.listForUser(1)).find((r) => r.word === "thee");
   expect(row).toMatchObject({ definition: "", definition_ko: KO });
+});
+
+test("the part of speech is saved, filled in on a second save, and kept when it is missing", async () => {
+  await vocabModel.add(1, "oak", null, "A tree.", null, null);
+  let row = (await vocabModel.listForUser(1)).find((r) => r.word === "oak");
+  expect(row.definition_pos).toBeNull();
+
+  await vocabModel.add(1, "oak", null, "A tree.", null, "noun");
+  row = (await vocabModel.listForUser(1)).find((r) => r.word === "oak");
+  expect(row.definition_pos).toBe("noun");
+
+  await vocabModel.add(1, "oak", null, "", null, null);
+  row = (await vocabModel.listForUser(1)).find((r) => r.word === "oak");
+  expect(row).toMatchObject({ definition: "A tree.", definition_pos: "noun" });
 });

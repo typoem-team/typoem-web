@@ -107,6 +107,7 @@
     const defs = Array.isArray(currentEntry.definitions) ? currentEntry.definitions : [];
     // keep the English definition (first one) and the Korean meanings shown in the popup
     const definition = (defs[0] && defs[0].definition) || '';
+    const definition_pos = (defs[0] && defs[0].definition && defs[0].partOfSpeech) || null;
     const ko = (Array.isArray(currentEntry.ko) ? currentEntry.ko : []).slice(0, 4).map((e) => ({
       pos: e.pos || '',
       ko: (e.ko || []).slice(0, 3),
@@ -124,6 +125,7 @@
           word: currentEntry.word,
           phonetic: currentEntry.phonetic || null,
           definition,
+          definition_pos,
           ko,
         }),
       });

@@ -66,8 +66,12 @@ async function addVocab(req, res) {
     }
 
     const phonetic = req.body.phonetic ? String(req.body.phonetic).trim() : null;
-    await model.add(req.user.id, word, phonetic, definition, ko ? JSON.stringify(ko) : null);
-    res.status(201).json({ word, phonetic, definition, ko });
+    // part of speech of the English definition ("noun", "verb", ...); only kept with a definition
+    const definition_pos = definition && req.body.definition_pos
+      ? String(req.body.definition_pos).trim().slice(0, 30) || null
+      : null;
+    await model.add(req.user.id, word, phonetic, definition, ko ? JSON.stringify(ko) : null, definition_pos);
+    res.status(201).json({ word, phonetic, definition, definition_pos, ko });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

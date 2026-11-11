@@ -118,6 +118,7 @@ describe("POST /api/vocab", () => {
       word: "clever",
       phonetic: "/ˈklɛvə/",
       definition: "Quick to understand, learn, and devise or apply ideas.",
+      definition_pos: null,
       ko: null,
     });
     expect(vocabModel.add).toHaveBeenCalledWith(
@@ -125,8 +126,37 @@ describe("POST /api/vocab", () => {
       "clever",
       "/ˈklɛvə/",
       "Quick to understand, learn, and devise or apply ideas.",
+      null,
       null
     );
+  });
+
+  test("saves the part of speech of the English definition", async () => {
+    vocabModel.add.mockResolvedValue({ lastID: 8, changes: 1 });
+
+    const res = await request(app)
+      .post("/api/vocab")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ ...validBody, definition_pos: "  adjective  " });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body.definition_pos).toBe("adjective");
+    expect(vocabModel.add).toHaveBeenCalledWith(
+      1, "clever", "/ˈklɛvə/", validBody.definition, null, "adjective"
+    );
+  });
+
+  test("drops the part of speech when there is no English definition", async () => {
+    vocabModel.add.mockResolvedValue({ lastID: 9, changes: 1 });
+
+    const res = await request(app)
+      .post("/api/vocab")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ word: "thee", definition_pos: "pronoun", ko: [{ pos: "고어", ko: ["너를"], own: true }] });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body.definition_pos).toBeNull();
+    expect(vocabModel.add.mock.calls[0][5]).toBeNull();
   });
 
   test("saves Korean meanings (cleaned) next to the English definition", async () => {
@@ -146,7 +176,8 @@ describe("POST /api/vocab", () => {
     expect(res.body.ko).toEqual([{ pos: "형용사", ko: ["영리한, 똑똑한."], own: true }]);
     expect(vocabModel.add).toHaveBeenCalledWith(
       1, "clever", "/ˈklɛvə/", validBody.definition,
-      JSON.stringify([{ pos: "형용사", ko: ["영리한, 똑똑한."], own: true }])
+      JSON.stringify([{ pos: "형용사", ko: ["영리한, 똑똑한."], own: true }]),
+      null
     );
   });
 

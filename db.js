@@ -178,6 +178,7 @@ async function initDb() {
   // CREATE TABLE IF NOT EXISTS never adds a column to a table that already exists
   // (the production database), so columns added after the first release go here.
   await addColumnIfMissing(db, 'vocab', 'definition_ko', 'TEXT');
+  await addColumnIfMissing(db, 'vocab', 'definition_pos', 'TEXT');
 
   return db;
 }
