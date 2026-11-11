@@ -100,14 +100,19 @@
     btn.textContent = '단어장에 담기';
   }
 
-  // Store the first definition of the current word in the personal notebook.
+  // Store the current word in the personal notebook: Korean meanings + first English definition.
   async function saveCurrentWord() {
     if (!currentEntry || !currentEntry.word) return;
     const btn = saveButtonEl();
     const defs = Array.isArray(currentEntry.definitions) ? currentEntry.definitions : [];
-    const koFirst = Array.isArray(currentEntry.ko) && currentEntry.ko[0] && currentEntry.ko[0].ko[0];
-    const definition = (defs[0] && defs[0].definition) || koFirst || '';
-    if (!definition) return;
+    // keep the English definition (first one) and the Korean meanings shown in the popup
+    const definition = (defs[0] && defs[0].definition) || '';
+    const ko = (Array.isArray(currentEntry.ko) ? currentEntry.ko : []).slice(0, 4).map((e) => ({
+      pos: e.pos || '',
+      ko: (e.ko || []).slice(0, 3),
+      own: !!e.own,
+    }));
+    if (!definition && ko.length === 0) return;
 
     if (btn) btn.disabled = true;
 
@@ -119,6 +124,7 @@
           word: currentEntry.word,
           phonetic: currentEntry.phonetic || null,
           definition,
+          ko,
         }),
       });
 

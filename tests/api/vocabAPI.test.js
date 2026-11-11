@@ -43,6 +43,24 @@ describe("GET /api/vocab", () => {
   });
 });
 
+describe("GET /api/vocab (Korean meanings)", () => {
+  test("turns the stored JSON text into a ko array", async () => {
+    vocabModel.listForUser.mockResolvedValue([
+      { id: 3, word: "clever", phonetic: null, definition: "quick", definition_ko: JSON.stringify([{ pos: "형용사", ko: ["영리한"], own: false }]), created_at: "2026-06-08 09:00:00" },
+      { id: 2, word: "brook", phonetic: null, definition: "a stream", definition_ko: null, created_at: "2026-06-07 09:00:00" },
+      { id: 1, word: "oak", phonetic: null, definition: "a tree", definition_ko: "{broken", created_at: "2026-06-06 09:00:00" },
+    ]);
+
+    const res = await request(app).get("/api/vocab").set("Authorization", `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body[0].ko).toEqual([{ pos: "형용사", ko: ["영리한"], own: false }]);
+    expect(res.body[0]).not.toHaveProperty("definition_ko");
+    expect(res.body[1].ko).toBeNull();
+    expect(res.body[2].ko).toBeNull();   // broken JSON never breaks the list
+  });
+});
+
 describe("POST /api/vocab", () => {
   const validBody = {
     word: "clever",
@@ -100,13 +118,58 @@ describe("POST /api/vocab", () => {
       word: "clever",
       phonetic: "/ˈklɛvə/",
       definition: "Quick to understand, learn, and devise or apply ideas.",
+      ko: null,
     });
     expect(vocabModel.add).toHaveBeenCalledWith(
       1,
       "clever",
       "/ˈklɛvə/",
-      "Quick to understand, learn, and devise or apply ideas."
+      "Quick to understand, learn, and devise or apply ideas.",
+      null
     );
+  });
+
+  test("saves Korean meanings (cleaned) next to the English definition", async () => {
+    vocabModel.add.mockResolvedValue({ lastID: 6, changes: 1 });
+    const ko = [
+      { pos: "형용사", ko: ["영리한, 똑똑한."], own: true, extra: "dropped" },
+      { pos: "명사", ko: ["", "  "] },            // no usable meaning: skipped
+      "not an object",
+    ];
+
+    const res = await request(app)
+      .post("/api/vocab")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ ...validBody, ko });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body.ko).toEqual([{ pos: "형용사", ko: ["영리한, 똑똑한."], own: true }]);
+    expect(vocabModel.add).toHaveBeenCalledWith(
+      1, "clever", "/ˈklɛvə/", validBody.definition,
+      JSON.stringify([{ pos: "형용사", ko: ["영리한, 똑똑한."], own: true }])
+    );
+  });
+
+  test("accepts Korean meanings without an English definition", async () => {
+    vocabModel.add.mockResolvedValue({ lastID: 7, changes: 1 });
+
+    const res = await request(app)
+      .post("/api/vocab")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ word: "thee", ko: [{ pos: "고어", ko: ["너를, 너에게"], own: true }] });
+
+    expect(res.statusCode).toBe(201);
+    expect(vocabModel.add.mock.calls[0][3]).toBe("");
+  });
+
+  test("returns 400 when there is neither a definition nor usable Korean meanings", async () => {
+    const res = await request(app)
+      .post("/api/vocab")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ word: "clever", ko: [{ pos: "명사", ko: [] }] });
+
+    expect(res.statusCode).toBe(400);
+    expect(vocabModel.add).not.toHaveBeenCalled();
   });
 
   test("ignores a duplicate word without error", async () => {

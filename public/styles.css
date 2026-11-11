@@ -1411,6 +1411,21 @@ html[lang="en"] .landing-invite {
   word-break: normal;
 }
 
+.vocab-ko {
+  margin-top: 6px;
+}
+
+/* with Korean meanings above it, the English definition becomes the quieter line */
+.vocab-ko + .vocab-def {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+.vocab-src {
+  text-align: center;
+}
+
 .vocab-card .link-btn {
   align-self: flex-end;
 }

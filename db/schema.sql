@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS vocab (
   word TEXT NOT NULL,
   phonetic TEXT,
   definition TEXT NOT NULL,
+  definition_ko TEXT,          -- JSON [{pos, ko[], own}] : Korean meanings shown in the notebook
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(user_id, word),
   FOREIGN KEY (user_id) REFERENCES users(id)

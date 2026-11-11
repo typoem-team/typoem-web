@@ -142,6 +142,17 @@ function makeDb() {
   };
 }
 
+// ALTER TABLE ... ADD COLUMN, skipped when the column is already there (new databases
+// get it from schema.sql). Any other error stops the start-up on purpose: a failed
+// deploy keeps the old version running, which is safer than running without the column.
+async function addColumnIfMissing(database, table, column, type) {
+  try {
+    await database.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+  } catch (err) {
+    if (!/duplicate column/i.test(String((err && err.message) || err))) throw err;
+  }
+}
+
 async function initDb() {
   if (process.env.TURSO_DATABASE_URL) {
     client = createClient({
@@ -163,6 +174,10 @@ async function initDb() {
 
   const schema = fs.readFileSync(path.join(__dirname, 'db/schema.sql'), 'utf8');
   await db.exec(schema);
+
+  // CREATE TABLE IF NOT EXISTS never adds a column to a table that already exists
+  // (the production database), so columns added after the first release go here.
+  await addColumnIfMissing(db, 'vocab', 'definition_ko', 'TEXT');
 
   return db;
 }
