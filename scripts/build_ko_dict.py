@@ -72,7 +72,7 @@ with open(os.path.join(HERE, 'ko_archaic.json'), encoding='utf-8') as f:
     archaic = json.load(f)
 for k, text in archaic.items():
     m = re.match(r'\((고어·시어|고어|시어)\) ', text)   # the label becomes the part-of-speech chip
-    entry = {'pos': m.group(1) if m else '고어', 'ko': [text[m.end():] if m else text]}
+    entry = {'pos': m.group(1) if m else '고어', 'ko': [text[m.end():] if m else text], 'own': True}   # own = written by the team, not from Wiktionary
     words.setdefault(k, [])
     words[k].append(entry)
 os.makedirs(out, exist_ok=True)

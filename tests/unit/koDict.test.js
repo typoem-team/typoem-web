@@ -57,6 +57,16 @@ describe('koDict data quality', () => {
   });
 });
 
+describe('koDict source flag', () => {
+  test('hand-written archaic entries are marked own, Wiktionary ones are not', () => {
+    expect(lookup('thee').entries.every((e) => e.own === true)).toBe(true);
+    expect(lookup('poem').entries.some((e) => e.own)).toBe(false);
+    const art = lookup('art').entries;
+    expect(art[0].own).toBeUndefined();
+    expect(art[art.length - 1].own).toBe(true);
+  });
+});
+
 describe('koDict.candidates', () => {
   test('lists the word itself first', () => {
     expect(candidates('running')[0]).toBe('running');

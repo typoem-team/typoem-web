@@ -162,7 +162,12 @@
         html += `<li>${pos}${escapeHtml((e.ko || []).join(' / '))}</li>`;
       }
       html += '</ul>';
-      html += '<p class="d-ko-src">뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
+      // The Wiktionary credit is shown only when a Wiktionary meaning is on screen;
+      // the hand-written archaic meanings (own) get no credit line.
+      const shown = ko.slice(0, 4);
+      if (shown.some((e) => !e.own)) {
+        html += '<p class="d-ko-src">뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
+      }
     }
 
     if (defs.length === 0 && ko.length === 0) {
