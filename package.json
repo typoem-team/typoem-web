@@ -12,7 +12,8 @@
     "dev": "node --watch server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "fetch-poems": "node scripts/fetch-poems.js"
+    "fetch-poems": "node scripts/fetch-poems.js",
+    "word-coverage": "node scripts/word-coverage.js"
   },
   "jest": {
     "testEnvironment": "node",
