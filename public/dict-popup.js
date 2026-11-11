@@ -162,14 +162,12 @@
         html += `<li>${pos}${escapeHtml((e.ko || []).join(' / '))}</li>`;
       }
       html += '</ul>';
-      // Credit each source separately: hand-written archaic meanings (own) are not from Wiktionary.
+      // The Wiktionary credit is shown only when a Wiktionary meaning is on screen;
+      // the hand-written archaic meanings (own) get no credit line.
       const shown = ko.slice(0, 4);
-      const fromWiki = shown.some((e) => !e.own);
-      const fromOwn = shown.some((e) => e.own);
-      const src = [];
-      if (fromWiki) src.push('뜻 출처: 위키낱말사전 (CC BY-SA 4.0)');
-      if (fromOwn) src.push(fromWiki ? '고어·시어 뜻은 Typoem이 직접 정리했어요' : '이 뜻은 Typoem이 직접 정리했어요');
-      html += `<p class="d-ko-src">${escapeHtml(src.join(' · '))}</p>`;
+      if (shown.some((e) => !e.own)) {
+        html += '<p class="d-ko-src">뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
+      }
     }
 
     if (defs.length === 0 && ko.length === 0) {
