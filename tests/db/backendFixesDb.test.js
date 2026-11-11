@@ -64,6 +64,45 @@ describe("memosModel.deleteMemo", () => {
   });
 });
 
+describe("memosModel.createMemo (double submit)", () => {
+  test("the same memo sent twice in a row is saved once, both calls get the same row", async () => {
+    const first = await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "double tap" });
+    const second = await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "double tap" });
+
+    expect(second.id).toBe(first.id);
+    expect(await count(`SELECT COUNT(*) AS n FROM memos WHERE content = 'double tap'`)).toBe(1);
+  });
+
+  test("two requests at the same moment still save one memo", async () => {
+    const [a, b] = await Promise.all([
+      memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "same moment" }),
+      memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "same moment" }),
+    ]);
+
+    expect(a.id).toBe(b.id);
+    expect(await count(`SELECT COUNT(*) AS n FROM memos WHERE content = 'same moment'`)).toBe(1);
+  });
+
+  test("different content, user or room is a new memo", async () => {
+    await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "base" });
+    await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "base!" });
+    await memosModel.createMemo({ user_id: 1, room_id: 1, poem_id: 1, content: "base" });
+    await memosModel.createMemo({ user_id: 2, room_id: 2, poem_id: 1, content: "base" });
+
+    expect(await count(`SELECT COUNT(*) AS n FROM memos WHERE content IN ('base', 'base!')`)).toBe(4);
+  });
+
+  test("the same text again after the 10-second window is a new memo", async () => {
+    const old = await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "later again" });
+    await getDb().run(`UPDATE memos SET created_at = datetime('now', '-1 minute') WHERE id = ?`, [old.id]);
+
+    const again = await memosModel.createMemo({ user_id: 2, room_id: 1, poem_id: 1, content: "later again" });
+
+    expect(again.id).not.toBe(old.id);
+    expect(await count(`SELECT COUNT(*) AS n FROM memos WHERE content = 'later again'`)).toBe(2);
+  });
+});
+
 describe("roomsModel.deleteRoom", () => {
   test("deletes a room whose memos have likes", async () => {
     const db = getDb();

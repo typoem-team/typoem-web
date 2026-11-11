@@ -80,7 +80,7 @@ async function getDictionary(req, res) {
     try {
       apiRes = await fetch(`${DICT_API}/${encodeURIComponent(word)}`, {
         headers: { Accept: "application/json", "User-Agent": "Typoem/1.0 (+https://typoem-app.onrender.com)" },
-        signal: AbortSignal.timeout(10000),
+        signal: AbortSignal.timeout(20000), // slow first lookups on the free API: wait up to 20 s
       });
     } catch (err) {
       console.error("Dictionary fetch failed:", err);

@@ -46,13 +46,35 @@ async function findById(id, viewer_id) {
     );
 }
 
+// A double tap, or the app retrying after a dropped connection, can send the same
+// create twice. Within this window an identical request returns the row that was
+// already saved instead of adding a second one.
+const DUPLICATE_WINDOW = "-10 seconds";
+
 // create a memo and return the full inserted row.
+// One statement (INSERT ... SELECT ... WHERE NOT EXISTS) so two requests arriving
+// at the same moment can't both insert.
 async function createMemo({ user_id, room_id, poem_id, content }) {
-    const result = await getDb().run(
-        `INSERT INTO memos (user_id, room_id, poem_id, content) VALUES (?, ?, ?, ?)`,
+    const db = getDb();
+    const result = await db.run(
+        `INSERT INTO memos (user_id, room_id, poem_id, content)
+         SELECT ?, ?, ?, ?
+         WHERE NOT EXISTS (
+             SELECT 1 FROM memos
+             WHERE user_id = ? AND room_id = ? AND poem_id = ? AND content = ?
+               AND created_at >= datetime('now', ?)
+         )`,
+        [user_id, room_id, poem_id, content, user_id, room_id, poem_id, content, DUPLICATE_WINDOW]
+    );
+    if (result.changes > 0) return await findById(result.lastID, user_id);
+
+    const existing = await db.get(
+        `SELECT id FROM memos
+         WHERE user_id = ? AND room_id = ? AND poem_id = ? AND content = ?
+         ORDER BY id DESC LIMIT 1`,
         [user_id, room_id, poem_id, content]
     );
-    return await findById(result.lastID, user_id);
+    return await findById(existing.id, user_id);
 }
 
 // update a memo's content and return the updated row.
