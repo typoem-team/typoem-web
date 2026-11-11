@@ -3141,13 +3141,26 @@ body.book-page {
     gap: 18px;
   }
 
+  /* the logo is in the navigation here; the date takes the title's place.
+     (Hidden from view only: it is still the page's <h1> for screen readers.) */
   .home .app-brand {
-    font-size: 60px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .home .app-date {
-    font-size: 20px;
-    margin-top: 8px;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin-top: 0;
   }
 
   .deck {
