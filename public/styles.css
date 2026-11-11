@@ -1280,8 +1280,24 @@ html[lang="en"] .landing-invite {
   word-break: keep-all;
 }
 
-.dict-ko-list li {
-  padding: 4px 0;
+.dict-ko-list > li {
+  padding: 6px 0;
+}
+
+/* several meanings of one part of speech: chip, then one numbered line each */
+.d-ko-senses {
+  list-style: decimal;
+  margin: 6px 0 0 1.3em;
+  padding: 0;
+}
+
+.d-ko-senses li {
+  padding: 2px 0;
+}
+
+.d-ko-senses li::marker {
+  color: var(--ink-2);
+  font-size: 13px;
 }
 
 .d-ko-from {
