@@ -140,7 +140,17 @@
     popupBody.innerHTML = html;
   }
 
-// ---- Render the slim API payload { word, phonetic, definitions[], ko[], koFrom } ----
+// The data keeps up to three meanings per part of speech, and a meaning can itself hold
+  // several ' / '-separated parts. Show each one on its own line (at most 5 per entry).
+  function koSenses(entry) {
+    return (entry.ko || [])
+      .flatMap((g) => String(g).split(' / '))
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .slice(0, 5);
+  }
+
+  // ---- Render the slim API payload { word, phonetic, definitions[], ko[], koFrom } ----
   function renderEntry(data) {
     currentEntry = data || null;
     document.getElementById('dict-popup-word').textContent = data.word || '';
@@ -158,8 +168,16 @@
       }
       html += '<ul class="dict-ko-list">';
       for (const e of ko.slice(0, 4)) {
-        const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span> ` : '';
-        html += `<li>${pos}${escapeHtml((e.ko || []).join(' / '))}</li>`;
+        const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span>` : '';
+        const senses = koSenses(e);
+        if (senses.length > 1) {
+          // several meanings: part-of-speech chip, then one numbered line per meaning
+          html += `<li class="d-ko-entry">${pos}<ol class="d-ko-senses">`
+            + senses.map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+            + '</ol></li>';
+        } else {
+          html += `<li class="d-ko-entry">${pos} ${escapeHtml(senses[0] || '')}</li>`;
+        }
       }
       html += '</ul>';
       // The Wiktionary credit is shown only when a Wiktionary meaning is on screen;
