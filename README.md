@@ -75,6 +75,10 @@ This project is the team submission for **ITM519 Web Programming (Spring 2026)**
 - [PoetryDB](https://poetrydb.org/) — Source of English poems (free, no auth)
 - [Free Dictionary API](https://dictionaryapi.dev/) — Word definitions and pronunciation (free, no auth)
 
+**Data**
+
+- Korean meanings of English words (`data/ko_dict.jsonl`) come from the Korean edition of [Wiktionary](https://ko.wiktionary.org/), extracted by [Wiktextract](https://github.com/tatuylonen/wiktextract) ([kaikki.org](https://kaikki.org/)). Licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Rebuild with `scripts/build_ko_dict.py`.
+
 ---
 
 ## Project Structure

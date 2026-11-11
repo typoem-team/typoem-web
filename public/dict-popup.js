@@ -105,7 +105,8 @@
     if (!currentEntry || !currentEntry.word) return;
     const btn = saveButtonEl();
     const defs = Array.isArray(currentEntry.definitions) ? currentEntry.definitions : [];
-    const definition = (defs[0] && defs[0].definition) || '';
+    const koFirst = Array.isArray(currentEntry.ko) && currentEntry.ko[0] && currentEntry.ko[0].ko[0];
+    const definition = (defs[0] && defs[0].definition) || koFirst || '';
     if (!definition) return;
 
     if (btn) btn.disabled = true;
@@ -139,7 +140,7 @@
     popupBody.innerHTML = html;
   }
 
-// ---- Render the slim API payload { word, phonetic, definitions[] } ----
+// ---- Render the slim API payload { word, phonetic, definitions[], ko[], koFrom } ----
   function renderEntry(data) {
     currentEntry = data || null;
     document.getElementById('dict-popup-word').textContent = data.word || '';
@@ -148,21 +149,40 @@
     let html = '';
 
     const defs = Array.isArray(data.definitions) ? data.definitions : [];
-    if (defs.length === 0) {
+    const ko = Array.isArray(data.ko) ? data.ko : [];
+
+    // Korean meanings first (at most 4 entries), then the English definitions.
+    if (ko.length > 0) {
+      if (data.koFrom) {
+        html += `<p class="d-ko-from">${escapeHtml(data.koFrom)}의 뜻</p>`;
+      }
+      html += '<ul class="dict-ko-list">';
+      for (const e of ko.slice(0, 4)) {
+        const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span> ` : '';
+        html += `<li>${pos}${escapeHtml((e.ko || []).join(' / '))}</li>`;
+      }
+      html += '</ul>';
+      html += '<p class="d-ko-src">뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
+    }
+
+    if (defs.length === 0 && ko.length === 0) {
       html += `<p class="dict-empty">뜻을 찾지 못했어요.</p>`;
       hideSaveButton();
     } else {
-      html += '<ol class="dict-def-list">';
-      for (const d of defs) {
-        const pos = d.partOfSpeech
-          ? `<span class="d-pos">${escapeHtml(d.partOfSpeech)}</span> `
-          : '';
-        const ex = d.example
-          ? `<span class="d-ex">${escapeHtml(d.example)}</span>`
-          : '';
-        html += `<li>${pos}${escapeHtml(d.definition)}${ex}</li>`;
+      if (defs.length > 0) {
+        if (ko.length > 0) html += '<p class="d-en-label">English</p>';
+        html += '<ol class="dict-def-list">';
+        for (const d of defs) {
+          const pos = d.partOfSpeech
+            ? `<span class="d-pos">${escapeHtml(d.partOfSpeech)}</span> `
+            : '';
+          const ex = d.example
+            ? `<span class="d-ex">${escapeHtml(d.example)}</span>`
+            : '';
+          html += `<li>${pos}${escapeHtml(d.definition)}${ex}</li>`;
+        }
+        html += '</ol>';
       }
-      html += '</ol>';
       showSaveButton();
     }
     setBody(html);
