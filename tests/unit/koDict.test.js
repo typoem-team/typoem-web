@@ -202,3 +202,28 @@ describe('most common sense comes first (ko_first.json)', () => {
   });
 });
 
+describe('grammar notes are stripped from Wiktionary meanings', () => {
+  const koDict = require('../../lib/koDict');
+  const glosses = (w) => koDict.lookup(w).entries.flatMap((e) => e.ko);
+  test('no leading "~ " marker and no "(진행형으로는 쓰이지 않음)" on think', () => {
+    const g = glosses('think');
+    expect(g.length).toBeGreaterThan(0);
+    for (const t of g) {
+      expect(t).not.toMatch(/^~\s/);
+      expect(t).not.toContain('진행형');
+    }
+  });
+  test.each(['happen', 'explode', 'gram', 'grandson', 'fortieth', 'access'])(
+    '%s has no (자동사)/(타동사)/(부록: …) note',
+    (w) => {
+      for (const t of glosses(w)) expect(t).not.toMatch(/\((?:자동사|타동사|자|타|불가산|가산|부록)[^)]*\)/);
+    }
+  );
+  test('field and register labels stay', () => {
+    expect(glosses('access').join(' ')).toContain('(격식)');
+  });
+  test('"~ somebody/something" placeholders are gone', () => {
+    expect(glosses('drench')[0]).toBe('흠뻑 적시다');
+  });
+});
+
