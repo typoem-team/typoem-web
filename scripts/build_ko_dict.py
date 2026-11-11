@@ -87,6 +87,18 @@ for k, entries in extra.items():
     words.setdefault(k, [])
     for ent in entries:
         words[k].append({'pos': ent['pos'], 'ko': ent['ko'], 'own': True})
+# Hand-written meanings that must come FIRST (scripts/ko_first.json). Wiktionary's
+# Korean edition sometimes lacks the most common sense of a very common word
+# ("old" only has the noun, "are" starts with the area unit "아르", "felt" with the
+# fabric). The entries are put in front of the Wiktionary ones; "drop_wiki": true
+# also removes the Wiktionary entries (a name or abbreviation that is never meant).
+# Value is a list of {pos, ko} or {"entries": [...], "drop_wiki": true}.
+with open(os.path.join(HERE, 'ko_first.json'), encoding='utf-8') as f:
+    first = json.load(f)
+for k, val in first.items():
+    entries, drop = (val, False) if isinstance(val, list) else (val['entries'], val.get('drop_wiki', False))
+    old = [] if drop else words.get(k, [])
+    words[k] = [{'pos': ent['pos'], 'ko': ent['ko'], 'own': True} for ent in entries] + old
 os.makedirs(out, exist_ok=True)
 with open(os.path.join(out, 'ko_dict.jsonl'), 'w', encoding='utf-8') as o:
     for k, v in sorted(words.items()):
