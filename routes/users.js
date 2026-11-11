@@ -6,5 +6,6 @@ const { authenticate } = require("../middleware/authMiddleware"); // for authent
 
 // add /users(prefix) in app.js
 router.get("/me", authenticate, controller.getMe);
+router.delete("/me", authenticate, controller.deleteMe); // 회원 탈퇴 (password required)
 
 module.exports = router;
