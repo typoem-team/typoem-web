@@ -8,7 +8,6 @@
 :root {
   /* colour: warm grey paper, dark ink, one deep wine accent */
   --bg: #f2eee7;
-  --bg-deep: #e6e1d7;        /* outside the centre column on wide screens */
   --surface: #fbf9f5;
   --ink: #1f1b16;
   --ink-2: #6b6358;
@@ -40,7 +39,9 @@
   --ease: cubic-bezier(.22, .61, .36, 1);
 
   /* layout */
-  --col: 480px;              /* centre column on screens wider than 600px */
+  --read: 640px;             /* longest line of reading text (about 65 characters) */
+  --band-h: 230px;           /* cover band at the top of the reading screen */
+  --nav-h: 64px;             /* top navigation at 1024px and up */
   --gutter: 24px;
   --tabbar-h: 60px;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -123,19 +124,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   word-break: keep-all;
   overflow-wrap: anywhere;
-}
-
-/* Web and app share these screens. On a computer the whole app is one centred
-   column; the sides are a shade darker than --bg. */
-@media (min-width: 601px) {
-  html {
-    background: var(--bg-deep);
-  }
-  body {
-    max-width: var(--col);
-    margin: 0 auto;
-    box-shadow: 0 0 60px -30px rgba(31, 27, 22, .45);
-  }
 }
 
 img {
@@ -348,8 +336,6 @@ hr {
   right: 0;
   bottom: 0;
   z-index: 30;
-  max-width: var(--col);
-  margin: 0 auto;
   height: calc(var(--tabbar-h) + var(--safe-bottom));
   padding: 6px 10px var(--safe-bottom);
   display: grid;
@@ -363,6 +349,17 @@ hr {
 
 .tabbar.away {
   transform: translateY(100%);
+}
+
+/* the three links sit directly in the bar's grid on small screens */
+.tabs-main {
+  display: contents;
+}
+
+/* only in the top navigation (1024px+) */
+.nav-brand,
+.tab-me-nick {
+  display: none;
 }
 
 .tab {
@@ -414,8 +411,6 @@ hr {
   right: 8px;
   bottom: calc(8px + var(--safe-bottom));
   z-index: 61;
-  max-width: calc(var(--col) - 16px);
-  margin: 0 auto;
   max-height: 78vh;
   max-height: 78dvh;
   overflow-y: auto;
@@ -497,7 +492,7 @@ hr {
   z-index: 90;
   transform: translate(-50%, -12px);
   opacity: 0;
-  max-width: calc(min(100vw, var(--col)) - 32px);
+  max-width: calc(min(100vw, var(--read)) - 32px);
   padding: 10px 16px;
   border-radius: 999px;
   background: var(--ink);
@@ -790,8 +785,6 @@ html[lang="en"] .landing-invite {
   left: 0;
   right: 0;
   z-index: 5;
-  max-width: var(--col);
-  margin: 0 auto;
   height: 52px;
   display: flex;
   align-items: center;
@@ -834,7 +827,7 @@ html[lang="en"] .landing-invite {
 /* the cover, opened: a band in the poem's colour with title and author */
 .r-head {
   position: relative;
-  min-height: calc(230px + var(--safe-top));
+  min-height: calc(var(--band-h) + var(--safe-top));
   padding: calc(var(--safe-top) + 84px) 30px 26px;
   display: flex;
   flex-direction: column;
@@ -1391,13 +1384,32 @@ html[lang="en"] .landing-invite {
    Home — last opened room: streak, members, cover deck
    ================================================= */
 .home {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   padding: calc(var(--safe-top) + 28px) var(--gutter) calc(var(--tabbar-h) + var(--safe-bottom) + 40px);
 }
 
-.home-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+/* The markup is grouped for the two-column layout (1024px+). On smaller
+   screens the groups dissolve and the pieces stack in reading order. */
+.home-left,
+.home-right {
+  display: contents;
+}
+
+.home-top    { order: 1; }
+.week        { order: 2; }
+.home .status { order: 3; }
+.members     { order: 4; }
+.deck        { order: 5; }
+.deck-foot   { order: 6; }
+.home .empty-state { order: 7; }
+
+/* streak ring: top right, beside the title */
+.streak {
+  position: absolute;
+  top: calc(var(--safe-top) + 28px);
+  right: var(--gutter);
 }
 
 .home .status {
@@ -2069,6 +2081,11 @@ html[lang="en"] .landing-invite {
 .h-row:last-child,
 .mem-row:last-child {
   border-bottom: 0;
+}
+
+/* "전체 메모로": only in the side panel (1024px+) */
+.panel-back {
+  display: none;
 }
 
 /* ============ Motion: quiet, and off when the user asks ============ */
@@ -2820,3 +2837,512 @@ body.book-page {
 .book-entry [hidden] {
   display: none !important;
 }
+
+
+/* =================================================
+   Wider screens
+   -------------------------------------------------
+   under 600px   phone layout (everything above)
+   600px+        content centred at reading width; sheets become dialogs
+   1024px+       top navigation; two-column home and reading screen;
+                 sheets become cards, side panels or popovers
+   The markup is the same at every width.
+   ================================================= */
+
+/* ---------- 600px and up ---------- */
+@media (min-width: 600px) {
+  .home,
+  .page,
+  .app-head,
+  .landing {
+    width: 100%;
+    max-width: calc(var(--read) + var(--gutter) * 2);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .auth-card {
+    max-width: 480px;
+  }
+
+  /* bottom bar spans the screen; its four items stay together in the middle */
+  .tabbar {
+    padding-left: max(10px, calc(50% - 320px));
+    padding-right: max(10px, calc(50% - 320px));
+  }
+
+  /* a cover keeps the shape of a book */
+  .deck,
+  .deck-foot {
+    width: 100%;
+    max-width: 400px;
+    align-self: center;
+  }
+
+  /* ---- sheets open as a dialog in the middle ---- */
+  .sheet {
+    left: 50%;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    width: min(520px, calc(100vw - 48px));
+    max-height: min(80vh, 720px);
+    max-height: min(80dvh, 720px);
+    padding: 26px 28px 28px;
+    border-radius: 24px;
+    box-shadow: 0 30px 70px -30px rgba(31, 27, 22, .5);
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 14px));
+    transition: transform .35s var(--ease), opacity .3s var(--ease), visibility 0s .35s;
+  }
+
+  .sheet.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    transition: transform .35s var(--ease), opacity .3s var(--ease), visibility 0s;
+  }
+
+  .sheet .handle {
+    display: none;
+  }
+
+  #sheet-dict .sheet-actions {
+    bottom: -28px;
+    margin-bottom: -28px;
+    padding-bottom: 28px;
+  }
+
+  /* ---- reading screen: one column at reading width, band across the screen ---- */
+  .r-bar {
+    padding-left: max(10px, calc(50% - var(--read) / 2 - 44px));
+    padding-right: max(10px, calc(50% - var(--read) / 2 - 44px));
+  }
+
+  .r-head {
+    padding-left: max(44px, calc(50% - var(--read) / 2));
+    padding-right: max(44px, calc(50% - var(--read) / 2));
+  }
+
+  .r-cols {
+    max-width: calc(var(--read) + 88px);
+    margin: 0 auto;
+  }
+
+  .r-end,
+  .reader .book-entry {
+    margin-left: 44px;
+    margin-right: 44px;
+  }
+}
+
+/* ---------- 1024px and up ---------- */
+@media (min-width: 1024px) {
+  :root {
+    --band-h: 280px;
+  }
+
+  /* ---- top navigation: Typoem · 오늘 내 방 단어장 · nickname ---- */
+  body[data-tab] {
+    padding-top: var(--nav-h);
+  }
+
+  .tabbar {
+    top: 0;
+    bottom: auto;
+    height: var(--nav-h);
+    padding: 0 max(32px, calc(50% - 600px));
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border-top: 0;
+    border-bottom: 1px solid rgba(226, 219, 207, .8);
+  }
+
+  .tabbar.away {
+    transform: translateY(-100%);
+  }
+
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    min-height: 44px;
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .tabs-main {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tab {
+    flex-direction: row;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+
+  .tabs-main .tab svg {
+    display: none;
+  }
+
+  .tab[aria-current="page"] {
+    color: var(--ink);
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px var(--hair);
+  }
+
+  .tab-me {
+    justify-self: end;
+    color: var(--ink);
+  }
+
+  .tab-me svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .tab-me-label {
+    display: none;
+  }
+
+  .tab-me-nick {
+    display: inline;
+    max-width: 14em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toast {
+    top: calc(var(--nav-h) + 16px);
+  }
+
+  /* the brand and date live in the navigation / the home column */
+  body[data-tab] .app-head {
+    display: none;
+  }
+
+  .page {
+    max-width: 1200px;
+    padding: 44px 32px 80px;
+  }
+
+  .page-headline h1 {
+    font-size: 26px;
+  }
+
+  .vocab-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* ---- sheets that are part of the page here ---- */
+  .sheet[data-wide="inline"] {
+    position: static;
+    z-index: auto;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    padding: 22px 24px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition: none;
+  }
+
+  /* ---- sheets that open as a small panel next to what opened them ---- */
+  .sheet[data-wide="popover"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 360px;
+    max-height: min(70vh, 560px);
+    padding: 20px 22px 22px;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px -16px rgba(31, 27, 22, .45), 0 0 0 1px var(--hair);
+    z-index: 70;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: transform .3s var(--ease), opacity .2s var(--ease), visibility 0s .3s;
+  }
+
+  .sheet[data-wide="popover"][data-side="above"] {
+    transform: translateY(6px);
+  }
+
+  .sheet[data-wide="popover"].show {
+    opacity: 1;
+    transform: none;
+    transition: transform .3s var(--ease), opacity .2s var(--ease), visibility 0s;
+  }
+
+  /* the nickname dropdown hangs from the fixed navigation */
+  #sheet-me {
+    position: fixed;
+    width: 280px;
+  }
+
+  #sheet-dict {
+    width: 380px;
+  }
+
+  #sheet-dict .sheet-actions {
+    bottom: -22px;
+    margin-bottom: -22px;
+    padding-bottom: 22px;
+  }
+
+  /* ---- home: two columns ---- */
+  .home {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px 72px;
+    align-items: start;
+    max-width: 1200px;
+    padding: 52px 32px 80px;
+  }
+
+  .home-left,
+  .home-right {
+    display: block;
+    min-width: 0;
+  }
+
+  /* each column keeps its own source order */
+  .home-top,
+  .week,
+  .home .status,
+  .members,
+  .deck,
+  .deck-foot,
+  .home .empty-state {
+    order: 0;
+  }
+
+  /* the cover stays in view while the right column scrolls */
+  .home-left {
+    position: sticky;
+    top: calc(var(--nav-h) + 28px);
+  }
+
+  .home-right {
+    position: relative;       /* the room dropdown is placed inside it */
+    display: grid;
+    gap: 18px;
+  }
+
+  /* the logo is in the navigation here; the date takes the title's place.
+     (Hidden from view only: it is still the page's <h1> for screen readers.) */
+  .home .app-brand {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .home .app-date {
+    font-style: italic;
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin-top: 0;
+  }
+
+  .deck {
+    max-width: 440px;
+    height: 560px;
+    margin-top: 36px;
+  }
+
+  .deck-foot {
+    max-width: 440px;
+  }
+
+  .deck .cover {
+    padding: 44px 40px 30px 50px;
+  }
+
+  .deck .c-title { font-size: 72px; }
+  .deck .c-title-md { font-size: 56px; }
+  .deck .c-title-sm { font-size: 44px; }
+  .deck .c-title-xs { font-size: 34px; }
+
+  .c-author {
+    font-size: 20px;
+  }
+
+  .c-kicker,
+  .c-foot {
+    font-size: 13px;
+  }
+
+  /* reading record: ring and week side by side in one card */
+  .streak {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ring-cap {
+    margin-top: 0;
+    font-size: 13px;
+  }
+
+  .week {
+    margin-top: 0;
+    padding: 16px 12px 18px;
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .members {
+    margin: 0;
+    padding: 12px 20px 16px 22px;
+  }
+
+  .room-switch {
+    font-size: 18px;
+  }
+
+  /* the invite card is right below, so no button */
+  .invite-btn {
+    display: none;
+  }
+
+  .code {
+    font-size: 36px;
+  }
+
+  /* ---- reading screen: text + memo panel ---- */
+  .reader {
+    padding-bottom: 80px;
+  }
+
+  /* text column 728px (640px of text + the two 44px margins) + 40px + panel 380px */
+  .r-bar {
+    padding-left: max(22px, calc(50% - 574px - 10px));
+    padding-right: max(22px, calc(50% - 574px - 10px));
+  }
+
+  .r-head {
+    padding: calc(var(--safe-top) + 96px) max(76px, calc(50% - 574px + 44px)) 36px;
+  }
+
+  .r-head .c-title { font-size: 64px; }
+  .r-head .c-title.c-title-md { font-size: 54px; }
+  .r-head .c-title.c-title-sm { font-size: 44px; }
+  .r-head .c-title.c-title-xs { font-size: 34px; }
+
+  .r-cols {
+    display: grid;
+    grid-template-columns: minmax(0, calc(var(--read) + 88px)) 380px;
+    gap: 40px;
+    justify-content: center;
+    align-items: start;
+    max-width: none;
+    padding: 0 32px;
+  }
+
+  .poem {
+    font-size: 20px;
+    line-height: 2;
+  }
+
+  .ln {
+    padding: 2px 0;           /* 40px of text + 4px = a 44px row */
+  }
+
+  .ln-blank {
+    height: 26px;
+    padding: 0;
+  }
+
+  /* the line whose notes are showing in the panel */
+  .ln-open .mark::after {
+    background: var(--accent);
+    transform: scale(1.5);
+  }
+
+  .memo-pill {
+    display: none;
+  }
+
+  /* memo panel: always open, follows the scroll */
+  .r-side {
+    position: sticky;
+    top: 24px;
+    margin-top: 26px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    border-radius: 20px;
+    background: var(--bg);
+  }
+
+  .r-side .sheet[data-wide="inline"] {
+    padding: 22px 22px 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .r-side .sheet:focus-visible {
+    outline: none;
+  }
+
+  .r-side .field {
+    background: var(--surface);
+  }
+
+  .r-side .note-confirm {
+    background: var(--surface);
+  }
+
+  /* the write box stays at the bottom of the panel, always in view */
+  .r-side .m-write {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -22px;
+    padding: 14px 22px 20px;
+    background: linear-gradient(rgba(242, 238, 231, 0), var(--bg) 12px);
+  }
+
+  .r-side .sheet > .line-btn:last-child,
+  .r-side #l-edit-mine {
+    margin-bottom: 20px;
+  }
+
+  /* one view at a time: all memos, or this line's */
+  .r-side:not(.line-mode) #sheet-line,
+  .r-side.line-mode #sheet-memo {
+    display: none;
+  }
+
+  .panel-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin: -10px 0 4px -4px;
+    padding: 0 4px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+}
+

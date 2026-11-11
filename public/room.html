@@ -27,54 +27,63 @@
       <p class="c-author" id="poem-author"></p>
     </header>
 
-    <div class="r-body" id="r-body">
-      <p class="r-meta" id="r-meta"></p>
-      <p id="status" class="status" role="status"></p>
-      <div class="poem" id="poem-body"></div>
-    </div>
+    <!-- 좁은 화면: 본문 한 칸, 메모는 시트.
+         1024px 이상: 본문(최대 640px) + 항상 열려 있는 메모 패널(380px). -->
+    <div class="r-cols">
+      <div class="r-main">
+        <div class="r-body" id="r-body">
+          <p class="r-meta" id="r-meta"></p>
+          <p id="status" class="status" role="status"></p>
+          <div class="poem" id="poem-body"></div>
+        </div>
 
-    <!-- "다 읽었어요": 스트릭 API가 없으면(404) 숨겨요 -->
-    <div class="r-end" id="r-end" hidden>
-      <p>오늘의 시를 끝까지 읽었다면</p>
-      <button type="button" class="finish" id="finish">다 읽었어요</button>
-    </div>
+        <!-- "다 읽었어요": 스트릭 API가 없으면(404) 숨겨요 -->
+        <div class="r-end" id="r-end" hidden>
+          <p>오늘의 시를 끝까지 읽었다면</p>
+          <button type="button" class="finish" id="finish">다 읽었어요</button>
+        </div>
 
-    <!-- This room's book (v1.1, temporary UI) — filled in by the book section of room.js -->
-    <section class="book-entry" id="book-entry" aria-label="이 방의 책" lang="ko" hidden>
-      <h4 class="book-label">이 방의 책</h4>
-      <div id="book-entry-body"></div>
-      <div id="book-picker" class="book-picker" hidden></div>
-    </section>
+        <!-- This room's book (v1.1, temporary UI) — filled in by the book section of room.js -->
+        <section class="book-entry" id="book-entry" aria-label="이 방의 책" lang="ko" hidden>
+          <h4 class="book-label">이 방의 책</h4>
+          <div id="book-entry-body"></div>
+          <div id="book-picker" class="book-picker" hidden></div>
+        </section>
+      </div>
+
+      <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널. 패널에서는 둘 중 하나만 보여요. -->
+      <aside class="r-side" id="r-side" aria-label="메모">
+        <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모" data-wide="inline">
+          <span class="handle"></span>
+          <p class="s-title">메모 <span id="m-count"></span></p>
+          <div id="memo-list" aria-live="polite"></div>
+          <form class="m-write" id="memo-form" novalidate>
+            <input id="memo-input" class="field" placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000" autocomplete="off">
+            <button type="submit" class="pri" id="memo-submit">남기기</button>
+          </form>
+        </section>
+
+        <section class="sheet" id="sheet-line" role="dialog" aria-label="이 줄의 메모" data-wide="inline">
+          <span class="handle"></span>
+          <button type="button" class="panel-back" id="l-back">&larr; 전체 메모로</button>
+          <p class="s-title">이 줄의 메모 <span id="l-count"></span></p>
+          <p class="d-ex" id="drawer-line"></p>
+          <button type="button" class="sec line-btn" id="l-mark">밑줄 긋기</button>
+          <div id="annotation-list" aria-live="polite"></div>
+          <form class="m-write" id="annotation-form" novalidate>
+            <input id="annotation-input" class="field" placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000" autocomplete="off">
+            <button type="submit" class="pri" id="annotation-submit">남기기</button>
+          </form>
+          <button type="button" class="sec line-btn" id="l-edit-mine" hidden>내 메모 고치기</button>
+        </section>
+      </aside>
+    </div>
   </article>
 
-  <!-- 떠 있는 "메모 N" 알약 -->
+  <!-- 떠 있는 "메모 N" 알약 (1024px 이상에서는 패널이 있어서 숨겨요) -->
   <button type="button" class="memo-pill" id="memo-pill" aria-haspopup="dialog" hidden>
     <span class="avs" id="pill-avs"></span><span id="pill-label"></span>
   </button>
-
-  <!-- ===== 시트 ===== -->
-  <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모">
-    <span class="handle"></span>
-    <p class="s-title">메모 <span id="m-count"></span></p>
-    <div id="memo-list" aria-live="polite"></div>
-    <form class="m-write" id="memo-form" novalidate>
-      <input id="memo-input" class="field" placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000" autocomplete="off">
-      <button type="submit" class="pri" id="memo-submit">남기기</button>
-    </form>
-  </section>
-
-  <section class="sheet" id="sheet-line" role="dialog" aria-label="이 줄의 메모">
-    <span class="handle"></span>
-    <p class="s-title">이 줄의 메모 <span id="l-count"></span></p>
-    <p class="d-ex" id="drawer-line"></p>
-    <button type="button" class="sec line-btn" id="l-mark">밑줄 긋기</button>
-    <div id="annotation-list" aria-live="polite"></div>
-    <form class="m-write" id="annotation-form" novalidate>
-      <input id="annotation-input" class="field" placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000" autocomplete="off">
-      <button type="submit" class="pri" id="annotation-submit">남기기</button>
-    </form>
-    <button type="button" class="sec line-btn" id="l-edit-mine" hidden>내 메모 고치기</button>
-  </section>
 
   <script src="auth.js"></script>
   <script src="ui.js"></script>

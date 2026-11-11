@@ -1,5 +1,8 @@
 // public/dict-popup.js
-// Dictionary — tap a word in the poem and its entry rises in a bottom sheet.
+// Dictionary — tap a word and its entry opens: a bottom sheet on phones, a
+// dialog on tablets, and at 1024px+ a popover next to the word (it flips above
+// the word when there is no room below; Esc or a click outside closes it).
+// The markup is the same in all three; ui.js and CSS decide the look.
 // Exposes window.openDictionary(word, anchorEl).
 //
 // The lookup logic (retries, latest-lookup-wins, saving to the notebook) is
@@ -23,8 +26,12 @@
     if (popup) return;
 
     popup = document.createElement('section');
-    popup.className = 'sheet';
+    // "dict-popup" is kept for book.js, which asks `.dict-popup` + `hidden`
+    // whether the dictionary is open before it turns a page.
+    popup.className = 'sheet dict-popup';
     popup.id = 'sheet-dict';
+    popup.dataset.wide = 'popover';
+    popup.hidden = true;
     popup.setAttribute('role', 'dialog');
     popup.setAttribute('aria-label', '사전');
 
@@ -60,8 +67,13 @@
     return div.innerHTML;
   }
 
+  let hideTimer = null;
+
   function onClosed() {
     lookupSeq++;            // drop a lookup that is still on its way
+    // take it out of the page once the closing transition is over
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => { if (!isOpen()) popup.hidden = true; }, 500);
     hideSaveButton();
     currentEntry = null;
     if (activeWordEl) {
@@ -200,10 +212,13 @@
     currentEntry = null;
     hideSaveButton();
     setBody('<p class="dict-loading">찾는 중이에요&hellip;</p>');
-    if (!isOpen()) {
-      UI.openSheet(popup);
-      UI.haptic();
-    }
+    const wasOpen = isOpen();
+    clearTimeout(hideTimer);
+    popup.hidden = false;
+    void popup.offsetWidth;    // lay it out first so the opening transition runs
+    // (re)attach to the tapped word: the popover follows it, a sheet ignores it
+    UI.openSheet(popup, { anchor: anchorEl });
+    if (!wasOpen) UI.haptic();
 
     const seq = ++lookupSeq;
     let res;
@@ -230,6 +245,7 @@
     const data = await res.json();
     if (seq !== lookupSeq || !isOpen()) return;
     renderEntry(data);
+    UI.placePopover(popup);    // the entry changed the height: flip above the word if needed
   }
 
   // Expose globally so room.js / P13 can trigger a lookup directly if needed.
