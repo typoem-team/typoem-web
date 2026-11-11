@@ -260,6 +260,20 @@ async function upsertProgress({ user_id, room_id, book_id, paragraph_idx, target
     return await getProgress(user_id, room_id, book_id);
 }
 
+// everyone who is a member of the room now and has progress on this book in this room
+// (people who left the room keep their progress row but are not listed)
+async function getReaders(room_id, book_id) {
+    return await getDb().all(
+        `SELECT rp.user_id, u.nickname, rp.paragraph_idx
+         FROM reading_progress rp
+         JOIN room_members rm ON rm.room_id = rp.room_id AND rm.user_id = rp.user_id
+         JOIN users u ON u.id = rp.user_id
+         WHERE rp.room_id = ? AND rp.book_id = ?
+         ORDER BY rm.id ASC`,
+        [room_id, book_id]
+    );
+} // [{ user_id, nickname, paragraph_idx }]
+
 module.exports = {
     findById,
     findByGutenbergId,
@@ -274,6 +288,7 @@ module.exports = {
     clearRoomBook,
     getProgress,
     upsertProgress,
+    getReaders,
     BookInUseError,
     IncompleteImportError,
     PARAGRAPHS_PER_BATCH,

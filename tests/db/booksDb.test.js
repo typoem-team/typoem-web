@@ -1,4 +1,4 @@
-// Real-SQL tests for models/booksModel.js and the book cleanup in roomsModel.deleteRoom.
+// Real-SQL tests for models/booksModel.js, models/bookMarksModel.js and the book cleanup in roomsModel.deleteRoom.
 // No mocks: an in-memory libSQL database built from db/schema.sql.
 // Jest gives every test file its own module registry, so this file's db.js instance
 // (and its in-memory database) is not shared with any other test file.
@@ -10,6 +10,7 @@ delete process.env.TURSO_AUTH_TOKEN;
 const { initDb, getDb } = require("../../db");
 const booksModel = require("../../models/booksModel");
 const roomsModel = require("../../models/roomsModel");
+const marksModel = require("../../models/bookMarksModel");
 
 // ---------------------------------------------------------------------------
 // fixtures
@@ -301,6 +302,65 @@ describe("reimportBook", () => {
 });
 
 // ---------------------------------------------------------------------------
+// readers + book marks
+// ---------------------------------------------------------------------------
+describe("getReaders", () => {
+    test("current room members with progress on this book only, with nicknames", async () => {
+        await booksModel.importBook(makeMeta(901), makeParsed([2, 3]));
+        await booksModel.upsertProgress({ user_id: 1, room_id: 1, book_id: 901, paragraph_idx: 4 });
+        await booksModel.upsertProgress({ user_id: 2, room_id: 1, book_id: 901, paragraph_idx: 0 });
+        await booksModel.upsertProgress({ user_id: 3, room_id: 1, book_id: 901, paragraph_idx: 1 }); // not a member of room 1
+        await booksModel.upsertProgress({ user_id: 1, room_id: 2, book_id: 901, paragraph_idx: 2 }); // other room
+
+        const readers = await booksModel.getReaders(1, 901);
+        expect(readers).toEqual([
+            { user_id: 1, nickname: "alice", paragraph_idx: 4 },
+            { user_id: 2, nickname: "bob", paragraph_idx: 0 },
+        ]);
+        expect(await booksModel.getReaders(1, 404)).toEqual([]);
+    });
+});
+
+describe("bookMarksModel", () => {
+    // book 902: chapter 0 = paragraphs 0-1, chapter 1 = paragraphs 2-4
+    beforeAll(async () => {
+        await booksModel.importBook(makeMeta(902), makeParsed([2, 3]));
+    });
+
+    const base = { room_id: 1, book_id: 902, chapter_idx: 1, start_para: 2, start_word: 0, end_para: 3, end_word: 1, quote: "q" };
+
+    test("findParagraphChapters maps idxs to chapters and skips unknown ones", async () => {
+        const rows = await marksModel.findParagraphChapters(902, [1, 2, 2, 99]);
+        expect(rows.sort((a, b) => a.idx - b.idx)).toEqual([{ idx: 1, chapter_idx: 0 }, { idx: 2, chapter_idx: 1 }]);
+    });
+
+    test("create / list / update / delete, oldest first, duplicates allowed", async () => {
+        const a = await marksModel.createMark({ ...base, user_id: 1, kind: "highlight" });
+        const b = await marksModel.createMark({ ...base, user_id: 2, kind: "note", content: "hi" });
+        const c = await marksModel.createMark({ ...base, user_id: 1, kind: "highlight" }); // same place again
+        await marksModel.createMark({ ...base, user_id: 1, kind: "highlight", chapter_idx: 0, start_para: 0, end_para: 1 });
+        await marksModel.createMark({ ...base, user_id: 1, kind: "highlight", room_id: 2 });
+
+        expect(a).toMatchObject({ ...base, user_id: 1, kind: "highlight", content: null, author_nickname: "alice" });
+        expect(a.created_at).toBeTruthy();
+        expect(b).toMatchObject({ kind: "note", content: "hi", author_nickname: "bob" });
+
+        const list = await marksModel.listForChapter(1, 902, 1);
+        expect(list.map((m) => m.id)).toEqual([a.id, b.id, c.id]);
+
+        expect(await marksModel.updateContent(b.id, "edited")).toMatchObject({ id: b.id, content: "edited" });
+        await marksModel.deleteMark(a.id);
+        expect(await marksModel.findById(a.id)).toBeUndefined();
+        expect((await marksModel.listForChapter(1, 902, 1)).map((m) => m.id)).toEqual([b.id, c.id]);
+    });
+
+    test("kind is limited to highlight / note by the schema", async () => {
+        await expect(marksModel.createMark({ ...base, user_id: 1, kind: "underline" }))
+            .rejects.toMatchObject({ code: "SQLITE_CONSTRAINT" });
+    });
+});
+
+// ---------------------------------------------------------------------------
 // roomsModel.deleteRoom cleanup
 // ---------------------------------------------------------------------------
 describe("roomsModel.deleteRoom", () => {
@@ -310,17 +370,21 @@ describe("roomsModel.deleteRoom", () => {
         await booksModel.upsertProgress({ user_id: 1, room_id: 1, book_id: 1342, paragraph_idx: 3 });
         await booksModel.upsertProgress({ user_id: 2, room_id: 1, book_id: 84, paragraph_idx: 4 }); // old book of room 1
         await booksModel.upsertProgress({ user_id: 3, room_id: 2, book_id: 84, paragraph_idx: 7 });
+        await marksModel.createMark({ room_id: 1, book_id: 1342, user_id: 2, kind: "highlight", chapter_idx: 0, start_para: 0, start_word: 0, end_para: 0, end_word: 0, quote: "q" });
+        const otherRoomMarks = await count(`SELECT COUNT(*) AS n FROM book_marks WHERE room_id = 2`);
         const otherRoomProgress = await count(`SELECT COUNT(*) AS n FROM reading_progress WHERE room_id = 2`);
 
         await roomsModel.deleteRoom(1);
 
         expect(await count(`SELECT COUNT(*) AS n FROM room_books WHERE room_id = 1`)).toBe(0);
         expect(await count(`SELECT COUNT(*) AS n FROM reading_progress WHERE room_id = 1`)).toBe(0);
+        expect(await count(`SELECT COUNT(*) AS n FROM book_marks WHERE room_id = 1`)).toBe(0);
         expect(await roomsModel.findById(1)).toBeUndefined();
 
         // other room and the books themselves are untouched
         expect(await count(`SELECT COUNT(*) AS n FROM room_books WHERE room_id = 2`)).toBe(1);
         expect(await count(`SELECT COUNT(*) AS n FROM reading_progress WHERE room_id = 2`)).toBe(otherRoomProgress);
+        expect(await count(`SELECT COUNT(*) AS n FROM book_marks WHERE room_id = 2`)).toBe(otherRoomMarks);
         expect(await bookCount(1342)).toBe(1);
         expect(await paragraphCount(1342)).toBe(9);
     });

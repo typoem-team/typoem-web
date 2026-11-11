@@ -7,9 +7,11 @@
 //   GET /api/books/shelf, GET /api/books   the shelf (10 recommended + other stored books)
 //   GET /api/books/search?q=            the empty slot's search (책 추가)
 //   PUT /api/rooms/:id/book             owner picks / changes the book
-//   GET /api/rooms/:id/book             overview: book, chapters, my progress
+//   GET /api/rooms/:id/book             overview: book, chapters, my progress, readers
 //   GET /api/rooms/:id/book?chapter=N   one chapter's paragraphs (cached in memory)
 //   PUT /api/rooms/:id/book/progress    { paragraphIdx, targetEndDate? }
+//   GET/POST /api/rooms/:id/book/marks, PATCH/DELETE /api/book-marks/:id
+//                                       highlights + notes (drawn by marks.js, cached per chapter)
 //
 // Paging: #book-flow is one viewport wide and one viewport tall, with
 // column-width = its width, so the chapter overflows sideways into columns that
@@ -41,7 +43,11 @@ function escapeHtml(str) {
 // while translating Gutenberg plain-text markup:
 //   _word_  -> <em>word</em>
 //   --      -> — (em dash)
+// Each .word also gets data-w = its 0-based position in this paragraph (marks.js:
+// highlights / notes store word positions). Book only — room.js keeps its own copy.
+let wordSeq = 0;
 function wrapWords(text) {
+  wordSeq = 0;
   let t = text.replace(/-{2,}/g, '—');   // 1) em dash (2+ hyphens), before tokenising
 
   // 2) Paired emphasis _..._ -> <em>...</em>. A lone/unmatched underscore is
@@ -81,7 +87,7 @@ function wrapWordChunk(chunk) {
   const pre = m[1], core = m[2], post = m[3];
   const lookup = escapeHtml(core.toLowerCase());
   return escapeHtml(pre)
-    + `<span class="word" data-word="${lookup}">${escapeHtml(core)}</span>`
+    + `<span class="word" data-word="${lookup}" data-w="${wordSeq++}">${escapeHtml(core)}</span>`
     + escapeHtml(post);
 }
 
@@ -92,8 +98,10 @@ const SAVE_DEBOUNCE_MS = 1500;
 
 let book = null;            // overview.book
 let chapters = [];          // overview.chapters
+let readers = [];           // overview.readers [{ userId, nickname, chapterIdx, isMe }]
 let targetEndDate = null;   // 'YYYY-MM-DD' or null
 const chapterCache = new Map();   // chapter idx -> paragraphs [{ id, idx, text }]
+const marksCache = new Map();     // chapter idx -> highlights + notes (GET .../book/marks?chapter=)
 
 let curChapter = 0;
 let curPage = 0;
@@ -107,6 +115,88 @@ let navBusy = false;        // a chapter is loading
 const el = (id) => document.getElementById(id);
 const viewport = el('book-viewport');
 const flow = el('book-flow');
+
+// =====================================================================
+//  Highlights + notes (marks.js does selection, toolbar, sheets, drawing)
+// =====================================================================
+const MARKS_URL = () => `/api/rooms/${encodeURIComponent(ROOM)}/book/marks`;
+
+// failed response -> Error with a message for the toast
+function marksError(res, fallback) {
+  return new Error(res.status === 403 ? '내 것만 바꿀 수 있어요.' : fallback);
+}
+
+const marks = window.TypoemMarks.attach({
+  container: flow,
+  unitSelector: '.book-para',
+  unitKey: (p) => Number(p.dataset.idx),
+  clip: viewport,
+  keepSelection: '.book-edge, .book-foot-nav',   // turning the page keeps the selection (same chapter)
+  context: () => ({ chapterIdx: curChapter }),
+  rangeOf: (m) => ({ start: [m.start_para, m.start_word], end: [m.end_para, m.end_word] }),
+  async create(m) {
+    const body = {
+      kind: m.kind,
+      chapterIdx: m.ctx.chapterIdx,
+      startPara: m.start[0], startWord: m.start[1],
+      endPara: m.end[0], endWord: m.end[1],
+      quote: m.quote,
+    };
+    if (m.kind === 'highlight') body.color = m.color;   // required for highlights
+    else body.content = m.content;
+    const res = await authFetch(MARKS_URL(), { method: 'POST', body: JSON.stringify(body) });
+    if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
+    return res.json();
+  },
+  async update(row, content) {
+    const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
+    if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
+    return res.json();
+  },
+  async remove(row) {
+    const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
+  },
+  // keep the per-chapter cache in step, then redraw if that chapter is open
+  changed({ type, row }) {
+    const ch = row.chapter_idx;
+    let list = (marksCache.get(ch) || []).filter((m) => m.id !== row.id);
+    if (type !== 'delete') list = list.concat(row);
+    list.sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id - b.id));
+    marksCache.set(ch, list);
+    if (ch === curChapter) showMarks(list);
+  },
+});
+
+// Marks of chapter c (cached per chapter), drawn once the chapter is laid out.
+async function loadMarks(c) {
+  let list = marksCache.get(c);
+  if (!list) {
+    try {
+      const res = await authFetch(`${MARKS_URL()}?chapter=${c}`);
+      if (!res.ok) throw new Error(`marks ${c}: ${res.status}`);
+      list = await res.json();
+      marksCache.set(c, list);
+    } catch (err) {
+      console.error(err);   // the chapter still reads fine without them
+      return;
+    }
+  }
+  if (c === curChapter && view === 'reader') showMarks(list);
+}
+
+// Marks are drawn in a layer that takes no space, so the pages should stay as
+// they are. If the page count moved anyway, go back to the anchor paragraph
+// (the relayoutKeepingAnchor flow); otherwise stay on the page being read.
+function showMarks(list) {
+  marks.set(list);
+  const before = pageCount;
+  const page = curPage;
+  layout();
+  if (pageCount !== before) showPage(pageOfIdx(anchorIdx));
+  else showPage(page);
+  marks.refresh();
+}
 
 // =====================================================================
 //  Load: the room has a book -> reader; no book yet (404) -> shelf
@@ -177,8 +267,16 @@ async function init() {
 
 // One of the four screens below the top bar.
 function setView(v) {
+  const changed = v !== view;
   view = v;
   document.body.classList.toggle('is-shelf', v === 'shelf');
+  // Content comes in the way the poem does on room.html (fade + rise); the top
+  // bar stays put. Paging measures relative positions, so a transform is safe.
+  if (changed && v === 'reader') {
+    UI.anim(el('book-stage'), [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 460 });
+  } else if (changed && v === 'shelf') {
+    UI.anim(document.querySelector('.book-shelf-wrap'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
+  }
   el('book-shelf-view').hidden = v !== 'shelf';
   el('book-bar').hidden = v !== 'reader';
   el('book-stage').hidden = v !== 'reader';
@@ -190,9 +288,13 @@ function setView(v) {
 
 // data: GET /api/rooms/:id/book overview
 async function showReader(data) {
-  if (book && book.id !== data.book.id) chapterCache.clear();   // 책 바꾸기
+  if (book && book.id !== data.book.id) {   // 책 바꾸기
+    chapterCache.clear();
+    marksCache.clear();
+  }
   book = data.book;
   chapters = data.chapters || [];
+  readers = data.readers || [];
   targetEndDate = data.progress.targetEndDate || null;
   savedIdx = data.progress.paragraphIdx;
   anchorIdx = Math.min(data.progress.paragraphIdx, Math.max(0, book.totalParagraphs - 1));
@@ -203,8 +305,8 @@ async function showReader(data) {
   el('book-goal-input').value = targetEndDate || '';
   renderToc();
   el('book-toc-btn').disabled = false;
-  el('book-goal-btn').disabled = false;
-  el('book-change-btn').hidden = !isOwner;
+  el('book-pace').disabled = false;
+  el('book-toc-foot').hidden = !isOwner;
 
   if (chapters.length === 0) {
     showMessage('이 책에는 읽을 장이 없어요.', true);
@@ -405,7 +507,10 @@ function openPick(cell) {
       <button type="button" class="sec" data-act="cancel">취소</button>
       <button type="button" class="pri" data-act="assign">이 책으로 정하기</button>
     </div>`);
-  if (panel) panel.querySelector('[data-act="assign"]').focus({ preventScroll: true });
+  if (!panel) return;
+  panel.querySelector('[data-act="assign"]').focus({ preventScroll: true });
+  // the popover floats below the book: keep it on screen near the bottom edge
+  panel.scrollIntoView({ block: 'nearest', behavior: UI.reduceMotion ? 'auto' : 'smooth' });
 }
 
 // authFetch takes no abort signal, so the client limit is a race. The server
@@ -620,6 +725,7 @@ el('book-shelf-back').addEventListener('click', backToReader);
 // shelf -> reader (when changing books), then home.
 window.TypoemNav.setBackHandler(function () {
   if (sheetOpen()) { closeSheets(); return true; }
+  if (marks.cancel()) return true;   // a word selection
   if (view === 'shelf' && openCell) { collapseCell(); return true; }
   if (view === 'shelf' && book) { backToReader(); return true; }
   window.location.href = '/index.html';
@@ -659,6 +765,7 @@ async function openChapter(c, where) {
   navBusy = false;
 
   curChapter = c;
+  marks.reset();             // new text: no selection, no marks until loadMarks
   renderChapter(paragraphs);
   layout();
 
@@ -669,6 +776,7 @@ async function openChapter(c, where) {
   } else {
     goToPage(where.page === 'last' ? pageCount - 1 : 0);
   }
+  loadMarks(c);
 
   // Warm the cache for the neighbours so chapter turns feel instant.
   const n = chapters.findIndex((ch) => ch.idx === c);
@@ -756,6 +864,7 @@ function showPage(n) {
   curPage = Math.max(0, Math.min(pageCount - 1, n));
   flow.style.transform = `translateX(${-curPage * step}px)`;
   el('book-page-num').textContent = `${curPage + 1} / ${pageCount}쪽 (이 장)`;
+  marks.reposition();        // a selection's toolbar follows the page
 }
 
 // A real page turn: move, take the new anchor, save soon.
@@ -793,6 +902,7 @@ function relayoutKeepingAnchor() {
   layout();
   showPage(pageOfIdx(anchorIdx));
   updateStats();
+  marks.refresh();           // columns moved: re-measure the marks
 }
 
 // =====================================================================
@@ -850,9 +960,10 @@ function updateStats() {
   pace.classList.remove('is-late');
   pace.title = '';
   if (!targetEndDate) {
-    pace.textContent = '목표일 없음';
+    pace.textContent = '목표일 정하기';
     return;
   }
+  pace.title = `목표일 ${targetEndDate.slice(5).replace('-', '/')} · 눌러서 바꾸기`;
   const remaining = total - read;
   const days = daysLeftIncludingToday(targetEndDate);
   if (remaining <= 0) {
@@ -869,7 +980,7 @@ function updateStats() {
     pace.textContent = pages
       ? `오늘 약 ${pages}쪽 (${perDay.toLocaleString('ko-KR')}단어)`
       : `오늘 약 ${perDay.toLocaleString('ko-KR')}단어`;
-    pace.title = `오늘을 포함해 ${days}일 남았어요`;
+    pace.title += ` · 오늘 포함 ${days}일 남음`;
   }
 }
 
@@ -917,9 +1028,20 @@ function saveOnLeave() {
   }
 }
 
+// The pace line opens the browser's date picker on a hidden date input; picking
+// a date saves it, clearing it in the picker removes the goal.
+function openGoalPicker() {
+  const input = el('book-goal-input');
+  input.value = targetEndDate || '';
+  try {
+    if (typeof input.showPicker === 'function') { input.showPicker(); return; }
+  } catch (err) { /* not allowed here: fall through */ }
+  input.focus();
+  input.click();
+}
+
 async function saveGoal(value) {
-  const status = el('book-goal-status');
-  status.textContent = '저장하는 중…';
+  if ((value || null) === targetEndDate) return;
   clearTimeout(saveTimer);
   const idx = anchorIdx;
   try {
@@ -929,15 +1051,15 @@ async function saveGoal(value) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      status.textContent = data.error || '목표일을 저장하지 못했어요.';
+      UI.toast('목표일을 저장하지 못했어요.');
       return;
     }
     savedIdx = idx;
     targetEndDate = data.targetEndDate || null;
-    status.textContent = targetEndDate ? '목표일을 저장했어요.' : '목표일을 지웠어요.';
+    UI.toast(targetEndDate ? '목표일을 저장했어요' : '목표일을 지웠어요');
     updateStats();
   } catch (err) {
-    status.textContent = '서버에 연결할 수 없어요.';
+    UI.toast('서버에 연결할 수 없어요.');
   }
 }
 
@@ -949,12 +1071,29 @@ function chapterLabel(c) {
   return c.title || `${c.idx + 1}장`;
 }
 
+// Other members reading chapter idx: up to 3 avatars, then "+N". I'm left out
+// (the "읽는 중" tag already marks where I am).
+const TOC_MAX_READERS = 3;
+function tocReadersHtml(idx) {
+  const here = readers.filter((r) => !r.isMe && r.chapterIdx === idx);
+  if (here.length === 0) return '';
+  const names = here.map((r) => r.nickname).join(', ');
+  const more = here.length - TOC_MAX_READERS;
+  return `<span class="book-toc-readers" title="${escapeHtml(names)}" aria-label="${escapeHtml(names)} 읽는 중">`
+    + here.slice(0, TOC_MAX_READERS).map((r) => UI.avatar(r.nickname)).join('')
+    + (more > 0 ? `<em>+${more}</em>` : '')
+    + '</span>';
+}
+
 function renderToc() {
   el('book-toc-count').textContent = `${chapters.length}장`;
   el('book-toc-list').innerHTML = chapters.map((c) => `
     <li><button type="button" class="book-btn book-toc-item" data-ch="${c.idx}">
       <span>${escapeHtml(chapterLabel(c))}</span>
-      <span class="book-toc-here" lang="ko" hidden>읽는 중</span>
+      <span class="book-toc-side">
+        ${tocReadersHtml(c.idx)}
+        <span class="book-toc-here" lang="ko" hidden>읽는 중</span>
+      </span>
     </button></li>`).join('');
   el('book-toc-list').querySelectorAll('.book-toc-item').forEach((b) => {
     b.addEventListener('click', async () => {
@@ -972,8 +1111,8 @@ function markTocCurrent() {
   });
 }
 
-// Bottom sheets (contents, goal): one at a time, over a scrim.
-const SHEETS = { 'book-toc': 'book-toc-btn', 'book-goal': 'book-goal-btn' };
+// Bottom sheet (contents), over a scrim.
+const SHEETS = { 'book-toc': 'book-toc-btn' };
 
 function sheetOpen() {
   return !el('book-scrim').hidden;
@@ -994,12 +1133,8 @@ function toggleSheet(id) {
   el(id).hidden = false;
   el(SHEETS[id]).setAttribute('aria-expanded', 'true');
   el('book-scrim').hidden = false;
-  if (id === 'book-toc') {
-    const cur = el(id).querySelector('.book-toc-item.is-current');
-    if (cur) cur.scrollIntoView({ block: 'center' });
-  } else {
-    el('book-goal-status').textContent = '';
-  }
+  const cur = el(id).querySelector('.book-toc-item.is-current');
+  if (cur) cur.scrollIntoView({ block: 'center' });
 }
 
 // =====================================================================
@@ -1044,14 +1179,9 @@ el('book-stage').addEventListener('touchend', (e) => {
 }, { passive: true });
 
 el('book-toc-btn').addEventListener('click', () => toggleSheet('book-toc'));
-el('book-goal-btn').addEventListener('click', () => toggleSheet('book-goal'));
-el('book-goal-close').addEventListener('click', closeSheets);
 el('book-scrim').addEventListener('click', closeSheets);
+el('book-pace').addEventListener('click', openGoalPicker);
 el('book-goal-input').addEventListener('change', (e) => saveGoal(e.target.value));
-el('book-goal-clear').addEventListener('click', () => {
-  el('book-goal-input').value = '';
-  saveGoal('');
-});
 
 // Resize / rotation (or the bar wrapping onto more lines): re-flow and return to
 // the anchor paragraph. Only re-flow when the viewport size really changed.

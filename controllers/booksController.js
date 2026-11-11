@@ -4,7 +4,7 @@
 // GET  /api/books/shelf               the fixed 10-book shelf + imported flags (no upstream calls)
 // GET  /api/books/search?q=           Gutendex search (Korea public domain only)
 // PUT  /api/rooms/:id/book            owner sets the room's book (imports it if needed)
-// GET  /api/rooms/:id/book[?chapter=] book overview + my progress, or one chapter's paragraphs
+// GET  /api/rooms/:id/book[?chapter=] book overview + my progress + where members are, or one chapter's paragraphs
 // PUT  /api/rooms/:id/book/progress   save my progress
 //
 // Dates / remaining days are computed on the client (device time); the server only
@@ -80,7 +80,19 @@ function progressDto(p) {
     };
 }
 
-const UPSTREAM_ERROR = { error: "Book service unavailable, please try again" };
+// chapter idx that a book-wide paragraph idx falls in: the last chapter starting at or
+// before it, so an idx past the end lands in the last chapter. null when there are no chapters.
+// chapters = getChapters() rows, ordered by idx (= by start_paragraph)
+function chapterOfParagraph(chapters, paragraph_idx) {
+    let found = chapters.length ? chapters[0].idx : null;
+    for (const c of chapters) {
+        if (c.start_paragraph <= paragraph_idx) found = c.idx;
+        else break;
+    }
+    return found;
+}
+
+const UPSTREAM_ERROR ={ error: "Book service unavailable, please try again" };
 
 // Gutendex meta lookup; timeouts / network errors are retried once
 async function getMetaWithRetry(gutenbergId) {
@@ -213,7 +225,7 @@ async function setRoomBook(req, res) {
     }
 }
 
-// [GET] /api/rooms/:id/book            -> { room, book, chapters, progress }
+// [GET] /api/rooms/:id/book            -> { room, book, chapters, progress, readers }
 // [GET] /api/rooms/:id/book?chapter=N  -> { chapter: { idx, title }, paragraphs }
 async function getRoomBook(req, res) {
     try {
@@ -242,6 +254,7 @@ async function getRoomBook(req, res) {
         }
 
         const progress = await booksModel.getProgress(req.user.id, room.id, rb.book_id); // no row is created here
+        const readers = await booksModel.getReaders(room.id, rb.book_id);
         res.set("Cache-Control", "no-store");
         res.status(200).json({
             room: { id: room.id, name: room.name },
@@ -254,6 +267,12 @@ async function getRoomBook(req, res) {
                 wordCount: c.word_count,
             })),
             progress: progressDto(progress),
+            readers: readers.map((r) => ({
+                userId: r.user_id,
+                nickname: r.nickname,
+                chapterIdx: chapterOfParagraph(chapters, r.paragraph_idx),
+                isMe: r.user_id === req.user.id,
+            })),
         });
     } catch (err) {
         console.error(err);

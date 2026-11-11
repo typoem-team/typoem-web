@@ -15,6 +15,8 @@ const { roomAnnotationsRouter, annotationsRouter } = require('./routes/annotatio
 const publicRouter = require('./routes/public'); 
 const vocabRouter = require('./routes/vocab');
 const { booksRouter, roomBooksRouter } = require('./routes/books');
+const { roomBookMarksRouter, bookMarksRouter } = require('./routes/bookMarks');
+const { roomPoemMarksRouter, poemMarksRouter } = require('./routes/poemMarks');
 
 const app = express();
 
@@ -45,6 +47,10 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/rooms', roomsRouter);
 app.use('/api/rooms', roomBooksRouter); // before memos/annotations
+app.use('/api/rooms', roomBookMarksRouter);
+app.use('/api/book-marks', bookMarksRouter);
+app.use('/api/rooms', roomPoemMarksRouter);
+app.use('/api/poem-marks', poemMarksRouter);
 app.use('/api/rooms', roomMemosRouter);
 app.use('/api/memos', memosRouter);
 app.use('/api/rooms', roomAnnotationsRouter);

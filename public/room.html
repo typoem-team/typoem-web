@@ -8,6 +8,12 @@
 
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
+  <!-- 시 | 책: room.html and book.html both opt in, so switching tabs cross-fades
+       (the top bar and the selected tab stay in place). Other pages don't. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
 </head>
 <body class="reader-page">
 

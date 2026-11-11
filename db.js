@@ -174,6 +174,7 @@ async function initDb() {
 
   const schema = fs.readFileSync(path.join(__dirname, 'db/schema.sql'), 'utf8');
   await db.exec(schema);
+  await migrate(db);
 
   // CREATE TABLE IF NOT EXISTS never adds a column to a table that already exists
   // (the production database), so columns added after the first release go here.
@@ -181,6 +182,25 @@ async function initDb() {
   await addColumnIfMissing(db, 'vocab', 'definition_pos', 'TEXT');
 
   return db;
+}
+
+// ---------- column migrations ----------
+// schema.sql only has CREATE ... IF NOT EXISTS, which never adds a column to a table that
+// already exists. Columns added after a table first shipped are added here, once.
+
+async function hasColumn(db, table, column) {
+  const cols = await db.all(`PRAGMA table_info(${table})`);
+  return cols.some((c) => c.name === column);
+}
+
+async function migrate(db) {
+  // book_marks.color (highlight colours). Highlights made before it existed become yellow.
+  if (!(await hasColumn(db, 'book_marks', 'color'))) {
+    await db.exec(
+      `ALTER TABLE book_marks ADD COLUMN color TEXT CHECK (color IS NULL OR color IN ('yellow', 'pink', 'blue', 'green'))`
+    );
+    await db.run(`UPDATE book_marks SET color = 'yellow' WHERE kind = 'highlight' AND color IS NULL`);
+  }
 }
 
 function getDb() {

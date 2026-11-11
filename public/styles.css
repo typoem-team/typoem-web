@@ -18,6 +18,12 @@
   --poem-ink: #2a241d;
   --mark: #b08a48;           /* highlighter */
   --mark-soft: rgba(176, 138, 72, .28);
+  /* word-range highlighters (marks.js): translucent, so overlaps mix */
+  --hl-yellow: rgba(236, 196, 64, .40);
+  --hl-pink: rgba(232, 112, 146, .30);
+  --hl-blue: rgba(96, 150, 214, .30);
+  --hl-green: rgba(126, 186, 96, .34);
+  --note-line: rgba(110, 47, 58, .45);   /* dotted underline under notes */
   --scrim: rgba(31, 27, 22, .28);
   --glass: rgba(242, 238, 231, .82);
 
@@ -855,6 +861,25 @@ html[lang="en"] .landing-invite {
   background: color-mix(in srgb, currentColor 18%, transparent);
 }
 
+/* 시 <-> 책 page switch (view transitions, opted in by room.html and book.html
+   only): the page cross-fades, the bar holds still and the selected-tab pill
+   slides to the other tab. Browsers without it just navigate. */
+.reader-page .r-bar,
+.book-page .r-bar {
+  view-transition-name: r-bar;
+}
+.r-tabs a[aria-current="page"] {
+  view-transition-name: r-tab-on;
+}
+::view-transition-group(*) {
+  animation-duration: .32s;
+  animation-timing-function: var(--ease);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: .24s;
+}
+
 /* the cover, opened: a band in the poem's colour with title and author */
 .r-head {
   position: relative;
@@ -1006,6 +1031,7 @@ html[lang="en"] .landing-invite {
 .word {
   cursor: pointer;
   transition: color .3s var(--ease);
+  touch-action: manipulation;   /* a double tap opens the dictionary, not a zoom */
 }
 
 .word.active {
@@ -2288,26 +2314,6 @@ textarea.field:focus {
   color: var(--accent, #6e2f3a);
 }
 
-.book-field,
-.book-field:focus {
-  width: 100%;
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  font-size: 14px;
-  color: var(--ink, #1f1b16);
-  background: var(--bg, #f2eee7);
-  border: 0;
-  border-radius: 14px;
-  padding: 12px 16px;
-}
-.book-field::placeholder {
-  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
-  font-style: normal;
-  color: var(--ink-3, #9a9184);
-}
-.book-field:focus {
-  outline: 1.5px solid var(--ink-2, #6b6358);
-}
-
 .book-note {
   font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
   font-size: 13px;
@@ -2464,8 +2470,39 @@ body.book-page:not(.is-shelf) .r-bar #room-name {
   font-size: 13px;
   color: var(--ink-2, #6b6358);
 }
-.book-pace.is-late {
+/* the pace line is the goal button: tap -> the date picker */
+.book-goal {
+  position: relative;
+}
+.book-btn.book-pace {
+  font-size: inherit;
+  color: inherit;
+  min-height: 32px;
+  margin: -8px 0;            /* bigger tap area without growing the row */
+  text-decoration: underline dotted;
+  text-decoration-color: var(--ink-3, #9a9184);
+  text-underline-offset: 4px;
+}
+.book-btn.book-pace:hover {
+  color: var(--ink, #1f1b16);
+}
+.book-btn.book-pace.is-late {
   color: var(--accent, #6e2f3a);
+}
+.book-btn.book-pace:disabled {
+  text-decoration: none;
+}
+/* the real date input: invisible, only there to anchor the picker */
+.book-goal-input {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 .book-progress-track {
   max-width: 696px;
@@ -2692,29 +2729,198 @@ body.book-page:not(.is-shelf) .r-bar #room-name {
   color: var(--accent, #6e2f3a);
   font-style: italic;
 }
+/* right side of a contents row: other readers' avatars, then 읽는 중 */
+.book-toc-side {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: center;
+}
+.book-toc-readers {
+  display: flex;
+  align-items: center;
+}
+.book-toc-readers i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-left: -5px;
+  border-radius: 50%;
+  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
+  font-style: normal;
+  font-size: 10px;
+  color: var(--on-ink);
+  box-shadow: 0 0 0 2px var(--surface, #fbf9f5);
+}
+.book-toc-readers i:first-child {
+  margin-left: 0;
+}
+.book-toc-readers em {
+  margin-left: 4px;
+  font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--ink-2, #6b6358);
+}
 .book-toc-here {
   flex: none;
   font-family: var(--ko, 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif);
   font-style: normal;
   font-size: 12px;
 }
-.book-goal-label {
-  display: block;
-  margin: 14px 0 8px;
-  letter-spacing: 0;
-  text-transform: none;
-}
-.book-goal-actions {
+/* 책 바꾸기 (owner) at the end of the contents */
+.book-toc-foot {
   display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+/* =================================================
+   Marks — word-range highlights + notes (marks.js; book now, poem later)
+   ================================================= */
+/* The text area: no browser text selection / long-press callout (marks.js
+   selects whole words itself). isolation keeps the mark layer behind the text
+   but in front of the area's own background. */
+.mk-host {
+  position: relative;
+  isolation: isolate;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Boxes are absolutely positioned at the back, one per line: they never
+   change line breaks or the page count. */
+.mk-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.mk-box {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* highlighter: the lower-text marker stroke of .ln .tx, in one of four colours */
+.mk-c-yellow { --hl: var(--hl-yellow); }
+.mk-c-pink { --hl: var(--hl-pink); }
+.mk-c-blue { --hl: var(--hl-blue); }
+.mk-c-green { --hl: var(--hl-green); }
+.mk-hl {
+  background-image: linear-gradient(transparent 62%, var(--hl) 62%, var(--hl) 94%, transparent 94%);
+}
+
+/* note: the dotted underline of .ln.has-cm .tx */
+.mk-note {
+  border-bottom: 1px dotted var(--note-line);
+  margin-top: 1.5px;
+}
+
+/* the range being chosen */
+.mk-sel {
+  background: rgba(110, 47, 58, .13);
+  border-radius: 3px;
+}
+
+/* ---- toolbar next to the selection ---- */
+.mk-bar {
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: 0 6px 22px -8px rgba(31, 27, 22, .45), 0 0 0 1px var(--hair);
+}
+.mk-bar[hidden] {
+  display: none;
+}
+.mk-swatch {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+/* the colour twice, so the translucent highlighter reads as a solid dot */
+.mk-swatch span,
+.mk-dot {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(var(--hl), var(--hl)), linear-gradient(var(--hl), var(--hl));
+  box-shadow: inset 0 0 0 1px rgba(31, 27, 22, .08);
+}
+.mk-swatch:hover span,
+.mk-swatch:focus-visible span {
+  box-shadow: inset 0 0 0 1px rgba(31, 27, 22, .08), 0 0 0 2px var(--surface), 0 0 0 3.5px var(--ink-3);
+}
+.mk-bar-btn {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: var(--ko);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.mk-bar-btn:hover {
+  background: var(--bg);
+}
+/* a hairline between the colours and 주석 */
+.mk-swatch + .mk-bar-btn {
+  margin-left: 6px;
+  position: relative;
+}
+.mk-swatch + .mk-bar-btn::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--hair);
+}
+
+/* ---- marks list (tap a marked word) ---- */
+.mk-list .m-item:last-child {
+  border-bottom: 0;
+}
+.mk-hl-tag {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-2);
 }
-.book-goal-actions .book-btn {
-  flex: 1;
+.mk-hl-tag .mk-dot {
+  width: 14px;
+  height: 14px;
 }
-.book-goal-status {
-  margin-top: 10px;
-  min-height: 1.6em;
+.mk-item b small {
+  color: var(--ink-3);
+}
+
+/* ---- note sheet ---- */
+.mk-note-sheet .mk-note-quote {
+  max-height: 7.5em;
+  overflow: hidden;
+  margin: 4px 0 14px;
+}
+.mk-note-sheet textarea.field {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
 }
 
 @media (max-width: 600px) {
@@ -2879,12 +3085,31 @@ button.book-shelf-item:active .book-cover {
 }
 
 /* ---- A row opened in place ---- */
+.book-shelf-cell {
+  position: relative;
+}
+/* the empty slot's search opens under it, in the flow (it is the last row) */
 .book-shelf-panel {
   padding: 0 0 18px;
 }
-/* a book's row: the text lines up with the title (cover 46px + 16px gap) */
+/* a book's "이 책으로 정하기" floats over the books below it; nothing moves */
 .book-shelf-cell:not(.book-shelf-slot) > .book-shelf-panel {
-  padding-left: 62px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 6px);
+  z-index: 30;
+  padding: 14px 16px 16px;
+  background: var(--surface, #fbf9f5);
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px var(--hair, #e2dbcf), 0 18px 36px -14px rgba(31, 27, 22, .38);
+  animation: book-pop .22s var(--ease, cubic-bezier(.22, .61, .36, 1));
+}
+@keyframes book-pop {
+  from { opacity: 0; transform: translateY(-6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-shelf-cell:not(.book-shelf-slot) > .book-shelf-panel { animation: none; }
 }
 .book-shelf-cell.is-open > button.book-shelf-item .book-shelf-title {
   color: var(--accent, #6e2f3a);
@@ -2994,8 +3219,9 @@ button.book-shelf-item:active .book-cover {
   .book-shelf-cell.is-planted .book-shelf-text { animation: none; }
 }
 
-/* in 2-3 columns the open slot takes the whole width, so the results have room */
-.book-shelf-view .book-shelf-slot.is-open {
+/* the empty slot always has a row of its own (in 2-3 columns too), so opening
+   its search does not move it */
+.book-shelf-view .book-shelf-slot {
   grid-column: 1 / -1;
 }
 
@@ -3025,9 +3251,6 @@ button.book-shelf-item:active .book-cover {
     width: 52px;
     height: 72px;
   }
-  .book-shelf-cell:not(.book-shelf-slot) > .book-shelf-panel {
-    padding-left: 68px;
-  }
 }
 
 /* one cover colour per book (picked by book id in book.js) */
@@ -3039,9 +3262,6 @@ button.book-shelf-item:active .book-cover {
 .book-cover.book-cover-6 { background: var(--cover-6, #4a5a46); }
 .book-cover.book-cover-7 { background: var(--cover-7, #4b3b4f); }
 
-.book-goal-hint {
-  margin-top: 8px;
-}
 
 /* main has no global [hidden] rule, and several book- boxes set display */
 .book-page [hidden] {

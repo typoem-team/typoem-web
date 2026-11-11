@@ -180,3 +180,58 @@ CREATE TABLE IF NOT EXISTS reading_progress (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
+
+-- Book Marks (highlights + notes on the room's book; one table for both kinds)
+-- start_para / end_para = book_paragraphs.idx; start_word / end_word = 0-based position of the
+-- .word span inside that paragraph (inclusive). Both ends lie in chapter_idx.
+-- No UNIQUE: one person may mark the same place more than once.
+-- No FOREIGN KEY to books: a book may be deleted and re-imported (same as reading_progress).
+-- color: highlight colour (required for a highlight, NULL for a note; enforced by the API).
+--   DBs created before color existed get it from db.js migrate() (ALTER TABLE ... ADD COLUMN).
+CREATE TABLE IF NOT EXISTS book_marks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  room_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('highlight', 'note')),
+  color TEXT CHECK (color IS NULL OR color IN ('yellow', 'pink', 'blue', 'green')),
+  chapter_idx INTEGER NOT NULL,
+  start_para INTEGER NOT NULL,
+  start_word INTEGER NOT NULL,
+  end_para INTEGER NOT NULL,
+  end_word INTEGER NOT NULL,
+  quote TEXT NOT NULL,
+  content TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (room_id) REFERENCES rooms(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_book_marks_chapter ON book_marks(room_id, book_id, chapter_idx);
+
+-- ===== Poem marks (v1.1) =====
+-- Highlights + notes on a word range of a room's poem; same rules as book_marks.
+-- start_line / end_line = poem_lines.line_number; start_word / end_word = 0-based word inside
+-- that line (inclusive), split the way public/room.js wrapWords() does (see lib/poemWords.js).
+-- source_annotation_id: the line_annotations row this note was copied from by
+-- scripts/migrate-line-annotations.js (NULL for marks made in the app); UNIQUE keeps reruns idempotent.
+-- line_annotations itself is left as it is (older app builds still use it).
+CREATE TABLE IF NOT EXISTS poem_marks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  room_id INTEGER NOT NULL,
+  poem_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('highlight', 'note')),
+  color TEXT CHECK (color IS NULL OR color IN ('yellow', 'pink', 'blue', 'green')),
+  start_line INTEGER NOT NULL,
+  start_word INTEGER NOT NULL,
+  end_line INTEGER NOT NULL,
+  end_word INTEGER NOT NULL,
+  quote TEXT NOT NULL,
+  content TEXT,
+  source_annotation_id INTEGER UNIQUE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (room_id) REFERENCES rooms(id),
+  FOREIGN KEY (poem_id) REFERENCES poems(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_poem_marks_room_poem ON poem_marks(room_id, poem_id);
