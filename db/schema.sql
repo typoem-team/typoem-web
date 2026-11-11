@@ -178,3 +178,27 @@ CREATE TABLE IF NOT EXISTS reading_progress (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
+
+-- Book Marks (highlights + notes on the room's book; one table for both kinds)
+-- start_para / end_para = book_paragraphs.idx; start_word / end_word = 0-based position of the
+-- .word span inside that paragraph (inclusive). Both ends lie in chapter_idx.
+-- No UNIQUE: one person may mark the same place more than once.
+-- No FOREIGN KEY to books: a book may be deleted and re-imported (same as reading_progress).
+CREATE TABLE IF NOT EXISTS book_marks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  room_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('highlight', 'note')),
+  chapter_idx INTEGER NOT NULL,
+  start_para INTEGER NOT NULL,
+  start_word INTEGER NOT NULL,
+  end_para INTEGER NOT NULL,
+  end_word INTEGER NOT NULL,
+  quote TEXT NOT NULL,
+  content TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (room_id) REFERENCES rooms(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_book_marks_chapter ON book_marks(room_id, book_id, chapter_idx);

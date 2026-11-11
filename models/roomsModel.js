@@ -132,6 +132,7 @@ async function deleteRoom(room_id) {
         await db.run(`DELETE FROM line_annotations WHERE room_id = ?`, [room_id]);
         await db.run(`DELETE FROM memos WHERE room_id = ?`, [room_id]);
         await db.run(`DELETE FROM daily_room_poems WHERE room_id = ?`, [room_id]);
+        await db.run(`DELETE FROM book_marks WHERE room_id = ?`, [room_id]);
         await db.run(`DELETE FROM reading_progress WHERE room_id = ?`, [room_id]);
         await db.run(`DELETE FROM room_books WHERE room_id = ?`, [room_id]);
         await db.run(`DELETE FROM room_members WHERE room_id = ?`, [room_id]);

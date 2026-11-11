@@ -40,6 +40,7 @@ beforeEach(() => {
     usersModel.findById.mockImplementation(async (id) => ({ id, username: id === 1 ? "alice" : "bob" }));
     roomsModel.findById.mockResolvedValue(room);
     roomsModel.isMember.mockResolvedValue(true);
+    booksModel.getReaders.mockResolvedValue([]);
     jest.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -446,6 +447,7 @@ describe("GET /api/rooms/:id/book", () => {
                 { idx: 1, title: null, startParagraph: 2, paragraphCount: 1, wordCount: 9 },
             ],
             progress: { paragraphIdx: 0, targetEndDate: null, startedAt: null, updatedAt: null },
+            readers: [],
         });
         expect(booksModel.getProgress).toHaveBeenCalledWith(2, 5, 1342);
         expect(booksModel.upsertProgress).not.toHaveBeenCalled();
@@ -459,6 +461,54 @@ describe("GET /api/rooms/:id/book", () => {
         });
         const res = await request(app).get("/api/rooms/5/book").set("Authorization", member);
         expect(res.body.progress).toEqual({ paragraphIdx: 2, targetEndDate: "2026-12-31", startedAt: "s", updatedAt: "u" });
+    });
+
+    test("200 readers: chapter from each reader's paragraph, isMe flags the caller", async () => {
+        const three = [
+            { idx: 0, title: "Chapter I.", start_paragraph: 0, paragraph_count: 2, word_count: 30 },
+            { idx: 1, title: "Chapter II.", start_paragraph: 2, paragraph_count: 3, word_count: 40 },
+            { idx: 2, title: "Chapter III.", start_paragraph: 5, paragraph_count: 2, word_count: 20 },
+        ];
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(three);
+        booksModel.getProgress.mockResolvedValue(undefined);
+        booksModel.getReaders.mockResolvedValue([
+            { user_id: 1, nickname: "Alice", paragraph_idx: 0 },   // first paragraph -> ch 0
+            { user_id: 2, nickname: "Bob", paragraph_idx: 4 },     // last paragraph of ch 1
+            { user_id: 3, nickname: "Cara", paragraph_idx: 5 },    // first paragraph of ch 2
+            { user_id: 4, nickname: "Dan", paragraph_idx: 999 },   // past the end -> last chapter
+        ]);
+
+        const res = await request(app).get("/api/rooms/5/book").set("Authorization", member);
+
+        expect(res.statusCode).toBe(200);
+        expect(booksModel.getReaders).toHaveBeenCalledWith(5, 1342);
+        expect(res.body.readers).toEqual([
+            { userId: 1, nickname: "Alice", chapterIdx: 0, isMe: false },
+            { userId: 2, nickname: "Bob", chapterIdx: 1, isMe: true },
+            { userId: 3, nickname: "Cara", chapterIdx: 2, isMe: false },
+            { userId: 4, nickname: "Dan", chapterIdx: 2, isMe: false },
+        ]);
+    });
+
+    test("readers are not looked up for a single chapter", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        booksModel.getChapterParagraphs.mockResolvedValue([]);
+        const res = await request(app).get("/api/rooms/5/book?chapter=1").set("Authorization", member);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.readers).toBeUndefined();
+        expect(booksModel.getReaders).not.toHaveBeenCalled();
+    });
+
+    test("500 when the readers lookup fails", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        booksModel.getProgress.mockResolvedValue(undefined);
+        booksModel.getReaders.mockRejectedValue(new Error("db down"));
+        const res = await request(app).get("/api/rooms/5/book").set("Authorization", member);
+        expect(res.statusCode).toBe(500);
+        expect(res.body).toEqual({ error: "Server error" });
     });
 
     test("200 one chapter's paragraphs", async () => {

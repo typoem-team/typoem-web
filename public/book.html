@@ -7,6 +7,12 @@
 
   <!-- Fonts are self-hosted: see the @font-face rules at the top of styles.css -->
   <link rel="stylesheet" href="styles.css">
+  <!-- 시 | 책: room.html and book.html both opt in, so switching tabs cross-fades
+       (the top bar and the selected tab stay in place). Other pages don't. -->
+  <style>
+    @view-transition { navigation: auto; }
+    @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+  </style>
 </head>
 <body class="book-page">
 
@@ -40,19 +46,21 @@
   </div>
 
   <!-- ===== Reader ===== -->
-  <!-- Book bar: title, contents + goal sheets (+ 책 바꾸기 for the owner), progress + pace -->
+  <!-- Book bar: title + 목차 (책 바꾸기 for the owner sits at the end of the 목차 sheet);
+       progress + pace. The pace opens the date picker for the goal date. -->
   <header class="book-bar" id="book-bar" hidden>
     <div class="book-bar-row">
       <div class="book-bar-head">
         <span id="book-title" class="book-bar-title" lang="en">&hellip;</span>
       </div>
       <button type="button" id="book-toc-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-toc" disabled>목차</button>
-      <button type="button" id="book-goal-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-goal" disabled>목표</button>
-      <button type="button" id="book-change-btn" class="book-btn book-bar-btn" hidden>책 바꾸기</button>
     </div>
     <div class="book-bar-stats">
       <span id="book-progress-text" class="book-progress-text"></span>
-      <span id="book-pace" class="book-pace"></span>
+      <span class="book-goal">
+        <button type="button" id="book-pace" class="book-btn book-pace" aria-label="완독 목표일 정하기" disabled></button>
+        <input type="date" id="book-goal-input" class="book-goal-input" tabindex="-1" aria-hidden="true">
+      </span>
     </div>
     <div class="book-progress-track" aria-hidden="true"><div id="book-progress-fill" class="book-progress-fill"></div></div>
   </header>
@@ -90,19 +98,9 @@
     <span class="book-handle" aria-hidden="true"></span>
     <p class="book-sheet-title">목차 <span id="book-toc-count"></span></p>
     <ol id="book-toc-list" class="book-toc-list" lang="en"></ol>
-  </section>
-
-  <section id="book-goal" class="book-sheet" role="dialog" aria-label="목표" hidden>
-    <span class="book-handle" aria-hidden="true"></span>
-    <p class="book-sheet-title">목표</p>
-    <label class="book-note book-goal-label" for="book-goal-input">완독 목표일</label>
-    <input type="date" id="book-goal-input" class="book-field">
-    <p class="book-note book-goal-hint">남은 분량을 남은 날수로 나눠 하루 분량을 보여 줘요.</p>
-    <div class="book-goal-actions">
-      <button type="button" id="book-goal-clear" class="book-btn book-btn-sec">목표일 지우기</button>
-      <button type="button" id="book-goal-close" class="book-btn book-btn-pri">닫기</button>
+    <div class="book-toc-foot" id="book-toc-foot" hidden>
+      <button type="button" id="book-change-btn" class="book-btn book-btn-sec">책 바꾸기</button>
     </div>
-    <p id="book-goal-status" class="book-note book-goal-status" role="status"></p>
   </section>
 
   <script src="auth.js"></script>
