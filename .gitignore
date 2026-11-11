@@ -159,3 +159,5 @@ Thumbs.db
 
 # Test coverage reports
 coverage/
+# output of scripts/word-coverage.js
+word-coverage-out/
