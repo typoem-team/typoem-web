@@ -10,6 +10,8 @@
 //   GET /api/rooms/:id/book             overview: book, chapters, my progress, readers
 //   GET /api/rooms/:id/book?chapter=N   one chapter's paragraphs (cached in memory)
 //   PUT /api/rooms/:id/book/progress    { paragraphIdx, targetEndDate? }
+//   GET/POST /api/rooms/:id/book/marks, PATCH/DELETE /api/book-marks/:id
+//                                       highlights + notes (drawn by marks.js, cached per chapter)
 //
 // Paging: #book-flow is one viewport wide and one viewport tall, with
 // column-width = its width, so the chapter overflows sideways into columns that
@@ -41,7 +43,11 @@ function escapeHtml(str) {
 // while translating Gutenberg plain-text markup:
 //   _word_  -> <em>word</em>
 //   --      -> — (em dash)
+// Each .word also gets data-w = its 0-based position in this paragraph (marks.js:
+// highlights / notes store word positions). Book only — room.js keeps its own copy.
+let wordSeq = 0;
 function wrapWords(text) {
+  wordSeq = 0;
   let t = text.replace(/-{2,}/g, '—');   // 1) em dash (2+ hyphens), before tokenising
 
   // 2) Paired emphasis _..._ -> <em>...</em>. A lone/unmatched underscore is
@@ -81,7 +87,7 @@ function wrapWordChunk(chunk) {
   const pre = m[1], core = m[2], post = m[3];
   const lookup = escapeHtml(core.toLowerCase());
   return escapeHtml(pre)
-    + `<span class="word" data-word="${lookup}">${escapeHtml(core)}</span>`
+    + `<span class="word" data-word="${lookup}" data-w="${wordSeq++}">${escapeHtml(core)}</span>`
     + escapeHtml(post);
 }
 
@@ -95,6 +101,7 @@ let chapters = [];          // overview.chapters
 let readers = [];           // overview.readers [{ userId, nickname, chapterIdx, isMe }]
 let targetEndDate = null;   // 'YYYY-MM-DD' or null
 const chapterCache = new Map();   // chapter idx -> paragraphs [{ id, idx, text }]
+const marksCache = new Map();     // chapter idx -> highlights + notes (GET .../book/marks?chapter=)
 
 let curChapter = 0;
 let curPage = 0;
@@ -108,6 +115,88 @@ let navBusy = false;        // a chapter is loading
 const el = (id) => document.getElementById(id);
 const viewport = el('book-viewport');
 const flow = el('book-flow');
+
+// =====================================================================
+//  Highlights + notes (marks.js does selection, toolbar, sheets, drawing)
+// =====================================================================
+const MARKS_URL = () => `/api/rooms/${encodeURIComponent(ROOM)}/book/marks`;
+
+// failed response -> Error with a message for the toast
+function marksError(res, fallback) {
+  return new Error(res.status === 403 ? '내 것만 바꿀 수 있어요.' : fallback);
+}
+
+const marks = window.TypoemMarks.attach({
+  container: flow,
+  unitSelector: '.book-para',
+  unitKey: (p) => Number(p.dataset.idx),
+  clip: viewport,
+  keepSelection: '.book-edge, .book-foot-nav',   // turning the page keeps the selection (same chapter)
+  context: () => ({ chapterIdx: curChapter }),
+  rangeOf: (m) => ({ start: [m.start_para, m.start_word], end: [m.end_para, m.end_word] }),
+  async create(m) {
+    const body = {
+      kind: m.kind,
+      chapterIdx: m.ctx.chapterIdx,
+      startPara: m.start[0], startWord: m.start[1],
+      endPara: m.end[0], endWord: m.end[1],
+      quote: m.quote,
+    };
+    if (m.kind === 'highlight') body.color = m.color;   // required for highlights
+    else body.content = m.content;
+    const res = await authFetch(MARKS_URL(), { method: 'POST', body: JSON.stringify(body) });
+    if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
+    return res.json();
+  },
+  async update(row, content) {
+    const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
+    if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
+    return res.json();
+  },
+  async remove(row) {
+    const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
+  },
+  // keep the per-chapter cache in step, then redraw if that chapter is open
+  changed({ type, row }) {
+    const ch = row.chapter_idx;
+    let list = (marksCache.get(ch) || []).filter((m) => m.id !== row.id);
+    if (type !== 'delete') list = list.concat(row);
+    list.sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id - b.id));
+    marksCache.set(ch, list);
+    if (ch === curChapter) showMarks(list);
+  },
+});
+
+// Marks of chapter c (cached per chapter), drawn once the chapter is laid out.
+async function loadMarks(c) {
+  let list = marksCache.get(c);
+  if (!list) {
+    try {
+      const res = await authFetch(`${MARKS_URL()}?chapter=${c}`);
+      if (!res.ok) throw new Error(`marks ${c}: ${res.status}`);
+      list = await res.json();
+      marksCache.set(c, list);
+    } catch (err) {
+      console.error(err);   // the chapter still reads fine without them
+      return;
+    }
+  }
+  if (c === curChapter && view === 'reader') showMarks(list);
+}
+
+// Marks are drawn in a layer that takes no space, so the pages should stay as
+// they are. If the page count moved anyway, go back to the anchor paragraph
+// (the relayoutKeepingAnchor flow); otherwise stay on the page being read.
+function showMarks(list) {
+  marks.set(list);
+  const before = pageCount;
+  const page = curPage;
+  layout();
+  if (pageCount !== before) showPage(pageOfIdx(anchorIdx));
+  else showPage(page);
+  marks.refresh();
+}
 
 // =====================================================================
 //  Load: the room has a book -> reader; no book yet (404) -> shelf
@@ -199,7 +288,10 @@ function setView(v) {
 
 // data: GET /api/rooms/:id/book overview
 async function showReader(data) {
-  if (book && book.id !== data.book.id) chapterCache.clear();   // 책 바꾸기
+  if (book && book.id !== data.book.id) {   // 책 바꾸기
+    chapterCache.clear();
+    marksCache.clear();
+  }
   book = data.book;
   chapters = data.chapters || [];
   readers = data.readers || [];
@@ -633,6 +725,7 @@ el('book-shelf-back').addEventListener('click', backToReader);
 // shelf -> reader (when changing books), then home.
 window.TypoemNav.setBackHandler(function () {
   if (sheetOpen()) { closeSheets(); return true; }
+  if (marks.cancel()) return true;   // a word selection
   if (view === 'shelf' && openCell) { collapseCell(); return true; }
   if (view === 'shelf' && book) { backToReader(); return true; }
   window.location.href = '/index.html';
@@ -672,6 +765,7 @@ async function openChapter(c, where) {
   navBusy = false;
 
   curChapter = c;
+  marks.reset();             // new text: no selection, no marks until loadMarks
   renderChapter(paragraphs);
   layout();
 
@@ -682,6 +776,7 @@ async function openChapter(c, where) {
   } else {
     goToPage(where.page === 'last' ? pageCount - 1 : 0);
   }
+  loadMarks(c);
 
   // Warm the cache for the neighbours so chapter turns feel instant.
   const n = chapters.findIndex((ch) => ch.idx === c);
@@ -769,6 +864,7 @@ function showPage(n) {
   curPage = Math.max(0, Math.min(pageCount - 1, n));
   flow.style.transform = `translateX(${-curPage * step}px)`;
   el('book-page-num').textContent = `${curPage + 1} / ${pageCount}쪽 (이 장)`;
+  marks.reposition();        // a selection's toolbar follows the page
 }
 
 // A real page turn: move, take the new anchor, save soon.
@@ -806,6 +902,7 @@ function relayoutKeepingAnchor() {
   layout();
   showPage(pageOfIdx(anchorIdx));
   updateStats();
+  marks.refresh();           // columns moved: re-measure the marks
 }
 
 // =====================================================================

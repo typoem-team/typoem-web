@@ -18,6 +18,12 @@
   --poem-ink: #2a241d;
   --mark: #b08a48;           /* highlighter */
   --mark-soft: rgba(176, 138, 72, .28);
+  /* word-range highlighters (marks.js): translucent, so overlaps mix */
+  --hl-yellow: rgba(236, 196, 64, .40);
+  --hl-pink: rgba(232, 112, 146, .30);
+  --hl-blue: rgba(96, 150, 214, .30);
+  --hl-green: rgba(126, 186, 96, .34);
+  --note-line: rgba(110, 47, 58, .45);   /* dotted underline under notes */
   --scrim: rgba(31, 27, 22, .28);
   --glass: rgba(242, 238, 231, .82);
 
@@ -1025,6 +1031,7 @@ html[lang="en"] .landing-invite {
 .word {
   cursor: pointer;
   transition: color .3s var(--ease);
+  touch-action: manipulation;   /* a double tap opens the dictionary, not a zoom */
 }
 
 .word.active {
@@ -2694,6 +2701,151 @@ body.book-page:not(.is-shelf) .r-bar #room-name {
   display: flex;
   justify-content: center;
   margin-top: 18px;
+}
+
+/* =================================================
+   Marks — word-range highlights + notes (marks.js; book now, poem later)
+   ================================================= */
+/* The text area: no browser text selection / long-press callout (marks.js
+   selects whole words itself). isolation keeps the mark layer behind the text
+   but in front of the area's own background. */
+.mk-host {
+  position: relative;
+  isolation: isolate;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Boxes are absolutely positioned at the back, one per line: they never
+   change line breaks or the page count. */
+.mk-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.mk-box {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* highlighter: the lower-text marker stroke of .ln .tx, in one of four colours */
+.mk-c-yellow { --hl: var(--hl-yellow); }
+.mk-c-pink { --hl: var(--hl-pink); }
+.mk-c-blue { --hl: var(--hl-blue); }
+.mk-c-green { --hl: var(--hl-green); }
+.mk-hl {
+  background-image: linear-gradient(transparent 62%, var(--hl) 62%, var(--hl) 94%, transparent 94%);
+}
+
+/* note: the dotted underline of .ln.has-cm .tx */
+.mk-note {
+  border-bottom: 1px dotted var(--note-line);
+  margin-top: 1.5px;
+}
+
+/* the range being chosen */
+.mk-sel {
+  background: rgba(110, 47, 58, .13);
+  border-radius: 3px;
+}
+
+/* ---- toolbar next to the selection ---- */
+.mk-bar {
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: 0 6px 22px -8px rgba(31, 27, 22, .45), 0 0 0 1px var(--hair);
+}
+.mk-bar[hidden] {
+  display: none;
+}
+.mk-swatch {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+/* the colour twice, so the translucent highlighter reads as a solid dot */
+.mk-swatch span,
+.mk-dot {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(var(--hl), var(--hl)), linear-gradient(var(--hl), var(--hl));
+  box-shadow: inset 0 0 0 1px rgba(31, 27, 22, .08);
+}
+.mk-swatch:hover span,
+.mk-swatch:focus-visible span {
+  box-shadow: inset 0 0 0 1px rgba(31, 27, 22, .08), 0 0 0 2px var(--surface), 0 0 0 3.5px var(--ink-3);
+}
+.mk-bar-btn {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-family: var(--ko);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.mk-bar-btn:hover {
+  background: var(--bg);
+}
+/* a hairline between the colours and 주석 */
+.mk-swatch + .mk-bar-btn {
+  margin-left: 6px;
+  position: relative;
+}
+.mk-swatch + .mk-bar-btn::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--hair);
+}
+
+/* ---- marks list (tap a marked word) ---- */
+.mk-list .m-item:last-child {
+  border-bottom: 0;
+}
+.mk-hl-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.mk-hl-tag .mk-dot {
+  width: 14px;
+  height: 14px;
+}
+.mk-item b small {
+  color: var(--ink-3);
+}
+
+/* ---- note sheet ---- */
+.mk-note-sheet .mk-note-quote {
+  max-height: 7.5em;
+  overflow: hidden;
+  margin: 4px 0 14px;
+}
+.mk-note-sheet textarea.field {
+  width: 100%;
+  min-height: 112px;
+  resize: vertical;
 }
 
 @media (max-width: 600px) {

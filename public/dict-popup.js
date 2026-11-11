@@ -1,5 +1,5 @@
 // public/dict-popup.js
-// Dictionary — tap a word and its entry opens: a bottom sheet on phones, a
+// Dictionary — double-tap (double-click) a word and its entry opens: a bottom sheet on phones, a
 // dialog on tablets, and at 1024px+ a popover next to the word (it flips above
 // the word when there is no room below; Esc or a click outside closes it).
 // The markup is the same in all three; ui.js and CSS decide the look.
@@ -251,13 +251,33 @@
   // Expose globally so room.js / P13 can trigger a lookup directly if needed.
   window.openDictionary = openDictionary;
 
-  // ---- Event delegation: one listener catches clicks on any .word span ----
+  // ---- Event delegation: a DOUBLE tap / double click on any .word span ----
   // Works even though the poem is rendered after this script runs.
+  // Detected from two clicks on the same word (not the dblclick event), so it
+  // works the same with a mouse, on phones and in the Android WebView.
+  // A single tap leaves the word free for other things (book marks: the marks
+  // list, see marks.js, which uses the same window).
+  const DOUBLE_TAP_MS = 350;
+  let lastTap = null;   // { el, t }
+
   document.addEventListener('click', (e) => {
     const wordEl = e.target.closest('.word');
-    if (!wordEl) return;
-    e.preventDefault();
-    const word = wordEl.dataset.word || wordEl.textContent;
-    openDictionary(word, wordEl);
+    if (!wordEl) { lastTap = null; return; }
+    const now = Date.now();
+    if (lastTap && lastTap.el === wordEl && now - lastTap.t <= DOUBLE_TAP_MS) {
+      lastTap = null;
+      e.preventDefault();
+      const word = wordEl.dataset.word || wordEl.textContent;
+      openDictionary(word, wordEl);
+      return;
+    }
+    lastTap = { el: wordEl, t: now };
   });
+
+  // A double click would also select the word's text (poem page); keep it clean.
+  document.addEventListener('mousedown', (e) => {
+    if (e.detail > 1 && e.target.closest && e.target.closest('.word')) e.preventDefault();
+  });
+
+  window.TypoemDict = { DOUBLE_TAP_MS };
 })();
