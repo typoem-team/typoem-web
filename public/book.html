@@ -10,18 +10,45 @@
 </head>
 <body class="book-page">
 
-  <!-- Top bar: back to the room, title, contents + goal sheets, progress + pace -->
-  <header class="book-bar">
+  <!-- Same top bar as room.html: back · room name · 시 | 책 -->
+  <div class="r-bar">
+    <a href="/index.html" class="r-back" id="back" aria-label="뒤로">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <span id="room-name"></span>
+    <nav class="r-tabs" aria-label="시와 책">
+      <a id="tab-poem" href="/index.html">시</a>
+      <a id="tab-book" href="#" aria-current="page">책</a>
+    </nav>
+  </div>
+
+  <!-- ===== Shelf: the room has no book yet, or the owner is changing it ===== -->
+  <div id="book-shelf-view" class="book-shelf-view" hidden>
+    <header class="r-head">
+      <h1 class="c-title" id="book-shelf-title">이 방의 책</h1>
+      <p class="c-author" id="book-shelf-lead"></p>
+    </header>
+    <div class="book-shelf-wrap">
+      <p id="book-shelf-status" class="status" role="status"></p>
+      <!-- Rows open in place (no sheets): a book's row -> "이 책으로 정하기";
+           the owner's empty slot at the end ("책 추가") -> search, and a found book is put on the shelf -->
+      <ol id="book-shelf" class="book-shelf" aria-label="책장"></ol>
+      <div id="book-shelf-foot" class="book-shelf-foot" hidden>
+        <button type="button" class="link-btn" id="book-shelf-back">돌아가기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Reader ===== -->
+  <!-- Book bar: title, contents + goal sheets (+ 책 바꾸기 for the owner), progress + pace -->
+  <header class="book-bar" id="book-bar" hidden>
     <div class="book-bar-row">
-      <a id="book-back" class="book-back" href="/index.html" aria-label="방으로 돌아가기">
-        <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-      </a>
       <div class="book-bar-head">
-        <span id="book-room" class="book-bar-room"></span>
-        <span id="book-title" class="book-bar-title">&hellip;</span>
+        <span id="book-title" class="book-bar-title" lang="en">&hellip;</span>
       </div>
       <button type="button" id="book-toc-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-toc" disabled>목차</button>
       <button type="button" id="book-goal-btn" class="book-btn book-bar-btn" aria-expanded="false" aria-controls="book-goal" disabled>목표</button>
+      <button type="button" id="book-change-btn" class="book-btn book-bar-btn" hidden>책 바꾸기</button>
     </div>
     <div class="book-bar-stats">
       <span id="book-progress-text" class="book-progress-text"></span>
@@ -67,10 +94,10 @@
 
   <section id="book-goal" class="book-sheet" role="dialog" aria-label="목표" hidden>
     <span class="book-handle" aria-hidden="true"></span>
-    <p class="book-sheet-title">목표 <span>언제까지 다 읽을까요?</span></p>
-    <label class="book-note book-goal-label" for="book-goal-input">이 날까지 다 읽을래요</label>
+    <p class="book-sheet-title">목표</p>
+    <label class="book-note book-goal-label" for="book-goal-input">완독 목표일</label>
     <input type="date" id="book-goal-input" class="book-field">
-    <p class="book-note book-goal-hint">날짜를 정하면 남은 분량을 남은 날로 나눠 오늘 읽을 양을 알려 드려요.</p>
+    <p class="book-note book-goal-hint">남은 분량을 남은 날수로 나눠 하루 분량을 보여 줘요.</p>
     <div class="book-goal-actions">
       <button type="button" id="book-goal-clear" class="book-btn book-btn-sec">목표일 지우기</button>
       <button type="button" id="book-goal-close" class="book-btn book-btn-pri">닫기</button>
@@ -79,9 +106,9 @@
   </section>
 
   <script src="auth.js"></script>
-  <script src="book.js"></script>
-  <!-- dict-popup.js opens the dictionary as a bottom sheet through ui.js -->
+  <!-- ui.js first: book.js uses TypoemUI (toast); dict-popup.js opens the dictionary through it -->
   <script src="ui.js"></script>
+  <script src="book.js"></script>
   <script src="dict-popup.js"></script>
 
 </body>

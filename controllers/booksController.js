@@ -1,6 +1,7 @@
 // Books (v1.1): search Gutenberg, assign a book to a room, read it, save reading progress.
 //
 // GET  /api/books                     imported books
+// GET  /api/books/shelf               the fixed 10-book shelf + imported flags (no upstream calls)
 // GET  /api/books/search?q=           Gutendex search (Korea public domain only)
 // PUT  /api/rooms/:id/book            owner sets the room's book (imports it if needed)
 // GET  /api/rooms/:id/book[?chapter=] book overview + my progress, or one chapter's paragraphs
@@ -12,6 +13,7 @@
 const booksModel = require("../models/booksModel");
 const roomsModel = require("../models/roomsModel");
 const bookFetch = require("../lib/bookFetch");
+const BOOK_SHELF = require("../data/bookShelf.json");
 
 // helper: parse ':id' path param and validate (same as roomsController)
 function parseId(raw) {
@@ -99,6 +101,24 @@ async function listBooks(req, res) {
             title: b.title,
             author: b.author,
             totalWords: b.total_words,
+        })));
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+}
+
+// [GET] /api/books/shelf
+// The fixed shelf of 10 books (data/bookShelf.json) + whether each is already stored.
+// Never calls Gutendex / Project Gutenberg.
+async function getShelf(req, res) {
+    try {
+        const imported = new Set(await booksModel.findImportedIds(BOOK_SHELF.map((b) => b.gutenbergId)));
+        res.status(200).json(BOOK_SHELF.map((b) => ({
+            gutenbergId: b.gutenbergId,
+            title: b.title,
+            author: b.author,
+            imported: imported.has(b.gutenbergId),
         })));
     } catch (err) {
         console.error(err);
@@ -274,4 +294,4 @@ async function updateProgress(req, res) {
     }
 }
 
-module.exports = { listBooks, searchBooks, setRoomBook, getRoomBook, updateProgress, isValidDate };
+module.exports = { listBooks, getShelf, searchBooks, setRoomBook, getRoomBook, updateProgress, isValidDate };
