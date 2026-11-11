@@ -1423,6 +1423,7 @@ html[lang="en"] .landing-invite {
 }
 
 .vocab-src {
+  grid-column: 1 / -1;   /* the list is a multi-column grid on wide screens */
   text-align: center;
 }
 
