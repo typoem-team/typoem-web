@@ -42,6 +42,8 @@ function vocabKoBlock(ko) {
 
 // ---- Build one vocabulary card ----
 function vocabCard(v) {
+  // Korean meanings win: a word saved with both (older saves) shows only the Korean
+  const hasKo = Array.isArray(v.ko) && v.ko.length > 0;
   const phon = v.phonetic
     ? `<span class="vocab-phon">${escapeHtml(v.phonetic)}</span>`
     : '';
@@ -49,7 +51,7 @@ function vocabCard(v) {
     <article class="vocab-card" data-vocab-id="${encodeURIComponent(v.id)}">
       <h2 class="vocab-word">${escapeHtml(v.word)} ${phon}</h2>
       ${vocabKoBlock(v.ko)}
-      ${v.definition ? `<p class="vocab-def">${v.definition_pos ? `<span class="d-pos">${escapeHtml(v.definition_pos)}</span> ` : ''}${escapeHtml(v.definition)}</p>` : ''}
+      ${v.definition && !hasKo ? `<p class="vocab-def">${v.definition_pos ? `<span class="d-pos">${escapeHtml(v.definition_pos)}</span> ` : ''}${escapeHtml(v.definition)}</p>` : ''}
       <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">지우기</button>
     </article>
   `;
