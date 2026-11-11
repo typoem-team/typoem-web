@@ -97,6 +97,21 @@ base = {'be':'am is are was were been being','have':'has had having','do':'does 
  'child':'children','man':'men','woman':'women','foot':'feet','tooth':'teeth','mouse':'mice','person':'people','life':'lives',
  'good':'better best','bad':'worse worst','well':'better best','many':'more most','little':'less least','far':'farther further',
  'I':'me my mine','he':'him his','she':'her hers','we':'us our ours','they':'them their theirs','this':'these','that':'those'}
+# More irregular verbs / plurals that show up in poems ("fled", "sunk", "torn", "leaves"...)
+base.update({'flee':'fled','sink':'sank sunk','string':'strung','tear':'tore torn','swear':'swore sworn','bind':'bound',
+ 'spin':'spun','sting':'stung','swing':'swung','hang':'hung','dig':'dug','strike':'struck stricken','steal':'stole stolen',
+ 'freeze':'froze frozen','shake':'shook shaken','wake':'woke woken','seek':'sought','fight':'fought','bend':'bent',
+ 'lend':'lent','light':'lit','slide':'slid','shoot':'shot','hide':'hid hidden','ride':'rode ridden','strive':'strove striven',
+ 'tread':'trod trodden','sweep':'swept','weep':'wept','creep':'crept','leap':'leapt','deal':'dealt','feed':'fed',
+ 'bleed':'bled','breed':'bred','speed':'sped','swim':'swam swum','ring':'rang rung','drink':'drank drunk','shrink':'shrank shrunk',
+ 'spring':'sprang sprung','throw':'threw thrown','blow':'blew blown','show':'shown','lay':'laid','eat':'ate eaten',
+ 'forgive':'forgave forgiven','forsake':'forsook forsaken','arise':'arose arisen','awake':'awoke awoken','beat':'beaten',
+ 'bite':'bit bitten','cling':'clung','fling':'flung','slay':'slew slain','smite':'smote smitten','swell':'swollen',
+ 'wring':'wrung','stride':'strode stridden','rend':'rent','bid':'bade','behold':'beheld','work':'wrought',
+ 'leaf':'leaves','wife':'wives','knife':'knives','wolf':'wolves','self':'selves','half':'halves','shelf':'shelves',
+ 'thief':'thieves','loaf':'loaves','calf':'calves','hero':'heroes','ox':'oxen','goose':'geese','louse':'lice',
+ 'die':'dying','tie':'tying'})
+base['lie'] += ' lying'
 for lemma, forms in base.items():
     for fm in forms.split(): irregular[fm.lower()] = lemma.lower()
 with open(os.path.join(out, 'irregular.json'), 'w', encoding='utf-8') as o:
