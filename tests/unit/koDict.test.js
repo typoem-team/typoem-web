@@ -227,3 +227,20 @@ describe('grammar notes are stripped from Wiktionary meanings', () => {
   });
 });
 
+describe('agent nouns do not fall back to a wrong base word', () => {
+  const koDict = require('../../lib/koDict');
+  // "-er" must not strip to ling / pee / garden / mourn / mould / cottage
+  test.each(['peer', 'linger', 'gardener', 'mourner', 'moulder', 'cottager'])(
+    '%s has its own entry',
+    (w) => {
+      expect(koDict.lookup(w).word).toBe(w);
+    }
+  );
+  test.each([['peers', 'peer'], ['lingers', 'linger'], ['gardeners', 'gardener'], ['mourners', 'mourner'], ['cottagers', 'cottager'], ['mouldering', 'moulder']])(
+    '%s finds %s',
+    (w, base) => {
+      expect(koDict.lookup(w).word).toBe(base);
+    }
+  );
+});
+

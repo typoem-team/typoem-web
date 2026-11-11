@@ -3734,6 +3734,7 @@
 {"word": "costume", "ko": [{"pos": "명사", "ko": ["의상, 복장; 분장."], "own": true}]}
 {"word": "cot", "ko": [{"pos": "명사", "ko": ["간이침대; 아기 침대."], "own": true}]}
 {"word": "cottage", "ko": [{"pos": "명사", "ko": ["오두막집, 작은 집."]}]}
+{"word": "cottager", "ko": [{"pos": "명사", "ko": ["시골집(오두막)에 사는 사람."], "own": true}]}
 {"word": "cotton", "ko": [{"pos": "unknown", "ko": ["(식물) 목화. 목화꽃으로 만든 솜 또는 면."]}]}
 {"word": "cotton candy", "ko": [{"pos": "unknown", "ko": ["솜사탕."]}]}
 {"word": "cottonwood", "ko": [{"pos": "unknown", "ko": ["<식물> 미루나무 <북미산 포플러의 일종>"]}]}
@@ -6388,6 +6389,7 @@
 {"word": "garbage can", "ko": [{"pos": "unknown", "ko": ["쓰레기통."]}]}
 {"word": "garble", "ko": [{"pos": "동사", "ko": ["내용을 멋대로 짜 맞추다, 왜곡하다, 각색하다."]}]}
 {"word": "garden", "ko": [{"pos": "unknown", "ko": ["정원, 공원."]}]}
+{"word": "gardener", "ko": [{"pos": "명사", "ko": ["정원사."], "own": true}]}
 {"word": "gardening", "ko": [{"pos": "형용사", "ko": ["정원과 관련된."]}]}
 {"word": "gargoyle", "ko": [{"pos": "명사", "ko": ["(건물의 장식용) 괴물 석상"]}]}
 {"word": "garland", "ko": [{"pos": "명사", "ko": ["화환, 꽃다발"], "own": true}]}
@@ -8900,6 +8902,7 @@
 {"word": "linen", "ko": [{"pos": "unknown", "ko": ["아마포."]}]}
 {"word": "lineup", "ko": [{"pos": "명사", "ko": ["라인업. 출전 선수들이 일렬로 서는 것.; 출전 선수 명단."]}]}
 {"word": "ling", "ko": [{"pos": "unknown", "ko": ["(동물) 특정한 종류보다는 몸통이 길쭉한 물고기를 이르는 말.", "(식물) 진달래과의 히스를 통틀어 이르는 말."]}]}
+{"word": "linger", "ko": [{"pos": "동사", "ko": ["오래 머무르다; 좀처럼 떠나지 않다."], "own": true}]}
 {"word": "lingering", "ko": [{"pos": "형용사", "ko": ["오래 끄는, 좀처럼 사라지지 않는"], "own": true}]}
 {"word": "lingual", "ko": [{"pos": "unknown", "ko": ["혀의."]}]}
 {"word": "linguist", "ko": [{"pos": "unknown", "ko": ["언어학자."]}]}
@@ -9809,6 +9812,7 @@
 {"word": "mou", "ko": [{"pos": "abbrev", "ko": ["(법률) 둘 이상의 집단 사이에 체결하는 상업적 양해 각서."]}]}
 {"word": "mouflon", "ko": [{"pos": "unknown", "ko": ["무플론."]}]}
 {"word": "mould", "ko": [{"pos": "명사", "ko": ["틀, 거푸집; 곰팡이"], "own": true}]}
+{"word": "moulder", "ko": [{"pos": "동사", "ko": ["(서서히) 썩다, 부서지다."], "own": true}]}
 {"word": "mount", "ko": [{"pos": "동사", "ko": ["오르다, 올라타다"], "own": true}, {"pos": "명사", "ko": ["산, 언덕 (Mount ~)"], "own": true}]}
 {"word": "mountain", "ko": [{"pos": "unknown", "ko": ["(지리) 산."]}]}
 {"word": "mountain bike", "ko": [{"pos": "unknown", "ko": ["산악에서 탈 수 있는 자전거, 산악자전거."]}]}
@@ -9817,6 +9821,7 @@
 {"word": "mountaineering", "ko": [{"pos": "unknown", "ko": ["등산."]}]}
 {"word": "mountainous", "ko": [{"pos": "unknown", "ko": ["산이 많은."]}]}
 {"word": "mourn", "ko": [{"pos": "unknown", "ko": ["슬퍼하다; (사자(死者)·죽음에 대하여) 애도하다, 조의를 표하다"]}]}
+{"word": "mourner", "ko": [{"pos": "명사", "ko": ["조문객, 애도하는 사람."], "own": true}]}
 {"word": "mouse", "ko": [{"pos": "명사", "ko": ["(동물) 생쥐.", "(복수 mice/mouses) 컴퓨터의 부속 기구."]}]}
 {"word": "mousetrap", "ko": [{"pos": "unknown", "ko": ["쥐덫."]}]}
 {"word": "moustache", "ko": [{"pos": "unknown", "ko": ["콧수염."]}]}
@@ -10878,6 +10883,7 @@
 {"word": "peek", "ko": [{"pos": "동사", "ko": ["(틈, 구멍으로) 살짝 엿보다."]}]}
 {"word": "peeling", "ko": [{"pos": "명사", "ko": ["이 낱말은 한국어 뜻풀이가 필요합니다. 뜻풀이를 추가한 다음, 이 틀을 지워 주세요."]}]}
 {"word": "peep", "ko": [{"pos": "동사", "ko": ["(구멍이나 창 따위를 통해) 들여다보다, 엿보다.", "(새나 병아리가) 짹짹거리다."]}, {"pos": "명사", "ko": ["엿보기, 엿보는 구멍.", "(새나 병아리가) 짹짹거리는 소리."]}]}
+{"word": "peer", "ko": [{"pos": "명사", "ko": ["동료, 또래; (영국) 귀족."], "own": true}, {"pos": "동사", "ko": ["자세히 들여다보다, 응시하다."], "own": true}]}
 {"word": "peer-to-peer", "ko": [{"pos": "unknown", "ko": ["비슷한 사람끼리 연계하는.", "(컴퓨터) 두세 대의 컴퓨터를 연결하는, 전산망의"]}]}
 {"word": "peering", "ko": [{"pos": "동사", "ko": ["유심히 들여다보는 (peer의 ~ing형)"], "own": true}]}
 {"word": "peg", "ko": [{"pos": "unknown", "ko": ["(경제) <통화를> 안정시키다."]}]}
