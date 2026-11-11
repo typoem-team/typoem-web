@@ -64,3 +64,43 @@ describe('koDict.candidates', () => {
     expect(candidates('cities')).toContain('city');
   });
 });
+
+describe('koDict lemma rules (poems)', () => {
+  const base = (w) => { const r = lookup(w); return r && r.word; };
+
+  test('possessive, poetic elision, archaic endings', () => {
+    expect(base("time's")).toBe('time');
+    expect(base("gather'd")).toBe('gather');
+    expect(base('abideth')).toBe('abide');
+  });
+
+  test('more irregular verbs and plurals', () => {
+    expect(base('fled')).toBe('flee');
+    expect(base('torn')).toBe('tear');
+    expect(base('leaves')).toBe('leaf');
+  });
+
+  test('word-building suffixes', () => {
+    expect(base('goodness')).toBe('good');
+    expect(base('fruitless')).toBe('fruit');
+  });
+
+  test('short stems are not taken from a plain suffix strip', () => {
+    // "hopes" is "hope", never "hop"; "notes" is "note", never "not"
+    expect(base('hopes')).toBe('hope');
+    expect(base('notes')).toBe('note');
+    expect(candidates('hopes')).not.toContain('hop');
+    expect(candidates('faded')).not.toContain('fad');
+    expect(candidates('tied')).toContain('tie');
+  });
+
+  test('"-y" words are not stripped to a different word', () => {
+    expect(base('policy')).toBeNull();
+    expect(base('weary')).toBeNull();
+  });
+
+  test('a base form never matches a hand-written archaic entry', () => {
+    // "wasted" must not turn into the archaic "wast"
+    expect(base('wasted')).not.toBe('wast');
+  });
+});
