@@ -6,6 +6,44 @@ src, out = sys.argv[1], sys.argv[2]
 POS = {'noun':'명사','verb':'동사','adj':'형용사','adv':'부사','prep':'전치사','pron':'대명사',
        'conj':'접속사','intj':'감탄사','num':'수사','det':'한정사','phrase':'구','name':'고유명사'}
 MAX_SENSES, MAX_LEN = 3, 90
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+def clean_gloss(g):
+    g = re.sub(r'\s+', ' ', g).strip()
+    # drop (...) groups that have no Hangul, innermost first: "(With the source of or at.)"
+    prev = None
+    while prev != g:
+        prev = g
+        g = re.sub(r'\(([^()가-힣]*)\)', lambda m: '' if re.search(r'[A-Za-z]{2,}', m.group(1)) else m.group(0), g)
+    # drop [..] / 〔..〕 groups that hold an English definition (long, no Hangul);
+    # short ones like "[~ have + done]" are usage patterns and stay
+    g = re.sub(r'[\[〔]([^\[\]〔〕가-힣]*)[\]〕]',
+               lambda m: '' if len(re.findall(r'[A-Za-z]', m.group(1))) >= 15 else m.group(0), g)
+    g = re.sub(r'\s+', ' ', g).strip()
+    segs = [s.strip() for s in g.split(' / ')]
+    out = []
+    for s in segs:
+        # trailing English sentence after Korean text:  "…있다. The first mentioned of two things."
+        s = re.sub(r'(?<=[가-힣.\]\)])\s+[A-Za-z][A-Za-z ,;:\'"\-]*[A-Za-z.!?]*\s*$', '', s).strip()
+        if re.search(r'[가-힣]', s):
+            out.append(s)
+    g = ' / '.join(out)
+    # a gloss that is mostly Latin letters is a quotation or an English leftover
+    if len(re.findall(r'[A-Za-z]', g)) > 3 * len(re.findall(r'[가-힣]', g)): return ''
+    g = re.sub(r'\(\s*\)', '', g)
+    g = re.sub(r'\s+([,.;])', r'\1', g)
+    g = re.sub(r'^[\s…·,;/]+|[\s,;/]+$', '', g)
+    return re.sub(r'\s+', ' ', g).strip()
+
+def shorten(g):
+    """Cut a long gloss at a ' / ' boundary instead of in the middle of a word."""
+    if len(g) <= MAX_LEN: return g
+    keep = []
+    for seg in g.split(' / '):
+        if keep and len(' / '.join(keep + [seg])) > MAX_LEN: break
+        keep.append(seg)
+    return ' / '.join(keep)[:MAX_LEN * 2]
+
 words = {}
 with open(src, encoding='utf-8') as f:
     for line in f:
@@ -15,9 +53,9 @@ with open(src, encoding='utf-8') as f:
         key = w.lower()
         gl = []
         for g in d['glosses']:
-            g = re.sub(r'\s+', ' ', g).strip()
+            g = clean_gloss(g)
             if not re.search(r'[가-힣]', g): continue
-            gl.append(g[:MAX_LEN])
+            gl.append(shorten(g))
         if not gl: continue
         words.setdefault(key, []).append({'pos': POS.get(d.get('pos'), d.get('pos') or ''), 'ko': gl[:MAX_SENSES], '_lower': w == key})
 # "BE" (an acronym) must not be mixed into "be": when a key has entries from the
@@ -27,6 +65,16 @@ for k, v in words.items():
         words[k] = [e for e in v if e['_lower']]
 for v in words.values():
     for e in v: del e['_lower']
+# Hand-written meanings for archaic / poetic words that Wiktionary's Korean
+# edition does not cover (scripts/ko_archaic.json). A word that is missing from
+# the dictionary gets this entry; a word that exists ("art", "wont") gets it appended.
+with open(os.path.join(HERE, 'ko_archaic.json'), encoding='utf-8') as f:
+    archaic = json.load(f)
+for k, text in archaic.items():
+    m = re.match(r'\((고어·시어|고어|시어)\) ', text)   # the label becomes the part-of-speech chip
+    entry = {'pos': m.group(1) if m else '고어', 'ko': [text[m.end():] if m else text]}
+    words.setdefault(k, [])
+    words[k].append(entry)
 os.makedirs(out, exist_ok=True)
 with open(os.path.join(out, 'ko_dict.jsonl'), 'w', encoding='utf-8') as o:
     for k, v in sorted(words.items()):
