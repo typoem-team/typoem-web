@@ -30,10 +30,11 @@
     </header>
     <div class="book-shelf-wrap">
       <p id="book-shelf-status" class="status" role="status"></p>
+      <!-- Rows open in place (no sheets): a book's row -> "이 책으로 정하기";
+           the owner's empty slot at the end ("책 추가") -> search, and a found book is put on the shelf -->
       <ol id="book-shelf" class="book-shelf" aria-label="책장"></ol>
       <div id="book-shelf-foot" class="book-shelf-foot" hidden>
-        <button type="button" class="link-btn" id="book-shelf-back" hidden>읽던 책으로 돌아가기</button>
-        <button type="button" class="link-btn" id="book-search-open" aria-haspopup="dialog">다른 책 찾기</button>
+        <button type="button" class="link-btn" id="book-shelf-back">돌아가기</button>
       </div>
     </div>
   </div>
@@ -93,10 +94,10 @@
 
   <section id="book-goal" class="book-sheet" role="dialog" aria-label="목표" hidden>
     <span class="book-handle" aria-hidden="true"></span>
-    <p class="book-sheet-title">목표 <span>언제까지 다 읽을까요?</span></p>
-    <label class="book-note book-goal-label" for="book-goal-input">이 날까지 다 읽을래요</label>
+    <p class="book-sheet-title">목표</p>
+    <label class="book-note book-goal-label" for="book-goal-input">완독 목표일</label>
     <input type="date" id="book-goal-input" class="book-field">
-    <p class="book-note book-goal-hint">날짜를 정하면 남은 분량을 남은 날로 나눠 오늘 읽을 양을 알려 드려요.</p>
+    <p class="book-note book-goal-hint">남은 분량을 남은 날수로 나눠 하루 분량을 보여 줘요.</p>
     <div class="book-goal-actions">
       <button type="button" id="book-goal-clear" class="book-btn book-btn-sec">목표일 지우기</button>
       <button type="button" id="book-goal-close" class="book-btn book-btn-pri">닫기</button>
@@ -104,32 +105,8 @@
     <p id="book-goal-status" class="book-note book-goal-status" role="status"></p>
   </section>
 
-  <!-- Shared sheets (ui.js): pick a book, search -->
-  <section class="sheet" id="sheet-pick" role="dialog" aria-label="책 고르기">
-    <span class="handle"></span>
-    <p class="s-title" id="pick-title">이 책으로 할까요?</p>
-    <div id="pick-book"></div>
-    <p id="pick-note" class="book-note book-pick-note"></p>
-    <div id="pick-status" class="book-pick-status" role="status"></div>
-    <div class="sheet-actions" id="pick-actions">
-      <button type="button" class="sec" data-close>취소</button>
-      <button type="button" class="pri" id="pick-yes">이 책으로</button>
-    </div>
-  </section>
-
-  <section class="sheet" id="sheet-search" role="dialog" aria-label="다른 책 찾기">
-    <span class="handle"></span>
-    <p class="s-title">다른 책 찾기 <span>제목 또는 구텐베르크 번호</span></p>
-    <form class="m-write" id="search-form" novalidate>
-      <input type="search" id="search-input" class="field" maxlength="100" placeholder="예: Emma, 1342" aria-label="제목 또는 구텐베르크 번호" autocomplete="off">
-      <button type="submit" class="pri" id="search-submit">찾기</button>
-    </form>
-    <p id="search-status" class="status book-search-status" role="status"></p>
-    <ol id="search-results" class="book-shelf book-shelf-results" aria-label="검색 결과"></ol>
-  </section>
-
   <script src="auth.js"></script>
-  <!-- ui.js first: book.js uses TypoemUI (sheets, toast); dict-popup.js opens the dictionary through it -->
+  <!-- ui.js first: book.js uses TypoemUI (toast); dict-popup.js opens the dictionary through it -->
   <script src="ui.js"></script>
   <script src="book.js"></script>
   <script src="dict-popup.js"></script>

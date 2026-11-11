@@ -4,7 +4,8 @@
 //
 // Data:
 //   GET /api/rooms/mine                 am I the owner? (also: member or not)
-//   GET /api/books/shelf                the shelf; GET /api/books/search?q= (다른 책 찾기)
+//   GET /api/books/shelf, GET /api/books   the shelf (10 recommended + other stored books)
+//   GET /api/books/search?q=            the empty slot's search (책 추가)
 //   PUT /api/rooms/:id/book             owner picks / changes the book
 //   GET /api/rooms/:id/book             overview: book, chapters, my progress
 //   GET /api/rooms/:id/book?chapter=N   one chapter's paragraphs (cached in memory)
@@ -115,7 +116,6 @@ const BOOK_PUT_TIMEOUT_MS = 75000;   // a first-time import can take ~70 s on th
 
 let isOwner = false;        // owner of this room (only the owner picks the book)
 let view = 'loading';       // 'loading' | 'message' | 'reader' | 'shelf'
-let shelfBooks = null;      // GET /api/books/shelf, kept once loaded
 
 function roomUrl() {
   return `/room.html?id=${encodeURIComponent(ROOM)}`;
@@ -229,8 +229,17 @@ function showMessage(text, withBackLink) {
 }
 
 // =====================================================================
-//  Shelf: 10 fixed books (owner picks one; members see what to expect)
+//  Shelf: 10 recommended books + other books already on the server.
+//  Everything happens inside the shelf (no sheets): a book's row opens to
+//  "이 책으로 정하기"; the owner's empty slot at the end opens to a search,
+//  and a found book is put on the shelf in front of the slot.
 // =====================================================================
+let shelfBooks = null;      // [{ gutenbergId, title, author, imported, cover? }]; also planted ones (until reload)
+let openCell = null;        // the <li> whose panel is open (one at a time)
+let assignBusy = false;     // a PUT is in flight (its row stays open)
+let searchSeq = 0;
+let searchResults = [];
+
 // Opened when the room has no book, or by the owner's 책 바꾸기 in the reader.
 function openShelf() {
   closeSheets();                     // the reader's contents / goal sheets
@@ -242,12 +251,11 @@ function openShelf() {
 
   el('book-shelf-title').textContent = changing ? '책 바꾸기' : '이 방의 책';
   el('book-shelf-lead').textContent = !isOwner
-    ? '방장이 책을 고르면 여기서 같이 읽어요'
+    ? '방장이 책을 고르면 여기에 표시돼요'
     : changing
-      ? '다른 책을 고르면 방 모두가 그 책을 읽어요'
-      : '함께 읽을 책을 한 권 골라 주세요';
-  el('book-shelf-foot').hidden = !isOwner;
-  el('book-shelf-back').hidden = !changing;
+      ? '바꾸면 방 전체에 적용돼요'
+      : '이 방에서 읽을 책을 고르세요';
+  el('book-shelf-foot').hidden = !(isOwner && changing);
 
   if (shelfBooks) renderShelf();
   else loadShelf();
@@ -255,63 +263,94 @@ function openShelf() {
 
 function backToReader() {
   if (!book) return;
+  collapseCell();
   setView('reader');
   document.title = `${book.title} · Typoem`;
   lastSize = '';
   relayoutKeepingAnchor();
 }
 
+// "Austen, Jane" (Gutenberg order) -> "Jane Austen"; several authors stay "; "-separated.
+function displayAuthor(name) {
+  if (!name) return '';
+  return String(name).split('; ').map((n) => {
+    const m = /^([^,]+),\s*(.+)$/.exec(n);
+    return m ? `${m[2]} ${m[1]}` : n;
+  }).join('; ');
+}
+
+// shelf = GET /api/books/shelf, then GET /api/books minus those 10
 async function loadShelf() {
   const status = el('book-shelf-status');
   status.textContent = '책장을 불러오는 중이에요…';
   el('book-shelf').innerHTML = '';
-  let res = null;
-  try {
-    res = await authFetch('/api/books/shelf');
-  } catch (err) {
-    res = null;
-  }
-  if (!res || !res.ok) {
+  const [shelfRes, booksRes] = await Promise.all([
+    authFetch('/api/books/shelf').catch(() => null),
+    authFetch('/api/books').catch(() => null),
+  ]);
+  if (!shelfRes || !shelfRes.ok) {
     status.innerHTML = '책장을 불러오지 못했어요. <button type="button" class="link-btn" id="book-shelf-retry">다시 시도</button>';
     el('book-shelf-retry').addEventListener('click', loadShelf);
     return;
   }
-  shelfBooks = await res.json();
+  const picks = await shelfRes.json();
+  let others = [];
+  if (booksRes && booksRes.ok) {
+    const stored = await booksRes.json().catch(() => []);
+    const onShelf = new Set(picks.map((b) => b.gutenbergId));
+    others = stored
+      .filter((b) => !onShelf.has(b.gutenbergId))
+      .map((b) => ({ gutenbergId: b.gutenbergId, title: b.title, author: displayAuthor(b.author), imported: true }));
+  }
+  shelfBooks = picks.concat(others);
   status.textContent = '';
   renderShelf();
 }
 
 function renderShelf() {
-  renderBookList(el('book-shelf'), shelfBooks);
+  openCell = null;
+  el('book-shelf').innerHTML = shelfBooks.map(cellHtml).join('') + (isOwner ? slotHtml() : '');
 }
 
-// books: [{ gutenbergId, title, author, imported }]
-// The owner gets a button per book; members and the current book get plain rows.
-function renderBookList(list, books) {
-  list.innerHTML = books.map((b) => {
-    const current = !!book && book.id === b.gutenbergId;
-    const inner = bookRowHtml(b) + (current ? '<span class="book-tag book-tag-current">지금 읽는 책</span>' : '');
-    return isOwner && !current
-      ? `<li><button type="button" class="book-shelf-item" data-gid="${b.gutenbergId}">${inner}</button></li>`
-      : `<li><div class="book-shelf-item">${inner}</div></li>`;
-  }).join('');
-  list.querySelectorAll('button.book-shelf-item').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      openPick(books.find((b) => b.gutenbergId === Number(btn.dataset.gid)));
-    });
-  });
+// The owner gets a button per book (it opens the row); members and the current
+// book get a plain row.
+function cellHtml(b) {
+  const current = !!book && book.id === b.gutenbergId;
+  const inner = bookRowHtml(b) + (current ? '<span class="book-tag book-tag-current">읽는 중</span>' : '');
+  if (!isOwner || current) {
+    return `<li class="book-shelf-cell" data-gid="${b.gutenbergId}"><div class="book-shelf-item">${inner}</div></li>`;
+  }
+  return `<li class="book-shelf-cell" data-gid="${b.gutenbergId}">
+      <button type="button" class="book-shelf-item" data-act="open-pick" aria-expanded="false">${inner}</button>
+      <div class="book-shelf-panel" hidden></div>
+    </li>`;
+}
+
+// the owner's empty place at the end of the shelf
+function slotHtml() {
+  return `<li class="book-shelf-cell book-shelf-slot">
+      <button type="button" class="book-shelf-item" data-act="open-search" aria-expanded="false">
+        <span class="book-slot-cover" aria-hidden="true"></span>
+        <span class="book-shelf-text">
+          <span class="book-slot-label">책 추가</span>
+          <span class="book-slot-hint">제목 또는 구텐베르크 번호로 검색</span>
+        </span>
+      </button>
+      <div class="book-shelf-panel" hidden></div>
+    </li>`;
 }
 
 // Cover colour 1-7: shelf books by shelf position (so neighbours differ),
-// anything else by id. A book keeps the same colour everywhere.
-function coverOf(id) {
-  const i = shelfBooks ? shelfBooks.findIndex((s) => s.gutenbergId === id) : -1;
-  return (i >= 0 ? i : id) % 7 + 1;
+// anything else by id. A planted book keeps the colour it had in the results.
+function coverOf(b) {
+  if (b.cover) return b.cover;
+  const i = shelfBooks ? shelfBooks.findIndex((s) => s.gutenbergId === b.gutenbergId) : -1;
+  return (i >= 0 ? i : b.gutenbergId) % 7 + 1;
 }
 
 function bookRowHtml(b) {
   return `
-    <span class="book-cover book-cover-${coverOf(b.gutenbergId)}" aria-hidden="true"></span>
+    <span class="book-cover book-cover-${coverOf(b)}" aria-hidden="true"></span>
     <span class="book-shelf-text">
       <span class="book-shelf-title" lang="en">${escapeHtml(b.title)}</span>
       ${b.author
@@ -320,23 +359,53 @@ function bookRowHtml(b) {
     </span>`;
 }
 
-// ---- Pick: confirm, then PUT /api/rooms/:id/book ----
-let picking = null;         // the book in the pick sheet
-let pickBusy = false;       // a PUT is in flight
+function bookOfCell(cell) {
+  const gid = Number(cell.dataset.gid);
+  return shelfBooks.find((b) => b.gutenbergId === gid);
+}
 
-function openPick(b) {
-  if (!b || pickBusy) return;
-  picking = b;
-  el('pick-title').textContent = book ? '이 책으로 바꿀까요?' : '이 책으로 할까요?';
-  el('pick-book').innerHTML = `<div class="book-shelf-item">${bookRowHtml(b)}</div>`;
-  el('pick-note').textContent = book
-    ? '방 멤버 모두 이 책을 읽게 돼요. 읽던 위치는 책마다 남아 있어서, 다시 돌아오면 이어 읽을 수 있어요.'
-    : '방 멤버 모두 이 책을 함께 읽어요. 나중에 바꿀 수도 있어요.';
-  el('pick-status').innerHTML = '';
-  el('pick-yes').hidden = false;
-  el('pick-yes').disabled = false;
-  el('pick-yes').textContent = book ? '바꾸기' : '이 책으로';
-  UI.openSheet('sheet-pick');
+// ---- open / close a row ----
+function openPanel(cell, html) {
+  if (!collapseCell()) return null;          // another row is busy
+  const btn = cell.querySelector(':scope > button');
+  const panel = cell.querySelector('.book-shelf-panel');
+  panel.innerHTML = html;
+  panel.hidden = false;
+  cell.classList.add('is-open');
+  btn.setAttribute('aria-expanded', 'true');
+  openCell = cell;
+  return panel;
+}
+
+// Returns false while a PUT is running (that row stays open).
+function collapseCell() {
+  if (!openCell) return true;
+  if (assignBusy) return false;
+  const cell = openCell;
+  openCell = null;
+  searchSeq++;                               // drop a search still in flight
+  cell.classList.remove('is-open');
+  const panel = cell.querySelector('.book-shelf-panel');
+  panel.hidden = true;
+  panel.innerHTML = '';
+  cell.querySelector(':scope > button').setAttribute('aria-expanded', 'false');
+  return true;
+}
+
+// ---- pick: the row opens to "이 책으로 정하기" ----
+function openPick(cell) {
+  const b = bookOfCell(cell);
+  if (!b) return;
+  const panel = openPanel(cell, `
+    <p class="book-note book-shelf-note">${book
+      ? '방 전체가 이 책으로 바뀌어요. 읽던 위치는 책마다 저장돼요.'
+      : '방 전체가 이 책을 읽게 돼요.'}</p>
+    <div class="book-shelf-status" role="status"></div>
+    <div class="book-shelf-actions">
+      <button type="button" class="sec" data-act="cancel">취소</button>
+      <button type="button" class="pri" data-act="assign">이 책으로 정하기</button>
+    </div>`);
+  if (panel) panel.querySelector('[data-act="assign"]').focus({ preventScroll: true });
 }
 
 // authFetch takes no abort signal, so the client limit is a race. The server
@@ -349,15 +418,19 @@ function withTimeout(promise, ms) {
   ]).finally(() => clearTimeout(timer));
 }
 
-async function assignPicked() {
-  const b = picking;
-  if (!b || pickBusy) return;
-  pickBusy = true;
-  el('pick-yes').disabled = true;
-  const status = el('pick-status');
+async function assignCell(cell) {
+  const b = bookOfCell(cell);
+  if (!b || assignBusy) return;
+  const panel = cell.querySelector('.book-shelf-panel');
+  const status = panel.querySelector('.book-shelf-status');
+  const yes = panel.querySelector('[data-act="assign"]');
+  const no = panel.querySelector('[data-act="cancel"]');
+  assignBusy = true;
+  yes.disabled = true;
+  no.disabled = true;
   status.innerHTML = `<p class="book-loading">${b.imported
-    ? '책을 펼치는 중이에요…'
-    : '책을 가져오는 중이에요 (처음 한 번만)'}</p>`;
+    ? '여는 중…'
+    : '책을 가져오는 중이에요. 처음에만 시간이 걸려요.'}</p>`;
 
   let res = null;
   let failure = null;
@@ -369,27 +442,25 @@ async function assignPicked() {
     }), BOOK_PUT_TIMEOUT_MS);
   } catch (err) {
     failure = err && err.message === 'timeout'
-      ? '시간이 너무 오래 걸리고 있어요.'
+      ? '시간이 오래 걸려 멈췄어요. 다시 시도해 주세요.'
       : '서버에 연결할 수 없어요.';
     retryable = true;
   }
 
   if (res && res.ok) {
     b.imported = true;
-    const s = shelfBooks && shelfBooks.find((x) => x.gutenbergId === b.gutenbergId);
-    if (s) s.imported = true;
-    pickBusy = false;
     let overview = null;
     try {
       const r = await authFetch(`/api/rooms/${encodeURIComponent(ROOM)}/book`);
       if (r.ok) overview = await r.json();
     } catch (err) { /* reload below */ }
+    assignBusy = false;
     if (!overview) {
       window.location.reload();
       return;
     }
-    UI.closeSheets();
-    UI.toast(`${overview.book.title}, 함께 읽어요`);
+    collapseCell();
+    UI.toast('읽을 책을 정했어요');
     await showReader(overview);
     return;
   }
@@ -397,40 +468,44 @@ async function assignPicked() {
   if (res) {
     if (res.status === 401) return;   // authFetch is redirecting to login
     if (res.status === 502 || res.status === 503) {
-      failure = '책을 가져오는 곳이 잠시 바빠요.';
+      failure = '구텐베르크가 응답하지 않아요. 잠시 후 다시 시도해 주세요.';
       retryable = true;
     } else if (res.status === 403) {
       failure = '방장만 책을 고를 수 있어요.';
     } else if (res.status === 404) {
       failure = '구텐베르크에서 이 책을 찾지 못했어요.';
     } else if (res.status === 422) {
-      failure = '이 책은 여기서 읽을 수 있게 가져오지 못해요. 다른 책을 골라 주세요.';
+      failure = '이 책은 가져올 수 없어요. 다른 책을 골라 주세요.';
     } else {
       failure = '책을 고르지 못했어요.';
     }
   }
 
-  pickBusy = false;
+  assignBusy = false;
   status.innerHTML = `<p class="book-error">${escapeHtml(failure)}</p>`;
-  el('pick-yes').disabled = false;
-  el('pick-yes').hidden = !retryable;
-  el('pick-yes').textContent = '다시 시도';
-  // closed while waiting: say it where it can be seen
-  if (!el('sheet-pick').classList.contains('show')) UI.toast(failure);
+  no.disabled = false;
+  yes.disabled = false;
+  yes.hidden = !retryable;
+  yes.textContent = '다시 시도';
 }
 
-// ---- 다른 책 찾기: the old title / number search, in a sheet ----
-let searchSeq = 0;
-
-function openSearch() {
-  UI.openSheet('sheet-search');
-  el('search-input').focus({ preventScroll: true });
+// ---- empty slot: the row opens to a search ----
+function openSearch(cell) {
+  const panel = openPanel(cell, `
+    <form class="m-write book-shelf-search" novalidate>
+      <input type="search" class="field" maxlength="100" placeholder="예: Emma, 1342"
+             aria-label="책 제목 또는 구텐베르크 번호" autocomplete="off">
+      <button type="submit" class="pri">찾기</button>
+    </form>
+    <p class="status book-shelf-search-status" role="status"></p>
+    <ol class="book-shelf-results" aria-label="찾은 책"></ol>`);
+  if (panel) panel.querySelector('input').focus({ preventScroll: true });
 }
 
-async function runSearch() {
-  const q = el('search-input').value.trim();
-  const status = el('search-status');
-  const list = el('search-results');
+async function runSearch(panel) {
+  const q = panel.querySelector('input').value.trim();
+  const status = panel.querySelector('.book-shelf-search-status');
+  const list = panel.querySelector('.book-shelf-results');
   if (!q) {
     status.textContent = '책 제목이나 번호를 적어 주세요.';
     return;
@@ -445,42 +520,107 @@ async function runSearch() {
   } catch (err) {
     res = null;
   }
-  if (seq !== searchSeq) return;     // a newer search is running
+  if (seq !== searchSeq) return;     // closed, or a newer search is running
   if (!res || !res.ok) {
     if (res && res.status === 401) return;
     status.textContent = res && res.status === 400
       ? '100자 안으로 적어 주세요.'
-      : '제목 검색이 잠시 안 돼요. 위 책장에서 골라 주세요.';
+      : '지금은 제목 검색을 쓸 수 없어요. 번호로 검색해 보세요. 예: 1342';
     return;
   }
   const results = await res.json();
   if (seq !== searchSeq) return;
   if (results.length === 0) {
-    status.textContent = '찾는 책이 없어요. 다른 제목이나 번호로 찾아보세요.';
+    status.textContent = '검색 결과가 없어요.';
     return;
   }
   status.textContent = '';
-  renderBookList(list, results.map((r) => ({
+  searchResults = results.map((r) => ({
     gutenbergId: r.gutenbergId,
     title: r.title,
-    author: (r.authors || []).map((a) => a.name).join('; '),
+    author: displayAuthor((r.authors || []).map((a) => a.name).join('; ')),
     imported: !!r.alreadyImported,
-  })));
+  }));
+  list.innerHTML = searchResults.map((b, i) => {
+    const onShelf = shelfBooks.some((s) => s.gutenbergId === b.gutenbergId);
+    return `<li><button type="button" class="book-shelf-item" data-act="plant" data-i="${i}">
+        ${bookRowHtml(b)}${onShelf ? '<span class="book-tag">책장에 있음</span>' : ''}
+      </button></li>`;
+  }).join('');
 }
+
+// A found book goes on the shelf right in front of the empty slot (or, if it
+// is already there, that book is shown). Then it is picked like any other.
+function plant(b) {
+  collapseCell();
+  const list = el('book-shelf');
+  let cell = list.querySelector(`.book-shelf-cell[data-gid="${b.gutenbergId}"]`);
+  if (!cell) {
+    b.cover = coverOf(b);                    // keep the colour it had in the results
+    shelfBooks.push(b);
+    const tpl = document.createElement('template');
+    tpl.innerHTML = cellHtml(b).trim();
+    cell = tpl.content.firstElementChild;
+    list.insertBefore(cell, list.querySelector('.book-shelf-slot'));
+  }
+  cell.classList.remove('is-planted');
+  void cell.offsetWidth;                     // restart the animation
+  cell.classList.add('is-planted');
+  cell.addEventListener('animationend', () => cell.classList.remove('is-planted'), { once: true });
+  cell.scrollIntoView({ block: 'nearest', behavior: UI.reduceMotion ? 'auto' : 'smooth' });
+  const btn = cell.querySelector(':scope > button');
+  if (btn) btn.focus({ preventScroll: true });
+}
+
+// ---- wiring (the list element stays; its rows are re-rendered) ----
+el('book-shelf').addEventListener('click', (e) => {
+  const t = e.target.closest('[data-act]');
+  if (!t) return;
+  const cell = t.closest('.book-shelf-cell');
+  switch (t.dataset.act) {
+    case 'open-pick':
+      if (openCell === cell) collapseCell(); else openPick(cell);
+      break;
+    case 'open-search':
+      if (openCell === cell) collapseCell(); else openSearch(cell);
+      break;
+    case 'cancel':
+      collapseCell();
+      cell.querySelector(':scope > button').focus({ preventScroll: true });
+      break;
+    case 'assign':
+      assignCell(cell);
+      break;
+    case 'plant':
+      plant(searchResults[Number(t.dataset.i)]);
+      break;
+  }
+});
+
+el('book-shelf').addEventListener('submit', (e) => {
+  if (!e.target.classList.contains('book-shelf-search')) return;
+  e.preventDefault();
+  runSearch(e.target.closest('.book-shelf-panel'));
+});
+
+// A click outside the open row, or Esc, folds it back.
+document.addEventListener('click', (e) => {
+  if (openCell && view === 'shelf' && !openCell.contains(e.target) && e.target.isConnected) collapseCell();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !openCell || view !== 'shelf') return;
+  const btn = openCell.querySelector(':scope > button');
+  if (collapseCell()) btn.focus({ preventScroll: true });
+});
 
 el('book-change-btn').addEventListener('click', openShelf);
 el('book-shelf-back').addEventListener('click', backToReader);
-el('book-search-open').addEventListener('click', openSearch);
-el('pick-yes').addEventListener('click', assignPicked);
-el('search-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  runSearch();
-});
 
-// Android back: shared sheets are closed by ui.js first; then the reader's own
-// sheets, then shelf -> reader (when changing books), then home.
+// Android back: the reader's own sheets, then an open shelf row, then
+// shelf -> reader (when changing books), then home.
 window.TypoemNav.setBackHandler(function () {
   if (sheetOpen()) { closeSheets(); return true; }
+  if (view === 'shelf' && openCell) { collapseCell(); return true; }
   if (view === 'shelf' && book) { backToReader(); return true; }
   window.location.href = '/index.html';
   return true;
@@ -710,13 +850,13 @@ function updateStats() {
   pace.classList.remove('is-late');
   pace.title = '';
   if (!targetEndDate) {
-    pace.textContent = '목표일을 정하지 않았어요';
+    pace.textContent = '목표일 없음';
     return;
   }
   const remaining = total - read;
   const days = daysLeftIncludingToday(targetEndDate);
   if (remaining <= 0) {
-    pace.textContent = '다 읽었어요!';
+    pace.textContent = '완독';
   } else if (days < 1) {
     pace.textContent = '목표일이 지났어요';
     pace.classList.add('is-late');
