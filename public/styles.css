@@ -1280,8 +1280,15 @@ html[lang="en"] .landing-invite {
   word-break: keep-all;
 }
 
+/* one block per part of speech, divided by the same hairline as the English list below */
 .dict-ko-list > li {
-  padding: 6px 0;
+  padding: 10px 0;
+  border-top: 1px solid var(--hair);
+}
+
+.dict-ko-list > li:first-child {
+  padding-top: 0;
+  border-top: 0;
 }
 
 /* several meanings of one part of speech: chip, then one numbered line each */
