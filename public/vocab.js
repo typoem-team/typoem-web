@@ -13,6 +13,33 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// ---- Korean meanings of a saved word (same look as the dictionary popup) ----
+// A meaning can hold several ' / '-separated parts; show each on its own line, at most 5.
+function vocabKoSenses(entry) {
+  return (entry.ko || [])
+    .flatMap((g) => String(g).split(' / '))
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function vocabKoBlock(ko) {
+  if (!Array.isArray(ko) || ko.length === 0) return '';
+  let html = '<ul class="dict-ko-list vocab-ko">';
+  for (const e of ko.slice(0, 4)) {
+    const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span>` : '';
+    const senses = vocabKoSenses(e);
+    if (senses.length > 1) {
+      html += `<li class="d-ko-entry">${pos}<ol class="d-ko-senses">`
+        + senses.map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+        + '</ol></li>';
+    } else {
+      html += `<li class="d-ko-entry">${pos} ${escapeHtml(senses[0] || '')}</li>`;
+    }
+  }
+  return html + '</ul>';
+}
+
 // ---- Build one vocabulary card ----
 function vocabCard(v) {
   const phon = v.phonetic
@@ -21,7 +48,8 @@ function vocabCard(v) {
   return `
     <article class="vocab-card" data-vocab-id="${encodeURIComponent(v.id)}">
       <h2 class="vocab-word">${escapeHtml(v.word)} ${phon}</h2>
-      <p class="vocab-def">${escapeHtml(v.definition)}</p>
+      ${vocabKoBlock(v.ko)}
+      ${v.definition ? `<p class="vocab-def">${escapeHtml(v.definition)}</p>` : ''}
       <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">지우기</button>
     </article>
   `;
@@ -55,6 +83,14 @@ async function loadVocab() {
     }
 
     list.innerHTML = words.map(vocabCard).join('');
+
+    // CC BY-SA: credit Wiktionary whenever one of its meanings is on screen
+    // (the team's own hand-written meanings are marked own and need no credit).
+    const usesWiktionary = words.some((w) => Array.isArray(w.ko) && w.ko.some((e) => !e.own));
+    if (usesWiktionary) {
+      list.insertAdjacentHTML('beforeend',
+        '<p class="d-ko-src vocab-src">한국어 뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>');
+    }
   } catch (err) {
     console.error(err);
     status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
