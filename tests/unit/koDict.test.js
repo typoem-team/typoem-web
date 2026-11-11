@@ -34,6 +34,29 @@ describe('koDict.lookup', () => {
   });
 });
 
+describe('koDict data quality', () => {
+  test('archaic words have Korean meanings and a 고어/시어 label', () => {
+    for (const w of ['thee', 'thy', 'thou', 'hast', "o'er"]) {
+      const r = lookup(w);
+      expect(r).not.toBeNull();
+      expect(r.entries[0].ko[0]).toMatch(/[가-힣]/);
+      expect(r.entries.some((e) => ['고어', '시어'].includes(e.pos))).toBe(true);
+    }
+  });
+
+  test('English definitions that were mixed into the Korean text are removed', () => {
+    const text = JSON.stringify(lookup('from').entries);
+    expect(text).not.toMatch(/provenance|starting point/);
+    expect(JSON.stringify(lookup('one').entries)).not.toMatch(/impersonal pronoun\) One thing/);
+  });
+
+  test('a modern word keeps its normal meaning before the archaic one', () => {
+    const r = lookup('art');
+    expect(r.entries[0].pos).not.toBe('고어');
+    expect(r.entries[r.entries.length - 1].pos).toBe('고어');
+  });
+});
+
 describe('koDict.candidates', () => {
   test('lists the word itself first', () => {
     expect(candidates('running')[0]).toBe('running');
