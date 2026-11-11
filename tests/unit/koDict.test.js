@@ -152,3 +152,15 @@ describe('koDict hand-written poem words (ko_extra.json)', () => {
     expect(lookup("tyranny's").word).toBe('tyranny');
   });
 });
+
+describe('top missing poem words (hand-written)', () => {
+  const koDict = require('../../lib/koDict');
+  test.each(['colour', 'coloured', 'glanced', 'appearances', 'mrs', "heav'nly", 'thro', 'quoth', "i've"])(
+    '%s has a Korean meaning',
+    (w) => {
+      const r = koDict.lookup(w);
+      expect(r).toBeTruthy();
+      expect(r.entries.length).toBeGreaterThan(0);
+    }
+  );
+});
