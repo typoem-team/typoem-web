@@ -37,6 +37,7 @@ let memos = [];               // full-poem memos, newest first
 let annotationsByLine = {};   // { line_id: [annotation, ...] }
 let currentLineId = null;     // line whose sheet is open, or null
 let marks = new Set();        // highlighted line ids (this device only)
+let lineOpener = null;        // the button that opened the line view (focus goes back to it)
 
 // =====================================================================
 //  Opening: the home screen's cover has just grown into this band
@@ -69,6 +70,7 @@ function setThemeColor(color) {
 
 // Android back button: sheets are closed by ui.js first; then back to home.
 window.TypoemNav.setBackHandler(function () {
+  if (closeLineView()) return true;
   window.location.href = '/index.html';
   return true;
 });
@@ -113,6 +115,7 @@ async function loadToday() {
   $('room-name').textContent = (data.room && data.room.name) || '';
   renderPoem();
   renderPill();
+  renderMemos();                 // the side panel (1024px+) shows the list straight away
   $('memo-pill').hidden = false;
   UI.anim($('r-body'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
   UI.anim($('memo-pill'), [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, delay: 300 });
@@ -282,7 +285,7 @@ function wrapWordChunk(chunk) {
 $('poem-body').addEventListener('click', (e) => {
   const btn = e.target.closest('.mark, .cm');
   if (!btn) return;
-  openLine(Number(btn.parentNode.dataset.lineId));
+  openLine(Number(btn.parentNode.dataset.lineId), btn);
 });
 
 // =====================================================================
@@ -471,15 +474,68 @@ function myAnnotation(lineId) {
   return (annotationsByLine[lineId] || []).find((a) => me && a.user_id === me.id) || null;
 }
 
-function openLine(lineId) {
+// Narrow screens: a sheet / dialog. 1024px+: the side panel switches from
+// "all memos" to "this line", and "전체 메모로" (or Esc) switches it back.
+function openLine(lineId, opener) {
   currentLineId = lineId;
   $('drawer-line').textContent = lineText(lineId);
   $('annotation-input').value = '';
   $('l-mark').textContent = marks.has(lineId) ? '밑줄 지우기' : '밑줄 긋기';
   renderAnnotations();
-  UI.openSheet('sheet-line');
   UI.haptic();
+
+  if (!UI.isWide()) {
+    UI.openSheet('sheet-line');
+    return;
+  }
+  UI.closeSheets();                         // e.g. an open dictionary popover
+  lineOpener = opener || document.activeElement;
+  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
+  const ln = lineEl(lineId);
+  if (ln) ln.classList.add('ln-open');
+  $('r-side').classList.add('line-mode');
+  const panel = $('sheet-line');
+  panel.setAttribute('tabindex', '-1');
+  panel.scrollTop = 0;
+  panel.focus({ preventScroll: true });     // move focus into the panel
 }
+
+function lineEl(lineId) {
+  return document.querySelector(`.ln[data-line-id="${lineId}"]`);
+}
+
+function lineViewOpen() {
+  return $('r-side').classList.contains('line-mode');
+}
+
+// Back to all memos; focus returns to the button that opened the line view
+// (or the line's margin button, if the count it came from is gone).
+function closeLineView() {
+  if (!lineViewOpen()) return false;
+  const ln = lineEl(currentLineId);
+  $('r-side').classList.remove('line-mode');
+  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
+  const back = (lineOpener && lineOpener.isConnected) ? lineOpener : (ln && ln.querySelector('.mark'));
+  if (back) back.focus({ preventScroll: true });
+  lineOpener = null;
+  return true;
+}
+
+$('l-back').addEventListener('click', closeLineView);
+
+// Esc closes the line view (an open popover or inline editor handles its own Esc first).
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || e.defaultPrevented) return;
+  if (document.querySelector('.sheet.show')) return;
+  if (closeLineView()) e.preventDefault();
+});
+
+// Crossing 1024px: the panel and the sheets are the same elements, so reset the view.
+UI.onWideChange(() => {
+  $('r-side').classList.remove('line-mode');
+  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
+  lineOpener = null;
+});
 
 function renderAnnotations() {
   const list = annotationsByLine[currentLineId] || [];
@@ -542,6 +598,7 @@ async function reloadAnnotations(lineId) {
   if (currentLineId === lineId) renderAnnotations();
   updateLine(lineId);
   renderPill();
+  renderMemos();                 // line notes are listed with the memos too
 }
 
 // =====================================================================
@@ -554,7 +611,10 @@ const KIND = {
 
 function itemEl(kind, id) {
   // the visible one: a line note can also sit (read-only) in the memo sheet
-  return document.querySelector(`.sheet.show .m-item[data-kind="${kind}"][data-id="${id}"]`);
+  const scope = UI.isWide()
+    ? (lineViewOpen() ? '#sheet-line' : '#sheet-memo')
+    : '.sheet.show';
+  return document.querySelector(`${scope} .m-item[data-kind="${kind}"][data-id="${id}"]`);
 }
 
 function startInlineEdit(kind, id) {

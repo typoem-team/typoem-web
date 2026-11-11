@@ -21,6 +21,11 @@ const $ = (id) => document.getElementById(id);
 
 const PAST_ON_DECK = 3;       // past covers shown on the deck before "+N"
 
+// Everything that only makes sense when there is a room (deck, room card, invite, past poems).
+function setRoomView(visible) {
+  document.querySelectorAll('[data-room-view]').forEach((el) => { el.hidden = !visible; });
+}
+
 // ---- State ----
 let rooms = [];
 let room = null;              // current room (from /rooms/mine)
@@ -63,12 +68,12 @@ async function loadHome(preferRoomId) {
     rooms = [];
     room = null;
     UI.setLastRoom(null);
-    $('room-view').hidden = true;
+    setRoomView(false);
     $('empty-state').hidden = false;
     return;
   }
   $('empty-state').hidden = true;
-  $('room-view').hidden = false;
+  setRoomView(true);
 
   // The room opened last; if it is gone (left / deleted), the newest room.
   const wanted = preferRoomId != null ? preferRoomId : UI.getLastRoom();
@@ -238,13 +243,22 @@ function renderRooms() {
   }).join('');
 }
 
+// Sheet / dialog, or at 1024px+ a dropdown under the room name.
 function openRooms() {
+  const sheet = $('sheet-rooms');
+  if (UI.isWide() && sheet.classList.contains('show')) {   // second click closes the dropdown
+    UI.closeSheets();
+    return;
+  }
   $('join-code').value = '';
-  UI.openSheet('sheet-rooms');
+  UI.openSheet(sheet, { anchor: $('room-switch') });
   UI.haptic();
 }
 
 $('room-switch').addEventListener('click', openRooms);
+
+// Crossing 1024px: the deck gains / loses its "+N" card.
+UI.onWideChange(() => { if (room) renderDeck(); });
 document.addEventListener('typoem:rooms', () => {
   if (rooms.length) openRooms();
 });
@@ -344,7 +358,8 @@ function renderDeck() {
   past.slice(0, PAST_ON_DECK).forEach((row) => {
     deckItems.push({ kind: 'past', row, poem: { id: row.poem_id, title: row.title, author: row.author } });
   });
-  if (past.length > PAST_ON_DECK) deckItems.push({ kind: 'more', count: past.length - PAST_ON_DECK });
+  // "+N" opens the full list; at 1024px+ the list is already on the page.
+  if (past.length > PAST_ON_DECK && !UI.isWide()) deckItems.push({ kind: 'more', count: past.length - PAST_ON_DECK });
 
   const deck = $('deck');
   deck.innerHTML = deckItems.map(coverHTML).join('');
@@ -422,7 +437,7 @@ function openReader(coverEl) {
   morph.className = 'morph';
   morph.style.background = color;
   // same height as .r-head on the reading screen
-  morph.style.height = 'calc(230px + var(--safe-top))';
+  morph.style.height = 'calc(var(--band-h) + var(--safe-top))';
   document.body.appendChild(morph);
   const bandHeight = morph.offsetHeight;
 
@@ -545,6 +560,9 @@ $('h-list').addEventListener('click', (e) => {
   await loadHome();
   // deep links from the tab bar / other pages
   if (window.location.hash === '#rooms' && rooms.length) openRooms();
-  if (window.location.hash === '#history' && room) UI.openSheet('sheet-history');
+  if (window.location.hash === '#history' && room) {
+    if (UI.isWide()) $('sheet-history').scrollIntoView({ block: 'start' });
+    else UI.openSheet('sheet-history');
+  }
   if (window.location.hash) history.replaceState(null, '', window.location.pathname);
 })();

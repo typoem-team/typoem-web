@@ -126,9 +126,24 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2000);
   }
 
-  // ---- Bottom sheets (one scrim, one open sheet at a time) ----
+  // ---- Sheets ----
+  // One piece of markup (<section class="sheet">), three looks, chosen by width:
+  //   under 600px      bottom sheet
+  //   600px and up     centred dialog
+  //   1024px and up    whatever the element asks for with data-wide:
+  //     (none)             centred dialog
+  //     data-wide="inline"   always visible in the page (a card / side panel); never "opened"
+  //     data-wide="popover"  a small panel next to the element that opened it, no scrim
+  // CSS does the looks; this code only decides scrim / position / focus.
+  var wideMQ = window.matchMedia('(min-width: 1024px)');
+  function isWide() { return wideMQ.matches; }
+  function modeOf(el) {
+    return isWide() ? (el.dataset.wide || 'dialog') : 'sheet';
+  }
+
   var scrim = null;
-  var lastFocus = null;
+  var lastFocus = null;       // what to focus again when the open sheet closes
+  var popAnchor = null;       // element an open popover is attached to
 
   function ensureScrim() {
     if (scrim) return;
@@ -136,54 +151,145 @@
     scrim.className = 'scrim';
     document.body.appendChild(scrim);
     scrim.addEventListener('click', closeSheets);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && openSheetEl()) closeSheets();
-    });
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && openSheetEl()) {
+      e.preventDefault();
+      closeSheets();
+    }
+  });
 
   function openSheetEl() {
     return document.querySelector('.sheet.show');
   }
 
-  function openSheet(el) {
-    if (typeof el === 'string') el = document.getElementById(el);
-    if (!el) return;
-    ensureScrim();
-    document.querySelectorAll('.sheet.show').forEach(function (s) {
-      if (s !== el) s.classList.remove('show');
-    });
-    if (!openSheetEl()) lastFocus = document.activeElement;
-    scrim.classList.add('show');
-    el.classList.add('show');
-    el.scrollTop = 0;
-    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
-    el.focus({ preventScroll: true });
+  // Something that can take focus back later (a poem word is a plain span).
+  function focusable(el) {
+    if (!el || el === document.body) return null;
+    if (el.tabIndex < 0 && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    return el;
   }
 
-  // Returns true if a sheet was open (the app's back button uses this later).
+  // Put a popover next to its anchor: below it, or above when there is no room
+  // below; kept inside the viewport sideways. Works for absolute and fixed.
+  function placePopover(el) {
+    if (!popAnchor || !el.classList.contains('show') || modeOf(el) !== 'popover') return;
+    var fixed = getComputedStyle(el).position === 'fixed';
+    var parent = el.offsetParent || document.body;
+    var pr = fixed ? { left: 0, top: 0 } : parent.getBoundingClientRect();
+    var ar = popAnchor.getBoundingClientRect();
+    var gap = 8, edge = 12;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    el.style.maxHeight = '';
+    var w = el.offsetWidth, h = el.offsetHeight;
+
+    var left = el.dataset.align === 'end' ? ar.right - w : ar.left;
+    left = Math.max(edge, Math.min(left, vw - w - edge));
+    // below the anchor; above it when it fits better there. If it fits on
+    // neither side, it takes the roomier side and scrolls inside.
+    var below = vh - ar.bottom - gap - edge, above = ar.top - gap - edge;
+    var goAbove = h > below && above > below;
+    var room = Math.max(160, goAbove ? above : below);
+    if (h > room) { el.style.maxHeight = room + 'px'; h = room; }
+    var top = goAbove ? ar.top - h - gap : ar.bottom + gap;
+    if (fixed) top = Math.max(edge, Math.min(top, vh - h - edge));
+
+    el.style.left = (left - pr.left) + 'px';
+    el.style.top = (top - pr.top) + 'px';
+    el.dataset.side = top < ar.top ? 'above' : 'below';
+  }
+
+  // opts.anchor: for a popover, the element it belongs to (default: the focused element)
+  function openSheet(el, opts) {
+    if (typeof el === 'string') el = document.getElementById(el);
+    if (!el) return;
+    opts = opts || {};
+    var mode = modeOf(el);
+    if (mode === 'inline') return;          // already on the page
+
+    var wasOpen = el.classList.contains('show');
+    document.querySelectorAll('.sheet.show').forEach(function (s) {
+      if (s !== el) {
+        s.classList.remove('show');
+        s.dispatchEvent(new CustomEvent('sheet:close'));
+      }
+    });
+    var opener = opts.anchor || document.activeElement;
+    if (!wasOpen || mode === 'popover') lastFocus = focusable(opener) || lastFocus;
+
+    if (mode === 'popover') {
+      if (scrim) scrim.classList.remove('show');
+      popAnchor = opts.anchor || opener;
+      el.style.left = el.style.top = el.style.maxHeight = '';
+      el.classList.add('show');
+      placePopover(el);
+    } else {
+      ensureScrim();
+      popAnchor = null;
+      el.style.left = el.style.top = el.style.maxHeight = '';
+      scrim.classList.add('show');
+      el.classList.add('show');
+    }
+    el.scrollTop = 0;
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });     // move focus inside
+  }
+
+  // Returns true if something was open (the app's back button relies on this).
   function closeSheets() {
     var open = document.querySelectorAll('.sheet.show');
     if (scrim) scrim.classList.remove('show');
     open.forEach(function (s) { s.classList.remove('show'); });
-    if (open.length && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    // give focus back to whatever opened it
+    if (open.length && lastFocus && lastFocus.isConnected && lastFocus.focus) lastFocus.focus({ preventScroll: true });
     lastFocus = null;
+    popAnchor = null;
     open.forEach(function (s) { s.dispatchEvent(new CustomEvent('sheet:close')); });
     return open.length > 0;
   }
 
   // The grab handle and any [data-close] button close the sheet they are in.
+  // A click outside an open popover closes it (bubble phase, so the page's own
+  // handlers see it as still open while they run).
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target.closest('.sheet .handle, .sheet [data-close]') : null;
-    if (t) closeSheets();
+    if (t) { closeSheets(); return; }
+    var open = openSheetEl();
+    if (!open || modeOf(open) !== 'popover') return;
+    if (open.contains(e.target)) return;
+    if (popAnchor && popAnchor.contains(e.target)) return;
+    // e.g. the 내 방 link, which opens / closes the room dropdown itself
+    if (e.target.closest && e.target.closest('[data-popover-keep]')) return;
+    closeSheets();
   });
 
-  // ---- "나" sheet: nickname, privacy policy, log out ----
+  window.addEventListener('resize', function () {
+    var open = openSheetEl();
+    if (open) placePopover(open);
+  });
+
+  // Crossing 1024px changes what a sheet is, so close whatever is open and let
+  // the screens rearrange themselves.
+  var wideListeners = [];
+  function onWideChange(fn) { wideListeners.push(fn); }
+  function wideChanged() {
+    closeSheets();
+    wideListeners.forEach(function (fn) { fn(isWide()); });
+  }
+  if (wideMQ.addEventListener) wideMQ.addEventListener('change', wideChanged);
+  else if (wideMQ.addListener) wideMQ.addListener(wideChanged);
+
+  // ---- "나": nickname, privacy policy, log out ----
+  // A sheet on phones, a dialog on tablets, a dropdown under the nickname at 1024px+.
   var meSheet = null;
-  function openMe() {
+  function openMe(anchor) {
     if (!meSheet) {
       meSheet = document.createElement('section');
       meSheet.className = 'sheet';
       meSheet.id = 'sheet-me';
+      meSheet.dataset.wide = 'popover';
+      meSheet.dataset.align = 'end';
       meSheet.setAttribute('role', 'dialog');
       meSheet.setAttribute('aria-label', '나');
       meSheet.innerHTML =
@@ -202,10 +308,12 @@
         if (typeof logout === 'function') logout();
       });
     }
-    openSheet(meSheet);
+    openSheet(meSheet, { anchor: anchor });
   }
 
-  // ---- Bottom tab bar ----
+  // ---- Navigation: bottom tab bar, or the top bar at 1024px+ ----
+  // Same element both ways (CSS moves it). It is the first thing in <body>, so
+  // the Tab key reaches it first: Typoem · 오늘 · 내 방 · 단어장 · nickname.
   var ICONS = {
     today: '<path d="M4 5.5C6.5 4 9.5 4 12 5.5v14C9.5 18 6.5 18 4 19.5zM20 5.5C17.5 4 14.5 4 12 5.5v14c2.5-1.5 5.5-1.5 8 0z"/>',
     rooms: '<path d="M4 10l8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/>',
@@ -227,14 +335,26 @@
     nav.id = 'tabbar';
     nav.setAttribute('aria-label', '메뉴');
     nav.innerHTML =
-      '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '오늘</a>' +
-      '<a class="tab" data-tab="rooms" href="/index.html#rooms">' + icon('rooms') + '내 방</a>' +
-      '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
-      '<button type="button" class="tab" data-tab="me" aria-haspopup="dialog">' + icon('me') + '나</button>';
+      '<a class="nav-brand" href="/index.html">Typoem</a>' +
+      '<div class="tabs-main">' +
+        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '오늘</a>' +
+        '<a class="tab" data-tab="rooms" data-popover-keep href="/index.html#rooms">' + icon('rooms') + '내 방</a>' +
+        '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
+      '</div>' +
+      '<button type="button" class="tab tab-me" data-tab="me" aria-haspopup="dialog">' + icon('me') +
+        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></button>';
+    var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    // textContent: the nickname is user input
+    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '나';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
     });
-    nav.querySelector('[data-tab="me"]').addEventListener('click', function () { haptic(); openMe(); });
+    nav.querySelector('[data-tab="me"]').addEventListener('click', function (e) {
+      // a second click on the nickname closes its dropdown
+      if (meSheet && meSheet.classList.contains('show') && isWide()) { closeSheets(); return; }
+      haptic();
+      openMe(e.currentTarget);
+    });
     // 내 방 opens the room list sheet on the home screen; from other pages the
     // link goes to /index.html#rooms and the home screen opens it on load.
     nav.querySelector('[data-tab="rooms"]').addEventListener('click', function (e) {
@@ -242,7 +362,7 @@
       e.preventDefault();
       document.dispatchEvent(new CustomEvent('typoem:rooms'));
     });
-    document.body.appendChild(nav);
+    document.body.insertBefore(nav, document.body.firstChild);
   }
 
   function fillDate() {
@@ -299,5 +419,8 @@
     toast: toast,
     openSheet: openSheet,
     closeSheets: closeSheets,
+    placePopover: placePopover,
+    isWide: isWide,
+    onWideChange: onWideChange,
   };
 })();
