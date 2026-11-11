@@ -35,8 +35,8 @@ form.addEventListener('submit', async function (e) {
     return;
   }
 
-  if (nickname.length < 3 || nickname.length > 20) {
-    showError('Nickname must be 3-20 characters.');
+  if (nickname.length < 2 || nickname.length > 20) {
+    showError('Nickname must be 2-20 characters.');
     return;
   }
 

@@ -125,25 +125,23 @@ async function removeMember(room_id, user_id) {
 }
 
 // delete a room and all dependent rows (no ON DELETE CASCADE in schema).
+// One batch: atomic and a single DB round trip. memo_likes must go before memos,
+// otherwise a room with liked memos fails the foreign key check.
 async function deleteRoom(room_id) {
-    const db = getDb();
-    try {
-        await db.exec("BEGIN");
-        await db.run(`DELETE FROM line_annotations WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM memos WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM daily_room_poems WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM poem_marks WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM book_marks WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM reading_progress WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM room_books WHERE room_id = ?`, [room_id]);
-        await db.run(`DELETE FROM room_members WHERE room_id = ?`, [room_id]);
-        const result = await db.run(`DELETE FROM rooms WHERE id = ?`, [room_id]);
-        await db.exec("COMMIT");
-        return result;
-    } catch (err) {
-        await db.exec("ROLLBACK");
-        throw err;
-    }
+    const stmts = [
+        `DELETE FROM memo_likes WHERE memo_id IN (SELECT id FROM memos WHERE room_id = ?)`,
+        `DELETE FROM line_annotations WHERE room_id = ?`,
+        `DELETE FROM memos WHERE room_id = ?`,
+        `DELETE FROM daily_room_poems WHERE room_id = ?`,
+        `DELETE FROM poem_marks WHERE room_id = ?`,
+        `DELETE FROM book_marks WHERE room_id = ?`,
+        `DELETE FROM reading_progress WHERE room_id = ?`,
+        `DELETE FROM room_books WHERE room_id = ?`,
+        `DELETE FROM room_members WHERE room_id = ?`,
+        `DELETE FROM rooms WHERE id = ?`,
+    ].map((sql) => ({ sql, args: [room_id] }));
+    const results = await getDb().batch(stmts);
+    return results[results.length - 1];
 }
 
 module.exports = { findById, findByInviteCode, isMember, listRoomsForUser, listMembers, createRoom, addMember, removeMember, deleteRoom, countOwnedRooms, countMemberships, InviteCodeGenerationError, AlreadyMemberError };

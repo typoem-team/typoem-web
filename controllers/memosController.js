@@ -1,3 +1,4 @@
+const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 const model = require("../models/memosModel");
 const roomsModel = require("../models/roomsModel");
 
@@ -8,10 +9,6 @@ function parseId(raw) {
     return id;
 }
 
-// helper: today's date as YYYY-MM-DD
-function today() {
-    return new Date().toISOString().slice(0, 10);
-}
 
 // create a memo on the room's poem of the day
 // [POST] /api/rooms/:id/memos

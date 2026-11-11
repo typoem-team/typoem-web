@@ -16,7 +16,7 @@ async function register(req, res) {
         if (/\s/.test(username) || /\s/.test(nickname) || /\s/.test(password)) return res.status(400).json({ error: "username, nickname and password cannot contain whitespace" });
         // length
         if (username.length < 3 || username.length > 20) return res.status(400).json({error: "username must be 3-20 characters"});
-        if (nickname.length < 3 || nickname.length > 20) return res.status(400).json({error: "nickname must be 3-20 characters"});
+        if (nickname.length < 2 || nickname.length > 20) return res.status(400).json({error: "nickname must be 2-20 characters"});
         if (password.length < 8 || password.length > 100) return res.status(400).json({error: "password must be 8-100 characters"});
         // username format
         if (!/^[a-zA-Z0-9_]+$/.test(username)) return res.status(400).json({ error: "username must contain only letters, numbers, and underscores" });

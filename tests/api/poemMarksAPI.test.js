@@ -8,6 +8,7 @@ jest.mock("../../models/poemsModel");
 jest.mock("../../models/memosModel");
 jest.mock("../../models/roomsModel");
 jest.mock("../../models/usersModel");
+jest.mock("../../models/streakModel"); // /today records a streak check-in
 const marksModel = require("../../models/poemMarksModel");
 const poemsModel = require("../../models/poemsModel");
 const memosModel = require("../../models/memosModel");
@@ -160,7 +161,7 @@ describe("POST /api/rooms/:id/poems/:poemId/marks", () => {
 
     test("uses today's date (UTC, same as line annotations)", async () => {
         await post(alice);
-        expect(poemsModel.getTodayPoemId).toHaveBeenCalledWith(5, new Date().toISOString().slice(0, 10));
+        expect(poemsModel.getTodayPoemId).toHaveBeenCalledWith(5, require("../../lib/dates").today());
     });
 
     test("201 highlight: quote trimmed, content ignored -> null", async () => {
@@ -350,7 +351,7 @@ describe("GET /api/rooms/:id/today poem_marks", () => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual({
             room: { id: 5, name: "poem-club" },
-            date: new Date().toISOString().slice(0, 10),
+            date: require("../../lib/dates").today(),
             poem,
             memos,
             annotations,

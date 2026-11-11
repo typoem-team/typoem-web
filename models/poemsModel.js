@@ -46,10 +46,17 @@ async function createPoemWithLines({ title, author, lines }) {
             [title, author, linecount]
         );
         const poem_id = result.lastID;
-        for (let i = 0; i < normalized.length; i++) {
+        // insert lines in multi-row batches: one DB round trip per 100 lines
+        // instead of one per line (matters a lot with a remote DB)
+        const BATCH = 100;
+        for (let start = 0; start < normalized.length; start += BATCH) {
+            const chunk = normalized.slice(start, start + BATCH);
+            const placeholders = chunk.map(() => '(?, ?, ?)').join(', ');
+            const params = [];
+            chunk.forEach((text, j) => params.push(poem_id, start + j + 1, text));
             await db.run(
-                `INSERT INTO poem_lines (poem_id, line_number, text) VALUES (?, ?, ?)`,
-                [poem_id, i + 1, normalized[i]]
+                `INSERT INTO poem_lines (poem_id, line_number, text) VALUES ${placeholders}`,
+                params
             );
         }
         await db.exec('COMMIT');

@@ -235,3 +235,13 @@ CREATE TABLE IF NOT EXISTS poem_marks (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 CREATE INDEX IF NOT EXISTS idx_poem_marks_room_poem ON poem_marks(room_id, poem_id);
+
+-- Reading streak: one row per user per day they finished the day's poem.
+-- date is the Korea (Asia/Seoul) calendar date 'YYYY-MM-DD' (lib/dates.js).
+CREATE TABLE IF NOT EXISTS reading_checkins (
+  user_id INTEGER NOT NULL,
+  date TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, date),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);

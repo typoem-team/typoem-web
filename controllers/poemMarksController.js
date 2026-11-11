@@ -9,6 +9,7 @@
 // Same body rules and response shape as book marks (lib/markInput.js).
 // The older line_annotations API is kept unchanged alongside this one.
 
+const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 const model = require("../models/poemMarksModel");
 const poemsModel = require("../models/poemsModel");
 const roomsModel = require("../models/roomsModel");
@@ -21,10 +22,6 @@ function parseId(raw) {
     return id;
 }
 
-// today's date as YYYY-MM-DD (UTC). Same as annotationsController / todayController today().
-function today() {
-    return new Date().toISOString().slice(0, 10);
-}
 
 // helper: valid ids + room exists + caller is a member (same order/messages as annotationsController)
 // returns { room_id, poem_id }, or null after sending the error response

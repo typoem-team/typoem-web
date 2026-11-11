@@ -9,6 +9,10 @@
 const { createClient } = require('@libsql/client');
 const path = require('path');
 const fs = require('fs');
+const { AsyncLocalStorage } = require('async_hooks');
+
+// Per-request DB stats (used by the timing log in app.js)
+const requestStats = new AsyncLocalStorage();
 
 let client;
 let db;
@@ -84,10 +88,14 @@ function target() {
 }
 
 async function execute(sql, params) {
+  const stats = requestStats.getStore();
+  const started = Date.now();
   try {
     return await target().execute({ sql, args: toArgs(params) });
   } catch (err) {
     throw normalizeError(err);
+  } finally {
+    if (stats) { stats.queries += 1; stats.dbMs += Date.now() - started; }
   }
 }
 
@@ -117,8 +125,11 @@ function makeDb() {
     // connection, so a batch issued while a BEGIN transaction is open fails (TRANSACTION_ACTIVE).
     async batch(statements) {
       const stmts = statements.map(({ sql, args }) => ({ sql, args: toArgs(args === undefined ? [] : [args]) }));
+      const stats = requestStats.getStore();
+      const started = Date.now();
       try {
         const results = await client.batch(stmts, 'write');
+        if (stats) { stats.queries += 1; stats.dbMs += Date.now() - started; }
         return results.map((rs) => ({
           rows: rs.rows.map((row) => toObject(rs, row)),
           lastID: rs.lastInsertRowid !== undefined ? Number(rs.lastInsertRowid) : undefined,
@@ -207,4 +218,4 @@ function getDb() {
   return db;
 }
 
-module.exports = { initDb, getDb };
+module.exports = { initDb, getDb, requestStats };
