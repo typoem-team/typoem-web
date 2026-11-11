@@ -105,12 +105,50 @@ describe('koDict lemma rules (poems)', () => {
   });
 
   test('"-y" words are not stripped to a different word', () => {
-    expect(base('policy')).toBeNull();
-    expect(base('weary')).toBeNull();
+    // "policy" is not "police", "weary" is not "wear" (they have their own entries now)
+    expect(candidates('policy')).not.toContain('police');
+    expect(candidates('weary')).not.toContain('wear');
+    expect(base('policy')).toBe('policy');
+    expect(base('weary')).toBe('weary');
   });
 
   test('a base form never matches a hand-written archaic entry', () => {
     // "wasted" must not turn into the archaic "wast"
     expect(base('wasted')).not.toBe('wast');
+  });
+});
+
+describe('koDict hand-written poem words (ko_extra.json)', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const extra = JSON.parse(fs.readFileSync(path.join(__dirname, '../../scripts/ko_extra.json'), 'utf8'));
+
+  test('every entry has a part of speech and a Korean meaning', () => {
+    for (const [word, entries] of Object.entries(extra)) {
+      expect(entries.length).toBeGreaterThan(0);
+      for (const e of entries) {
+        expect(e.pos).toMatch(/[가-힣]/);
+        expect(e.ko.length).toBeGreaterThan(0);
+        for (const k of e.ko) expect(k).toMatch(/[가-힣]/);
+      }
+    }
+  });
+
+  test('base words found, with no Wiktionary credit (own)', () => {
+    for (const w of ['lyre', 'woe', 'farewell', 'no', 'much']) {
+      const r = lookup(w);
+      expect(r).not.toBeNull();
+      expect(r.word).toBe(w);
+      expect(r.entries.some((e) => e.own)).toBe(true);
+    }
+  });
+
+  test('inflected forms find these base words', () => {
+    expect(lookup('deeds').word).toBe('deed');
+    expect(lookup('woes').word).toBe('woe');
+    expect(lookup('wrinkles').word).toBe('wrinkle');
+    expect(lookup('wearied').word).toBe('weary');
+    expect(lookup('shone').word).toBe('shine');
+    expect(lookup("tyranny's").word).toBe('tyranny');
   });
 });

@@ -72,9 +72,21 @@ with open(os.path.join(HERE, 'ko_archaic.json'), encoding='utf-8') as f:
     archaic = json.load(f)
 for k, text in archaic.items():
     m = re.match(r'\((고어·시어|고어|시어)\) ', text)   # the label becomes the part-of-speech chip
-    entry = {'pos': m.group(1) if m else '고어', 'ko': [text[m.end():] if m else text], 'own': True}   # own = written by the team, not from Wiktionary
+    entry = {'pos': m.group(1) if m else '고어', 'ko': [text[m.end():] if m else text],
+             'own': True,      # written by the team, not from Wiktionary
+             'exact': True}    # belongs to this exact spelling only ("wast" is not "wasted")
     words.setdefault(k, [])
     words[k].append(entry)
+# Hand-written meanings for words that appear in the app's poems (or are very
+# common) but are missing from Wiktionary's Korean edition (scripts/ko_extra.json).
+# Same rule as above: missing word -> new entry, existing word -> appended last.
+# Unlike the archaic ones, these are normal base words, so "deeds" may find "deed".
+with open(os.path.join(HERE, 'ko_extra.json'), encoding='utf-8') as f:
+    extra = json.load(f)
+for k, entries in extra.items():
+    words.setdefault(k, [])
+    for ent in entries:
+        words[k].append({'pos': ent['pos'], 'ko': ent['ko'], 'own': True})
 os.makedirs(out, exist_ok=True)
 with open(os.path.join(out, 'ko_dict.jsonl'), 'w', encoding='utf-8') as o:
     for k, v in sorted(words.items()):
@@ -110,7 +122,8 @@ base.update({'flee':'fled','sink':'sank sunk','string':'strung','tear':'tore tor
  'wring':'wrung','stride':'strode stridden','rend':'rent','bid':'bade','behold':'beheld','work':'wrought',
  'leaf':'leaves','wife':'wives','knife':'knives','wolf':'wolves','self':'selves','half':'halves','shelf':'shelves',
  'thief':'thieves','loaf':'loaves','calf':'calves','hero':'heroes','ox':'oxen','goose':'geese','louse':'lice',
- 'die':'dying','tie':'tying'})
+ 'die':'dying','tie':'tying','shine':'shone','smell':'smelt','dwell':'dwelt','spell':'spelt','spill':'spilt',
+ 'learn':'learnt','weave':'wove woven','sew':'sewn','mow':'mown','prove':'proven'})
 base['lie'] += ' lying'
 for lemma, forms in base.items():
     for fm in forms.split(): irregular[fm.lower()] = lemma.lower()
