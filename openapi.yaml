@@ -115,6 +115,11 @@ components:
               maximum: 100
               description: My progress in the room's book, % of words before my saved paragraph (rounded down). 0 before I open it, null when the room has no book.
               example: 42
+            last_opened_at:
+              type: string
+              nullable: true
+              description: 'When I last opened this room''s poem (GET /today, not ?checkin=0) or book (GET /book), UTC "YYYY-MM-DD HH:MM:SS.SSS". null if never.'
+              example: '2026-11-13 08:30:12.345'
 
     RoomMember:
       type: object
@@ -1003,6 +1008,7 @@ paths:
     get:
       tags: [Rooms]
       summary: List rooms the current user belongs to
+      description: The room I opened last comes first (last_opened_at, any device), then rooms I never opened, newest first.
       security:
         - bearerAuth: []
       responses:

@@ -250,7 +250,6 @@ async function init() {
     return;
   }
   if (res.status === 404) {
-    UI.setLastRoom(ROOM);
     openShelf();
     return;
   }
@@ -259,7 +258,6 @@ async function init() {
     return;
   }
 
-  UI.setLastRoom(ROOM);
   await showReader(await res.json());
 }
 

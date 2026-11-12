@@ -50,12 +50,13 @@ async function countMemberships(user_id) {
 } // return number of rooms this user belongs to (owned rooms included)
 
 
-// rooms user belongs to, with what a home room card shows:
+// rooms user belongs to — the one I opened last first (last_opened_at, any device), then newest —
+// with what a home room card shows:
 // today_poem_title (null until someone opens today's poem — listing never assigns one),
 // book_title, book_progress (my % of the room's book by words read; 0 before I start, null without a book).
 async function listRoomsForUser(user_id, date) {
     const rows = await getDb().all(
-        `SELECT r.id, r.name, r.description, r.invite_code, r.owner_id,
+        `SELECT r.id, r.name, r.description, r.invite_code, r.owner_id, rm.last_opened_at,
                 (SELECT COUNT(*) FROM room_members WHERE room_id = r.id) AS member_count,
                 (SELECT p.title FROM daily_room_poems d JOIN poems p ON p.id = d.poem_id
                   WHERE d.room_id = r.id AND d.date = ?) AS today_poem_title,
@@ -71,7 +72,7 @@ async function listRoomsForUser(user_id, date) {
          LEFT JOIN room_books rb ON rb.room_id = r.id
          LEFT JOIN books b ON b.id = rb.book_id
          WHERE rm.user_id = ?
-         ORDER BY r.id DESC`,
+         ORDER BY rm.last_opened_at IS NULL, rm.last_opened_at DESC, r.id DESC`,
         [date, user_id]
     );
     return rows.map(({ book_total_words, book_words_read, ...room }) => ({
@@ -165,4 +166,12 @@ async function deleteRoom(room_id) {
     return results[results.length - 1];
 }
 
-module.exports = { findById, findByInviteCode, isMember, listRoomsForUser, listMembers, createRoom, addMember, removeMember, deleteRoom, countOwnedRooms, countMemberships, InviteCodeGenerationError, AlreadyMemberError };
+// I opened this room's poem or book: it goes first in my room list (any device).
+async function markOpened(room_id, user_id) {
+    await getDb().run(
+        `UPDATE room_members SET last_opened_at = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE room_id = ? AND user_id = ?`,
+        [room_id, user_id]
+    );
+}
+
+module.exports = { findById, markOpened, findByInviteCode, isMember, listRoomsForUser, listMembers, createRoom, addMember, removeMember, deleteRoom, countOwnedRooms, countMemberships, InviteCodeGenerationError, AlreadyMemberError };

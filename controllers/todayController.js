@@ -121,6 +121,9 @@ async function getToday(req, res) {
             Promise.resolve()
                 .then(() => (checkIn ? streakModel.checkIn(req.user.id, date) : null))
                 .catch((err) => console.error("Streak check-in failed:", err)),
+            Promise.resolve()
+                .then(() => (checkIn ? roomsModel.markOpened(room_id, req.user.id) : null))   // room order
+                .catch((err) => console.error("Marking the room opened failed:", err)),
         ]);
 
         res.set("Cache-Control", "no-store"); // GET has side effects + data changes; don't cache

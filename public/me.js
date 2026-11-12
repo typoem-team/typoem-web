@@ -34,7 +34,7 @@ async function loadFriends() {
     const res = await authFetch('/api/rooms/mine');
     if (!res.ok) { status.textContent = '친구 기록을 불러오지 못했어요.'; return; }
     // only rooms with someone besides me
-    rooms = UI.sortRooms(await res.json()).filter((r) => r.member_count > 1);
+    rooms = (await res.json()).filter((r) => r.member_count > 1);
   } catch (err) {
     status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
     return;

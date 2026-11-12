@@ -46,6 +46,23 @@ test("room cards carry today's poem title, the book and my own progress", async 
     expect(r1).not.toHaveProperty("book_words_read");
 });
 
+test("the room I opened last comes first; rooms never opened keep newest-first after it", async () => {
+    await db.run(`INSERT INTO rooms (name, invite_code, owner_id) VALUES ('r4', 'DDDDDD', 1)`);
+    await db.run(`INSERT INTO room_members (room_id, user_id) VALUES (4, 1)`);
+    expect((await roomsModel.listRoomsForUser(1, TODAY)).map((r) => r.id)).toEqual([4, 2, 1]);
+
+    await roomsModel.markOpened(2, 1);
+    await new Promise((r) => setTimeout(r, 5));   // the timestamp has millisecond resolution
+    await roomsModel.markOpened(1, 1);
+    const rooms = await roomsModel.listRoomsForUser(1, TODAY);
+    expect(rooms.map((r) => r.id)).toEqual([1, 2, 4]);
+    expect(rooms[0].last_opened_at).toEqual(expect.any(String));
+    expect(rooms[2].last_opened_at).toBeNull();
+
+    // only my own membership moves: bob's order is untouched
+    expect((await roomsModel.listRoomsForUser(2, TODAY)).map((r) => r.id)).toEqual([3, 1]);
+});
+
 test("a member who hasn't opened the book is at 0%", async () => {
     const r1 = (await roomsModel.listRoomsForUser(2, TODAY)).find((r) => r.id === 1);
     expect(r1.book_progress).toBe(0);

@@ -29,11 +29,10 @@ async function loadRooms() {
   const rooms = await res.json();
   status.textContent = '';
 
-  const list = Array.isArray(rooms) ? UI.sortRooms(rooms) : [];
-  const last = UI.getLastRoom();
+  const list = Array.isArray(rooms) ? rooms : [];   // the server sends them last opened first
   if ($('rooms-count')) $('rooms-count').textContent = list.length ? `${list.length}개` : '';   // the home has no count
   $('empty-state').hidden = list.length > 0;
-  $('rooms-list').innerHTML = list.map((r) => UI.roomCard(r, String(r.id) === last)).join('');
+  $('rooms-list').innerHTML = list.map((r, i) => UI.roomCard(r, i === 0 && !!r.last_opened_at)).join('');
 }
 
 loadRooms();
