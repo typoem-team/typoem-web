@@ -92,6 +92,11 @@ async function loadToday() {
     return;
   }
 
+  // Today's poem that the home screen just showed: draw it straight away, then
+  // refresh it from /today below (which is also what checks me in for the streak).
+  const shown = PAST_DATE ? null : takeHomeCopy();
+  if (shown) showPoem(shown);
+
   const url = PAST_DATE
     ? `/api/rooms/${encodeURIComponent(ROOM_ID)}/history/${PAST_DATE}`
     : `/api/rooms/${encodeURIComponent(ROOM_ID)}/today`;
@@ -99,18 +104,59 @@ async function loadToday() {
   try {
     res = await authFetch(url);
   } catch (err) {
-    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
+    if (!shown) status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
     return;
   }
 
   // authFetch already handles 401 (logout + redirect); handle the rest here
   if (!res.ok) {
-    status.textContent = loadErrorText(res.status);
+    if (!shown) status.textContent = loadErrorText(res.status);
     return;
   }
 
   const data = await res.json();
-  status.textContent = '';
+  if (shown && data.poem && shown.poem && data.poem.id === shown.poem.id) refreshNotes(data);
+  else showPoem(data);
+  // after /today has checked me in, so the streak state is already up to date
+  if (!READ_ONLY) loadFinish();
+}
+
+// The home screen leaves today's payload in sessionStorage when a cover is
+// opened (index.js openReader). Used once, only for this room, only if fresh.
+const HOME_COPY_MAX_AGE = 60 * 1000;
+function takeHomeCopy() {
+  let copy = null;
+  try {
+    copy = JSON.parse(sessionStorage.getItem('typoem:today') || 'null');
+    sessionStorage.removeItem('typoem:today');
+  } catch (err) { return null; }
+  if (!copy || String(copy.roomId) !== String(ROOM_ID)) return null;
+  if (!(Date.now() - copy.savedAt < HOME_COPY_MAX_AGE)) return null;
+  if (!copy.data || !copy.data.poem) return null;
+  return copy.data;
+}
+
+// Set by every write (memo, line note, like, edit, delete). Once I have changed
+// something, the background refresh must not paint the older list over it.
+let wrote = false;
+function writeFetch(url, options) {
+  wrote = true;
+  return authFetch(url, options);
+}
+
+// Same poem as the one drawn from the home copy: only the notes may have changed.
+function refreshNotes(data) {
+  if (wrote) return;
+  memos = data.memos || [];
+  indexAnnotations(data.annotations || []);
+  (poem.lines || []).forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
+  renderPill();
+  renderMemos();
+  if (currentLineId != null) renderAnnotations();
+}
+
+function showPoem(data) {
+  $('status').textContent = '';
 
   // Remember this room: the home screen opens the room you read in last.
   UI.setLastRoom(ROOM_ID);
@@ -129,8 +175,6 @@ async function loadToday() {
   $('memo-pill').hidden = false;
   UI.anim($('r-body'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
   UI.anim($('memo-pill'), [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, delay: 300 });
-
-  if (!READ_ONLY) loadFinish();
 }
 
 // A past poem: hide everything that writes, and say why where the forms were.
@@ -446,7 +490,7 @@ $('memo-form').addEventListener('submit', async (e) => {
   const btn = $('memo-submit');
   btn.disabled = true;
   try {
-    const res = await authFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/memos`, {
+    const res = await writeFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/memos`, {
       method: 'POST',
       body: JSON.stringify({ content }),
     });
@@ -478,7 +522,7 @@ async function reloadMemos() {
 // ({ liked, like_count }); update just this button rather than reloading the
 // list, so the scroll position and any open editors are kept.
 async function toggleLike(id) {
-  const res = await authFetch(`/api/memos/${id}/like`, { method: 'POST' });
+  const res = await writeFetch(`/api/memos/${id}/like`, { method: 'POST' });
   if (!res.ok) return;
   const data = await res.json();
   const memo = memos.find((m) => m.id === id);
@@ -594,7 +638,7 @@ $('annotation-form').addEventListener('submit', async (e) => {
   const btn = $('annotation-submit');
   btn.disabled = true;
   try {
-    const res = await authFetch(
+    const res = await writeFetch(
       `/api/rooms/${encodeURIComponent(ROOM_ID)}/lines/${lineId}/annotations`,
       { method: 'POST', body: JSON.stringify({ content }) }
     );
@@ -689,7 +733,7 @@ function startInlineEdit(kind, id) {
       UI.toast('메모는 1~1000자로 써 주세요');
       return;
     }
-    const res = await authFetch(`${KIND[kind].apiPath}/${id}`, {
+    const res = await writeFetch(`${KIND[kind].apiPath}/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ content: trimmed }),
     });
@@ -725,7 +769,7 @@ function startInlineDelete(kind, id) {
     contentEl.hidden = false;
   });
   box.querySelector('.note-confirm-yes').addEventListener('click', async () => {
-    const res = await authFetch(`${KIND[kind].apiPath}/${id}`, { method: 'DELETE' });
+    const res = await writeFetch(`${KIND[kind].apiPath}/${id}`, { method: 'DELETE' });
     if (!res.ok && res.status !== 204) {
       UI.toast('메모를 지우지 못했어요');
       return;
