@@ -111,19 +111,18 @@ async function authFetch(url, options) {
 
 
 // ============ Login / register error messages ============
-// The login and register screens are in English. These turn a failed request into
-// a message the user can act on, instead of the browser's "Failed to fetch" or the
-// API's raw messages ("Invalid credentials").
+// These turn a failed login/register request into a Korean message the user can
+// act on, instead of the browser's "Failed to fetch" or the API's English
+// messages ("Invalid credentials"). The forms check the input rules themselves
+// first, so the API's own 400 text is never needed here.
 
 // Error for a response that came back but wasn't ok.
 async function authErrorFromResponse(res, fallback) {
-  let data = {};
-  try { data = await res.json(); } catch (e) { /* not JSON, e.g. a proxy error page */ }
+  // Only the status matters; the body may not even be JSON (a proxy error page).
   let message;
-  if (res.status === 401) message = 'Wrong username or password.';
-  else if (res.status === 409) message = 'That username is already taken.';
-  else if (res.status >= 500) message = 'Something went wrong on our side. Please try again.';
-  else if (data.error) message = data.error.charAt(0).toUpperCase() + data.error.slice(1) + '.';
+  if (res.status === 401) message = '아이디 또는 비밀번호가 맞지 않아요.';
+  else if (res.status === 409) message = '이미 쓰고 있는 아이디예요.';
+  else if (res.status >= 500) message = '서버에 문제가 생겼어요. 잠시 후 다시 시도해 주세요.';
   else message = fallback;
   const err = new Error(message);
   err.isUserMessage = true;
@@ -134,8 +133,8 @@ async function authErrorFromResponse(res, fallback) {
 // rejects with a TypeError when no answer came back at all (offline, server down).
 function authErrorMessage(err) {
   if (err && err.isUserMessage) return err.message;
-  if (err instanceof TypeError) return "Can't reach the server. Check your connection and try again.";
-  return 'Something went wrong. Please try again.';
+  if (err instanceof TypeError) return '서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.';
+  return '문제가 생겼어요. 다시 시도해 주세요.';
 }
 
 

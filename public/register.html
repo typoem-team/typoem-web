@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -14,40 +14,40 @@
   <div class="auth-card">
 
     <h1 class="auth-brand">Typoem</h1>
-    <p class="auth-subtitle">A daily poem, shared in quiet company.</p>
+    <p class="auth-subtitle">매일 시 한 편을 함께 읽어요.</p>
 
     <div id="errorBox" class="auth-error hidden"></div>
 
     <form class="auth-form" id="registerForm" novalidate>
 
       <div class="field">
-        <label for="username">Username</label>
+        <label for="username">아이디</label>
         <input
           id="username"
           name="username"
           type="text"
-          placeholder="Choose a username"
+          placeholder="쓸 아이디를 정해 주세요"
           required
           autocomplete="username"
         >
-        <span class="hint">3–20 characters · letters, numbers, underscores</span>
+        <span class="hint">3~20자 · 영문, 숫자, 밑줄(_)만</span>
       </div>
 
       <div class="field">
-        <label for="nickname">Nickname</label>
+        <label for="nickname">닉네임</label>
         <input
           id="nickname"
           name="nickname"
           type="text"
-          placeholder="How should we call you?"
+          placeholder="뭐라고 불러 드릴까요?"
           required
           autocomplete="nickname"
         >
-        <span class="hint">2–20 characters · shown to room members</span>
+        <span class="hint">2~20자 · 방 멤버에게 보여요</span>
       </div>
 
       <div class="field">
-        <label for="password">Password</label>
+        <label for="password">비밀번호</label>
         <input
           id="password"
           name="password"
@@ -56,11 +56,11 @@
           required
           autocomplete="new-password"
         >
-        <span class="hint">At least 8 characters · no spaces</span>
+        <span class="hint">8자 이상 · 띄어쓰기 없이</span>
       </div>
 
       <div class="field">
-        <label for="confirmPassword">Confirm Password</label>
+        <label for="confirmPassword">비밀번호 확인</label>
         <input
           id="confirmPassword"
           name="confirmPassword"
@@ -71,12 +71,12 @@
         >
       </div>
 
-      <button type="submit" id="submitBtn" class="auth-submit">Create Account</button>
+      <button type="submit" id="submitBtn" class="auth-submit">가입하기</button>
 
     </form>
 
     <p class="auth-footer">
-      Already have an account? <a href="login.html">Log in</a>
+      이미 계정이 있나요? <a href="login.html">로그인</a>
     </p>
 
   </div>

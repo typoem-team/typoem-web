@@ -21,48 +21,48 @@ form.addEventListener('submit', async function (e) {
   // Mirrors the server-side rules in authController.js
 
   if (!username || !nickname || !password || !confirmPassword) {
-    showError('Please fill in all fields.');
+    showError('모든 칸을 채워 주세요.');
     return;
   }
 
   if (username.length < 3 || username.length > 20) {
-    showError('Username must be 3-20 characters.');
+    showError('아이디는 3~20자로 정해 주세요.');
     return;
   }
 
   if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-    showError('Username can only contain letters, numbers, and underscores.');
+    showError('아이디에는 영문, 숫자, 밑줄(_)만 쓸 수 있어요.');
     return;
   }
 
   if (nickname.length < 2 || nickname.length > 20) {
-    showError('Nickname must be 2-20 characters.');
+    showError('닉네임은 2~20자로 정해 주세요.');
     return;
   }
 
   if (/\s/.test(nickname)) {
-    showError('Nickname cannot contain spaces.');
+    showError('닉네임에는 띄어쓰기를 쓸 수 없어요.');
     return;
   }
 
   if (password.length < 8 || password.length > 100) {
-    showError('Password must be 8-100 characters.');
+    showError('비밀번호는 8~100자로 정해 주세요.');
     return;
   }
 
   if (/\s/.test(password)) {
-    showError('Password cannot contain spaces.');
+    showError('비밀번호에는 띄어쓰기를 쓸 수 없어요.');
     return;
   }
 
   if (password !== confirmPassword) {
-    showError('Passwords do not match.');
+    showError('비밀번호가 서로 달라요.');
     return;
   }
 
   // ============ API call ============
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Creating account...';
+  submitBtn.textContent = '가입하는 중…';
 
   try {
     // Step 1: register
@@ -77,7 +77,7 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!registerRes.ok) {
-      throw await authErrorFromResponse(registerRes, 'Registration failed. Please try again.');
+      throw await authErrorFromResponse(registerRes, '가입하지 못했어요. 다시 시도해 주세요.');
     }
 
     // Step 2: auto-login to get token (register API does not return one)
@@ -105,7 +105,7 @@ form.addEventListener('submit', async function (e) {
     console.error('Register error:', err);
     showError(authErrorMessage(err));
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Create Account';
+    submitBtn.textContent = '가입하기';
   }
 });
 
