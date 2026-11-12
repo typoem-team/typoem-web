@@ -179,6 +179,34 @@
       '</a>';
   }
 
+  // ---- Room header: back · room name · 시 | 책 (room.html and book.html) ----
+  // A room is the unit; 시 and 책 are its two tabs. Both pages take ?id= (book.html also
+  // still reads the old ?room=). Drawn as soon as ui.js runs, so room.js / book.js
+  // find #room-name right away.
+  function roomId() {
+    var q = new URLSearchParams(window.location.search);
+    return q.get('id') || q.get('room');
+  }
+
+  function drawRoomBar() {
+    var bar = document.querySelector('[data-room-bar]');
+    if (!bar) return;
+    var tab = bar.dataset.roomBar;       // 'poem' | 'book'
+    var id = encodeURIComponent(roomId() || '');
+    function tabLink(key, href, label) {
+      return '<a href="' + href + '"' + (key === tab ? ' aria-current="page"' : '') + '>' + label + '</a>';
+    }
+    bar.innerHTML =
+      '<a href="/index.html" class="r-back" aria-label="뒤로">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>' +
+      '<span id="room-name"></span>' +
+      '<nav class="r-tabs" aria-label="시와 책">' +
+        tabLink('poem', '/room.html?id=' + id, '시') +
+        tabLink('book', '/book.html?id=' + id, '책') +
+      '</nav>';
+  }
+  drawRoomBar();
+
   // ---- Toast ----
   var toastEl = null;
   var toastTimer = null;

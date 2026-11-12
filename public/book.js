@@ -24,7 +24,8 @@
 // ---- Guard: redirect to login if there is no token ----
 requireLogin();
 
-const ROOM = new URLSearchParams(window.location.search).get('room');
+const QUERY = new URLSearchParams(window.location.search);
+const ROOM = QUERY.get('id') || QUERY.get('room');   // ?room= : old links, before 시 | 책 shared ?id=
 
 // =====================================================================
 //  Word wrapping for the dictionary — copied from room.js.
@@ -216,9 +217,6 @@ async function init() {
     showMessage('방 정보를 찾지 못했어요. 내 방 목록에서 다시 들어와 주세요.', false);
     return;
   }
-  el('tab-poem').href = roomUrl();
-  el('tab-book').href = `/book.html?room=${encodeURIComponent(ROOM)}`;
-
   let res;
   let roomsRes;
   try {
@@ -327,7 +325,7 @@ function showMessage(text, withBackLink) {
   const box = el('book-message');
   box.innerHTML = `<p class="book-note">${escapeHtml(text)}</p>` + (withBackLink && ROOM
     ? `<a class="book-btn book-btn-pri" href="${roomUrl()}">방으로 돌아가기</a>`
-    : '<a class="book-btn book-btn-pri" href="/index.html">내 방 목록으로</a>');
+    : '<a class="book-btn book-btn-pri" href="/rooms.html">내 방 목록으로</a>');
 }
 
 // =====================================================================

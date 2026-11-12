@@ -16,17 +16,8 @@
 </head>
 <body class="book-page">
 
-  <!-- Same top bar as room.html: back · room name · 시 | 책 -->
-  <div class="r-bar">
-    <a href="/index.html" class="r-back" id="back" aria-label="뒤로">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-    </a>
-    <span id="room-name"></span>
-    <nav class="r-tabs" aria-label="시와 책">
-      <a id="tab-poem" href="/index.html">시</a>
-      <a id="tab-book" href="#" aria-current="page">책</a>
-    </nav>
-  </div>
+  <!-- room header (back · room name · 시 | 책), drawn by ui.js; the same one is on room.html -->
+  <div class="r-bar" data-room-bar="book"></div>
 
   <!-- ===== Shelf: the room has no book yet, or the owner is changing it ===== -->
   <div id="book-shelf-view" class="book-shelf-view" hidden>

@@ -19,17 +19,8 @@
 
   <!-- ===== 읽기 화면 ===== -->
   <article class="reader" id="reader" aria-label="시 읽기">
-    <div class="r-bar">
-      <a href="/index.html" class="r-back" id="back" aria-label="뒤로">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-      </a>
-      <span id="room-name"></span>
-      <!-- 시 | 책: the same two tabs sit here on book.html too -->
-      <nav class="r-tabs" aria-label="시와 책">
-        <a id="tab-poem" href="#" aria-current="page">시</a>
-        <a id="tab-book" href="/book.html">책</a>
-      </nav>
-    </div>
+    <!-- room header (back · room name · 시 | 책), drawn by ui.js; the same one is on book.html -->
+    <div class="r-bar" data-room-bar="poem"></div>
 
     <!-- 표지 색 띠 + 제목 · 작가 -->
     <header class="r-head" id="r-head">
