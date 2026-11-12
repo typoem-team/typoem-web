@@ -1,14 +1,14 @@
 // public/index.js
-// Home — the room you opened last: members, invite, and a deck of covers
+// Home — the room you opened last: members and a deck of covers
 // (today's poem + the three most recent past poems + "more").
+// (Invite and leave / delete live inside the room now: invite.js.)
 //
 // Data (existing APIs, unchanged):
-//   GET    /api/rooms/mine          rooms + invite_code + member_count
+//   GET    /api/rooms/mine          rooms + member_count
 //   GET    /api/rooms/:id/today     today's poem, memos, annotations
 //   GET    /api/rooms/:id/history   past daily poems + contributors
 //   GET    /api/rooms/:id/members   members in join order
 //   POST   /api/rooms/join          join with an invite code
-//   DELETE /api/rooms/:id/leave     leave (members) · DELETE /api/rooms/:id (owner)
 //
 // Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak).
 
@@ -16,12 +16,11 @@ requireLogin();
 
 const UI = window.TypoemUI;
 const esc = UI.esc;
-const me = getCurrentUser();
 const $ = (id) => document.getElementById(id);
 
 const PAST_ON_DECK = 3;       // past covers shown on the deck before "+N"
 
-// Everything that only makes sense when there is a room (deck, room card, invite, past poems).
+// Everything that only makes sense when there is a room (deck, room card, past poems).
 function setRoomView(visible) {
   document.querySelectorAll('[data-room-view]').forEach((el) => { el.hidden = !visible; });
 }
@@ -105,8 +104,6 @@ async function showRoom(next, prefetched) {
 
   // textContent: the room name is user input
   $('room-name').textContent = room.name;
-  $('invite-room').textContent = room.name;
-  $('invite-code').textContent = room.invite_code || '';
   $('room-avs').innerHTML = '';
   $('status').textContent = '';
   renderRooms();
@@ -138,7 +135,7 @@ async function showRoom(next, prefetched) {
 }
 
 // =====================================================================
-//  Members + invite sheet
+//  Members (avatars next to the room name; invite and leave/delete are in the room now: invite.js)
 // =====================================================================
 function renderMembers(members) {
   const names = members.map((m) => m.nickname || m.username || '');
@@ -146,107 +143,7 @@ function renderMembers(members) {
   $('room-avs').innerHTML = shown.map(UI.avatar).join('') +
     (names.length > shown.length ? `<em>+${names.length - shown.length}</em>` : '');
   $('room-avs').setAttribute('aria-label', `멤버 ${names.length}명`);
-
-  $('member-count').textContent = `${members.length}명`;
-  $('member-list').innerHTML = members.map((m) => {
-    const name = m.nickname || m.username || '';
-    const tags = [];
-    if (m.role === 'owner') tags.push('방장');
-    if (me && m.id === me.id) tags.push('나');
-    return `<div class="mem-row">${UI.avatar(name)}${esc(name)}<span>${tags.join(' · ')}</span></div>`;
-  }).join('');
-
-  drawRoomAction();
 }
-
-// Owner: delete the room. Member: leave it. Both ask once more, inline.
-function drawRoomAction() {
-  const row = $('room-actions-row');
-  if (!room || !me) { row.innerHTML = ''; return; }
-  const isOwner = room.owner_id === me.id;
-  row.innerHTML = `<button type="button" class="leave" id="room-action">${isOwner ? '이 방 삭제하기' : '이 방 나가기'}</button>`;
-  $('room-action').addEventListener('click', () => confirmRoomAction(isOwner));
-}
-
-function confirmRoomAction(isOwner) {
-  const row = $('room-actions-row');
-  row.innerHTML = `
-    <div class="note-confirm">
-      <span class="note-confirm-text">${isOwner
-        ? '이 방을 삭제할까요? 모두의 메모가 함께 사라지고 되돌릴 수 없어요.'
-        : '이 방에서 나갈까요?'}</span>
-      <span class="note-confirm-actions">
-        <button type="button" class="btn-sm btn-danger" id="room-confirm-yes">${isOwner ? '삭제' : '나가기'}</button>
-        <button type="button" class="btn-sm" id="room-confirm-no">취소</button>
-      </span>
-    </div>`;
-  $('room-confirm-no').addEventListener('click', drawRoomAction);
-  $('room-confirm-yes').addEventListener('click', async () => {
-    const id = encodeURIComponent(room.id);
-    const path = isOwner ? `/api/rooms/${id}` : `/api/rooms/${id}/leave`;
-    let ok = false;
-    try {
-      const res = await authFetch(path, { method: 'DELETE' });
-      ok = res.ok || res.status === 204;
-    } catch (err) { ok = false; }
-    if (!ok) {
-      UI.toast(isOwner ? '방을 삭제하지 못했어요' : '방에서 나가지 못했어요');
-      drawRoomAction();
-      return;
-    }
-    UI.closeSheets();
-    UI.setLastRoom(null);
-    UI.toast(isOwner ? '방을 삭제했어요' : '방에서 나왔어요');
-    loadHome();
-  });
-}
-
-// 공유 창이 없는 환경(대부분의 PC 브라우저)에선 공유하기가 복사와 똑같아서 숨긴다.
-// 앱은 navigator.share가 늦게 생기므로 시트를 열 때와 페이지가 다 뜬 뒤에 다시 확인한다.
-function syncShareButton() {
-  $('invite-share').hidden = typeof navigator.share !== 'function';
-}
-syncShareButton();
-window.addEventListener('load', syncShareButton);
-
-$('invite-open').addEventListener('click', () => {
-  drawRoomAction();              // reset a half-finished confirm
-  syncShareButton();
-  UI.openSheet('sheet-invite');
-  UI.haptic();
-});
-
-$('invite-copy').addEventListener('click', async () => {
-  const code = $('invite-code').textContent;
-  try {
-    await navigator.clipboard.writeText(code);
-    UI.toast('초대 코드를 복사했어요');
-  } catch (err) {
-    // no clipboard permission: select the code so it can be copied by hand
-    const range = document.createRange();
-    range.selectNodeContents($('invite-code'));
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    UI.toast('코드를 길게 눌러 복사해 주세요');
-  }
-});
-
-$('invite-share').addEventListener('click', async () => {
-  const code = $('invite-code').textContent;
-  const text = `${room.name}에서 같이 시 읽어요. Typoem 초대 코드: ${code}`;
-  if (navigator.share) {
-    try { await navigator.share({ title: 'Typoem', text }); } catch (err) { /* cancelled */ }
-    return;
-  }
-  // no share sheet (most desktop browsers): copy the invitation text instead
-  try {
-    await navigator.clipboard.writeText(text);
-    UI.toast('초대 문구를 복사했어요');
-  } catch (err) {
-    UI.toast(`초대 코드: ${code}`);
-  }
-});
 
 // =====================================================================
 //  Room list sheet: switch · join with a code · create

@@ -182,7 +182,7 @@
   // ---- Room header: back · room name · 시 | 책 (room.html and book.html) ----
   // A room is the unit; 시 and 책 are its two tabs. Both pages take ?id= (book.html also
   // still reads the old ?room=). Drawn as soon as ui.js runs, so room.js / book.js
-  // find #room-name right away.
+  // find #room-name right away. The room name opens the invite sheet (invite.js).
   function roomId() {
     var q = new URLSearchParams(window.location.search);
     return q.get('id') || q.get('room');
@@ -199,7 +199,10 @@
     bar.innerHTML =
       '<a href="/index.html" class="r-back" aria-label="뒤로">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>' +
-      '<span id="room-name"></span>' +
+      '<button type="button" class="r-room" aria-haspopup="dialog" aria-label="멤버 · 초대">' +
+        '<span id="room-name"></span>' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c1-3.3 3.3-5 6-5s5 1.7 6 5"/><path d="M19 8v6M16 11h6"/></svg>' +
+      '</button>' +
       '<nav class="r-tabs" aria-label="시와 책">' +
         tabLink('poem', '/room.html?id=' + id, '시') +
         tabLink('book', '/book.html?id=' + id, '책') +
