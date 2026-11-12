@@ -1,4 +1,5 @@
 const model = require("../models/roomsModel");
+const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 
 // per-user room limits (fixed server policy)
 const MAX_OWNED_ROOMS = 3;
@@ -50,7 +51,7 @@ async function createRoom(req, res) {
 // [GET] /api/rooms/mine
 async function listMyRooms(req, res) {
     try {
-        const rooms = await model.listRoomsForUser(req.user.id);
+        const rooms = await model.listRoomsForUser(req.user.id, today());
         res.status(200).json(rooms);
     } catch (err) {
         console.error(err);
