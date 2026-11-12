@@ -51,19 +51,35 @@
   }
 
   // ---- Colours ----
+  // The colours live in styles.css (:root tokens), so a palette change or dark
+  // mode only touches the stylesheet. These read the token at call time; the hex
+  // values are only a fallback for a page without styles.css. They return a real
+  // colour (not var(...)) because the reading screen also puts it in <meta theme-color>.
+  function token(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
+
   // One cover colour per poem, picked by id so a poem always gets the same one.
-  var COVERS = ['#2e3d35', '#5a2b33', '#2a3444', '#7a5f36', '#3b3a36', '#4a5a46', '#4b3b4f'];
+  var COVERS = ['#2e3d35', '#5a2b33', '#2a3444', '#7a5f36', '#3b3a36', '#4a5a46', '#4b3b4f']; // --cover-1..7
   function coverColor(id) {
     var n = Math.abs(parseInt(id, 10)) || 0;
-    return COVERS[n % COVERS.length];
+    var k = n % COVERS.length;
+    return token('--cover-' + (k + 1), COVERS[k]);
   }
 
   // Avatar colour from the nickname (the history API only gives nicknames).
-  var AVATARS = ['#6e2f3a', '#2a3444', '#7a5f36', '#1f1b16', '#4a5a46', '#4b3b4f'];
+  var AVATARS = [
+    ['--accent', '#6e2f3a'], ['--cover-3', '#2a3444'], ['--cover-4', '#7a5f36'],
+    ['--ink', '#1f1b16'], ['--cover-6', '#4a5a46'], ['--cover-7', '#4b3b4f'],
+  ];
   function avatarColor(name) {
     var s = String(name || ''), h = 7;
     for (var i = 0; i < s.length; i++) h = (h * 33 + s.charCodeAt(i) * (i + 1)) % 65521;
-    return AVATARS[h % AVATARS.length];
+    var a = AVATARS[h % AVATARS.length];
+    return token(a[0], a[1]);
   }
 
   // <i> avatar with the first letter of the nickname
