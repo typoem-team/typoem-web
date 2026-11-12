@@ -1,7 +1,7 @@
 # Typoem 대수정 계획 (시안 C 기준)
 
 > 기준 시안: [docs/design/typoem-design-C-slim.html](design/typoem-design-C-slim.html) (390×844 모바일 화면 15개)
-> 이 문서는 계획만 담아요. 코드는 아직 고치지 않았어요.
+> 11/12에 계획으로 쓰고, 11/13까지 한 일을 표시했어요 (아래 '11/13 진행 상황'). 1장의 '지금 대응하는 파일' 칸과 2장의 '대수정 전' 흐름은 11/12 기준이에요.
 
 ## 0. 원칙
 
@@ -19,6 +19,28 @@
 | 🟦 경윤 | 경윤 담당. 소연은 건드리지 않아요 |
 | 🟩 지섭 | 지섭 담당. 소연은 건드리지 않아요 |
 | ⬜ 미정 | 아직 담당이 없어요. 팀에서 정해요 |
+
+### 11/13 진행 상황
+
+| 화면 · 일 | 상태 | PR |
+|---|---|---|
+| 하단 탭 (홈 · 방 · 단어장 · 나), 방 탭 `rooms.html` | ✅ 끝 | #50 |
+| 시 · 책 공통 방 헤더 (`ui.js` `drawRoomBar`, 둘 다 `?id=`) | ✅ 끝 | #51 |
+| 초대 시트를 방 안으로 (`invite.js`) | ✅ 끝 | #52 |
+| 홈: 스트릭 자리 + 최근 방 카드 3개 + `모든 방 보기` | ✅ 끝 | #53, #59 |
+| 지난 시: 시 화면 아래 링크 → 시트 (`past.js`, History가 생기기 전까지) | ✅ 임시 | #53 |
+| 시 화면 밑줄 빼기 | ✅ 끝 | #48 |
+| 방 카드 API (A1), 마지막에 연 방 서버 저장 (A1-b) | ✅ 끝 | #47, #58 |
+| 나 `me.html` (닉네임 · 스트릭 자리 · 친구 기록 · 배지 자리 · 설정 링크) | ✅ 끝 | #54 |
+| 단어장 정렬 (최근 저장 / A–Z) | ✅ 끝 | #55 |
+| 닉네임 API (A4), openapi.yaml 문법 오류 | ✅ 끝 | #56 |
+| 설정 `settings.html` (닉네임 · 로그아웃 · 계정 삭제) | 🔶 테마 · 출처 · 버전 남음 | #57 |
+| 스트릭 화면 생김새 · 월 캘린더 (8단계, A5) | ⬜ 🟦 경윤 | |
+| History 화면 (9단계, A2) | ⬜ 🟦 경윤 | |
+| 책 열면 출석 (A3), 시 화면 형광펜 · 주석 (11-b) | ⬜ 🟩 지섭 | |
+| CSS 나누기 (2단계) | ⬜ 🟨 소연, 11/15 제출 뒤 | |
+| 앱: 새 탭 페이지 뒤로 버튼, 바탕색 · 상태 표시줄 색 (3-앱) | ⬜ 🟨 소연 | 앱 저장소 |
+| 다크 모드 · 테마 전환, 프로필 팝오버(14), 배지(16) | ⬜ 팀 결정 · 색 값 기다림 | |
 
 ---
 
@@ -50,7 +72,7 @@ API 칸: ✅ 있음 · ⚠️ 있지만 고쳐야 함 · ❌ 없음
 
 ## 2. 라우팅·화면 이동 흐름
 
-### 지금
+### 대수정 전 (11/12)
 
 ```
 login ─▶ index.html (홈 = 마지막 방 하나)
@@ -63,6 +85,21 @@ login ─▶ index.html (홈 = 마지막 방 하나)
 ```
 
 문제: 방이 "홈의 상태"예요. 홈에서 방을 바꾸고 표지를 넘겨야 들어가요. 시/책이 서로 다른 페이지인데 시 화면 안의 토글처럼 보여요.
+
+### 11/13 지금
+
+```
+login ─▶ index.html (홈)
+          ├─ 스트릭 자리 (.streak-slot, 생김새는 8단계)
+          ├─ 최근 방 카드 3개 (마지막에 연 방이 맨 앞, 서버 순서) ─▶ room.html?id=X (시 탭)
+          └─ 모든 방 보기 ─▶ rooms.html
+room.html?id=X (시) · book.html?id=X (책): 같은 방 헤더 (뒤로 · 방 이름 · 시|책)
+          ├─ 방 이름 ─▶ 초대 시트 (invite.js)
+          └─ (시 화면 아래) 지난 시 보기 ─▶ #sheet-history (past.js) ─▶ room.html?id=X&date=
+rooms.html: 방 전체 + 코드로 참여 · 새 방 만들기
+me.html: 닉네임 · 스트릭 자리 · 친구 기록 · 배지 자리 ─▶ settings.html (닉네임 · 로그아웃 · 계정 삭제)
+하단 탭: 홈(index) · 방(rooms.html) · 단어장(vocab.html) · 나(me.html)
+```
 
 ### 시안 C (앞으로)
 
@@ -87,9 +124,9 @@ login ─▶ index.html (홈)
 1. **방이 기본 단위예요.** 방 안의 탭은 `시`와 `책`이에요. 둘 다 같은 방 헤더를 써요.
    - 페이지는 지금처럼 `room.html`과 `book.html` 두 개로 둬요. `book.js`가 1,200줄이라 합치면 위험이 너무 커요. 쿼리 이름만 `?id=`로 맞춰요 (`book.html?room=`도 한동안 받아줘요).
    - 지금 `room.html`과 `book.html`에 이미 있는 `@view-transition`은 그대로 둬요. 탭을 바꿀 때 헤더가 고정된 것처럼 보여요.
-2. **방 카드는 오버뷰 없이 바로 시 탭으로 가요.** 지금 홈 덱이 쓰는 `sessionStorage` 넘겨주기(`typoem:open`, `typoem:today`)는 카드 → 시 탭으로 갈 때도 그대로 쓸 수 있어요. 미리 받아둔 오늘의 시를 넘겨서 바로 그려요.
-3. **마지막에 들어간 방이 맨 앞이에요.** `ui.js`에 이미 `typoem:lastRoom`(localStorage)이 있어요. 첫 단계에서는 이 방 하나를 앞으로 올리고, 나머지는 서버 순서(`r.id DESC`)대로 둬요. 기기를 바꿔도 순서가 같아야 하면 서버에 기록해요 (4장 A1-b, 선택).
-4. **"나"는 시트가 아니라 페이지예요.** 프로필 팝오버는 홈 아바타에만 달아요.
+2. **방 카드는 오버뷰 없이 바로 시 탭으로 가요.** (11/13) 홈이 오늘의 시를 미리 받지 않아서 `sessionStorage` 넘겨주기(`typoem:open`, `typoem:today`)는 쓰지 않아요. `room.js`의 받는 코드는 지섭의 형광펜 작업 뒤에 지워요.
+3. **마지막에 들어간 방이 맨 앞이에요.** (11/13) 서버가 `room_members.last_opened_at`으로 정렬해서 줘요 (A1-b, PR #58). 옛 `typoem:lastRoom` localStorage는 지웠어요.
+4. **"나"는 시트가 아니라 페이지예요.** (11/13) `me.html`이 생겼어요. 홈 아바타의 프로필 팝오버를 둘지는 팀에서 정해요 (14단계).
 5. **지난 시는 홈이 아니라 History로 가요.** `room.html?date=`의 뒤로 버튼은 `history.html?room=X`로 가요.
 6. 데스크톱(1024px 이상)에서 지금 쓰는 2단 배치와 `data-wide` 시트/팝오버 규칙은 그대로 둬요. 시안이 모바일 화면만 보여주니, 넓은 화면 배치는 Design.md가 나온 뒤에 다시 정해요.
 
@@ -208,8 +245,8 @@ public/
 |---|---|---|
 | sync가 무엇을 복사하나 | `public/` 전체를 하위 폴더까지 `www/`로 복사해요 (`cpSync … recursive`). 따로 정한 파일 목록은 없어요 | `css/`, `css/pages/` 같은 새 폴더는 앱에도 그대로 들어가요. sync 목록을 고칠 필요가 없어요 |
 | app-shell 태그를 어디에 넣나 | `www/` **맨 위 폴더의 `.html`에만** `<script src="/app-shell.js">`를 넣어요 (`readdirSync(outDir)`라 하위 폴더는 안 봐요) | **새 페이지(`rooms.html`, `history.html`, `me.html`, `settings.html`)는 반드시 `public/` 바로 아래에 둬요.** `public/pages/` 같은 곳에 두면 앱에서 뒤로 버튼, 공유, 상태 표시줄이 안 돼요 |
-| 웹이 부르는 app-shell 함수 | `TypoemNav.setBackHandler`/`back()` (`room.js:79`, `book.js:726`, `ui.js:419`), `TypoemNative.setStatusBar` (`index.js:8·15`, `room.js:70`, `book.js:286`) | 홈 덱을 지울 때(5단계) `setStatusBar('dark')`는 남겼어요 (`index.js:8`, bfcache로 돌아올 때 `:15`). 시 화면 머리 띠가 어두우면 `room.js:70`의 `'light'`도 유지해요. 시트를 여닫는 새 화면은 `TypoemNav` 규칙을 따라요 |
-| 안드로이드 뒤로 버튼 | `EXIT_PAGES = ['/', '/index.html', '/login.html', '/landing.html']`. 그 밖의 페이지는 `history.back()`, 기록이 없으면 홈으로 가요 | 새 하단 탭 페이지(`rooms.html`, `me.html`, `vocab.html`)에서 뒤로 버튼을 누르면 탭을 거꾸로 돌아가요. 탭 페이지에서는 홈으로 가게 할지 **앱 저장소에서 정해요** (앱 PR 따로) |
+| 웹이 부르는 app-shell 함수 | `TypoemNav.setBackHandler`/`back()` (`room.js:71`, `book.js:722`, `ui.js:420`), `TypoemNative.setStatusBar` (`index.js:8·15`, `room.js:62`, `book.js:282`) | 홈 덱을 지울 때(5단계) `setStatusBar('dark')`는 남겼어요 (`index.js:8`, bfcache로 돌아올 때 `:15`). 시 화면 머리 띠가 어두우면 `room.js:62`의 `'light'`도 유지해요. 시트를 여닫는 새 화면은 `TypoemNav` 규칙을 따라요 |
+| 안드로이드 뒤로 버튼 | `EXIT_PAGES = ['/', '/index.html', '/login.html', '/landing.html']`. 그 밖의 페이지는 `history.back()`, 기록이 없으면 홈으로 가요 | 새 하단 탭 페이지(`rooms.html`, `me.html`, `vocab.html`)에서 뒤로 버튼을 누르면 탭을 거꾸로 돌아가요. (11/13) 앱 저장소에서 탭 페이지는 홈으로, `settings.html`은 `me.html`로 가게 바꾸기로 하고 앱 쪽 작업을 시작해요 |
 | 바탕색 | `app-shell.js:242`의 `PAPER = '#f2eee7'`와 `capacitor.config.json`의 `backgroundColor`, `StatusBar.backgroundColor`에 지금 바탕색이 박혀 있어요 | 시안의 흰 바탕이나 다크 모드로 바꾸면 **앱 쪽 값도 같이 바꿔야 해요.** 다크 모드는 app-shell이 `--bg`를 읽어서 상태 표시줄 색을 정하게 바꾸는 앱 PR이 필요해요 (13단계와 함께) |
 | 깨어나는 중 화면 | `app-shell.js:91-102`가 `var(--bg)`, `var(--ink)`, `var(--ink-2)`, `var(--on-ink)`를 써요 | 토큰 이름을 바꿔도 **이 네 이름은 별칭으로 계속 남겨요** (3-4장의 "기존 토큰은 새 토큰을 가리키게" 규칙) |
 
@@ -225,7 +262,7 @@ public/
 | A1-b | `room_members.last_opened_at` + `/mine`을 이 순서로 정렬 | 기기를 바꿔도 "마지막에 들어간 방이 맨 앞"이 맞게 하려면 필요해요 | 작아요 | **끝났어요** (PR #58, 🟨 소연). `/today`(`?checkin=0` 말고)와 `/book`을 열면 기록해요. 옛 `typoem:lastRoom` localStorage와 `sortRooms`는 지웠어요 |
 | A2 | `GET /api/rooms/:id/books/history` → `[{ book_id, title, author, status: reading\|finished\|paused, progress, last_read_at, finished_at, my_mark_count, readers }]` | History · 소설 탭 | 중간. `reading_progress`와 `room_books`, `book_marks`를 모아요 | 🟦 경윤 |
 | A3 | 책을 열면 출석 체크: `GET /rooms/:id/book` 또는 `PUT …/book/progress`에서 `streakModel` 체크인 호출 (`/today`가 이미 하는 방식과 같게, `?checkin=0`으로 끌 수 있게) | "시든 소설이든 열면 그날 읽은 거예요" | 작아요 | 🟩 지섭 |
-| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | 🟨 소연 (PR #56). 서버만 했어요. 응답은 `{ id, username, nickname }`. 화면(설정)은 13단계에서 붙이고, 그때 `localStorage`의 `typoem_user`도 새 닉네임으로 바꿔요 |
+| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | 🟨 소연 (PR #56). 서버만 했어요. 응답은 `{ id, username, nickname }`. 설정 화면(PR #57)에서 써요. 바꾸면 `localStorage`의 `typoem_user`도 같이 바꿔요 |
 | A5 | `GET /api/streak?month=YYYY-MM` (또는 응답에 `days: [...]` 범위 추가) | 나 화면의 월 캘린더. 지금 응답에는 `week`만 있어요 | 작아요 | 🟦 경윤 (스트릭 UI와 함께) |
 | A6 | 배지 `GET /api/users/me/badges` | 나 화면, 프로필 배지 수 | 규칙 정하기가 먼저예요. 이번에는 자리만 잡아둬요 | ⬜ |
 | — | 친구 기록: `GET /api/rooms/:id/streaks` | 나 화면의 친구 기록 | **있어요** | — |
@@ -248,7 +285,7 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 | 3-앱 | 앱 저장소(typoem-app): 새 탭 페이지 뒤로 버튼, 바탕색·상태 표시줄 색을 시안 C에 맞추기 (3-5장) | 🟨 소연 | 3단계와 경윤의 Design.md(색 값) 뒤에 해요 |
 | 4 | API A1 (`/rooms/mine`에 카드 정보 추가) | 🟨 소연 | 테스트 포함. PR #47 |
 | 5 | 홈 다시 짜기: 주간 캘린더 자리 + 방 카드 목록. 덱과 홈의 시트 지우기 | 🟨 소연 | **끝났어요** (PR #53). 주간 캘린더 **생김새와 동작**은 🟦 경윤. 홈에는 자리(`.streak-slot` 안의 `[data-streak]`)만 둬요. 방 카드 목록은 `rooms.js`를 홈과 방 탭이 같이 써요 |
-| 6 | `rooms.html` (방 카드 재사용 + 참여·만들기) | 🟨 소연 | **끝났어요** (PR #50). 방 카드는 `ui.js`의 `roomCard`, `sortRooms` |
+| 6 | `rooms.html` (방 카드 재사용 + 참여·만들기) | 🟨 소연 | **끝났어요** (PR #50). 방 카드는 `ui.js`의 `roomCard`. 홈도 `rooms.js`를 같이 써요 (`data-limit`) |
 | 7 | 초대 시트를 방 안으로 옮기기 (`index.js` → `room.js`나 공통 파일) | 🟨 소연 | **끝났어요** (PR #52). 공통 파일 `invite.js`로 옮겼어요. 시·책 헤더의 방 이름을 누르면 열려요 |
 | 8 | 스트릭 화면 UI (주간, 월, 나 화면 상단) + A5 | 🟦 경윤 | 소연은 건드리지 않아요 |
 | 9 | History 화면 시\|소설 탭 + A2 | 🟦 경윤 | 소연은 건드리지 않아요. 6단계 전에 `history.html` 파일 이름만 같이 정해요 |
