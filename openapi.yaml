@@ -892,6 +892,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+    patch:
+      tags: [Users]
+      summary: Change my nickname
+      description: Same rules as register (2-20 characters, no whitespace). The username does not change.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nickname]
+              properties:
+                nickname: { type: string, minLength: 2, maxLength: 20, example: 앨리스 }
+      responses:
+        '200':
+          description: Nickname changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400': { description: Nickname missing, too short / long, or has whitespace }
+        '401': { description: Missing or invalid token }
+        '404': { description: User not found }
+
     delete:
       tags: [Users]
       summary: Delete my account (회원 탈퇴)
@@ -2237,7 +2263,7 @@ paths:
     get:
       tags: [Books]
       summary: List highlights and notes in one chapter of the room's book
-      description: Oldest first. Sent with `Cache-Control: no-store`.
+      description: 'Oldest first. Sent with `Cache-Control: no-store`.'
       security:
         - bearerAuth: []
       parameters:
