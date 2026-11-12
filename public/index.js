@@ -49,6 +49,12 @@ async function loadHome(preferRoomId) {
   const status = $('status');
   status.textContent = '방을 불러오는 중이에요…';
 
+  // The room we'll most likely show is already known (the one read last), so its
+  // poem / history / members are asked for together with the room list instead
+  // of after it: one round trip to the server less before the home screen fills.
+  const wanted = preferRoomId != null ? preferRoomId : UI.getLastRoom();
+  const early = wanted != null ? { roomId: wanted, data: fetchRoomData(wanted) } : null;
+
   let res;
   try {
     res = await authFetch('/api/rooms/mine');
@@ -76,12 +82,23 @@ async function loadHome(preferRoomId) {
   setRoomView(true);
 
   // The room opened last; if it is gone (left / deleted), the newest room.
-  const wanted = preferRoomId != null ? preferRoomId : UI.getLastRoom();
   const found = rooms.find((r) => String(r.id) === String(wanted));
-  await showRoom(found || rooms[0]);
+  await showRoom(found || rooms[0], found ? early.data : null);
 }
 
-async function showRoom(next) {
+// today (without a streak check-in: drawing the cover isn't reading it), history,
+// members, all at once. Each one resolves to its Response, or null on a network error.
+function fetchRoomData(roomId) {
+  const id = encodeURIComponent(roomId);
+  return Promise.all([
+    authFetch(`/api/rooms/${id}/today?checkin=0`).catch(() => null),
+    authFetch(`/api/rooms/${id}/history`).catch(() => null),
+    authFetch(`/api/rooms/${id}/members`).catch(() => null),
+  ]);
+}
+
+// prefetched: fetchRoomData(next.id) already started by loadHome, if any.
+async function showRoom(next, prefetched) {
   const seq = ++loadSeq;
   room = next;
   UI.setLastRoom(room.id);
@@ -95,13 +112,7 @@ async function showRoom(next) {
   renderRooms();
   renderDeckLoading();
 
-  const id = encodeURIComponent(room.id);
-  const [todayRes, historyRes, membersRes] = await Promise.all([
-    // checkin=0: drawing the cover isn't reading it; the reading screen checks in.
-    authFetch(`/api/rooms/${id}/today?checkin=0`).catch(() => null),
-    authFetch(`/api/rooms/${id}/history`).catch(() => null),
-    authFetch(`/api/rooms/${id}/members`).catch(() => null),
-  ]);
+  const [todayRes, historyRes, membersRes] = await (prefetched || fetchRoomData(room.id));
   if (seq !== loadSeq) return;   // the user switched rooms meanwhile
 
   today = todayRes && todayRes.ok ? await todayRes.json() : null;
@@ -427,6 +438,13 @@ function openReader(coverEl, p, date) {
   if (opening) return;
   const color = UI.coverColor(p.id);
   const url = `/room.html?id=${encodeURIComponent(room.id)}` + (date ? `&date=${encodeURIComponent(date)}` : '');
+  // Today's poem is already here: hand it to the reading screen so it can draw
+  // the poem at once instead of waiting for /today again (room.js takeHomeCopy).
+  if (!date && today) {
+    try {
+      sessionStorage.setItem('typoem:today', JSON.stringify({ roomId: room.id, savedAt: Date.now(), data: today }));
+    } catch (err) { /* storage full: the reader just loads it itself */ }
+  }
   try {
     sessionStorage.setItem('typoem:open', JSON.stringify({
       roomId: room.id, roomName: room.name, color, title: p.title, author: p.author,
