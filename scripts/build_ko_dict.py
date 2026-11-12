@@ -1,5 +1,7 @@
 """en-from-ko.jsonl -> out/ko_dict.jsonl, out/ko_dict.sql, out/irregular.json
-usage: python -I build_ko_dict.py <en-from-ko.jsonl> <out_dir>
+usage: python -I scripts/build_ko_dict.py scripts/en-from-ko.jsonl <out_dir>
+       then copy <out_dir>/ko_dict.jsonl -> data/ko_dict.jsonl, <out_dir>/irregular.json -> data/ko_irregular.json
+scripts/en-from-ko.jsonl: the English words ({word, pos, glosses}) of kaikki.org's Korean Wiktionary extract.
 """
 import sys, json, os, re
 src, out = sys.argv[1], sys.argv[2]
