@@ -38,7 +38,7 @@ form.addEventListener('submit', async function (e) {
       const messages = {
         404: '그 코드의 방을 찾지 못했어요.',
         409: '이미 참여한 방이에요.',
-        403: '방에 더 참여할 수 없어요. 참여한 방 수가 한도에 닿았어요.',
+        403: '참여할 수 있는 방 수를 다 채워서 더 참여할 수 없어요.',
       };
       const e = new Error(messages[res.status] || '방에 참여하지 못했어요.');
       e.isUserMessage = true;

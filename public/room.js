@@ -575,7 +575,7 @@ $('annotation-form').addEventListener('submit', async (e) => {
     );
     if (!res.ok) {
       // 409 = already annotated this line (written on another device, say)
-      UI.toast(res.status === 409 ? '이 줄에는 이미 메모를 남겼어요' : '메모를 남기지 못했어요');
+      UI.toast(res.status === 409 ? '이미 메모를 남겼어요' : '메모를 남기지 못했어요');
       if (res.status === 409) await reloadAnnotations(lineId);
       return;
     }
