@@ -3,7 +3,7 @@
 // The room opened last comes first. A card goes straight to that room's 시 tab.
 //
 // Data: GET /api/rooms/mine -> [{ id, name, member_count, today_poem_title, book_title, book_progress }]
-// Depends on auth.js, ui.js (TypoemUI).
+// Depends on auth.js, ui.js (TypoemUI). The home (index.html) loads this file too.
 
 requireLogin();
 
@@ -31,7 +31,7 @@ async function loadRooms() {
 
   const list = Array.isArray(rooms) ? UI.sortRooms(rooms) : [];
   const last = UI.getLastRoom();
-  $('rooms-count').textContent = list.length ? `${list.length}개` : '';
+  if ($('rooms-count')) $('rooms-count').textContent = list.length ? `${list.length}개` : '';   // the home has no count
   $('empty-state').hidden = list.length > 0;
   $('rooms-list').innerHTML = list.map((r) => UI.roomCard(r, String(r.id) === last)).join('');
 }

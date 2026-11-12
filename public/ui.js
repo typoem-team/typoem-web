@@ -512,6 +512,7 @@
     setLastRoom: setLastRoom,
     sortRooms: sortRooms,
     roomCard: roomCard,
+    poemTitleHtml: poemTitleHtml,
     toast: toast,
     openSheet: openSheet,
     closeSheets: closeSheets,

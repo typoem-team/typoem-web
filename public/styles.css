@@ -965,6 +965,17 @@ html[lang="en"] .landing-invite {
   text-align: left;
 }
 
+/* "지난 시 보기": a small link under the poem (past.js) */
+.past-link {
+  display: block;
+  min-height: 44px;
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .poem {
   font-family: var(--poem);
   font-size: 18px;
@@ -1081,14 +1092,6 @@ html[lang="en"] .landing-invite {
 
 .memo-pill .avs:empty {
   display: none;
-}
-
-/* ---- Cover -> band: the piece that grows on the home screen before leaving ---- */
-.morph {
-  position: fixed;
-  z-index: 40;
-  pointer-events: none;
-  overflow: hidden;
 }
 
 /* =================================================
@@ -1494,39 +1497,23 @@ html[lang="en"] .landing-invite {
 }
 
 /* =================================================
-   Home — last opened room: streak, members, cover deck
+   Home — this week's streak on top, every room below as a card (.room-card).
+   The streak's look is step 8 (경윤); this only gives it its place.
    ================================================= */
-.home {
-  position: relative;
+.home-streak {
   display: flex;
-  flex-direction: column;
-  padding: calc(var(--safe-top) + 28px) var(--gutter) calc(var(--tabbar-h) + var(--safe-bottom) + 40px);
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
-/* The markup is grouped for the two-column layout (1024px+). On smaller
-   screens the groups dissolve and the pieces stack in reading order. */
-.home-left,
-.home-right {
-  display: contents;
+.home-streak .week {
+  flex: 1;
+  margin-top: 0;
 }
 
-.home-top    { order: 1; }
-.week        { order: 2; }
-.home .status { order: 3; }
-.members     { order: 4; }
-.deck        { order: 5; }
-.deck-foot   { order: 6; }
-.home .empty-state { order: 7; }
-
-/* streak ring: top right, beside the title */
-.streak {
-  position: absolute;
-  top: calc(var(--safe-top) + 28px);
-  right: var(--gutter);
-}
-
-.home .status {
-  margin-top: 16px;
+.home .empty-state .actions {
+  margin-top: 20px;
 }
 
 /* ---- Streak ring + this week's dots (hidden while the API is missing) ---- */
@@ -1618,51 +1605,6 @@ html[lang="en"] .landing-invite {
   transform: scale(1.25);
 }
 
-/* ---- Room card: name ⌄ · avatars · invite ---- */
-.members {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 24px 0 22px;
-  padding: 8px 14px 12px 16px;
-  border-radius: 16px;
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
-}
-
-.room-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.room-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 44px;
-  max-width: 100%;
-  font-size: 15px;
-  color: var(--ink);
-  text-align: left;
-}
-
-.room-switch span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.room-switch svg {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.6;
-}
-
 /* avatars: a row of overlapping initials */
 .avs {
   display: flex;
@@ -1700,141 +1642,6 @@ html[lang="en"] .landing-invite {
   margin-left: 6px;
 }
 
-.invite-btn {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--on-ink);
-  font-size: 13px;
-}
-
-.invite-btn svg {
-  width: 15px;
-  height: 15px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-}
-
-/* ---- Cover deck ----
-   A cover: spine shading, a thin inner frame, a long soft shadow.
-   Push the front cover sideways and the next one (a past poem) comes forward. */
-.deck {
-  position: relative;
-  height: 372px;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-  border-radius: 12px;
-}
-
-.cover {
-  position: absolute;
-  border-radius: 6px 12px 12px 6px;
-  overflow: hidden;
-  color: var(--on-ink);
-}
-
-.cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, .05) 7px, rgba(255, 255, 255, .08) 9px, transparent 16px),
-    radial-gradient(120% 80% at 30% 0%, rgba(255, 255, 255, .12), transparent 60%);
-  pointer-events: none;
-}
-
-.cover::after {
-  content: "";
-  position: absolute;
-  inset: 12px 12px 12px 20px;
-  border: 1px solid rgba(var(--on-ink-rgb), .22);
-  border-radius: 2px;
-  pointer-events: none;
-}
-
-.deck .cover {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: calc(100% - 34px);
-  padding: 32px 30px 24px 38px;
-  display: flex;
-  flex-direction: column;
-  transform-origin: 50% 100%;
-  transition: transform .5s var(--ease), opacity .4s var(--ease), box-shadow .4s var(--ease);
-  will-change: transform;
-  cursor: pointer;
-}
-
-.deck.dragging .cover.k0 {
-  transition: none;
-  cursor: grabbing;
-}
-
-.deck .cover.k0 {
-  z-index: 5;
-  box-shadow: 0 34px 46px -28px rgba(var(--ink-rgb), .65), 0 14px 18px -12px rgba(var(--ink-rgb), .35);
-}
-
-.deck .cover.k1 {
-  z-index: 4;
-  transform: translateX(20px) scale(.94);
-  box-shadow: 0 20px 30px -20px rgba(var(--ink-rgb), .5);
-}
-
-.deck .cover.k2 {
-  z-index: 3;
-  transform: translateX(36px) scale(.88);
-  box-shadow: 0 16px 24px -18px rgba(var(--ink-rgb), .45);
-}
-
-.deck .cover.k3 {
-  z-index: 2;
-  transform: translateX(46px) scale(.82);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.deck .cover.gone {
-  z-index: 6;
-  transform: translateX(-118%) rotate(-7deg);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.deck .cover > * {
-  transition: opacity .35s var(--ease) .1s;
-}
-
-.deck .cover.k1 > *,
-.deck .cover.k2 > *,
-.deck .cover.k3 > * {
-  opacity: 0;
-  transition: opacity .3s var(--ease);
-}
-
-.cover-loading {
-  background: var(--hair);
-  box-shadow: none !important;
-}
-
-.cover-loading::after {
-  display: none;
-}
-
-.c-kicker {
-  font-size: 11.5px;
-  letter-spacing: .14em;
-  opacity: .7;
-}
-
 .c-title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -1862,86 +1669,6 @@ html[lang="en"] .landing-invite {
   letter-spacing: .06em;
   margin-top: 10px;
   opacity: .85;
-}
-
-.c-foot {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11.5px;
-  opacity: .72;
-  margin-top: 24px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(var(--on-ink-rgb), .2);
-}
-
-/* the last card: "+N" older poems */
-.deck .more {
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  text-align: center;
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--hair), 0 20px 30px -24px rgba(var(--ink-rgb), .4) !important;
-}
-
-.deck .more::before,
-.deck .more::after {
-  display: none;
-}
-
-.more b {
-  font-family: var(--display);
-  font-size: 64px;
-  font-weight: 500;
-  line-height: 1;
-}
-
-.more em {
-  font-style: normal;
-  font-size: 13px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--on-ink);
-}
-
-.deck-foot {
-  display: flex;
-  justify-content: center;
-  padding-right: 34px;
-}
-
-.dots {
-  display: flex;
-  min-height: 44px;
-}
-
-/* each dot is a 44px-tall button; the visible dot is drawn inside */
-.dots button {
-  display: grid;
-  place-items: center;
-  min-width: 18px;
-  height: 44px;
-  padding: 0 3px;
-}
-
-.dots button::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--hair);
-  transition: width .35s var(--ease), background .35s var(--ease);
-}
-
-.dots button[aria-current="true"]::before {
-  width: 20px;
-  background: var(--ink);
-}
-
-.home .empty-state .actions {
-  margin-top: 20px;
 }
 
 /* =================================================
@@ -2004,14 +1731,6 @@ textarea.field {
 input.field:focus,
 textarea.field:focus {
   box-shadow: inset 0 0 0 1.5px var(--ink-2);
-}
-
-.code-field {
-  text-transform: uppercase;
-}
-
-.code-field::placeholder {
-  text-transform: none;
 }
 
 /* ---- Invite ---- */
@@ -2201,65 +1920,6 @@ textarea.field:focus {
   margin-top: 20px;
 }
 
-/* ---- Room list ---- */
-.room-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--hair);
-  text-align: left;
-}
-
-.room-row .sw {
-  flex: none;
-  width: 38px;
-  height: 50px;
-  border-radius: 3px 6px 6px 3px;
-  box-shadow: 0 8px 12px -8px rgba(var(--ink-rgb), .5);
-}
-
-.room-row-text {
-  min-width: 0;
-}
-
-.room-row b {
-  display: block;
-  font-size: 15px;
-  font-weight: 400;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.room-row small {
-  font-size: 12px;
-  color: var(--ink-2);
-}
-
-.room-row .chk {
-  margin-left: auto;
-  color: var(--accent);
-  font-size: 13px;
-}
-
-.join {
-  display: grid;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.join-row {
-  display: flex;
-  gap: 8px;
-}
-
-.join-row .field {
-  flex: 1;
-  min-width: 0;
-}
-
 /* ---- Past poems ---- */
 .h-row {
   display: grid;
@@ -2270,6 +1930,7 @@ textarea.field:focus {
   padding: 12px 0;
   border-bottom: 1px solid var(--hair);
   text-align: left;
+  color: var(--ink);          /* rows are links (past.js) */
 }
 
 .h-row .sw {
@@ -2320,7 +1981,6 @@ textarea.field:focus {
   letter-spacing: .04em;
 }
 
-.room-row:last-child,
 .h-row:last-child,
 .mem-row:last-child {
   border-bottom: 0;
@@ -3414,14 +3074,6 @@ button.book-shelf-item:active .book-cover {
     padding-right: max(10px, calc(50% - 320px));
   }
 
-  /* a cover keeps the shape of a book */
-  .deck,
-  .deck-foot {
-    width: 100%;
-    max-width: 400px;
-    align-self: center;
-  }
-
   /* ---- sheets open as a dialog in the middle ---- */
   .sheet {
     left: 50%;
@@ -3644,93 +3296,8 @@ button.book-shelf-item:active .book-cover {
     padding-bottom: 22px;
   }
 
-  /* ---- home: two columns ---- */
-  .home {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 24px 72px;
-    align-items: start;
-    max-width: 1200px;
-    padding: 52px 32px 80px;
-  }
-
-  .home-left,
-  .home-right {
-    display: block;
-    min-width: 0;
-  }
-
-  /* each column keeps its own source order */
-  .home-top,
-  .week,
-  .home .status,
-  .members,
-  .deck,
-  .deck-foot,
-  .home .empty-state {
-    order: 0;
-  }
-
-  /* the cover stays in view while the right column scrolls */
-  .home-left {
-    position: sticky;
-    top: calc(var(--nav-h) + 28px);
-  }
-
-  .home-right {
-    position: relative;       /* the room dropdown is placed inside it */
-    display: grid;
-    gap: 18px;
-  }
-
-  /* the logo is in the navigation here; the date takes the title's place.
-     (Hidden from view only: it is still the page's <h1> for screen readers.) */
-  .home .app-brand {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .home .app-date {
-    font-style: italic;
-    font-weight: 500;
-    font-size: 56px;
-    line-height: 1;
-    letter-spacing: 0;
-    color: var(--ink);
-    margin-top: 0;
-  }
-
-  .deck {
-    max-width: 440px;
-    height: 560px;
-    margin-top: 36px;
-  }
-
-  .deck-foot {
-    max-width: 440px;
-  }
-
-  .deck .cover {
-    padding: 44px 40px 30px 50px;
-  }
-
-  .deck .c-title { font-size: 72px; }
-  .deck .c-title-md { font-size: 56px; }
-  .deck .c-title-sm { font-size: 44px; }
-  .deck .c-title-xs { font-size: 34px; }
-
   .c-author {
     font-size: 20px;
-  }
-
-  .c-kicker,
-  .c-foot {
-    font-size: 13px;
   }
 
   /* reading record: ring and week side by side in one card */
@@ -3752,20 +3319,6 @@ button.book-shelf-item:active .book-cover {
     border-radius: 16px;
     background: var(--surface);
     box-shadow: var(--shadow-card);
-  }
-
-  .members {
-    margin: 0;
-    padding: 12px 20px 16px 22px;
-  }
-
-  .room-switch {
-    font-size: 18px;
-  }
-
-  /* the invite card is right below, so no button */
-  .invite-btn {
-    display: none;
   }
 
   .code {
