@@ -14,27 +14,18 @@ function escapeHtml(str) {
 }
 
 // ---- Korean meanings of a saved word (same look as the dictionary popup) ----
-// A meaning can hold several ' / '-separated parts; show each on its own line, at most 5.
-function vocabKoSenses(entry) {
-  return (entry.ko || [])
-    .flatMap((g) => String(g).split(' / '))
-    .map((t) => t.replace(/\s*;\s*/g, ', ').trim())   // ";" looks like a glitch: show ","
-    .filter(Boolean)
-    .slice(0, 5);
-}
-
 function vocabKoBlock(ko) {
   if (!Array.isArray(ko) || ko.length === 0) return '';
   let html = '<ul class="dict-ko-list vocab-ko">';
   for (const e of ko.slice(0, 4)) {
     const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span>` : '';
-    const senses = vocabKoSenses(e);
+    const senses = TypoemUI.koSenses(e);
     if (senses.length > 1) {
       html += `<li class="d-ko-entry">${pos}<ol class="d-ko-senses">`
-        + senses.map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+        + senses.map((t) => `<li>${TypoemUI.koHtml(t)}</li>`).join('')
         + '</ol></li>';
     } else {
-      html += `<li class="d-ko-entry">${pos} ${escapeHtml(senses[0] || '')}</li>`;
+      html += `<li class="d-ko-entry">${pos} ${TypoemUI.koHtml(senses[0] || '')}</li>`;
     }
   }
   return html + '</ul>';
