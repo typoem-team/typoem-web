@@ -1088,6 +1088,7 @@ paths:
         annotations. If no poem is assigned yet, a fresh (room-unseen) poem is
         fetched live from PoetryDB (falling back to a local pool), cached, and
         assigned for today. This is the only endpoint that assigns a daily poem.
+        Opening it also checks the user in for today's streak, unless checkin=0.
       security:
         - bearerAuth: []
       parameters:
@@ -1097,6 +1098,13 @@ paths:
           schema:
             type: integer
             example: 1
+        - name: checkin
+          in: query
+          required: false
+          description: "0 = return the poem without a streak check-in (the home cover). Default: check in."
+          schema:
+            type: string
+            enum: ['0', '1']
       responses:
         '200':
           description: Today's poem with memos and annotations
