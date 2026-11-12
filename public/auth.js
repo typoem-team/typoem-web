@@ -110,6 +110,35 @@ async function authFetch(url, options) {
 }
 
 
+// ============ Login / register error messages ============
+// The login and register screens are in English. These turn a failed request into
+// a message the user can act on, instead of the browser's "Failed to fetch" or the
+// API's raw messages ("Invalid credentials").
+
+// Error for a response that came back but wasn't ok.
+async function authErrorFromResponse(res, fallback) {
+  let data = {};
+  try { data = await res.json(); } catch (e) { /* not JSON, e.g. a proxy error page */ }
+  let message;
+  if (res.status === 401) message = 'Wrong username or password.';
+  else if (res.status === 409) message = 'That username is already taken.';
+  else if (res.status >= 500) message = 'Something went wrong on our side. Please try again.';
+  else if (data.error) message = data.error.charAt(0).toUpperCase() + data.error.slice(1) + '.';
+  else message = fallback;
+  const err = new Error(message);
+  err.isUserMessage = true;
+  return err;
+}
+
+// Message for anything caught around a login/register request. fetch() only
+// rejects with a TypeError when no answer came back at all (offline, server down).
+function authErrorMessage(err) {
+  if (err && err.isUserMessage) return err.message;
+  if (err instanceof TypeError) return "Can't reach the server. Check your connection and try again.";
+  return 'Something went wrong. Please try again.';
+}
+
+
 // ============ Logout ============
 
 function logout() {

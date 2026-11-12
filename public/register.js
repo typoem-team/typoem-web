@@ -77,8 +77,7 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!registerRes.ok) {
-      const errData = await registerRes.json();
-      throw new Error(errData.error || 'Registration failed.');
+      throw await authErrorFromResponse(registerRes, 'Registration failed. Please try again.');
     }
 
     // Step 2: auto-login to get token (register API does not return one)
@@ -104,7 +103,7 @@ form.addEventListener('submit', async function (e) {
 
   } catch (err) {
     console.error('Register error:', err);
-    showError(err.message || 'Something went wrong. Please try again.');
+    showError(authErrorMessage(err));
     submitBtn.disabled = false;
     submitBtn.textContent = 'Create Account';
   }

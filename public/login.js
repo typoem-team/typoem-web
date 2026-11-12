@@ -34,8 +34,7 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.error || 'Login failed.');
+      throw await authErrorFromResponse(res, 'Login failed. Please try again.');
     }
 
     const data = await res.json();
@@ -44,7 +43,7 @@ form.addEventListener('submit', async function (e) {
 
   } catch (err) {
     console.error('Login error:', err);
-    showError(err.message || 'Something went wrong. Please try again.');
+    showError(authErrorMessage(err));
     submitBtn.disabled = false;
     submitBtn.textContent = 'Log In';
   }
