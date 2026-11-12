@@ -98,6 +98,23 @@ components:
             member_count:
               type: integer
               example: 3
+            today_poem_title:
+              type: string
+              nullable: true
+              description: Today's poem (Korea date). null until someone in the room opens today's poem — listing rooms never picks one.
+              example: Lights Out
+            book_title:
+              type: string
+              nullable: true
+              description: The room's book, null when the room has none.
+              example: Pride and Prejudice
+            book_progress:
+              type: integer
+              nullable: true
+              minimum: 0
+              maximum: 100
+              description: My progress in the room's book, % of words before my saved paragraph (rounded down). 0 before I open it, null when the room has no book.
+              example: 42
 
     RoomMember:
       type: object

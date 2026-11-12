@@ -50,16 +50,37 @@ async function countMemberships(user_id) {
 } // return number of rooms this user belongs to (owned rooms included)
 
 
-async function listRoomsForUser(user_id) { // rooms user belong to
-    return await getDb().all(
+// rooms user belongs to, with what a home room card shows:
+// today_poem_title (null until someone opens today's poem — listing never assigns one),
+// book_title, book_progress (my % of the room's book by words read; 0 before I start, null without a book).
+async function listRoomsForUser(user_id, date) {
+    const rows = await getDb().all(
         `SELECT r.id, r.name, r.description, r.invite_code, r.owner_id,
-                (SELECT COUNT(*) FROM room_members WHERE room_id = r.id) AS member_count
+                (SELECT COUNT(*) FROM room_members WHERE room_id = r.id) AS member_count,
+                (SELECT p.title FROM daily_room_poems d JOIN poems p ON p.id = d.poem_id
+                  WHERE d.room_id = r.id AND d.date = ?) AS today_poem_title,
+                b.title AS book_title,
+                b.total_words AS book_total_words,
+                (SELECT COALESCE(SUM(bp.word_count), 0) FROM book_paragraphs bp
+                  WHERE bp.book_id = rb.book_id
+                    AND bp.idx < (SELECT rp.paragraph_idx FROM reading_progress rp
+                                   WHERE rp.user_id = rm.user_id AND rp.room_id = r.id AND rp.book_id = rb.book_id)
+                ) AS book_words_read
          FROM rooms r
          JOIN room_members rm ON rm.room_id = r.id
+         LEFT JOIN room_books rb ON rb.room_id = r.id
+         LEFT JOIN books b ON b.id = rb.book_id
          WHERE rm.user_id = ?
          ORDER BY r.id DESC`,
-        [user_id]
+        [date, user_id]
     );
+    return rows.map(({ book_total_words, book_words_read, ...room }) => ({
+        ...room,
+        today_poem_title: room.today_poem_title ?? null,
+        book_title: room.book_title ?? null,
+        book_progress: room.book_title == null ? null
+            : book_total_words > 0 ? Math.min(100, Math.floor((book_words_read * 100) / book_total_words)) : 0,
+    }));
 } // return array of rooms
 
 async function listMembers(room_id) { // list members of a room, joined with user info
