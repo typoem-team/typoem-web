@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f2eee7">
+  <title>나 · Typoem</title>
+
+  <!-- App stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-tab="me">
+
+  <header class="app-head">
+    <a href="/index.html" class="app-brand">Typoem</a>
+    <p class="app-date" id="today"></p>
+  </header>
+
+  <!-- 나 탭: 내 기록(스트릭) · 친구 기록 · 배지 · 계정 -->
+  <main class="page">
+    <div class="page-headline">
+      <h1 id="me-nick"></h1>
+      <p class="me-username" id="me-username"></p>
+    </div>
+
+    <!-- 스트릭 자리: 생김새와 동작은 8단계(경윤). 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
+    <section class="streak-slot" aria-label="읽은 날" data-streak hidden>
+      <div class="streak" data-streak hidden>
+        <div class="ring" id="streak-ring" role="img">
+          <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="streak-bar" cx="26" cy="26" r="23"/></svg>
+          <b id="streak-count"></b>
+        </div>
+        <p class="ring-cap">일 연속</p>
+      </div>
+      <div class="week" id="streak-week" aria-label="이번 주 읽은 날" data-streak hidden></div>
+    </section>
+
+    <h2 class="me-h">친구 기록</h2>
+    <p id="status" class="status" role="status"></p>
+    <div id="friends"></div>
+
+    <!-- 배지 자리: 규칙(16단계, A6)이 정해지면 채워요 -->
+    <h2 class="me-h">배지</h2>
+    <p class="s-note">배지는 곧 생겨요.</p>
+
+    <div class="me-box me-account">
+      <a class="s-row" href="/privacy.html">개인정보처리방침</a>
+      <button type="button" class="s-row quiet" id="logout-btn">로그아웃</button>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="ui.js"></script>
+  <script src="streak.js"></script>
+  <script src="me.js"></script>
+
+</body>
+</html>

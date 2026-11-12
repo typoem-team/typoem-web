@@ -247,7 +247,7 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 | 3 | `ui.js`: 하단 탭을 홈·방·단어장·나로 바꾸고, 공통 `room-header`를 그리게 하기, `book.html`이 `?id=`도 받게 하기 | 🟨 소연 | **끝났어요.** 하단 탭은 PR #50, 방 헤더(`drawRoomBar`)와 `book.html?id=`는 PR #51. `room.html`과 `book.html`의 복사된 r-bar를 지웠어요 |
 | 3-앱 | 앱 저장소(typoem-app): 새 탭 페이지 뒤로 버튼, 바탕색·상태 표시줄 색을 시안 C에 맞추기 (3-5장) | 🟨 소연 | 3단계와 경윤의 Design.md(색 값) 뒤에 해요 |
 | 4 | API A1 (`/rooms/mine`에 카드 정보 추가) | 🟨 소연 | 테스트 포함. PR #47 |
-| 5 | 홈 다시 짜기: 주간 캘린더 자리 + 방 카드 목록. 덱과 홈의 시트 지우기 | 🟨 소연 | **끝났어요** (PR #53). 주간 캘린더 **생김새와 동작**은 🟦 경윤. 홈에는 자리(`.home-streak` 안의 `[data-streak]`)만 둬요. 방 카드 목록은 `rooms.js`를 홈과 방 탭이 같이 써요 |
+| 5 | 홈 다시 짜기: 주간 캘린더 자리 + 방 카드 목록. 덱과 홈의 시트 지우기 | 🟨 소연 | **끝났어요** (PR #53). 주간 캘린더 **생김새와 동작**은 🟦 경윤. 홈에는 자리(`.streak-slot` 안의 `[data-streak]`)만 둬요. 방 카드 목록은 `rooms.js`를 홈과 방 탭이 같이 써요 |
 | 6 | `rooms.html` (방 카드 재사용 + 참여·만들기) | 🟨 소연 | **끝났어요** (PR #50). 방 카드는 `ui.js`의 `roomCard`, `sortRooms` |
 | 7 | 초대 시트를 방 안으로 옮기기 (`index.js` → `room.js`나 공통 파일) | 🟨 소연 | **끝났어요** (PR #52). 공통 파일 `invite.js`로 옮겼어요. 시·책 헤더의 방 이름을 누르면 열려요 |
 | 8 | 스트릭 화면 UI (주간, 월, 나 화면 상단) + A5 | 🟦 경윤 | 소연은 건드리지 않아요 |
@@ -255,9 +255,9 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 | 10 | 책 열면 출석 체크 (A3) | 🟩 지섭 | 소연은 건드리지 않아요 |
 | 11 | 시 화면 밑줄 기능 지우기 | 🟨 소연 | **끝났어요 (PR #48, 11/13 merge).** 지섭이 자고 있어서 소연이 먼저 했어요. 방 헤더(3단계)가 같은 파일을 건드려서요 |
 | 11-b | 시 화면에 형광펜·주석 붙이기 (`marks.js`, ToDo '시 주석 소설처럼 만들기') | 🟩 지섭 | 소연은 건드리지 않아요. `poem-marks` API는 이미 있어요. 지금 시 화면에는 밑줄도 형광펜도 없어서 **v1.0 빌드 전에 꼭 들어가야 해요.** 사전 더블 탭은 원래 돼요 |
-| 12 | `me.html` 뼈대 (스트릭 자리 🟦 + 친구 기록 + 배지 자리) | ⬜ | 친구 기록은 API가 있어서 바로 할 수 있어요 |
+| 12 | `me.html` 뼈대 (스트릭 자리 🟦 + 친구 기록 + 배지 자리) | 🟨 소연 | **끝났어요** (PR #54). 하단 "나" 탭이 `me.html`로 가요. 스트릭 자리는 홈과 같은 마크업(`.streak-slot`)이에요. 친구 기록은 나 말고 멤버가 있는 방마다 `/rooms/:id/streaks`를 불러요. 개인정보처리방침과 로그아웃도 여기로 옮겼어요 |
 | 13 | `settings.html` + 테마 전환 + 다크 토큰 + 탈퇴 UI + A4 닉네임 | ⬜ | 다크 **값**은 🟦 경윤 (Design.md) |
-| 14 | 프로필 팝오버 (홈 아바타) | ⬜ | `ui.js` `openMe()`를 다시 써요 |
+| 14 | 프로필 팝오버 (홈 아바타) | ⬜ | 옛 `openMe()` 시트는 12단계에서 지웠어요 (git 기록에 있어요). 팝오버는 `openSheet(el, { anchor })`와 `data-wide="popover"`, `data-align="end"`로 새로 만들어요 |
 | 15 | 단어장 정렬(최근 저장 / A–Z) + `word-card` 컴포넌트 | 🟨 소연 | **정렬은 끝났어요** (PR #55). 클라이언트에서 정렬하고, 고른 정렬은 이 기기에 기억해요(`typoem:vocabSort`). 알약 모양은 `.r-tabs`를 같이 써요. `word-card` 공통 컴포넌트는 단어 카드를 쓰는 곳이 단어장 하나뿐이라 두 번째로 쓰는 곳이 생길 때 빼요 |
 | 16 | 배지 규칙 + A6 | ⬜ | 이번에는 자리만 잡아요 |
 
@@ -282,7 +282,7 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 | 홈의 초대 시트 `#sheet-invite` | `index.html`, `index.js:143-253` (`renderMembers` 143, `drawRoomAction` 163, `confirmRoomAction` 171, `syncShareButton` 206) | **끝났어요** (PR #52). `invite.js`로 옮겼어요. 로직은 그대로예요 |
 | 연속일 링 `#streak-ring` | `index.html`, `streak.js` | 8단계 🟦 경윤 (주간 캘린더로 바꿀지 경윤이 정해요) |
 | 하단 탭 "오늘"·"내 방" 팝오버 처리 (`data-popover-keep`, `index.html#rooms`, `typoem:rooms` 이벤트) | `ui.js:297`(`data-popover-keep` 검사), `ui.js:362-397`(`buildTabbar`, "내 방" 링크 `:375`, 이벤트 `:397`), `index.js:283` | **끝났어요** (PR #50) |
-| "나" 시트 `#sheet-me` | `ui.js:320` `openMe()` | 14단계 (프로필 팝오버로 다시 써요) |
+| "나" 시트 `#sheet-me` | `ui.js:320` `openMe()` | **끝났어요** (PR #54). "나" 탭이 `me.html` 링크가 되면서 지웠어요 |
 | `var(--x, #hex)` 대체값 (토큰 이름이 바뀌면 옛 색이 남을 수 있어요), 직접 쓴 px 글자 크기·간격 | `styles.css` 전체 | 2단계부터 조금씩. 대체값은 지우고, 크기와 간격은 토큰으로 바꿔요 |
 | 옛 디자인 참고 파일 주석 (`Design reference: docs/design/typoem-calm-demo.html`) | `styles.css:4`, `docs/design/typoem-calm-demo.html` | Design.md가 생기면 주석을 바꾸고, 옛 시안은 지울지 팀에서 정해요 |
 | `@view-transition` 인라인 `<style>` 2곳 | `room.html`, `book.html` | 2단계에서 `pages/room.css`로 옮겨요 |
