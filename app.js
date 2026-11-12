@@ -27,11 +27,16 @@ const allowedOrigins = (process.env.CORS_ORIGINS ||
   'https://localhost,capacitor://localhost,http://localhost')
   .split(',').map((s) => s.trim()).filter(Boolean);
 
+// maxAge: the app's API calls carry an Authorization header from another origin,
+// so the WebView asks first (OPTIONS) before every one of them. Without
+// Access-Control-Max-Age it remembers the answer for only 5 seconds, which makes
+// almost every call two round trips. 7200 s (2 h) is Chrome's upper limit.
 app.use(cors({
   origin(origin, cb) {
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
     return cb(null, false);
   },
+  maxAge: 7200,
 }));
 
 // Timing log for API requests: "API GET /api/rooms/1/today 200 840ms (db 7q 610ms)"
