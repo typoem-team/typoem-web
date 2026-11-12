@@ -5,13 +5,14 @@
 //   - lines that have notes: dotted underline + a count on the right;
 //     the count or the left margin of a line opens that line's sheet
 //   - highlighter marks, kept on this device only (localStorage)
-//   - "다 읽었어요" (only when the streak API exists)
+//   - opening today's poem checks me in for the streak (GET /today does it on the
+//     server), so there is no "다 읽었어요" button
 //
 // Data source: GET /api/rooms/:id/today  (poem + memos + annotations in one payload)
 // A past poem (?date=YYYY-MM-DD) comes from GET /api/rooms/:id/history/:date and
 // is read-only: memos and line notes are shown, but nothing can be written,
 // edited, deleted or liked.
-// Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak).
+// Depends on auth.js, ui.js (TypoemUI).
 // dict-popup.js handles taps on words.
 
 requireLogin();
@@ -117,8 +118,6 @@ async function loadToday() {
   const data = await res.json();
   if (shown && data.poem && shown.poem && data.poem.id === shown.poem.id) refreshNotes(data);
   else showPoem(data);
-  // after /today has checked me in, so the streak state is already up to date
-  if (!READ_ONLY) loadFinish();
 }
 
 // The home screen leaves today's payload in sessionStorage when a cover is
@@ -799,38 +798,6 @@ function wireList(listEl) {
 }
 wireList($('memo-list'));
 wireList($('annotation-list'));
-
-// =====================================================================
-//  "다 읽었어요" — streak check-in (hidden until the API exists)
-// =====================================================================
-async function loadFinish() {
-  const state = await TypoemStreak.load();     // null on 404 -> stays hidden
-  if (!state) return;
-  $('r-end').hidden = false;
-  if (state.checkedInToday) setFinished();
-}
-
-function setFinished() {
-  const btn = $('finish');
-  btn.classList.add('done');
-  btn.textContent = '오늘의 시를 읽었어요';
-  btn.disabled = true;
-}
-
-$('finish').addEventListener('click', async () => {
-  const btn = $('finish');
-  btn.disabled = true;
-  const state = await TypoemStreak.checkin();
-  if (!state) {
-    btn.disabled = false;
-    UI.toast('기록하지 못했어요. 다시 눌러 주세요');
-    return;
-  }
-  setFinished();
-  UI.haptic();
-  UI.toast(`${state.current}일째 이어서 읽고 있어요`);
-  setTimeout(() => { window.location.href = '/index.html'; }, 1200);
-});
 
 // =====================================================================
 //  Helpers
