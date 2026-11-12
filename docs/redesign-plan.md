@@ -225,7 +225,7 @@ public/
 | A1-b | (선택) `room_members.last_opened_at` + `/mine`을 이 순서로 정렬 | 기기를 바꿔도 "마지막에 들어간 방이 맨 앞"이 맞게 하려면 필요해요. 첫 단계는 localStorage로 충분해요 | 작아요. 마이그레이션 1개 + `/today`·`/book`을 열 때 기록 | ⬜ |
 | A2 | `GET /api/rooms/:id/books/history` → `[{ book_id, title, author, status: reading\|finished\|paused, progress, last_read_at, finished_at, my_mark_count, readers }]` | History · 소설 탭 | 중간. `reading_progress`와 `room_books`, `book_marks`를 모아요 | 🟦 경윤 |
 | A3 | 책을 열면 출석 체크: `GET /rooms/:id/book` 또는 `PUT …/book/progress`에서 `streakModel` 체크인 호출 (`/today`가 이미 하는 방식과 같게, `?checkin=0`으로 끌 수 있게) | "시든 소설이든 열면 그날 읽은 거예요" | 작아요 | 🟩 지섭 |
-| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | ⬜ |
+| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | 🟨 소연 (PR #56). 서버만 했어요. 응답은 `{ id, username, nickname }`. 화면(설정)은 13단계에서 붙이고, 그때 `localStorage`의 `typoem_user`도 새 닉네임으로 바꿔요 |
 | A5 | `GET /api/streak?month=YYYY-MM` (또는 응답에 `days: [...]` 범위 추가) | 나 화면의 월 캘린더. 지금 응답에는 `week`만 있어요 | 작아요 | 🟦 경윤 (스트릭 UI와 함께) |
 | A6 | 배지 `GET /api/users/me/badges` | 나 화면, 프로필 배지 수 | 규칙 정하기가 먼저예요. 이번에는 자리만 잡아둬요 | ⬜ |
 | — | 친구 기록: `GET /api/rooms/:id/streaks` | 나 화면의 친구 기록 | **있어요** | — |
@@ -258,7 +258,7 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 | 12 | `me.html` 뼈대 (스트릭 자리 🟦 + 친구 기록 + 배지 자리) | 🟨 소연 | **끝났어요** (PR #54). 하단 "나" 탭이 `me.html`로 가요. 스트릭 자리는 홈과 같은 마크업(`.streak-slot`)이에요. 친구 기록은 나 말고 멤버가 있는 방마다 `/rooms/:id/streaks`를 불러요. 개인정보처리방침과 로그아웃도 여기로 옮겼어요 |
 | 13 | `settings.html` + 테마 전환 + 다크 토큰 + 탈퇴 UI + A4 닉네임 | ⬜ | 다크 **값**은 🟦 경윤 (Design.md) |
 | 14 | 프로필 팝오버 (홈 아바타) | ⬜ | 옛 `openMe()` 시트는 12단계에서 지웠어요 (git 기록에 있어요). 팝오버는 `openSheet(el, { anchor })`와 `data-wide="popover"`, `data-align="end"`로 새로 만들어요 |
-| 15 | 단어장 정렬(최근 저장 / A–Z) + `word-card` 컴포넌트 | ⬜ | |
+| 15 | 단어장 정렬(최근 저장 / A–Z) + `word-card` 컴포넌트 | 🟨 소연 | **정렬은 끝났어요** (PR #55). 클라이언트에서 정렬하고, 고른 정렬은 이 기기에 기억해요(`typoem:vocabSort`). 알약 모양은 `.r-tabs`를 같이 써요. `word-card` 공통 컴포넌트는 단어 카드를 쓰는 곳이 단어장 하나뿐이라 두 번째로 쓰는 곳이 생길 때 빼요 |
 | 16 | 배지 규칙 + A6 | ⬜ | 이번에는 자리만 잡아요 |
 
 **서로 기다려야 하는 것**
