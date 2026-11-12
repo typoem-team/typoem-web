@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f2eee7">
+  <title>설정 · Typoem</title>
+
+  <!-- App stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-tab="me">
+
+  <header class="app-head">
+    <a href="/index.html" class="app-brand">Typoem</a>
+    <p class="app-date" id="today"></p>
+  </header>
+
+  <!-- 설정: 닉네임 · 계정(개인정보처리방침, 로그아웃, 계정 삭제). 테마 전환은 다크 색 값이 정해지면 더해요 (13단계) -->
+  <main class="page">
+    <div class="page-headline">
+      <a href="/me.html" class="link-btn back-link">&larr; 나</a>
+      <h1>설정</h1>
+    </div>
+
+    <h2 class="me-h">닉네임</h2>
+    <form class="me-box set-form" id="nick-form" novalidate>
+      <label for="nick-input">다른 사람에게 보이는 이름이에요 (2–20자, 띄어쓰기 없이)</label>
+      <div class="set-row">
+        <input class="field" id="nick-input" maxlength="20" autocomplete="nickname" required>
+        <button type="submit" class="btn-sm" id="nick-save">바꾸기</button>
+      </div>
+      <p class="me-username" id="nick-id"></p>
+    </form>
+
+    <h2 class="me-h">계정</h2>
+    <div class="me-box">
+      <a class="s-row" href="/privacy.html">개인정보처리방침</a>
+      <button type="button" class="s-row quiet" id="logout-btn">로그아웃</button>
+      <button type="button" class="s-row quiet" id="delete-open" aria-expanded="false" aria-controls="delete-form">계정 삭제</button>
+    </div>
+
+    <!-- 계정 삭제: 비밀번호를 한 번 더 받아요 (DELETE /api/users/me) -->
+    <form class="me-box set-form set-danger" id="delete-form" novalidate hidden>
+      <p class="set-note">내 메모, 주석, 형광펜, 단어장, 읽은 기록이 모두 지워지고 되돌릴 수 없어요. 내가 만든 방은 가장 먼저 들어온 멤버에게 넘어가고, 혼자 있는 방은 지워져요.</p>
+      <label for="delete-password">비밀번호</label>
+      <div class="set-row">
+        <input class="field" id="delete-password" type="password" autocomplete="current-password" required>
+        <button type="submit" class="btn-sm btn-danger" id="delete-btn">삭제</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="ui.js"></script>
+  <script src="settings.js"></script>
+
+</body>
+</html>

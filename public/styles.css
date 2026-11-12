@@ -1719,6 +1719,50 @@ html[lang="en"] .landing-invite {
   margin-top: 28px;
 }
 
+.s-row-sub {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+/* ---- 설정 (settings.html) ---- */
+.back-link {
+  margin-left: -4px;
+}
+
+.set-form {
+  padding: 16px 18px;
+}
+
+.set-row {
+  display: flex;
+  gap: 8px;
+}
+
+.set-row .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.set-row .btn-sm {
+  flex: none;
+}
+
+.set-form .me-username {
+  margin-top: 10px;
+}
+
+.set-danger {
+  margin-top: 12px;
+}
+
+.set-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+
 /* =================================================
    Sheet contents — invite · rooms · past poems
    ================================================= */
