@@ -1,6 +1,6 @@
 // public/me.js
 // 나 탭 — my streak (streak.js; its look is step 8), my friends' streaks per room,
-// a place for badges (step 16), and the account links (privacy policy, log out).
+// a place for badges (step 16), and a link to 설정 (settings.html).
 //
 // Data: GET /api/rooms/mine              -> [{ id, name, ... }]
 //       GET /api/rooms/:id/streaks       -> { date, members: [{ id, username, nickname, current, longest, checkedInToday }] }
@@ -16,7 +16,6 @@ const me = getCurrentUser();
 // textContent: nickname / username are user input
 $('me-nick').textContent = (me && me.nickname) || '나';
 $('me-username').textContent = me && me.username ? '@' + me.username : '';
-$('logout-btn').addEventListener('click', () => logout());
 
 function friendRow(m) {
   const name = m.nickname || m.username || '';
