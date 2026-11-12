@@ -1,14 +1,15 @@
 // public/ui.js
 // Shared app chrome for the logged-in screens:
 //   - date line (11/10 Tue, Asia/Seoul)
-//   - bottom tab bar: 오늘 · 내 방 · 단어장 · 나
+//   - bottom tab bar: 홈 · 방 · 단어장 · 나
 //   - bottom sheets + toast
+//   - room cards (rooms.html, and the home screen next)
 //
 //   - small helpers shared by the screens (escape, cover / avatar colours, haptic)
 //   - window.TypoemNav.back() and window.TypoemNative for the Android app shell
 //
 // Load after auth.js. A page picks its active tab with <body data-tab="...">
-// (today | vocab).
+// (today | rooms | vocab).
 
 (function () {
   'use strict';
@@ -141,6 +142,41 @@
       if (id == null) localStorage.removeItem(LAST_ROOM_KEY);
       else localStorage.setItem(LAST_ROOM_KEY, String(id));
     } catch (e) { /* storage may be unavailable */ }
+  }
+
+  // ---- Room cards (rows from GET /api/rooms/mine) ----
+  // The room opened last goes first; the rest keep the server's order (newest first).
+  // shortcut: "last opened" is this device only (typoem:lastRoom), so only that one room moves;
+  // store it on the server (ToDo '방 순서를 서버에 저장') for a full order across devices.
+  function sortRooms(rooms) {
+    var last = getLastRoom();
+    var first = rooms.filter(function (r) { return String(r.id) === last; });
+    return first.concat(rooms.filter(function (r) { return String(r.id) !== last; }));
+  }
+
+  // PoetryDB titles: "--" is an em dash, _word_ is italics (same rules as the reader)
+  function poemTitleHtml(t) {
+    return esc(t).replace(/-{2,}/g, '—').replace(/_([^_]+)_/g, '<em>$1</em>');
+  }
+
+  // One room: its name large; today's poem and the book's progress small.
+  // A link straight into the room's 시 tab (no overview in between).
+  function roomCard(r, isLast) {
+    var poem = r.today_poem_title
+      ? '<i class="rc-poem">' + poemTitleHtml(r.today_poem_title) + '</i>'
+      : '<span class="rc-none">오늘의 시를 열어 보세요</span>';
+    var book = r.book_title
+      ? '<i class="rc-book">' + esc(r.book_title) + '</i>' +
+        '<span class="rc-bar" aria-hidden="true"><span style="width:' + Number(r.book_progress || 0) + '%"></span></span>' +
+        '<span class="rc-num">' + (r.book_progress >= 100 ? '완독' : Number(r.book_progress || 0) + '%') + '</span>'
+      : '<span class="rc-none">아직 고른 책이 없어요</span>';
+    return '<a class="room-card" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '">' +
+        '<span class="rc-top"><b class="rc-name">' + esc(r.name) + '</b>' +
+          (isLast ? '<span class="rc-tag">최근</span>' : '') + '</span>' +
+        '<span class="rc-line"><span class="rc-label">TODAY</span>' + poem + '</span>' +
+        '<span class="rc-line"><span class="rc-label">BOOK</span>' + book + '</span>' +
+        '<span class="rc-meta">멤버 ' + esc(r.member_count) + '명</span>' +
+      '</a>';
   }
 
   // ---- Toast ----
@@ -293,8 +329,6 @@
     if (!open || modeOf(open) !== 'popover') return;
     if (open.contains(e.target)) return;
     if (popAnchor && popAnchor.contains(e.target)) return;
-    // e.g. the 내 방 link, which opens / closes the room dropdown itself
-    if (e.target.closest && e.target.closest('[data-popover-keep]')) return;
     closeSheets();
   });
 
@@ -347,10 +381,11 @@
 
   // ---- Navigation: bottom tab bar, or the top bar at 1024px+ ----
   // Same element both ways (CSS moves it). It is the first thing in <body>, so
-  // the Tab key reaches it first: Typoem · 오늘 · 내 방 · 단어장 · nickname.
+  // the Tab key reaches it first: Typoem · 홈 · 방 · 단어장 · nickname.
+  // ("나" stays a sheet until its page, me.html, exists.)
   var ICONS = {
-    today: '<path d="M4 5.5C6.5 4 9.5 4 12 5.5v14C9.5 18 6.5 18 4 19.5zM20 5.5C17.5 4 14.5 4 12 5.5v14c2.5-1.5 5.5-1.5 8 0z"/>',
-    rooms: '<path d="M4 10l8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/>',
+    today: '<path d="M4 10l8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/>',
+    rooms: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c1-3.3 3.3-5 6-5s5 1.7 6 5"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17 14.2c2 .6 3.4 2.2 4 4.8"/>',
     vocab: '<path d="M6 3h12v18l-6-4-6 4z"/>',
     me: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 7-5.5s5.8 1.9 7 5.5"/>',
   };
@@ -362,7 +397,6 @@
   function buildTabbar() {
     if (document.getElementById('tabbar')) return;
     var active = document.body.dataset.tab || '';
-    var isHome = active === 'today' && !!document.getElementById('home');
 
     var nav = document.createElement('nav');
     nav.className = 'tabbar';
@@ -371,8 +405,8 @@
     nav.innerHTML =
       '<a class="nav-brand" href="/index.html">Typoem</a>' +
       '<div class="tabs-main">' +
-        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '오늘</a>' +
-        '<a class="tab" data-tab="rooms" data-popover-keep href="/index.html#rooms">' + icon('rooms') + '내 방</a>' +
+        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '홈</a>' +
+        '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + '방</a>' +
         '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
       '</div>' +
       '<button type="button" class="tab tab-me" data-tab="me" aria-haspopup="dialog">' + icon('me') +
@@ -388,13 +422,6 @@
       if (meSheet && meSheet.classList.contains('show') && isWide()) { closeSheets(); return; }
       haptic();
       openMe(e.currentTarget);
-    });
-    // 내 방 opens the room list sheet on the home screen; from other pages the
-    // link goes to /index.html#rooms and the home screen opens it on load.
-    nav.querySelector('[data-tab="rooms"]').addEventListener('click', function (e) {
-      if (!isHome) return;
-      e.preventDefault();
-      document.dispatchEvent(new CustomEvent('typoem:rooms'));
     });
     document.body.insertBefore(nav, document.body.firstChild);
   }
@@ -452,6 +479,8 @@
     formatIsoDay: formatIsoDay,
     getLastRoom: getLastRoom,
     setLastRoom: setLastRoom,
+    sortRooms: sortRooms,
+    roomCard: roomCard,
     toast: toast,
     openSheet: openSheet,
     closeSheets: closeSheets,
