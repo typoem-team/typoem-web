@@ -123,7 +123,7 @@ const MARKS_URL = () => `/api/rooms/${encodeURIComponent(ROOM)}/book/marks`;
 
 // failed response -> Error with a message for the toast
 function marksError(res, fallback) {
-  return new Error(res.status === 403 ? '내 것만 바꿀 수 있어요.' : fallback);
+  return new Error(res.status === 403 ? '내가 남긴 것만 고칠 수 있어요.' : fallback);
 }
 
 const marks = window.TypoemMarks.attach({
@@ -213,7 +213,7 @@ function roomUrl() {
 
 async function init() {
   if (!ROOM) {
-    showMessage('어느 방의 책인지 알 수 없어요.', false);
+    showMessage('방 정보를 찾지 못했어요. 내 방 목록에서 다시 들어와 주세요.', false);
     return;
   }
   el('tab-poem').href = roomUrl();
@@ -435,7 +435,7 @@ function slotHtml() {
         <span class="book-slot-cover" aria-hidden="true"></span>
         <span class="book-shelf-text">
           <span class="book-slot-label">책 추가</span>
-          <span class="book-slot-hint">제목 또는 구텐베르크 번호로 검색</span>
+          <span class="book-slot-hint">책 제목으로 찾기</span>
         </span>
       </button>
       <div class="book-shelf-panel" hidden></div>
@@ -573,12 +573,12 @@ async function assignCell(cell) {
   if (res) {
     if (res.status === 401) return;   // authFetch is redirecting to login
     if (res.status === 502 || res.status === 503) {
-      failure = '구텐베르크가 응답하지 않아요. 잠시 후 다시 시도해 주세요.';
+      failure = '책을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.';
       retryable = true;
     } else if (res.status === 403) {
       failure = '방장만 책을 고를 수 있어요.';
     } else if (res.status === 404) {
-      failure = '구텐베르크에서 이 책을 찾지 못했어요.';
+      failure = '이 책을 찾지 못했어요.';
     } else if (res.status === 422) {
       failure = '이 책은 가져올 수 없어요. 다른 책을 골라 주세요.';
     } else {
@@ -598,8 +598,8 @@ async function assignCell(cell) {
 function openSearch(cell) {
   const panel = openPanel(cell, `
     <form class="m-write book-shelf-search" novalidate>
-      <input type="search" class="field" maxlength="100" placeholder="예: Emma, 1342"
-             aria-label="책 제목 또는 구텐베르크 번호" autocomplete="off">
+      <input type="search" class="field" maxlength="100" placeholder="예: Emma"
+             aria-label="책 제목" autocomplete="off">
       <button type="submit" class="pri">찾기</button>
     </form>
     <p class="status book-shelf-search-status" role="status"></p>
@@ -612,7 +612,7 @@ async function runSearch(panel) {
   const status = panel.querySelector('.book-shelf-search-status');
   const list = panel.querySelector('.book-shelf-results');
   if (!q) {
-    status.textContent = '책 제목이나 번호를 적어 주세요.';
+    status.textContent = '책 제목을 적어 주세요.';
     return;
   }
   const seq = ++searchSeq;
@@ -630,7 +630,7 @@ async function runSearch(panel) {
     if (res && res.status === 401) return;
     status.textContent = res && res.status === 400
       ? '100자 안으로 적어 주세요.'
-      : '지금은 제목 검색을 쓸 수 없어요. 번호로 검색해 보세요. 예: 1342';
+      : '지금은 검색이 잘 안 돼요. 잠시 후 다시 찾아 주세요.';
     return;
   }
   const results = await res.json();

@@ -40,7 +40,7 @@ form.addEventListener('submit', async function (e) {
     if (!res.ok) {
       // 403 = room limit reached (owned or joined)
       const e = new Error(res.status === 403
-        ? '방을 더 만들 수 없어요. 가진 방 수가 한도에 닿았어요.'
+        ? '만들 수 있는 방 수를 다 채워서 더 만들 수 없어요.'
         : '방을 만들지 못했어요.');
       e.isUserMessage = true;
       throw e;
