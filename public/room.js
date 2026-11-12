@@ -8,6 +8,9 @@
 //   - "다 읽었어요" (only when the streak API exists)
 //
 // Data source: GET /api/rooms/:id/today  (poem + memos + annotations in one payload)
+// A past poem (?date=YYYY-MM-DD) comes from GET /api/rooms/:id/history/:date and
+// is read-only: memos and line notes are shown, but nothing can be written,
+// edited, deleted or liked.
 // Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak).
 // dict-popup.js handles taps on words.
 
@@ -21,6 +24,9 @@ const me = getCurrentUser();
 // ---- Read room id from the query string (?id=...) ----
 const params = new URLSearchParams(window.location.search);
 const ROOM_ID = params.get('id');
+// ?date=YYYY-MM-DD -> that day's poem, read-only
+const PAST_DATE = /^\d{4}-\d{2}-\d{2}$/.test(params.get('date') || '') ? params.get('date') : null;
+const READ_ONLY = !!PAST_DATE;
 
 // 시 | 책 tabs in the top bar
 if (ROOM_ID) {
@@ -86,9 +92,12 @@ async function loadToday() {
     return;
   }
 
+  const url = PAST_DATE
+    ? `/api/rooms/${encodeURIComponent(ROOM_ID)}/history/${PAST_DATE}`
+    : `/api/rooms/${encodeURIComponent(ROOM_ID)}/today`;
   let res;
   try {
-    res = await authFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/today`);
+    res = await authFetch(url);
   } catch (err) {
     status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
     return;
@@ -105,6 +114,7 @@ async function loadToday() {
 
   // Remember this room: the home screen opens the room you read in last.
   UI.setLastRoom(ROOM_ID);
+  if (READ_ONLY) setReadOnly();
 
   poem = data.poem;
   poemDate = data.date;
@@ -120,12 +130,25 @@ async function loadToday() {
   UI.anim($('r-body'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
   UI.anim($('memo-pill'), [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, delay: 300 });
 
-  loadFinish();
+  if (!READ_ONLY) loadFinish();
 }
 
-// Korean message for a failed /today load (the API's own messages are English).
+// A past poem: hide everything that writes, and say why where the forms were.
+function setReadOnly() {
+  document.body.classList.add('read-only');
+  ['memo-form', 'annotation-form', 'l-mark', 'l-edit-mine'].forEach((id) => { $(id).hidden = true; });
+  ['memo-form', 'annotation-form'].forEach((id) => {
+    const note = document.createElement('p');
+    note.className = 's-note read-only-note';
+    note.textContent = '지난 시는 읽기만 할 수 있어요.';
+    $(id).after(note);
+  });
+}
+
+// Korean message for a failed load (the API's own messages are English).
 function loadErrorText(status) {
   if (status === 403) return '이 방의 멤버가 아니에요.';
+  if (READ_ONLY) return status === 404 ? '그날의 시를 찾지 못했어요.' : '지난 시를 불러오지 못했어요.';
   if (status === 404) return '방을 찾지 못했어요.';
   if (status === 503) return '오늘의 시를 가져오지 못했어요. 잠시 뒤에 다시 열어 주세요.';
   return '오늘의 시를 불러오지 못했어요.';
@@ -359,6 +382,7 @@ function renderMemos() {
 // A line note is edited with the sheet's "내 메모 고치기" button, so its own
 // row only needs "지우기".
 function controls(kind, id) {
+  if (READ_ONLY) return '';
   const edit = kind === 'memo'
     ? `<button type="button" class="link-btn" data-edit="${kind}" data-id="${id}">고치기</button>`
     : '';
@@ -377,7 +401,7 @@ function memoItem(memo) {
         <b>${esc(memo.author_nickname)}<small>${formatDate(memo.created_at)}</small></b>
         <p class="note-content">${esc(memo.content)}</p>
         <div class="m-foot">
-          <button type="button" class="like-btn${memo.liked_by_me ? ' liked' : ''}" data-like="${memo.id}"
+          <button type="button" class="like-btn${memo.liked_by_me ? ' liked' : ''}" data-like="${memo.id}"${READ_ONLY ? ' disabled' : ''}
                   aria-pressed="${memo.liked_by_me ? 'true' : 'false'}" aria-label="좋아요">
             <span class="like-heart" aria-hidden="true">${memo.liked_by_me ? '♥' : '♡'}</span>
             <span class="like-count">${memo.like_count || 0}</span>
@@ -546,6 +570,7 @@ function renderAnnotations() {
 
   // One note per person per line (UNIQUE(line_id, room_id, user_id)):
   // if mine exists, offer "edit my note" instead of a new one.
+  if (READ_ONLY) return;                      // the forms stay hidden
   const mine = myAnnotation(currentLineId);
   $('annotation-form').hidden = !!mine;
   $('l-edit-mine').hidden = !mine;
@@ -719,6 +744,7 @@ function closeInline(item) {
 // One listener per sheet for like / edit / delete (items are re-rendered often).
 function wireList(listEl) {
   listEl.addEventListener('click', (e) => {
+    if (READ_ONLY) return;
     const like = e.target.closest('[data-like]');
     if (like) { toggleLike(Number(like.dataset.like)); return; }
     const edit = e.target.closest('[data-edit]');

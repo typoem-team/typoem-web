@@ -412,21 +412,20 @@ function openCover(i) {
     UI.openSheet('sheet-history');
     UI.haptic();
   } else if (item.kind === 'today') {
-    openReader(covers()[i]);
+    openReader(covers()[i], today.poem);
   } else {
-    // Past poems open once the read-only API exists (GET /rooms/:id/history/:date).
-    UI.toast('지난 시는 곧 열려요');
+    openReader(covers()[i], item.poem, item.row.date);   // read-only past poem
   }
 }
 
 // Unfold: the tapped cover grows into the reading screen's top band, then the
 // reading page (room.html) takes over with the same band already in place.
+// date: a past day (YYYY-MM-DD) opens that poem read-only; omit it for today.
 let opening = false;
-function openReader(coverEl) {
+function openReader(coverEl, p, date) {
   if (opening) return;
-  const p = today.poem;
   const color = UI.coverColor(p.id);
-  const url = `/room.html?id=${encodeURIComponent(room.id)}`;
+  const url = `/room.html?id=${encodeURIComponent(room.id)}` + (date ? `&date=${encodeURIComponent(date)}` : '');
   try {
     sessionStorage.setItem('typoem:open', JSON.stringify({
       roomId: room.id, roomName: room.name, color, title: p.title, author: p.author,
@@ -543,12 +542,12 @@ function renderHistory() {
     $('h-list').innerHTML = '<p class="s-note">아직 지난 시가 없어요.</p>';
     return;
   }
-  $('h-list').innerHTML = past.map((row) => {
+  $('h-list').innerHTML = past.map((row, i) => {
     const names = row.contributors
       ? row.contributors.split(',').map((n) => esc(n.trim())).join(', ')
       : '';
     return `
-      <button type="button" class="h-row">
+      <button type="button" class="h-row" data-i="${i}">
         <span class="sw" style="background:${UI.coverColor(row.poem_id)}"></span>
         <span class="h-text"><b>${meta(row.title || 'Untitled')}</b><small>${meta(row.author)}</small>${names ? `<small class="h-names">${names}</small>` : ''}</span>
         <em>${esc(UI.formatIsoDay(row.date))}<br>${contributorText(row)}</em>
@@ -556,8 +555,13 @@ function renderHistory() {
   }).join('');
 }
 
+// A row opens that day's poem read-only (no unfold: the list is in a sheet).
 $('h-list').addEventListener('click', (e) => {
-  if (e.target.closest('.h-row')) UI.toast('지난 시는 곧 열려요');
+  const rowEl = e.target.closest('.h-row');
+  if (!rowEl) return;
+  const row = past[Number(rowEl.dataset.i)];
+  if (!row) return;
+  openReader(null, { id: row.poem_id, title: row.title, author: row.author }, row.date);
 });
 
 // =====================================================================
