@@ -28,12 +28,6 @@ const ROOM_ID = params.get('id');
 const PAST_DATE = /^\d{4}-\d{2}-\d{2}$/.test(params.get('date') || '') ? params.get('date') : null;
 const READ_ONLY = !!PAST_DATE;
 
-// 시 | 책 tabs in the top bar
-if (ROOM_ID) {
-  $('tab-poem').href = `/room.html?id=${encodeURIComponent(ROOM_ID)}`;
-  $('tab-book').href = `/book.html?room=${encodeURIComponent(ROOM_ID)}`;
-}
-
 // =====================================================================
 //  State
 // =====================================================================
