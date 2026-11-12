@@ -11,36 +11,16 @@
 </head>
 <body data-tab="today">
 
-  <!-- ===== 홈: 마지막으로 연 방 =====
-       좁은 화면: 한 줄로 쌓여요 (제목 → 이번 주 → 방 → 표지 덱).
-       1024px 이상: 2칸 (왼쪽 제목 · 표지 덱 / 오른쪽 기록 · 방 · 초대 · 지난 시). -->
-  <main class="home" id="home">
+  <header class="app-head">
+    <h1 class="app-brand">Typoem</h1>
+    <p class="app-date" id="today"></p>
+  </header>
 
-    <div class="home-left">
-      <div class="home-top">
-        <h1 class="app-brand">Typoem</h1>
-        <p class="app-date" id="today"></p>
-      </div>
+  <!-- ===== 홈: 위는 스트릭, 아래는 내 방 카드 (마지막에 연 방이 맨 앞) ===== -->
+  <main class="page home" id="home">
 
-      <p id="status" class="status" role="status"></p>
-
-      <div class="deck" id="deck" tabindex="0" aria-roledescription="carousel" aria-label="오늘의 시와 지난 시" data-room-view hidden></div>
-      <div class="deck-foot" data-room-view hidden>
-        <div class="dots" id="dots" role="tablist" aria-label="표지 고르기"></div>
-      </div>
-
-      <!-- 방이 없을 때 -->
-      <div id="empty-state" class="empty-state" hidden>
-        <p class="empty-lead">아직 방이 없어요</p>
-        <div class="actions">
-          <a href="/create-room.html" class="btn">방 만들기</a>
-          <a href="/join.html" class="btn btn-ghost">코드로 참여</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="home-right">
-      <!-- 연속일 링 · 이번 주 점: 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
+    <!-- 스트릭 자리: 생김새와 동작은 8단계(경윤). 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
+    <section class="home-streak" aria-label="읽은 날" data-streak hidden>
       <div class="streak" data-streak hidden>
         <div class="ring" id="streak-ring" role="img">
           <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="streak-bar" cx="26" cy="26" r="23"/></svg>
@@ -49,44 +29,26 @@
         <p class="ring-cap">일 연속</p>
       </div>
       <div class="week" id="streak-week" aria-label="이번 주 읽은 날" data-streak hidden></div>
+    </section>
 
-      <div class="members" data-room-view hidden>
-        <div class="room-info">
-          <button type="button" class="room-switch" id="room-switch" aria-haspopup="dialog">
-            <span id="room-name"></span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
-          </button>
-          <div class="avs" id="room-avs"></div>
-        </div>
+    <p id="status" class="status" role="status"></p>
+
+    <nav id="rooms-list" class="room-cards" aria-label="내 방"></nav>
+
+    <!-- 방이 없을 때 -->
+    <div id="empty-state" class="empty-state" hidden>
+      <p class="empty-lead">아직 방이 없어요</p>
+      <div class="actions">
+        <a href="/create-room.html" class="btn">방 만들기</a>
+        <a href="/join.html" class="btn btn-ghost">코드로 참여</a>
       </div>
-
-      <!-- 방 목록: 시트 / 대화상자 / (1024px+) 방 이름 옆 드롭다운 -->
-      <section class="sheet" id="sheet-rooms" role="dialog" aria-label="내 방" data-wide="popover">
-        <span class="handle"></span>
-        <p class="s-title">내 방 <span id="rooms-count"></span></p>
-        <div id="rooms-list"></div>
-        <form class="join" id="join-form" novalidate>
-          <div class="join-row">
-            <input class="field code-field" id="join-code" placeholder="초대 코드 6자리" aria-label="초대 코드 6자리"
-              maxlength="6" autocomplete="off" autocapitalize="characters">
-            <button type="submit" class="pri" id="join-btn">참여</button>
-          </div>
-          <a class="sec" href="/create-room.html">새 방 만들기</a>
-        </form>
-      </section>
-
-      <!-- 지난 시: 시트 / 대화상자 / (1024px+) 펼쳐진 목록 -->
-      <section class="sheet" id="sheet-history" role="dialog" aria-label="지난 시" data-wide="inline" data-room-view hidden>
-        <span class="handle"></span>
-        <p class="s-title">지난 시 <span id="h-count"></span></p>
-        <div id="h-list"></div>
-      </section>
     </div>
   </main>
 
   <script src="auth.js"></script>
   <script src="ui.js"></script>
   <script src="streak.js"></script>
+  <script src="rooms.js"></script>
   <script src="index.js"></script>
 
 </body>
