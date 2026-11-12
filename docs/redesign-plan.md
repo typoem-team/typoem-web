@@ -225,7 +225,7 @@ public/
 | A1-b | (선택) `room_members.last_opened_at` + `/mine`을 이 순서로 정렬 | 기기를 바꿔도 "마지막에 들어간 방이 맨 앞"이 맞게 하려면 필요해요. 첫 단계는 localStorage로 충분해요 | 작아요. 마이그레이션 1개 + `/today`·`/book`을 열 때 기록 | ⬜ |
 | A2 | `GET /api/rooms/:id/books/history` → `[{ book_id, title, author, status: reading\|finished\|paused, progress, last_read_at, finished_at, my_mark_count, readers }]` | History · 소설 탭 | 중간. `reading_progress`와 `room_books`, `book_marks`를 모아요 | 🟦 경윤 |
 | A3 | 책을 열면 출석 체크: `GET /rooms/:id/book` 또는 `PUT …/book/progress`에서 `streakModel` 체크인 호출 (`/today`가 이미 하는 방식과 같게, `?checkin=0`으로 끌 수 있게) | "시든 소설이든 열면 그날 읽은 거예요" | 작아요 | 🟩 지섭 |
-| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | ⬜ |
+| A4 | `PATCH /api/users/me` `{ nickname }` | 프로필의 닉네임 바꾸기, 설정 | 작아요. 길이와 공백 검사 필요 | 🟨 소연 (PR #56). 서버만 했어요. 응답은 `{ id, username, nickname }`. 화면(설정)은 13단계에서 붙이고, 그때 `localStorage`의 `typoem_user`도 새 닉네임으로 바꿔요 |
 | A5 | `GET /api/streak?month=YYYY-MM` (또는 응답에 `days: [...]` 범위 추가) | 나 화면의 월 캘린더. 지금 응답에는 `week`만 있어요 | 작아요 | 🟦 경윤 (스트릭 UI와 함께) |
 | A6 | 배지 `GET /api/users/me/badges` | 나 화면, 프로필 배지 수 | 규칙 정하기가 먼저예요. 이번에는 자리만 잡아둬요 | ⬜ |
 | — | 친구 기록: `GET /api/rooms/:id/streaks` | 나 화면의 친구 기록 | **있어요** | — |

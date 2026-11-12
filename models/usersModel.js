@@ -24,6 +24,12 @@ async function create({ username, nickname, password_hash }) { // password comes
     }
 }
 
+// change my nickname; false if the user doesn't exist
+async function updateNickname(id, nickname) {
+    const result = await getDb().run(`UPDATE users SET nickname = ? WHERE id = ?`, [nickname, id]);
+    return result.changes > 0;
+}
+
 // statements that remove a room and everything in it (same order as roomsModel.deleteRoom)
 function roomDeleteStatements(room_id) {
     return [
@@ -96,4 +102,4 @@ async function deleteAccount(user_id) {
     return { roomsDeleted, roomsHandedOver };
 }
 
-module.exports = { findById, findByUsername, create, deleteAccount, UsernameTakenError };
+module.exports = { findById, findByUsername, create, updateNickname, deleteAccount, UsernameTakenError };
