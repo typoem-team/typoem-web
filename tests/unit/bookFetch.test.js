@@ -261,6 +261,40 @@ describe("toParagraphs", () => {
         const paras = bf.toParagraphs("“Merely to the illustration of your character,” said she.");
         expect(paras).toHaveLength(1);
     });
+
+    test("turns Gutenberg markup into typography, keeping one paragraph per block", () => {
+        const text = [
+            "You may go--or not. Mr. D---- came.",
+            "/* NIND “My dear friend,\n*/",
+            "/* RIGHT “Hunsford, Kent. */",
+            "------------------------------------------------------------------------",
+            "* * * * *",
+            "* No wasting time.",
+            "qu{ae} fit, C{2}HCl{3}O",
+            "a well-known fact - and 12 1/2 miles",
+        ].join("\n\n");
+        expect(bf.toParagraphs(text).map((p) => p.text)).toEqual([
+            "You may go—or not. Mr. D— came.",
+            "“My dear friend,",
+            "“Hunsford, Kent.",
+            "* * *",
+            "* * * * *",
+            "• No wasting time.",
+            "quæ fit, C₂HCl₃O",
+            "a well-known fact - and 12 1/2 miles",
+        ]);
+    });
+
+    test("cleanMarkup is idempotent (safe to rerun on stored paragraphs)", () => {
+        for (const s of ["go--or", "/* NIND “Hi, */", "-----", "* item", "C{2}", "plain text"]) {
+            const once = bf.cleanMarkup(s);
+            expect(bf.cleanMarkup(once)).toBe(once);
+        }
+    });
+
+    test("a lone /* or */ line becomes empty and is dropped", () => {
+        expect(bf.toParagraphs("Before.\n\n/*\n\nAfter.\n\n*/").map((p) => p.text)).toEqual(["Before.", "After."]);
+    });
 });
 
 // ---------------------------------------------------------------------------
