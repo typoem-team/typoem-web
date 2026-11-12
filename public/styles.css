@@ -870,7 +870,8 @@ html[lang="en"] .landing-invite {
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
-.r-tabs a {
+.r-tabs a,
+.r-tabs button {
   display: grid;
   place-items: center;
   min-width: 44px;
@@ -884,7 +885,8 @@ html[lang="en"] .landing-invite {
   transition: opacity .3s var(--ease), background .3s var(--ease);
 }
 
-.r-tabs a[aria-current="page"] {
+.r-tabs a[aria-current="page"],
+.r-tabs button[aria-pressed="true"] {
   opacity: 1;
   font-weight: 700;
   background: color-mix(in srgb, currentColor 18%, transparent);
@@ -1394,6 +1396,13 @@ html[lang="en"] .landing-invite {
 /* =================================================
    Vocabulary notebook
    ================================================= */
+.vocab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .vocab-list {
   display: grid;
   gap: 12px;
