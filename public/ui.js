@@ -50,6 +50,24 @@
     return div.innerHTML;
   }
 
+  // ---- Korean dictionary meanings (dictionary popup + vocab notebook) ----
+  // A meaning can hold several ' / '-separated parts: one line each, at most 5.
+  function koSenses(entry) {
+    return ((entry && entry.ko) || [])
+      .reduce(function (all, g) { return all.concat(String(g).split(' / ')); }, [])
+      .map(function (t) { return t.replace(/\s*;\s*/g, ', ').trim(); })   // ";" looks like a glitch: show ","
+      .filter(Boolean)
+      .slice(0, 5);
+  }
+
+  // Escaped HTML of one meaning; (..) hints such as "(식사 등을) 하다" get a lighter colour
+  // so the meaning itself stands out.
+  function koHtml(text) {
+    return esc(text).replace(/\((?:[^()]|\([^()]*\))*\)/g, function (g) {
+      return '<span class="d-hint">' + g + '</span>';
+    });
+  }
+
   // ---- Colours ----
   // The colours live in styles.css (:root tokens), so a palette change or dark
   // mode only touches the stylesheet. These read the token at call time; the hex
@@ -421,6 +439,8 @@
 
   window.TypoemUI = {
     esc: esc,
+    koSenses: koSenses,
+    koHtml: koHtml,
     coverColor: coverColor,
     avatarColor: avatarColor,
     avatar: avatar,

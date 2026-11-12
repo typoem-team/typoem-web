@@ -150,16 +150,6 @@
     popupBody.innerHTML = html;
   }
 
-// The data keeps up to three meanings per part of speech, and a meaning can itself hold
-  // several ' / '-separated parts. Show each one on its own line (at most 5 per entry).
-  function koSenses(entry) {
-    return (entry.ko || [])
-      .flatMap((g) => String(g).split(' / '))
-      .map((t) => t.replace(/\s*;\s*/g, ', ').trim())   // ";" looks like a glitch: show ","
-      .filter(Boolean)
-      .slice(0, 5);
-  }
-
   // ---- Render the slim API payload { word, phonetic, definitions[], ko[], koFrom } ----
   function renderEntry(data) {
     currentEntry = data || null;
@@ -179,14 +169,14 @@
       html += '<ul class="dict-ko-list">';
       for (const e of ko.slice(0, 4)) {
         const pos = e.pos ? `<span class="d-pos">${escapeHtml(e.pos)}</span>` : '';
-        const senses = koSenses(e);
+        const senses = UI.koSenses(e);
         if (senses.length > 1) {
           // several meanings: part-of-speech chip, then one numbered line per meaning
           html += `<li class="d-ko-entry">${pos}<ol class="d-ko-senses">`
-            + senses.map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+            + senses.map((t) => `<li>${UI.koHtml(t)}</li>`).join('')
             + '</ol></li>';
         } else {
-          html += `<li class="d-ko-entry">${pos} ${escapeHtml(senses[0] || '')}</li>`;
+          html += `<li class="d-ko-entry">${pos} ${UI.koHtml(senses[0] || '')}</li>`;
         }
       }
       html += '</ul>';

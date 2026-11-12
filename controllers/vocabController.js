@@ -1,5 +1,6 @@
 // controllers/vocabController.js
 const model = require("../models/vocabModel");
+const { tidyEntries } = require("../lib/koGloss");
 
 function parseId(raw) {
   const n = Number(raw);
@@ -27,7 +28,8 @@ function parseKo(text) {
   if (!text) return null;
   try {
     const v = JSON.parse(text);
-    return Array.isArray(v) ? v : null;
+    // saved before lib/koGloss.js existed (or by an old app build): tidy on the way out
+    return Array.isArray(v) ? tidyEntries(v) : null;
   } catch (err) {
     return null;
   }
