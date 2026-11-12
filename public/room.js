@@ -4,7 +4,6 @@
 //   - a floating "메모 N" pill -> sheet with every memo (write · like · edit)
 //   - lines that have notes: dotted underline + a count on the right;
 //     the count or the left margin of a line opens that line's sheet
-//   - highlighter marks, kept on this device only (localStorage)
 //   - opening today's poem checks me in for the streak (GET /today does it on the
 //     server), so there is no "다 읽었어요" button
 //
@@ -43,7 +42,6 @@ let poemDate = null;          // the server's date for this poem (YYYY-MM-DD)
 let memos = [];               // full-poem memos, newest first
 let annotationsByLine = {};   // { line_id: [annotation, ...] }
 let currentLineId = null;     // line whose sheet is open, or null
-let marks = new Set();        // highlighted line ids (this device only)
 let lineOpener = null;        // the button that opened the line view (focus goes back to it)
 
 // =====================================================================
@@ -165,7 +163,6 @@ function showPoem(data) {
   poemDate = data.date;
   memos = data.memos || [];
   indexAnnotations(data.annotations || []);
-  loadMarks();
 
   $('room-name').textContent = (data.room && data.room.name) || '';
   renderPoem();
@@ -179,7 +176,7 @@ function showPoem(data) {
 // A past poem: hide everything that writes, and say why where the forms were.
 function setReadOnly() {
   document.body.classList.add('read-only');
-  ['memo-form', 'annotation-form', 'l-mark', 'l-edit-mine'].forEach((id) => { $(id).hidden = true; });
+  ['memo-form', 'annotation-form', 'l-edit-mine'].forEach((id) => { $(id).hidden = true; });
   ['memo-form', 'annotation-form'].forEach((id) => {
     const note = document.createElement('p');
     note.className = 's-note read-only-note';
@@ -245,7 +242,7 @@ function renderPoem() {
 }
 
 // One poem line: [ margin button ] [ text ] [ note count ]
-//   - margin button -> this line's sheet (notes · highlighter)
+//   - margin button -> this line's sheet (notes)
 //   - text          -> dictionary territory (words wrapped for dict-popup.js)
 //   - count         -> added by updateLine() when the line has notes
 // Blank lines render as spacers.
@@ -255,18 +252,17 @@ function renderLine(line) {
   }
   return `
     <span class="ln" data-line-id="${line.id}">
-      <button type="button" class="mark" aria-label="이 줄에 밑줄 · 메모"></button>
+      <button type="button" class="mark" aria-label="이 줄의 메모"></button>
       <span class="tx">${wrapWords(line.text)}</span>
     </span>`;
 }
 
-// Keep one line's indicators in sync: dotted underline, count, highlighter.
+// Keep one line's indicators in sync: dotted underline, count.
 function updateLine(lineId) {
   const ln = document.querySelector(`.ln[data-line-id="${lineId}"]`);
   if (!ln) return;
   const n = (annotationsByLine[lineId] || []).length;
   ln.classList.toggle('has-cm', n > 0);
-  ln.classList.toggle('marked', marks.has(lineId));
 
   let cm = ln.querySelector('.cm');
   if (n === 0) {
@@ -354,38 +350,6 @@ $('poem-body').addEventListener('click', (e) => {
   openLine(Number(btn.parentNode.dataset.lineId), btn);
 });
 
-// =====================================================================
-//  Highlighter — this device only
-// =====================================================================
-function marksKey() {
-  return `typoem:marks:${ROOM_ID}:${poem.id}`;
-}
-
-function loadMarks() {
-  marks = new Set();
-  if (!poem) return;
-  try {
-    const saved = JSON.parse(localStorage.getItem(marksKey()) || '[]');
-    if (Array.isArray(saved)) saved.forEach((id) => marks.add(Number(id)));
-  } catch (err) { /* nothing saved */ }
-}
-
-function saveMarks() {
-  try {
-    if (marks.size) localStorage.setItem(marksKey(), JSON.stringify(Array.from(marks)));
-    else localStorage.removeItem(marksKey());
-  } catch (err) { /* storage full or unavailable: the mark just won't survive a reload */ }
-}
-
-$('l-mark').addEventListener('click', () => {
-  if (currentLineId == null) return;
-  if (marks.has(currentLineId)) marks.delete(currentLineId);
-  else marks.add(currentLineId);
-  saveMarks();
-  updateLine(currentLineId);
-  $('l-mark').textContent = marks.has(currentLineId) ? '밑줄 지우기' : '밑줄 긋기';
-  UI.haptic();
-});
 
 // =====================================================================
 //  Memo pill + memo sheet (every memo on this poem)
@@ -535,7 +499,7 @@ async function toggleLike(id) {
 }
 
 // =====================================================================
-//  Line sheet (one line's notes · highlighter)
+//  Line sheet (one line's notes)
 // =====================================================================
 function myAnnotation(lineId) {
   return (annotationsByLine[lineId] || []).find((a) => me && a.user_id === me.id) || null;
@@ -547,7 +511,6 @@ function openLine(lineId, opener) {
   currentLineId = lineId;
   $('drawer-line').textContent = lineText(lineId);
   $('annotation-input').value = '';
-  $('l-mark').textContent = marks.has(lineId) ? '밑줄 지우기' : '밑줄 긋기';
   renderAnnotations();
   UI.haptic();
 

@@ -25,8 +25,6 @@
   --on-ink-rgb: 244, 239, 230;
   --sheen-rgb: 255, 255, 255; /* light edge on cards and the memo pill (not on covers) */
   --poem-ink: #2a241d;
-  --mark: #b08a48;           /* highlighter */
-  --mark-soft: rgba(176, 138, 72, .28);
   /* word-range highlighters (marks.js): translucent, so overlaps mix */
   --hl-yellow: rgba(236, 196, 64, .40);
   --hl-pink: rgba(232, 112, 146, .30);
@@ -967,20 +965,6 @@ html[lang="en"] .landing-invite {
   padding: 0;
 }
 
-/* highlighter: a soft marker stroke that draws in from the left */
-.ln .tx {
-  background-image: linear-gradient(transparent 62%, var(--mark-soft) 62%, var(--mark-soft) 94%, transparent 94%);
-  background-repeat: no-repeat;
-  background-size: 0% 100%;
-  transition: background-size .55s var(--ease);
-  -webkit-box-decoration-break: clone;
-          box-decoration-break: clone;
-}
-
-.ln.marked .tx {
-  background-size: 100% 100%;
-}
-
 /* left margin of the line: always there (no hover needed), a faint dot */
 .mark {
   position: absolute;
@@ -1001,10 +985,6 @@ html[lang="en"] .landing-invite {
   border-radius: 50%;
   background: var(--hair);
   transition: background .3s var(--ease);
-}
-
-.ln.marked .mark::after {
-  background: var(--mark);
 }
 
 /* a line with notes: dotted underline + a count on the right */
