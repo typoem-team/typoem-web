@@ -66,29 +66,65 @@ async function loadVocab() {
       return;
     }
 
-    const words = await res.json();
+    words = await res.json();
     status.textContent = '';
 
     if (!Array.isArray(words) || words.length === 0) {
+      words = [];
       list.innerHTML = '';
       empty.hidden = false;
+      sortBar.hidden = true;
       return;
     }
 
-    list.innerHTML = words.map(vocabCard).join('');
-
-    // CC BY-SA: credit Wiktionary whenever one of its meanings is on screen
-    // (the team's own hand-written meanings are marked own and need no credit).
-    const usesWiktionary = words.some((w) => Array.isArray(w.ko) && w.ko.some((e) => !e.own));
-    if (usesWiktionary) {
-      list.insertAdjacentHTML('beforeend',
-        '<p class="d-ko-src vocab-src">한국어 뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>');
-    }
+    sortBar.hidden = false;
+    renderList();
   } catch (err) {
     console.error(err);
     status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
   }
 }
+
+// ---- Draw the cards in the chosen order ----
+function renderList() {
+  const list = document.getElementById('vocab-list');
+  // the server sends newest first; A–Z ignores case
+  const shown = sortBy === 'az'
+    ? words.slice().sort((a, b) => String(a.word).localeCompare(String(b.word), 'en', { sensitivity: 'base' }))
+    : words;
+  list.innerHTML = shown.map(vocabCard).join('');
+
+  // CC BY-SA: credit Wiktionary whenever one of its meanings is on screen
+  // (the team's own hand-written meanings are marked own and need no credit).
+  const usesWiktionary = words.some((w) => Array.isArray(w.ko) && w.ko.some((e) => !e.own));
+  if (usesWiktionary) {
+    list.insertAdjacentHTML('beforeend',
+      '<p class="d-ko-src vocab-src">한국어 뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>');
+  }
+}
+
+// ---- Sort: 최근 저장 / A–Z (remembered on this device) ----
+const SORT_KEY = 'typoem:vocabSort';
+const sortBar = document.getElementById('vocab-sort');
+let words = [];
+let sortBy = 'recent';
+try { if (localStorage.getItem(SORT_KEY) === 'az') sortBy = 'az'; } catch (e) { /* storage may be unavailable */ }
+
+function drawSortBar() {
+  sortBar.querySelectorAll('button').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.dataset.sort === sortBy));
+  });
+}
+drawSortBar();
+
+sortBar.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-sort]');
+  if (!btn || btn.dataset.sort === sortBy) return;
+  sortBy = btn.dataset.sort;
+  try { localStorage.setItem(SORT_KEY, sortBy); } catch (err) { /* this visit only */ }
+  drawSortBar();
+  renderList();
+});
 
 // ---- Delete via event delegation (cards are rendered after this runs) ----
 document.getElementById('vocab-list').addEventListener('click', async (e) => {
