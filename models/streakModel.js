@@ -75,4 +75,13 @@ async function listForRoom(room_id, today) {
     });
 }
 
-module.exports = { checkIn, getSummary, listForRoom, summarize };
+// my check-in dates between two 'YYYY-MM-DD' dates (inclusive), ascending
+async function datesBetween(user_id, from, to) {
+    const rows = await getDb().all(
+        `SELECT date FROM reading_checkins WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC`,
+        [user_id, from, to]
+    );
+    return rows.map((r) => r.date);
+}
+
+module.exports = { checkIn, getSummary, listForRoom, summarize, datesBetween };

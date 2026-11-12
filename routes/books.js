@@ -1,5 +1,6 @@
 const express = require("express");
 const controller = require("../controllers/booksController");
+const historyController = require("../controllers/bookHistoryController");
 const { authenticate } = require("../middleware/authMiddleware");
 
 // Router mounted at /api/books — the shared book catalogue.
@@ -14,9 +15,11 @@ booksRouter.get("/search", controller.searchBooks);
 // authenticate is attached per route (not router.use) so other /api/rooms/* requests
 // passing through this router don't run an extra auth lookup.
 // GET /api/rooms/:id/book   PUT /api/rooms/:id/book   PUT /api/rooms/:id/book/progress
+// GET /api/rooms/:id/books/history
 const roomBooksRouter = express.Router();
 roomBooksRouter.get("/:id/book", authenticate, controller.getRoomBook);
 roomBooksRouter.put("/:id/book", authenticate, controller.setRoomBook);
 roomBooksRouter.put("/:id/book/progress", authenticate, controller.updateProgress);
+roomBooksRouter.get("/:id/books/history", authenticate, historyController.getRoomBookHistory); // History · 소설 탭
 
 module.exports = { booksRouter, roomBooksRouter };

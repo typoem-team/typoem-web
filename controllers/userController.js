@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const model = require('../models/usersModel');
+const badgesModel = require('../models/badgesModel');
+const { today } = require('../lib/dates');
 
 async function getMe(req, res) {
     try{
@@ -55,4 +57,18 @@ async function deleteMe(req, res) {
     }
 }
 
-module.exports = { getMe, updateMe, deleteMe };
+// 배지
+// GET /api/users/me/badges
+// -> { badges: [{ id, name, description, earned, progress, goal }], earned_count }
+// progress is capped at goal, so a bar can be drawn as progress / goal.
+async function getMyBadges(req, res) {
+    try {
+        res.set("Cache-Control", "no-store");
+        return res.status(200).json(await badgesModel.listForUser(req.user.id, today()));
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+}
+
+module.exports = { getMe, updateMe, deleteMe, getMyBadges };
