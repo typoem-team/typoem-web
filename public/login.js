@@ -16,12 +16,12 @@ form.addEventListener('submit', async function (e) {
   const password = document.getElementById('password').value;
 
   if (!username || !password) {
-    showError('Please enter your username and password.');
+    showError('아이디와 비밀번호를 입력해 주세요.');
     return;
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Logging in...';
+  submitBtn.textContent = '로그인하는 중…';
 
   try {
     const res = await fetch('/api/auth/login', {
@@ -34,8 +34,7 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.error || 'Login failed.');
+      throw await authErrorFromResponse(res, '로그인하지 못했어요. 다시 시도해 주세요.');
     }
 
     const data = await res.json();
@@ -44,9 +43,9 @@ form.addEventListener('submit', async function (e) {
 
   } catch (err) {
     console.error('Login error:', err);
-    showError(err.message || 'Something went wrong. Please try again.');
+    showError(authErrorMessage(err));
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Log In';
+    submitBtn.textContent = '로그인';
   }
 });
 

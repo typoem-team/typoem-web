@@ -560,7 +560,7 @@ hr {
 }
 
 /* =================================================
-   Auth pages (landing / login / register stay in English)
+   Auth pages (landing stays in English; login / register are Korean)
    + create-room / join, which reuse the card
    ================================================= */
 .auth-page {
