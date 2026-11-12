@@ -1500,14 +1500,14 @@ html[lang="en"] .landing-invite {
    Home — this week's streak on top, every room below as a card (.room-card).
    The streak's look is step 8 (경윤); this only gives it its place.
    ================================================= */
-.home-streak {
+.streak-slot {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 22px;
 }
 
-.home-streak .week {
+.streak-slot .week {
   flex: 1;
   margin-top: 0;
 }
@@ -1669,6 +1669,45 @@ html[lang="en"] .landing-invite {
   letter-spacing: .06em;
   margin-top: 10px;
   opacity: .85;
+}
+
+/* =================================================
+   나 (me.html) — streak, friends' streaks per room, badges, account
+   ================================================= */
+.me-username {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+
+.me-h {
+  font-size: 15px;
+  margin: 28px 0 10px;
+}
+
+.me-box {
+  padding: 6px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.me-box + .me-box {
+  margin-top: 12px;
+}
+
+.me-room {
+  padding-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.me-account {
+  margin-top: 28px;
 }
 
 /* =================================================
@@ -3278,12 +3317,6 @@ button.book-shelf-item:active .book-cover {
     opacity: 1;
     transform: none;
     transition: transform .3s var(--ease), opacity .2s var(--ease), visibility 0s;
-  }
-
-  /* the nickname dropdown hangs from the fixed navigation */
-  #sheet-me {
-    position: fixed;
-    width: 280px;
   }
 
   #sheet-dict {

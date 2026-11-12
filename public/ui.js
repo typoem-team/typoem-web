@@ -379,41 +379,9 @@
   if (wideMQ.addEventListener) wideMQ.addEventListener('change', wideChanged);
   else if (wideMQ.addListener) wideMQ.addListener(wideChanged);
 
-  // ---- "나": nickname, privacy policy, log out ----
-  // A sheet on phones, a dialog on tablets, a dropdown under the nickname at 1024px+.
-  var meSheet = null;
-  function openMe(anchor) {
-    if (!meSheet) {
-      meSheet = document.createElement('section');
-      meSheet.className = 'sheet';
-      meSheet.id = 'sheet-me';
-      meSheet.dataset.wide = 'popover';
-      meSheet.dataset.align = 'end';
-      meSheet.setAttribute('role', 'dialog');
-      meSheet.setAttribute('aria-label', '나');
-      meSheet.innerHTML =
-        '<span class="handle"></span>' +
-        '<p class="s-title"><b id="nav-user"></b>' +
-        '<span id="nav-username"></span></p>' +
-        '<a class="s-row" href="/privacy.html">개인정보처리방침</a>' +
-        '<button type="button" class="s-row quiet" id="logout-btn">로그아웃</button>';
-      document.body.appendChild(meSheet);
-
-      var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-      // textContent: nickname / username are user input
-      meSheet.querySelector('#nav-user').textContent = (user && user.nickname) || '';
-      meSheet.querySelector('#nav-username').textContent = (user && user.username) ? '@' + user.username : '';
-      meSheet.querySelector('#logout-btn').addEventListener('click', function () {
-        if (typeof logout === 'function') logout();
-      });
-    }
-    openSheet(meSheet, { anchor: anchor });
-  }
-
   // ---- Navigation: bottom tab bar, or the top bar at 1024px+ ----
   // Same element both ways (CSS moves it). It is the first thing in <body>, so
   // the Tab key reaches it first: Typoem · 홈 · 방 · 단어장 · nickname.
-  // ("나" stays a sheet until its page, me.html, exists.)
   var ICONS = {
     today: '<path d="M4 10l8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/>',
     rooms: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c1-3.3 3.3-5 6-5s5 1.7 6 5"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17 14.2c2 .6 3.4 2.2 4 4.8"/>',
@@ -440,19 +408,13 @@
         '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + '방</a>' +
         '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
       '</div>' +
-      '<button type="button" class="tab tab-me" data-tab="me" aria-haspopup="dialog">' + icon('me') +
-        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></button>';
+      '<a class="tab tab-me" data-tab="me" href="/me.html">' + icon('me') +
+        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></a>';
     var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     // textContent: the nickname is user input
     nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '나';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
-    });
-    nav.querySelector('[data-tab="me"]').addEventListener('click', function (e) {
-      // a second click on the nickname closes its dropdown
-      if (meSheet && meSheet.classList.contains('show') && isWide()) { closeSheets(); return; }
-      haptic();
-      openMe(e.currentTarget);
     });
     document.body.insertBefore(nav, document.body.firstChild);
   }
