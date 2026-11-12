@@ -280,9 +280,6 @@ $('room-switch').addEventListener('click', openRooms);
 
 // Crossing 1024px: the deck gains / loses its "+N" card.
 UI.onWideChange(() => { if (room) renderDeck(); });
-document.addEventListener('typoem:rooms', () => {
-  if (rooms.length) openRooms();
-});
 
 $('rooms-list').addEventListener('click', (e) => {
   const row = e.target.closest('.room-row');
@@ -590,8 +587,7 @@ $('h-list').addEventListener('click', (e) => {
   window.TypoemNative.setStatusBar('dark');   // dark status bar text on the paper background
   TypoemStreak.load();           // hides itself on 404
   await loadHome();
-  // deep links from the tab bar / other pages
-  if (window.location.hash === '#rooms' && rooms.length) openRooms();
+  // deep links from other pages
   if (window.location.hash === '#history' && room) {
     if (UI.isWide()) $('sheet-history').scrollIntoView({ block: 'start' });
     else UI.openSheet('sheet-history');
