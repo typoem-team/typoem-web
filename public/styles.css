@@ -815,6 +815,28 @@ html[lang="en"] .landing-invite {
   opacity: .85;
 }
 
+/* the room name is a button: members · invite (invite.js) */
+.r-room {
+  min-width: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: inherit;
+}
+
+.r-room svg {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  opacity: .75;
+}
+
 .r-back,
 .r-bar-space {
   flex: none;

@@ -58,9 +58,6 @@
           </button>
           <div class="avs" id="room-avs"></div>
         </div>
-        <button type="button" class="invite-btn" id="invite-open" aria-haspopup="dialog">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>초대
-        </button>
       </div>
 
       <!-- 방 목록: 시트 / 대화상자 / (1024px+) 방 이름 옆 드롭다운 -->
@@ -76,20 +73,6 @@
           </div>
           <a class="sec" href="/create-room.html">새 방 만들기</a>
         </form>
-      </section>
-
-      <!-- 초대: 시트 / 대화상자 / (1024px+) 바로 보이는 카드 -->
-      <section class="sheet" id="sheet-invite" role="dialog" aria-label="친구 초대" data-wide="inline" data-room-view hidden>
-        <span class="handle"></span>
-        <p class="s-title">친구 초대 <span id="invite-room"></span></p>
-        <div class="code-box"><small>초대 코드</small><p class="code" id="invite-code"></p></div>
-        <div class="sheet-actions">
-          <button type="button" class="sec" id="invite-copy">코드 복사</button>
-          <button type="button" class="pri" id="invite-share">공유하기</button>
-        </div>
-        <p class="s-title s-title-gap">멤버 <span id="member-count"></span></p>
-        <div id="member-list"></div>
-        <div id="room-actions-row" class="room-leave"></div>
       </section>
 
       <!-- 지난 시: 시트 / 대화상자 / (1024px+) 펼쳐진 목록 -->
