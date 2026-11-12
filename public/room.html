@@ -46,12 +46,6 @@
           <p id="status" class="status" role="status"></p>
           <div class="poem" id="poem-body"></div>
         </div>
-
-        <!-- "다 읽었어요": 스트릭 API가 없으면(404) 숨겨요 -->
-        <div class="r-end" id="r-end" hidden>
-          <p>오늘의 시를 끝까지 읽었다면</p>
-          <button type="button" class="finish" id="finish">다 읽었어요</button>
-        </div>
       </div>
 
       <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널. 패널에서는 둘 중 하나만 보여요. -->
@@ -90,7 +84,6 @@
 
   <script src="auth.js"></script>
   <script src="ui.js"></script>
-  <script src="streak.js"></script>
   <script src="room.js"></script>
   <script src="dict-popup.js"></script>
 
