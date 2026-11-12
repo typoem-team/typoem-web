@@ -39,7 +39,8 @@
 | History 화면 (9단계, A2) | ⬜ 🟦 경윤 | |
 | 책 열면 출석 (A3), 시 화면 형광펜 · 주석 (11-b) | ⬜ 🟩 지섭 | |
 | CSS 나누기 (2단계) | ⬜ 🟨 소연, 11/15 제출 뒤 | |
-| 앱: 새 탭 페이지 뒤로 버튼, 바탕색 · 상태 표시줄 색 (3-앱) | ⬜ 🟨 소연 | 앱 저장소 |
+| 앱: 새 탭 페이지 뒤로 버튼 (3-앱) | ✅ 끝 (실기기 확인 남음) | 앱 #6 |
+| 앱: 바탕색 · 상태 표시줄 색 (3-앱) | ⬜ 🟨 소연, Design.md 색 값 뒤 | |
 | 다크 모드 · 테마 전환, 프로필 팝오버(14), 배지(16) | ⬜ 팀 결정 · 색 값 기다림 | |
 
 ---
@@ -246,7 +247,7 @@ public/
 | sync가 무엇을 복사하나 | `public/` 전체를 하위 폴더까지 `www/`로 복사해요 (`cpSync … recursive`). 따로 정한 파일 목록은 없어요 | `css/`, `css/pages/` 같은 새 폴더는 앱에도 그대로 들어가요. sync 목록을 고칠 필요가 없어요 |
 | app-shell 태그를 어디에 넣나 | `www/` **맨 위 폴더의 `.html`에만** `<script src="/app-shell.js">`를 넣어요 (`readdirSync(outDir)`라 하위 폴더는 안 봐요) | **새 페이지(`rooms.html`, `history.html`, `me.html`, `settings.html`)는 반드시 `public/` 바로 아래에 둬요.** `public/pages/` 같은 곳에 두면 앱에서 뒤로 버튼, 공유, 상태 표시줄이 안 돼요 |
 | 웹이 부르는 app-shell 함수 | `TypoemNav.setBackHandler`/`back()` (`room.js:71`, `book.js:722`, `ui.js:420`), `TypoemNative.setStatusBar` (`index.js:8·15`, `room.js:62`, `book.js:282`) | 홈 덱을 지울 때(5단계) `setStatusBar('dark')`는 남겼어요 (`index.js:8`, bfcache로 돌아올 때 `:15`). 시 화면 머리 띠가 어두우면 `room.js:62`의 `'light'`도 유지해요. 시트를 여닫는 새 화면은 `TypoemNav` 규칙을 따라요 |
-| 안드로이드 뒤로 버튼 | `EXIT_PAGES = ['/', '/index.html', '/login.html', '/landing.html']`. 그 밖의 페이지는 `history.back()`, 기록이 없으면 홈으로 가요 | 새 하단 탭 페이지(`rooms.html`, `me.html`, `vocab.html`)에서 뒤로 버튼을 누르면 탭을 거꾸로 돌아가요. (11/13) 앱 저장소에서 탭 페이지는 홈으로, `settings.html`은 `me.html`로 가게 바꾸기로 하고 앱 쪽 작업을 시작해요 |
+| 안드로이드 뒤로 버튼 | (11/12) `EXIT_PAGES = ['/', '/index.html', '/login.html', '/landing.html']`. 그 밖의 페이지는 `history.back()`, 기록이 없으면 홈으로 가요 | 새 하단 탭 페이지(`rooms.html`, `me.html`, `vocab.html`)에서 뒤로 버튼을 누르면 탭을 거꾸로 돌아가요. (11/13, 앱 PR #6) `app-shell.js`의 `BACK_RULES` 상수 하나로 정해요 (`EXIT_PAGES`를 합침): 홈 · 로그인 · 랜딩은 앱 종료, 탭 페이지(`rooms` · `vocab` · `me`)는 홈으로(`location.replace`), `settings.html`은 `history.back()`이고 기록이 없으면 `me.html`. 새 페이지를 더하면 여기에 규칙을 더해요. 앱의 `npm test`(`scripts/test-back-button.mjs`)로 확인해요 |
 | 바탕색 | `app-shell.js:242`의 `PAPER = '#f2eee7'`와 `capacitor.config.json`의 `backgroundColor`, `StatusBar.backgroundColor`에 지금 바탕색이 박혀 있어요 | 시안의 흰 바탕이나 다크 모드로 바꾸면 **앱 쪽 값도 같이 바꿔야 해요.** 다크 모드는 app-shell이 `--bg`를 읽어서 상태 표시줄 색을 정하게 바꾸는 앱 PR이 필요해요 (13단계와 함께) |
 | 깨어나는 중 화면 | `app-shell.js:91-102`가 `var(--bg)`, `var(--ink)`, `var(--ink-2)`, `var(--on-ink)`를 써요 | 토큰 이름을 바꿔도 **이 네 이름은 별칭으로 계속 남겨요** (3-4장의 "기존 토큰은 새 토큰을 가리키게" 규칙) |
 
