@@ -1525,6 +1525,12 @@ html[lang="en"] .landing-invite {
   margin-top: 20px;
 }
 
+.all-rooms {
+  display: flex;
+  width: fit-content;
+  margin: 14px auto 0;
+}
+
 /* ---- Streak ring + this week's dots (hidden while the API is missing) ---- */
 .ring {
   position: relative;

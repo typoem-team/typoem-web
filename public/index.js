@@ -1,5 +1,5 @@
 // public/index.js
-// Home — this week's streak on top, every room below as a card.
+// Home — this week's streak on top, the rooms I opened last below as cards (3 at most).
 // The cards come from rooms.js (the same list as the 방 tab); the streak from streak.js
 // (its look is step 8: keep [data-streak], #streak-week and the ids it fills).
 //

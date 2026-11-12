@@ -32,7 +32,13 @@ async function loadRooms() {
   const list = Array.isArray(rooms) ? rooms : [];   // the server sends them last opened first
   if ($('rooms-count')) $('rooms-count').textContent = list.length ? `${list.length}개` : '';   // the home has no count
   $('empty-state').hidden = list.length > 0;
-  $('rooms-list').innerHTML = list.map((r, i) => UI.roomCard(r, i === 0 && !!r.last_opened_at)).join('');
+  // the home shows only the first few (data-limit); the 방 tab shows them all
+  const limit = Number($('rooms-list').dataset.limit) || list.length;
+  $('rooms-list').innerHTML = list.slice(0, limit).map((r, i) => UI.roomCard(r, i === 0 && !!r.last_opened_at)).join('');
+  if ($('all-rooms')) {
+    $('all-rooms').hidden = list.length <= limit;
+    $('all-rooms').textContent = `모든 방 보기 (${list.length}개)`;
+  }
 }
 
 loadRooms();

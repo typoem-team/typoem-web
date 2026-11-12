@@ -16,7 +16,7 @@
     <p class="app-date" id="today"></p>
   </header>
 
-  <!-- ===== 홈: 위는 스트릭, 아래는 내 방 카드 (마지막에 연 방이 맨 앞) ===== -->
+  <!-- ===== 홈: 위는 스트릭, 아래는 최근 방 카드 3개 (마지막에 연 방이 맨 앞) ===== -->
   <main class="page home" id="home">
 
     <!-- 스트릭 자리: 생김새와 동작은 8단계(경윤). 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
@@ -33,7 +33,9 @@
 
     <p id="status" class="status" role="status"></p>
 
-    <nav id="rooms-list" class="room-cards" aria-label="내 방"></nav>
+    <!-- 최근에 연 방 3개까지. 전부는 방 탭(rooms.html)에서 봐요 -->
+    <nav id="rooms-list" class="room-cards" aria-label="최근 방" data-limit="3"></nav>
+    <a href="/rooms.html" class="link-btn all-rooms" id="all-rooms" hidden></a>
 
     <!-- 방이 없을 때 -->
     <div id="empty-state" class="empty-state" hidden>
