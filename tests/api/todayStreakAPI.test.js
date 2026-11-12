@@ -50,6 +50,14 @@ test("a failed check-in still returns the poem", async () => {
   expect(res.body.poem).toEqual(poem);
 });
 
+test("?checkin=0 (the home cover) returns the poem without checking in", async () => {
+  const res = await request(app).get("/api/rooms/5/today?checkin=0").set(auth);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.poem).toEqual(poem);
+  expect(streakModel.checkIn).not.toHaveBeenCalled();
+});
+
 test("non-members are not checked in", async () => {
   roomsModel.isMember.mockResolvedValue(false);
   const res = await request(app).get("/api/rooms/5/today").set(auth);

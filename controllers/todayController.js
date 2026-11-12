@@ -74,7 +74,9 @@ async function getCandidatePoem(roomSeen) {
 
 
 
-// GET /api/rooms/:id/today
+// GET /api/rooms/:id/today[?checkin=0]
+// ?checkin=0: just the poem, no streak check-in. The home screen uses it to draw
+// the cover; only opening the reading screen counts as reading today's poem.
 async function getToday(req, res) {
     try {
         const room_id = parseId(req.params.id);
@@ -107,15 +109,17 @@ async function getToday(req, res) {
         }
 
         // independent reads -> run in parallel (saves DB round trips).
-        // Opening today's poem also counts as reading it today (streak check-in).
+        // Opening today's poem also counts as reading it today (streak check-in),
+        // unless the caller only wants to show it (?checkin=0, the home cover).
         // A failed check-in must never break the poem itself, so it only logs.
+        const checkIn = req.query.checkin !== "0";
         const [poem, memos, annotations, poem_marks] = await Promise.all([
             poemsModel.findPoemWithLines(poem_id),
             memosModel.listForRoomPoem(room_id, poem_id, req.user.id),
             poemsModel.listAnnotationsForRoomPoem(room_id, poem_id),
             poemMarksModel.listForRoomPoem(room_id, poem_id),
             Promise.resolve()
-                .then(() => streakModel.checkIn(req.user.id, date))
+                .then(() => (checkIn ? streakModel.checkIn(req.user.id, date) : null))
                 .catch((err) => console.error("Streak check-in failed:", err)),
         ]);
 

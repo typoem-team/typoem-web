@@ -97,7 +97,8 @@ async function showRoom(next) {
 
   const id = encodeURIComponent(room.id);
   const [todayRes, historyRes, membersRes] = await Promise.all([
-    authFetch(`/api/rooms/${id}/today`).catch(() => null),
+    // checkin=0: drawing the cover isn't reading it; the reading screen checks in.
+    authFetch(`/api/rooms/${id}/today?checkin=0`).catch(() => null),
     authFetch(`/api/rooms/${id}/history`).catch(() => null),
     authFetch(`/api/rooms/${id}/members`).catch(() => null),
   ]);
