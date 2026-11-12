@@ -149,8 +149,6 @@ function refreshNotes(data) {
 function showPoem(data) {
   $('status').textContent = '';
 
-  // Remember this room: the home screen opens the room you read in last.
-  UI.setLastRoom(ROOM_ID);
   if (READ_ONLY) setReadOnly();
 
   poem = data.poem;

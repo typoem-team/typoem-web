@@ -231,6 +231,10 @@ async function getRoomBook(req, res) {
     try {
         const room = await loadRoomForMember(req, res);
         if (!room) return;
+        // opening the book puts the room first in my room list; never break the book over it
+        await Promise.resolve()
+            .then(() => roomsModel.markOpened(room.id, req.user.id))
+            .catch((err) => console.error("Marking the room opened failed:", err));
 
         let chapterIdx = null;
         if (req.query.chapter !== undefined) {

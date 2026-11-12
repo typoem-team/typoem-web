@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS room_members (
   room_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   role TEXT NOT NULL DEFAULT 'member',
+  last_opened_at TEXT,              -- when this member last opened the room's poem or book (room order)
   UNIQUE(room_id, user_id),
   FOREIGN KEY (room_id) REFERENCES rooms(id),
   FOREIGN KEY (user_id) REFERENCES users(id)

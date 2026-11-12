@@ -139,7 +139,6 @@
         drawRoomAction();
         return;
       }
-      UI.setLastRoom(null);
       UI.toast(isOwner ? '방을 삭제했어요' : '방에서 나왔어요');
       window.location.href = '/rooms.html';   // this room is gone for me
     });

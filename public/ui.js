@@ -14,7 +14,6 @@
 (function () {
   'use strict';
 
-  var LAST_ROOM_KEY = 'typoem:lastRoom';
 
   // ---- Date: always computed in Asia/Seoul, shown as "11/10 Tue" ----
   // (The server's "today" is UTC for now, so it rolls over at 09:00 KST.)
@@ -133,26 +132,8 @@
     return el.animate(frames, Object.assign({ duration: 400, easing: EASE, fill: 'both' }, opts));
   }
 
-  // ---- Last opened room (the home screen opens this room) ----
-  function getLastRoom() {
-    try { return localStorage.getItem(LAST_ROOM_KEY); } catch (e) { return null; }
-  }
-  function setLastRoom(id) {
-    try {
-      if (id == null) localStorage.removeItem(LAST_ROOM_KEY);
-      else localStorage.setItem(LAST_ROOM_KEY, String(id));
-    } catch (e) { /* storage may be unavailable */ }
-  }
-
   // ---- Room cards (rows from GET /api/rooms/mine) ----
-  // The room opened last goes first; the rest keep the server's order (newest first).
-  // shortcut: "last opened" is this device only (typoem:lastRoom), so only that one room moves;
-  // store it on the server (ToDo '방 순서를 서버에 저장') for a full order across devices.
-  function sortRooms(rooms) {
-    var last = getLastRoom();
-    var first = rooms.filter(function (r) { return String(r.id) === last; });
-    return first.concat(rooms.filter(function (r) { return String(r.id) !== last; }));
-  }
+  // The server already sends my rooms in order: last opened first (on any device), then newest.
 
   // PoetryDB titles: "--" is an em dash, _word_ is italics (same rules as the reader)
   function poemTitleHtml(t) {
@@ -470,9 +451,6 @@
     reduceMotion: reduceMotion,
     formatDay: formatDay,
     formatIsoDay: formatIsoDay,
-    getLastRoom: getLastRoom,
-    setLastRoom: setLastRoom,
-    sortRooms: sortRooms,
     roomCard: roomCard,
     poemTitleHtml: poemTitleHtml,
     toast: toast,

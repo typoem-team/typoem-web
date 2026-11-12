@@ -191,6 +191,7 @@ async function initDb() {
   // (the production database), so columns added after the first release go here.
   await addColumnIfMissing(db, 'vocab', 'definition_ko', 'TEXT');
   await addColumnIfMissing(db, 'vocab', 'definition_pos', 'TEXT');
+  await addColumnIfMissing(db, 'room_members', 'last_opened_at', 'TEXT');
 
   return db;
 }
