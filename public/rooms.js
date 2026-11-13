@@ -1,6 +1,7 @@
 // public/rooms.js
-// 방 탭 — every room I'm in, as cards (room name large; today's poem and the book small).
-// The room opened last comes first. A card goes straight to that room's 시 tab.
+// 방 탭 (Rooms) — every room I'm in, as cards (room name large; today's poem and the book small).
+// The room opened last comes first (= the room the home shows, marked '지금 방').
+// Tapping a card picks that room for the home (POST /api/rooms/:id/open) and goes home (안 2, 11/13).
 //
 // Data: GET /api/rooms/mine -> [{ id, name, member_count, today_poem_title, book_title, book_progress }]
 // Depends on auth.js, ui.js (TypoemUI). The home (index.html) loads this file too.
@@ -42,3 +43,17 @@ async function loadRooms() {
 }
 
 loadRooms();
+
+// A card picks the home's room. The link (room.html) stays as the fallback without JS.
+$('rooms-list').addEventListener('click', async (e) => {
+  const card = e.target.closest('.room-card[data-room-id]');
+  if (!card || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const id = card.dataset.roomId;
+  UI.haptic();
+  card.setAttribute('aria-busy', 'true');
+  try {
+    await authFetch(`/api/rooms/${encodeURIComponent(id)}/open`, { method: 'POST' });
+  } catch (err) { /* the home still opens this room from ?room= */ }
+  window.location.href = `/index.html?room=${encodeURIComponent(id)}`;
+});

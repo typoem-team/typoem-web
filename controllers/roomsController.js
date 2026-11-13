@@ -155,4 +155,27 @@ async function leaveRoom(req, res) {
     }
 }
 
-module.exports = { createRoom, listMyRooms, joinRoom, getMembers, deleteRoom, leaveRoom };
+// pick a room for the home screen (Rooms tab -> tap a room)
+// [POST] /api/rooms/:id/open -> 204
+// Records the room as the one I opened last, so the home shows it (on any device).
+async function openRoom(req, res) {
+    try {
+        const room_id = parseId(req.params.id);
+        if (!room_id) return res.status(400).json({ error: "invalid room id" });
+
+        const [room, isMember] = await Promise.all([
+            model.findById(room_id),
+            model.isMember(room_id, req.user.id),
+        ]);
+        if (!room) return res.status(404).json({ error: "Room not found" });
+        if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
+
+        await model.markOpened(room_id, req.user.id);
+        return res.status(204).end();
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+}
+
+module.exports = { createRoom, listMyRooms, joinRoom, getMembers, deleteRoom, leaveRoom, openRoom };

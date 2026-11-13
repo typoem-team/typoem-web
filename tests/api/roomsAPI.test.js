@@ -349,3 +349,36 @@ describe("GET /api/rooms/:id/members", () => {
     expect(roomsModel.listMembers).toHaveBeenCalledWith(5);
   });
 });
+// -----------------------------------------------------------------------------
+// POST /api/rooms/:id/open  (Rooms tab -> the home shows this room)
+// -----------------------------------------------------------------------------
+describe("POST /api/rooms/:id/open", () => {
+  test("204 and records the room as opened last", async () => {
+    roomsModel.findById.mockResolvedValue({ id: 5, name: "r", owner_id: 2 });
+    roomsModel.isMember.mockResolvedValue(true);
+    const res = await request(app).post("/api/rooms/5/open").set("Authorization", `Bearer ${token}`);
+    expect(res.statusCode).toBe(204);
+    expect(roomsModel.markOpened).toHaveBeenCalledWith(5, 1);
+  });
+
+  test("400 on an invalid id", async () => {
+    const res = await request(app).post("/api/rooms/abc/open").set("Authorization", `Bearer ${token}`);
+    expect(res.statusCode).toBe(400);
+  });
+
+  test("404 when the room does not exist", async () => {
+    roomsModel.findById.mockResolvedValue(undefined);
+    roomsModel.isMember.mockResolvedValue(false);
+    const res = await request(app).post("/api/rooms/5/open").set("Authorization", `Bearer ${token}`);
+    expect(res.statusCode).toBe(404);
+    expect(roomsModel.markOpened).not.toHaveBeenCalled();
+  });
+
+  test("403 when not a member", async () => {
+    roomsModel.findById.mockResolvedValue({ id: 5, name: "r", owner_id: 2 });
+    roomsModel.isMember.mockResolvedValue(false);
+    const res = await request(app).post("/api/rooms/5/open").set("Authorization", `Bearer ${token}`);
+    expect(res.statusCode).toBe(403);
+    expect(roomsModel.markOpened).not.toHaveBeenCalled();
+  });
+});

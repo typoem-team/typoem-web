@@ -153,7 +153,7 @@
       : '<span class="rc-none">아직 고른 책이 없어요</span>';
     return '<a class="room-card" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '">' +
         '<span class="rc-top"><b class="rc-name">' + esc(r.name) + '</b>' +
-          (isLast ? '<span class="rc-tag">최근</span>' : '') + '</span>' +
+          (isLast ? '<span class="rc-tag">지금 방</span>' : '') + '</span>' +
         '<span class="rc-line"><span class="rc-label">TODAY</span>' + poem + '</span>' +
         '<span class="rc-line"><span class="rc-label">BOOK</span>' + book + '</span>' +
         '<span class="rc-meta">멤버 ' + esc(r.member_count) + '명</span>' +

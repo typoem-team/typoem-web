@@ -1629,18 +1629,12 @@ html[lang="en"] .landing-invite {
 }
 
 /* =================================================
-   Home — this week's streak on top, every room below as a card (.room-card).
-   The streak's look is below ("Streak", 시안 C).
+   Home (안 2, 11/13) — this week's streak, then one room large (.hr): today's poem and
+   our book as book covers, and the room's History. The streak's look is below ("Streak").
    ================================================= */
 
 .home .empty-state .actions {
   margin-top: 20px;
-}
-
-.all-rooms {
-  display: flex;
-  width: fit-content;
-  margin: 14px auto 0;
 }
 
 /* ---- Streak (streak.js) — 시안 C, docs/design/Design.md ----
@@ -4011,4 +4005,355 @@ button.book-shelf-item:active .book-cover {
   font-family: var(--font-mono);
   font-size: var(--fs-md);
   color: var(--color-ink-2);
+}
+
+/* ============ Home: one room large (index.html, index.js) — 시안 C 안 2 ============ */
+.home-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: calc(var(--safe-top) + 44px);
+}
+.home-head .sw-sum {
+  padding-bottom: 8px;
+}
+.home .streak-slot {
+  margin-bottom: 0;
+}
+
+.hr-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 36px;
+}
+.hr-name {
+  min-width: 0;
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.hr-name b {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-ko-head);
+  font-weight: 600;
+  font-size: 19px;
+}
+.hr-switch {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 22px;
+  border: 1px solid var(--color-line);
+  border-radius: 11px;
+  color: var(--color-ink-2);
+}
+.hr-switch svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hr-people {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+.hr-avs {
+  display: flex;
+}
+.hr-avs i,
+.hr-avs-sm i {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--color-on-ink);
+  font-style: normal;
+  font-weight: 700;
+}
+.hr-avs i {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-bg);
+  font-size: var(--fs-sm);
+}
+.hr-avs i + i {
+  margin-left: -8px;
+}
+.hr-invite {
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  margin-left: -4px;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+}
+.hr-invite svg {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1.5px dashed var(--color-ink-2);
+  border-radius: 50%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+/* two book covers */
+.hr-books {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: 18px;
+}
+.hr-cover {
+  --line: rgba(242, 203, 150, .55);
+  --accent-on-cover: var(--color-accent-warm);
+  position: relative;
+  min-height: 252px;
+  box-sizing: border-box;
+  padding: 20px 16px 10px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-radius: var(--radius-book);
+  background-color: var(--cover-1);   /* the cover stays dark in the dark theme too */
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, .35) 0, rgba(0, 0, 0, .08) 8px, rgba(255, 255, 255, .12) 10px, rgba(255, 255, 255, 0) 16px);
+  box-shadow: var(--shadow-book);
+  color: var(--color-on-ink);
+  text-decoration: none;
+}
+.hr-cover.is-book {
+  --line: rgba(130, 170, 185, .6);
+  --accent-on-cover: var(--color-accent);
+}
+.hr-cover::before {          /* thin inner frame */
+  content: '';
+  position: absolute;
+  inset: 8px 8px 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 3px 6px 6px 3px;
+  pointer-events: none;
+}
+.hr-cover:active {
+  transform: scale(.985);
+}
+.hr-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 1.5px;
+  color: var(--accent-on-cover);
+}
+.hr-title {
+  margin-top: 2px;
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.05;
+  letter-spacing: -.5px;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.hr-title.is-long { font-size: 23px; }
+.hr-title.is-xlong { font-size: 19px; }
+.hr-title.is-empty {
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--color-on-ink-2);
+}
+.hr-bar {
+  margin-top: auto;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .25);
+}
+.hr-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+.hr-foot {
+  margin-top: auto;
+  min-height: 44px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--accent-on-cover);
+}
+.hr-bar + .hr-foot {
+  margin-top: var(--space-2);
+}
+.hr-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-on-ink-2);
+}
+.hr-meta b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--color-on-ink);
+}
+.hr-hint {
+  color: var(--color-on-ink-2);
+}
+.hr-avs-sm {
+  display: flex;
+}
+.hr-avs-sm i {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--cover-1);
+  font-size: var(--fs-2xs);
+}
+.hr-avs-sm i + i {
+  margin-left: -7px;
+}
+.hr-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+.hr-count svg,
+.hr-go {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hr-count svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 1.8;
+}
+.hr-go {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+/* the room's History */
+.hr-history {
+  margin-top: 28px;
+  padding: 16px 16px 4px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.hr-history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-line);
+}
+.hr-history-head h2 {
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 20px;
+}
+.hr-history-tabs {
+  display: flex;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+}
+.hr-history-tabs a {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-2);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.hr-history-tabs a[aria-current] {
+  background: var(--color-ink);
+  color: var(--color-on-fill);
+  font-weight: 700;
+}
+.hr-past {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.hr-date {
+  flex: none;
+  width: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--color-ink-2);
+}
+.hr-past-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.hr-past-main i {
+  font-family: var(--font-text);
+  font-size: 18px;
+}
+.hr-past-main small {
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
+}
+.hr-past .hr-count {
+  color: var(--color-ink-2);
+}
+.hr-empty {
+  padding: 14px 0;
+  font-size: var(--fs-md);
+  color: var(--color-ink-2);
+}
+.hr-all {
+  min-height: var(--touch);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.hr-all::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
 }
