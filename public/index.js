@@ -117,7 +117,7 @@ requireLogin();
     $('hr-avs').setAttribute('role', 'img');
   }
 
-  // 읽은 기록 box: 시 | 책 switch in place; the title and '전체 보기' open the History screen.
+  // History box: 시 | 책 switch in place; the title and '전체 보기' open the History screen.
   var hist = { roomId: null, kind: 'poem', poems: null, books: null };
   var COUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>';
 
@@ -209,8 +209,7 @@ requireLogin();
     // what /rooms/mine already has: draw it now, fill in the rest below
     $('hr-name').textContent = room.name;
     $('hr-invite').dataset.inviteRoom = String(room.id);
-    $('hr-code').textContent = room.invite_code || '';
-    $('hr-invite').setAttribute('aria-label', room.invite_code ? '멤버 및 초대 코드 보기, 초대 코드 ' + room.invite_code : '멤버 및 초대 코드 보기');
+    $('invite-code').textContent = room.invite_code || '';
     drawPoem(room, null);
     drawBook(room);
 
@@ -233,7 +232,8 @@ requireLogin();
       { el: '#hr-poem', text: '매일 새 시 한 편이 와요. 눌러서 읽고 메모를 남겨요.' },
       { el: '#hr-book', text: '방 친구들과 책 한 권을 함께 읽어요.' },
       { el: ['#streak-week', '#streak-summary'], text: '오늘의 시를 열면 읽은 날이 하루씩 쌓여요.' },
-      { el: '#hr-invite', text: '친구를 이 방에 초대해요.' },
+      { el: '#hr-invite', text: '이 방에 함께하는 멤버를 볼 수 있어요.' },
+      { el: '.hr-invite-box', text: '초대 코드를 복사하거나 공유해서 친구를 이 방에 초대해요.' },
       { el: '.tab[data-tab="rooms"]', text: '방이 여러 개면 방 탭에서 다른 방으로 바꿔요.' },
     ]);
   }

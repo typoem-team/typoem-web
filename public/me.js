@@ -18,7 +18,7 @@ const me = getCurrentUser();
 // textContent: nickname / username are user input
 function drawName() {
   const user = getCurrentUser();   // read again: 설정 may have changed the nickname
-  $('me-nick').textContent = (user && user.nickname) || '나';
+  $('me-nick').textContent = (user && user.nickname) || '내 정보';
   $('me-username').textContent = user && user.username ? '@' + user.username : '';
 }
 drawName();
@@ -146,7 +146,13 @@ async function loadBadges() {
 
 TypoemStreak.load();   // hides itself on 404
 loadFriends();
-loadBadges();
+loadBadges().then(() => {
+  TypoemTour.run('me', [
+    { el: '#streak-month', text: '시나 책을 연 날이 달력에 하루씩 표시돼요.' },
+    { el: '#badges-box', text: '꾸준히 읽고 메모를 남기면 배지를 받아요.' },
+    { el: '.s-row[href="/settings.html"]', text: '닉네임 · 화면 테마 · 계정은 설정에서 바꿔요.' },
+  ]);
+});
 
 // Back via the back/forward cache (e.g. from a room or 설정): streak, friends, badges and
 // the nickname may have changed. Same as the home (index.js).

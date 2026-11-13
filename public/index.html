@@ -40,8 +40,7 @@
         <span class="hr-people">
           <span class="hr-avs" id="hr-avs"></span>
           <!-- invite.js가 이 버튼으로 초대 시트를 열어요 (data-invite-room = 방 id) -->
-          <button type="button" class="hr-invite" id="hr-invite" data-invite-room="" aria-label="멤버 및 초대 코드 보기" aria-haspopup="dialog">
-            <span class="hr-code" id="hr-code"></span>
+          <button type="button" class="hr-invite" id="hr-invite" data-invite-room="" aria-label="참여 멤버 보기" aria-haspopup="dialog">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           </button>
         </span>
@@ -63,7 +62,7 @@
 
       <section class="hr-history" aria-labelledby="hr-history-h">
         <div class="hr-history-head">
-          <h2 id="hr-history-h"><a id="hr-history-link" href="#">읽은 기록</a></h2>
+          <h2 id="hr-history-h"><a id="hr-history-link" href="#">History</a></h2>
           <!-- 시 | 소설: 홈 안에서 바꿔 보여줘요. 'History'나 '전체 보기'를 누르면 History 화면으로 가요 -->
           <span class="hr-history-tabs" role="group" aria-label="기록 종류">
             <button type="button" data-kind="poem" aria-pressed="true">시</button>
@@ -72,6 +71,15 @@
         </div>
         <div id="hr-past"></div>
         <a class="hr-all" id="hr-all" href="#" hidden></a>
+      </section>
+
+      <!-- 초대: 이 방의 코드 · 코드 복사 · 공유하기 (invite.js가 버튼을 맡아요) -->
+      <section class="hr-invite-box" aria-label="친구 초대">
+        <div class="code-box"><small>초대 코드</small><p class="code" id="invite-code"></p></div>
+        <div class="sheet-actions">
+          <button type="button" class="sec" id="invite-copy">코드 복사</button>
+          <button type="button" class="pri" id="invite-share">공유하기</button>
+        </div>
       </section>
     </section>
 

@@ -3975,10 +3975,12 @@ button.book-shelf-item:active .book-cover {
   margin: var(--space-2) 0 var(--space-5);
 }
 .hist-title {
-  font-family: var(--font-ko-accent);
+  font-family: var(--font-text);
+  font-style: italic;
   font-weight: 400;
   font-size: var(--fs-h1);
   line-height: 1;
+  letter-spacing: -1px;
   color: var(--color-ink);
 }
 .hist-tabs {
@@ -4374,17 +4376,18 @@ button.book-shelf-item:active .book-cover {
   background: none;
   color: var(--color-ink);
 }
-/* the room's invite code, always on home (small; the sheet behind '+' copies / shares it) */
-.hr-code {
-  margin-right: 6px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-md);
-  font-weight: 500;
-  letter-spacing: .08em;
-  white-space: nowrap;
-  color: var(--color-ink-2);
+/* the room's invite code at the bottom of the home: the sheet's code box, smaller */
+.hr-invite-box {
+  margin-top: var(--space-5);
 }
-.hr-code:empty { display: none; }
+.hr-invite-box .code-box {
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--color-surface);
+}
+.hr-invite-box .code {
+  font-size: min(26px, 8vw);
+}
 .hr-invite svg {
   width: 32px;
   height: 32px;
@@ -4560,7 +4563,8 @@ button.book-shelf-item:active .book-cover {
   border-bottom: 1px solid var(--color-line);
 }
 .hr-history-head h2 {
-  font-family: var(--font-ko-accent);
+  font-family: var(--font-text);
+  font-style: italic;
   font-weight: 400;
   font-size: 20px;
 }
@@ -4698,10 +4702,11 @@ button.book-shelf-item:active .book-cover {
       "head   head"
       "books  streak"
       "books  history"
+      "books  invite"
       "empty  empty";
     /* the cover column is taller than 'this week': the extra height goes to the History row,
        so the History box keeps its place and only grows downwards */
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto 1fr auto;
     column-gap: 48px;
     justify-content: center;
     align-items: start;
@@ -4728,6 +4733,10 @@ button.book-shelf-item:active .book-cover {
   }
   .hr-history {
     grid-area: history;
+    margin-top: 16px;
+  }
+  .hr-invite-box {
+    grid-area: invite;
     margin-top: 16px;
   }
   /* Rooms: 코드로 참여 · 새 방 만들기 in the middle */

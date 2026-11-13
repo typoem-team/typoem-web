@@ -1,7 +1,7 @@
 // public/invite.js
-// Invite sheet: the '+' next to the members on the home (index.html, [data-invite-room] =
-// the home's room id) opens it. (The room header on 시 · 책 no longer opens it, 11/13.) Invite code (copy · share), members, and 방 삭제 (owner) / 나가기 (member).
-// Moved here from the home screen: a room is where you invite people now.
+// Members sheet: the '+' next to the members on the home (index.html, [data-invite-room] =
+// the home's room id) opens it: members, and 방 삭제 (owner) / 나가기 (member).
+// Also runs the home's invite box at the bottom (#invite-code · 코드 복사 · 공유하기, 피드백 11/13).
 //
 // Data (asked for when the sheet opens):
 //   GET    /api/rooms/mine         this room's invite_code and owner (skipped when the home
@@ -35,29 +35,27 @@
     sheet.id = 'sheet-invite';
     sheet.dataset.wide = 'popover';
     sheet.setAttribute('role', 'dialog');
-    sheet.setAttribute('aria-label', '멤버 및 친구 초대');
+    sheet.setAttribute('aria-label', '참여 멤버');
     sheet.innerHTML =
       '<span class="handle"></span>' +
-      '<p class="s-title">친구 초대 <span id="invite-room"></span></p>' +
-      '<div class="code-box"><small>초대 코드</small><p class="code" id="invite-code"></p></div>' +
-      '<div class="sheet-actions">' +
-        '<button type="button" class="sec" id="invite-copy">코드 복사</button>' +
-        '<button type="button" class="pri" id="invite-share">공유하기</button>' +
-      '</div>' +
-      '<p class="s-title s-title-gap">참여 멤버 <span id="member-count"></span></p>' +
+      '<p class="s-title">참여 멤버 <span id="member-count"></span></p>' +
       '<div id="member-list" aria-live="polite"></div>' +
       '<div id="room-actions-row" class="room-leave"></div>';
     document.body.appendChild(sheet);
-    $('invite-copy').addEventListener('click', copyCode);
-    $('invite-share').addEventListener('click', share);
   }
 
   // No share sheet (most desktop browsers): 공유하기 would just copy, so hide it.
-  // In the app navigator.share appears late, so check again on open and after load.
+  // In the app navigator.share appears late, so check again after load.
   function syncShareButton() {
-    if (sheet) $('invite-share').hidden = typeof navigator.share !== 'function';
+    if ($('invite-share')) $('invite-share').hidden = typeof navigator.share !== 'function';
   }
+  syncShareButton();
   window.addEventListener('load', syncShareButton);
+
+  // the home's invite box (code · 코드 복사 · 공유하기); index.js writes the code into #invite-code
+  function homeRoom() {
+    return room || findRoom(window.TypoemHomeRooms, currentRoomId());
+  }
 
   async function open() {
     var id = currentRoomId();
@@ -65,18 +63,15 @@
     if (id !== ROOM_ID) { ROOM_ID = id; room = null; }
     if (!sheet) build();
     if (UI.isWide() && sheet.classList.contains('show')) { UI.closeSheets(); return; }  // second click closes the popover
-    syncShareButton();
-    if (!room) {
-      $('invite-code').textContent = '…';
-      $('member-list').innerHTML = '<p class="s-note">불러오는 중…</p>';
-    }
+    if (!room) $('member-list').innerHTML = '<p class="s-note">불러오는 중…</p>';
     UI.openSheet(sheet, { anchor: opener });
     UI.haptic();
     await load();
   }
 
-  function findRoom(rooms) {
-    return (Array.isArray(rooms) ? rooms : []).find(function (r) { return String(r.id) === String(ROOM_ID); }) || null;
+  function findRoom(rooms, id) {
+    var want = String(id || ROOM_ID);
+    return (Array.isArray(rooms) ? rooms : []).find(function (r) { return String(r.id) === want; }) || null;
   }
 
   async function load() {
@@ -95,14 +90,10 @@
     }
     room = known || findRoom(roomsRes.ok ? await roomsRes.json() : []);
     if (!room || !membersRes.ok) {
-      $('invite-code').textContent = '';
       $('member-list').innerHTML = '<p class="s-note">방 정보를 불러오지 못했어요.</p>';
       $('room-actions-row').innerHTML = '';
       return;
     }
-    // textContent: the room name and code are user / server data
-    $('invite-room').textContent = room.name;
-    $('invite-code').textContent = room.invite_code || '';
     renderMembers(await membersRes.json());
   }
 
@@ -174,9 +165,10 @@
   }
 
   async function share() {
-    if (!room) return;
+    var r = homeRoom();
+    if (!r) return;
     var code = $('invite-code').textContent;
-    var text = '‘' + room.name + '’에서 매일 시 한 편과 책 한 권을 같이 읽어요. Typoem 초대 코드: ' + code;
+    var text = '‘' + r.name + '’에서 매일 시 한 편과 책 한 권을 같이 읽어요. Typoem 초대 코드: ' + code;
     if (navigator.share) {
       try { await navigator.share({ title: 'Typoem', text: text }); } catch (err) { /* cancelled */ }
       return;
@@ -191,4 +183,6 @@
   }
 
   opener.addEventListener('click', open);
+  if ($('invite-copy')) $('invite-copy').addEventListener('click', copyCode);
+  if ($('invite-share')) $('invite-share').addEventListener('click', share);
 })();
