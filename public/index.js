@@ -209,6 +209,8 @@ requireLogin();
     // what /rooms/mine already has: draw it now, fill in the rest below
     $('hr-name').textContent = room.name;
     $('hr-invite').dataset.inviteRoom = String(room.id);
+    $('hr-code').textContent = room.invite_code || '';
+    $('hr-invite').setAttribute('aria-label', room.invite_code ? '친구 초대, 초대 코드 ' + room.invite_code : '친구 초대');
     drawPoem(room, null);
     drawBook(room);
 

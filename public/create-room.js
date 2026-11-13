@@ -6,8 +6,8 @@ requireLogin();
 const form = document.getElementById('createForm');
 const errorBox = document.getElementById('errorBox');
 const submitBtn = document.getElementById('submitBtn');
-const successBox = document.getElementById('successBox');
-const inviteCode = document.getElementById('inviteCode');
+
+backToPrevious(document.getElementById('backLink'));
 
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -48,39 +48,11 @@ form.addEventListener('submit', async function (e) {
 
     const room = await res.json();
 
-    // Show the invite code; hide the form
-    form.classList.add('hidden');
-    inviteCode.textContent = room.invite_code;
-    successBox.classList.remove('hidden');
-
-    // ---- Copy button ----
-    const copyBtn = document.getElementById('copyBtn');
-    const copyFeedback = document.getElementById('copyFeedback');
-
-    copyBtn.addEventListener('click', async function () {
-      try {
-        await navigator.clipboard.writeText(room.invite_code);
-      } catch (err) {
-        const range = document.createRange();
-        range.selectNodeContents(inviteCode);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-        document.execCommand('copy');
-        sel.removeAllRanges();
-      }
-      copyBtn.textContent = '복사했어요';
-      copyFeedback.classList.remove('hidden');
-      setTimeout(function () {
-        copyBtn.textContent = '복사';
-        copyFeedback.classList.add('hidden');
-      }, 5000);
-    });
+    // Straight to the new room's home; its invite code shows there next to the members
+    window.location.href = '/index.html?room=' + encodeURIComponent(room.id);
 
   } catch (err) {
     console.error('Create room error:', err);
-    successBox.classList.add('hidden');
-    form.classList.remove('hidden');  
     showError(userMessage(err));
     submitBtn.disabled = false;
     submitBtn.textContent = '방 만들기';
