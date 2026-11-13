@@ -16,8 +16,12 @@ const $ = (id) => document.getElementById(id);
 const me = getCurrentUser();
 
 // textContent: nickname / username are user input
-$('me-nick').textContent = (me && me.nickname) || '나';
-$('me-username').textContent = me && me.username ? '@' + me.username : '';
+function drawName() {
+  const user = getCurrentUser();   // read again: 설정 may have changed the nickname
+  $('me-nick').textContent = (user && user.nickname) || '나';
+  $('me-username').textContent = user && user.username ? '@' + user.username : '';
+}
+drawName();
 
 // book = the room's current book, or null when it has none
 //        { title, progress: Map(user id -> { progress, finished }) }
@@ -143,3 +147,13 @@ async function loadBadges() {
 TypoemStreak.load();   // hides itself on 404
 loadFriends();
 loadBadges();
+
+// Back via the back/forward cache (e.g. from a room or 설정): streak, friends, badges and
+// the nickname may have changed. Same as the home (index.js).
+window.addEventListener('pageshow', (e) => {
+  if (!e.persisted) return;
+  drawName();
+  TypoemStreak.load();
+  loadFriends();
+  loadBadges();
+});

@@ -8,7 +8,8 @@ async function getMe(req, res) {
     try{
         const user = await model.findById(req.user.id); // provided after checking from middleware
         if(!user) return res.status(404).json({error: "User not found"});
-        res.status(200).json({id: user.id, username: user.username, nickname: user.nickname}); // remove hash password
+        // remove hash password; created_at = sign-up time (UTC 'YYYY-MM-DD HH:MM:SS'), null if unknown
+        res.status(200).json({id: user.id, username: user.username, nickname: user.nickname, created_at: user.created_at ?? null});
     } catch(err){
         console.error(err);
         res.status(500).json({ error: "Server error" });

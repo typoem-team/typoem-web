@@ -1,7 +1,9 @@
 // public/settings.js
-// 설정 — change my nickname, privacy policy, log out, delete my account.
+// 설정 — my profile (top), change my nickname, privacy policy, log out, delete my account.
 //
-// Data: PATCH  /api/users/me  { nickname }  -> { id, username, nickname }
+// Data: GET    /api/users/me  -> { id, username, nickname, created_at }   (profile: 함께한 날)
+//       GET    /api/rooms/mine -> [{ id, name, ... }]                      (profile: 참여한 방)
+//       PATCH  /api/users/me  { nickname }  -> { id, username, nickname }
 //       DELETE /api/users/me  { password }  -> 204 (403: wrong password)
 // Depends on auth.js (authFetch, getCurrentUser, saveAuth, getToken, logout, clearAuth), ui.js (TypoemUI).
 
@@ -14,6 +16,43 @@ const me = getCurrentUser() || {};
 $('nick-input').value = me.nickname || '';
 $('nick-id').textContent = me.username ? `아이디 @${me.username}은 바뀌지 않아요` : '';
 $('logout-btn').addEventListener('click', () => logout());
+
+// ---- Profile card: avatar · nickname · 함께한 날 · 참여한 방 ----
+function showProfileName(nickname) {
+  const name = nickname || me.username || '';
+  $('prof-av').innerHTML = UI.avatar(name);   // UI.avatar escapes
+  $('prof-nick').textContent = name;
+}
+
+// 'YYYY-MM-DD' of a moment in Korea (Typoem's calendar day, like lib/dates.js)
+const seoulFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' });
+const dayNumber = (iso) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return Date.UTC(y, m - 1, d) / 86400000;
+};
+
+// created_at (UTC 'YYYY-MM-DD HH:MM:SS') -> "N일째": the sign-up day is day 1
+function daysTogether(createdAt) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(createdAt || '');
+  if (!m) return null;
+  const joined = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]));
+  const n = dayNumber(seoulFmt.format(new Date())) - dayNumber(seoulFmt.format(joined)) + 1;
+  return Math.max(1, n);
+}
+
+async function loadProfile() {
+  const getJson = (url) => authFetch(url).then((res) => (res.ok ? res.json() : null)).catch(() => null);
+  const [user, rooms] = await Promise.all([getJson('/api/users/me'), getJson('/api/rooms/mine')]);
+  if (user) {
+    showProfileName(user.nickname);
+    const days = daysTogether(user.created_at);
+    if (days) $('prof-days').textContent = `${days}일째`;
+  }
+  if (Array.isArray(rooms)) $('prof-rooms').textContent = `${rooms.length}개`;
+}
+
+showProfileName(me.nickname);
+loadProfile();
 
 // ---- Nickname (same rules as the server: 2-20 characters, no whitespace) ----
 $('nick-form').addEventListener('submit', async (e) => {
@@ -34,6 +73,7 @@ $('nick-form').addEventListener('submit', async (e) => {
     me.nickname = user.nickname;
     const nick = document.querySelector('.tab-me-nick');
     if (nick) nick.textContent = user.nickname;
+    showProfileName(user.nickname);
     UI.toast('닉네임을 바꿨어요');
   } catch (err) {
     UI.toast('네트워크 오류가 났어요. 다시 시도해 주세요');
