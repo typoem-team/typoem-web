@@ -109,7 +109,20 @@ function showPoem(data) {
   renderMemos();                 // the side panel (1024px+) shows the list straight away
   $('memo-pill').hidden = false;
   UI.anim($('r-body'), [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }], { duration: 520 });
-  UI.anim($('memo-pill'), [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, delay: 300 });
+  UI.anim($('memo-pill'), [{ opacity: 0, transform: 'translate(-50%, 14px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 380, delay: 300 })
+    .finished.then(runTour);
+}
+
+// Coach marks, once (tour.js). Today's poem only: a past poem can't be written on.
+function runTour() {
+  if (READ_ONLY) return;
+  const line = '#poem-body .ln:not(.ln-blank)';
+  TypoemTour.run('room', [
+    { el: line, text: '단어를 두 번 톡톡 누르면 뜻이 나와요. 마음에 드는 단어는 단어장에 담아요.' },
+    { el: line, text: '단어를 길게 누르거나 여러 단어를 끌어서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.' },
+    { el: ['#memo-pill', '#r-side'], text: '이 시에 남긴 메모는 여기서 보고, 나도 남겨요.' },
+    { el: '#past-link', text: '지난 시는 History에서 다시 볼 수 있어요.' },
+  ]);
 }
 
 // A past poem: hide everything that writes, and say why where the forms were.

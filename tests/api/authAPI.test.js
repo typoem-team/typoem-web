@@ -121,6 +121,7 @@ describe('POST /api/auth/login', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('token');
     expect(res.body.user).toMatchObject({ username: 'carol', nickname: 'Carol' });
+    expect(res.body.user.created_at).toMatch(/^\d{4}-\d{2}-\d{2}/);   // tour.js: new accounts only
   });
 
   test('400 — missing password', async () => {

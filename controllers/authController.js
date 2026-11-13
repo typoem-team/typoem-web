@@ -54,7 +54,8 @@ async function login(req, res) {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-        res.status(200).json({ token, user: { id: user.id, username: user.username, nickname: user.nickname } });
+        // created_at: the client shows first-run coach marks to new accounts (public/tour.js)
+        res.status(200).json({ token, user: { id: user.id, username: user.username, nickname: user.nickname, created_at: user.created_at } });
     } catch (err) {
         console.error(err);
         res.status(500).json({error:"Server error"});

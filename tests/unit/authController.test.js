@@ -134,7 +134,7 @@ describe('login controller', () => {
   test('200 with token on valid credentials', async () => {
     const hash = await bcrypt.hash('password123', 1);
     model.findByUsername.mockResolvedValue({
-      id: 1, username: 'alice', nickname: 'Alice', password_hash: hash,
+      id: 1, username: 'alice', nickname: 'Alice', password_hash: hash, created_at: '2026-11-13 01:02:03',
     });
     const req = makeReq({ username: 'alice', password: 'password123' });
     const res = makeRes();
@@ -144,7 +144,8 @@ describe('login controller', () => {
     expect(res.status).toHaveBeenCalledWith(200);
     const body = res.json.mock.calls[0][0];
     expect(body).toHaveProperty('token');
-    expect(body.user).toMatchObject({ id: 1, username: 'alice', nickname: 'Alice' });
+    expect(body.user).toMatchObject({ id: 1, username: 'alice', nickname: 'Alice', created_at: '2026-11-13 01:02:03' });
+    expect(body.user).not.toHaveProperty('password_hash');
   });
 
   test('400 when username or password is missing', async () => {

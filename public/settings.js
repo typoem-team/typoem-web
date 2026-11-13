@@ -16,6 +16,10 @@ const me = getCurrentUser() || {};
 $('nick-input').value = me.nickname || '';
 $('nick-id').textContent = me.username ? `아이디 @${me.username}은 바뀌지 않아요` : '';
 $('logout-btn').addEventListener('click', () => logout());
+$('tour-reset').addEventListener('click', () => {
+  TypoemTour.reset();
+  UI.toast('화면을 다시 열면 안내가 나와요');
+});
 
 // ---- Profile card: avatar · nickname · 함께한 날 · 참여한 방 ----
 function showProfileName(nickname) {

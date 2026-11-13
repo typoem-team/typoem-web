@@ -196,7 +196,12 @@ requireLogin();
     window.TypoemHomeRooms = list;   // invite.js ('+') reads the room's code and owner from here
     $('empty-state').hidden = list.length > 0;
     $('home-room').hidden = !list.length;
-    if (!list.length) return;
+    if (!list.length) {
+      TypoemTour.run('home-empty', [
+        { el: '#empty-state .actions', text: '방을 만들거나, 친구에게 받은 초대 코드로 들어가요. 방 친구들과 매일 같은 시를 읽어요.' },
+      ]);
+      return;
+    }
 
     var want = new URLSearchParams(window.location.search).get('room');
     var room = list.find(function (r) { return String(r.id) === String(want); }) || list[0];
@@ -221,6 +226,14 @@ requireLogin();
     window.TypoemNative.sendTodayToWidget(results[0], room.id, streakLoad);   // home screen widget (?checkin=0: the streak is unchanged)
     drawMembers(results[1]);
     setHistory(room, results[2], results[3]);
+    await streakLoad.catch(function () {});   // the week row shows (or hides) itself first
+    TypoemTour.run('home', [
+      { el: '#hr-poem', text: '매일 새 시 한 편이 와요. 눌러서 읽고 메모를 남겨요.' },
+      { el: '#hr-book', text: '방 친구들과 소설 한 권을 함께 읽어요.' },
+      { el: ['#streak-week', '#streak-summary'], text: '오늘의 시를 열면 읽은 날이 하루씩 쌓여요.' },
+      { el: '#hr-invite', text: '친구를 이 방에 초대해요.' },
+      { el: '.hr-name', text: '방이 여러 개면 여기서 다른 방으로 바꿔요.' },
+    ]);
   }
 
   load();

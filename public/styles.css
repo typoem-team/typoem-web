@@ -686,6 +686,55 @@ hr {
   transform: translate(-50%, 0);
 }
 
+/* ---- Coach marks (tour.js): a hole in the scrim around the target + a speech bubble ---- */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 95;               /* over sheets and the toast */
+}
+
+.tour-hole {
+  position: fixed;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 200vmax var(--scrim);
+  pointer-events: none;
+  transition: left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease);
+}
+
+.tour-tip {
+  position: fixed;
+  width: min(300px, calc(100vw - 24px));
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-pop);
+  transition: left .3s var(--ease), top .3s var(--ease);
+}
+
+.tour-text {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.tour-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tour-count {
+  margin-right: auto;
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-hole, .tour-tip { transition: none; }
+}
+
 /* ---- Status line ---- */
 .status {
   text-align: center;
