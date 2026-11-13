@@ -148,6 +148,15 @@ describe("streakModel", () => {
     expect(members[0]).toMatchObject({ id: 1, current: 2, checkedInToday: true });
     expect(members[1]).toMatchObject({ id: 2, current: 1, checkedInToday: false });
   });
+
+  test("listForRoom ignores check-ins of people outside the room", async () => {
+    await streakModel.checkIn(3, "2026-11-11");   // carol is not in room 1
+    const members = await streakModel.listForRoom(1, "2026-11-11");
+
+    expect(members.map((m) => m.id)).toEqual([1, 2]);
+    expect(members[0]).toMatchObject({ id: 1, current: 2, checkedInToday: true });
+    expect(members[1]).toMatchObject({ id: 2, current: 1, checkedInToday: false });
+  });
 });
 
 describe("poemsModel.findOrCreatePoem (batched line inserts)", () => {

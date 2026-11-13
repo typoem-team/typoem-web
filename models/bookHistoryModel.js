@@ -45,20 +45,27 @@ async function progressRows(where, args) {
 // Current book first, then the one I read most recently.
 async function listForRoom(room_id, user_id) {
     const db = getDb();
-    const current = await db.get(`SELECT book_id FROM room_books WHERE room_id = ?`, [room_id]);
-    const rows = await progressRows(`rp.room_id = ?`, [room_id]);
-    const nicknames = new Map(
-        (await db.all(
+    // none of these needs another's answer -> one round trip. The current book comes with its
+    // title, so a current book nobody has opened yet needs no extra lookup afterwards.
+    const [current, rows, members, marks] = await Promise.all([
+        db.get(
+            `SELECT rb.book_id, b.title, b.author
+             FROM room_books rb JOIN books b ON b.id = rb.book_id
+             WHERE rb.room_id = ?`,
+            [room_id]
+        ),
+        progressRows(`rp.room_id = ?`, [room_id]),
+        db.all(
             `SELECT u.id, u.nickname FROM room_members rm JOIN users u ON u.id = rm.user_id WHERE rm.room_id = ?`,
             [room_id]
-        )).map((u) => [u.id, u.nickname])
-    );
-    const markCounts = new Map(
-        (await db.all(
+        ),
+        db.all(
             `SELECT book_id, COUNT(*) AS n FROM book_marks WHERE room_id = ? AND user_id = ? GROUP BY book_id`,
             [room_id, user_id]
-        )).map((r) => [r.book_id, r.n])
-    );
+        ),
+    ]);
+    const nicknames = new Map(members.map((u) => [u.id, u.nickname]));
+    const markCounts = new Map(marks.map((r) => [r.book_id, r.n]));
 
     const books = new Map(); // book_id -> entry
     const entry = (book_id, title, author) => {
@@ -88,10 +95,7 @@ async function listForRoom(room_id, user_id) {
         }
     }
 
-    if (current && !books.has(current.book_id)) {
-        const b = await db.get(`SELECT id, title, author FROM books WHERE id = ?`, [current.book_id]);
-        if (b) entry(b.id, b.title, b.author);
-    }
+    if (current && !books.has(current.book_id)) entry(current.book_id, current.title, current.author);
 
     const list = [...books.values()].map((e) => ({
         ...e,

@@ -69,6 +69,13 @@ describe("GET /api/rooms/:id/books/history", () => {
     expect(historyModel.listForRoom).not.toHaveBeenCalled();
   });
 
+  test("404 (not 403) when the room is missing and I'm not a member — both are read at once", async () => {
+    roomsModel.findById.mockResolvedValueOnce(undefined);
+    roomsModel.isMember.mockResolvedValueOnce(false);
+    expect((await request(app).get("/api/rooms/5/books/history").set(auth)).statusCode).toBe(404);
+    expect(historyModel.listForRoom).not.toHaveBeenCalled();
+  });
+
   test("200 with the room's books for me", async () => {
     const list = [{ book_id: 501, title: "Emma", status: "reading", progress: 50, readers: [] }];
     historyModel.listForRoom.mockResolvedValue(list);
