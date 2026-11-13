@@ -33,6 +33,8 @@ const usersModel = require("../models/usersModel");
 const roomsModel = require("../models/roomsModel");
 const poemsModel = require("../models/poemsModel");
 const booksModel = require("../models/booksModel");
+const wordCache = require("../models/wordCacheModel");
+const { slimify } = require("../controllers/dictionaryController");
 
 // ---------------------------------------------------------------------------
 // data
@@ -281,10 +283,12 @@ function stamp(date, hour, minute) {
     return new Date(t).toISOString().slice(0, 19).replace("T", " ");
 }
 
-function koOf(word) {
+// Korean meanings as the dictionary popup saves them. definitions = the English ones (for the
+// part of speech the server fills in, koDict.fillPos); omit to skip that.
+function koOf(word, definitions) {
     const found = koDict.lookup(word);
     if (!found || !found.entries.length) return null;
-    const ko = found.entries.slice(0, 4)
+    const ko = koDict.fillPos(found.entries, definitions).slice(0, 4)
         .map((e) => ({ pos: String(e.pos || ""), ko: (e.ko || []).slice(0, 3), own: !!e.own }))
         .filter((e) => e.ko.length);
     return ko.length ? JSON.stringify(ko) : null;
@@ -492,11 +496,23 @@ async function seed(db, password) {
         })));
     }
 
-    // 까망's word list, saved the way the dictionary popup saves (Korean meanings only, no English line)
-    await db.batch(VOCAB.map((v, i) => ({
-        sql: `INSERT INTO vocab (user_id, word, phonetic, definition, definition_pos, definition_ko, created_at) VALUES (?, ?, ?, '', NULL, ?, ?)`,
-        args: [uid[OWNER], v.word, v.phonetic, koOf(v.word), stamp(D(v.day), USERS[OWNER].hour, 45 + i)],
-    })));
+    // 까망's word list, saved the way the dictionary popup saves (Korean meanings only, no English line).
+    // English definitions come from the server's word cache, or Free Dictionary when not cached yet.
+    const vocabRows = [];
+    for (const [i, v] of VOCAB.entries()) {
+        let defs = [];
+        const cached = await wordCache.findByWord(v.word);
+        if (cached) defs = JSON.parse(cached.definitions);
+        else {
+            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${v.word}`).catch(() => null);
+            if (r && r.ok) defs = slimify(await r.json()).definitions;
+        }
+        vocabRows.push({
+            sql: `INSERT INTO vocab (user_id, word, phonetic, definition, definition_pos, definition_ko, created_at) VALUES (?, ?, ?, '', NULL, ?, ?)`,
+            args: [uid[OWNER], v.word, v.phonetic, koOf(v.word, defs), stamp(D(v.day), USERS[OWNER].hour, 45 + i)],
+        });
+    }
+    await db.batch(vocabRows);
 
     return passwords;
 }

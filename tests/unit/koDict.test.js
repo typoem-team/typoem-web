@@ -244,3 +244,23 @@ describe('agent nouns do not fall back to a wrong base word', () => {
   );
 });
 
+
+describe('koDict.fillPos', () => {
+  const { fillPos } = require('../../lib/koDict');
+  const def = (partOfSpeech) => ({ partOfSpeech, definition: 'x' });
+
+  test('one Korean entry without pos takes the single English part of speech', () => {
+    expect(fillPos([{ pos: '', ko: ['귀족 계급'] }], [def('noun'), def('noun')]))
+      .toEqual([{ pos: '명사', ko: ['귀족 계급'] }]);
+  });
+
+  test('left as is when it could be wrong or is already there', () => {
+    const blank = [{ pos: '', ko: ['꿀'] }];
+    expect(fillPos(blank, [def('noun'), def('verb')])).toBe(blank);           // English has two kinds
+    expect(fillPos(blank, [])).toBe(blank);                                    // no English (Korean only)
+    const two = [{ pos: '', ko: ['a'] }, { pos: '', ko: ['b'] }];
+    expect(fillPos(two, [def('noun')])).toBe(two);                             // two Korean entries
+    const has = [{ pos: '시어', ko: ['지방'] }];
+    expect(fillPos(has, [def('noun')])).toBe(has);                             // already has one
+  });
+});
