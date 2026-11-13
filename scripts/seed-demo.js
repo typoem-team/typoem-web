@@ -239,15 +239,13 @@ const ROOMS = [
 ];
 
 // 까망's word list: words from the poems whose English (Free Dictionary) and Korean (data/ko_dict.jsonl)
-// meanings both read cleanly in the dictionary popup (checked 11/14). day = the day that poem was read.
+// meanings agree, part of speech included, with the 품사 already in the Korean data (checked 11/14).
+// day = the day that poem was read.
 const VOCAB = [
     { word: "clime", phonetic: "/ˈklaɪm/", day: -5 },          // Ah Sunflower
-    { word: "crimson", phonetic: "/ˈkɹɪmzən/", day: -4 },      // The Sick Rose
     { word: "sorrow", phonetic: "/ˈsɔɹoʊ/", day: -3 },         // To-Morrow
-    { word: "cordially", phonetic: "/ˈkɔːdɪəli/", day: -2 },   // The bee is not afraid of me
     { word: "prithee", phonetic: "/ˈpɹɪði/", day: -2 },        // Summer
     { word: "pedigree", phonetic: "/ˈpɛd.ɪ.ɡɹi/", day: -1 },   // The pedigree of honey
-    { word: "aristocracy", phonetic: "/ˌæ.ɹɪˈstɒk.ɹə.si/", day: -1 },
     { word: "chariot", phonetic: "/ˈt͡ʃæɹɪət/", day: 0 },       // There is no frigate like a book
 ];
 
