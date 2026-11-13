@@ -1,22 +1,32 @@
 // public/streak.js
-// Reading streak: the ring (days in a row) and this week's dots on the home
-// screen, and the check-in behind the "다 읽었어요" button.
+// Reading streak (시안 C, docs/design/Design.md):
+//   - home: this week as seven day circles (#streak-week) with "NOV · WEEK 46" and "N일째 이어 읽는 중"
+//   - 나: the big number (#streak-count), the longest streak, and this month's calendar (#streak-month)
+// A day counts when I open a poem or a book that day (the server checks me in).
 //
-// The streak API is being built by another teammate. Until it exists the
-// server answers 404, and this file then hides the streak UI completely —
-// no made-up numbers.
+// API (controllers/streakController.js):
+//   GET  /api/streak[?month=YYYY-MM] -> { current, longest, checkedInToday, week: ["2026-11-09", ...],
+//                                         month?: "2026-11", days?: ["2026-11-01", ...] }
+//   POST /api/streak/checkin         -> the same without month/days
+// If the API fails, the streak UI stays hidden: no made-up numbers.
 //
-// ASSUMED API (not in the server yet):
-//   GET  /api/streak          -> { current, longest, checkedInToday, week: ["2026-11-09", ...] }
-//   POST /api/streak/checkin  -> the same shape, after marking today as read
-//   `week` lists the dates (YYYY-MM-DD) read in the current week.
-//
-// Depends on auth.js (authFetch). Dates are computed in Asia/Seoul.
+// Elements (all optional): [data-streak] wrappers, #streak-week, #streak-week-label, #streak-summary,
+// #streak-count, #streak-sub, #streak-month.
+// Depends on auth.js (authFetch). Dates are Korea calendar days.
 
 (function () {
   'use strict';
 
   var state = null;        // last good response, or null when unavailable
+  var days = null;         // this month's read days (only when #streak-month is on the page)
+
+  var DOW = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  var DOW_KO = ['월', '화', '수', '목', '금', '토', '일'];
+  var MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  var MONTH = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
+    'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+
+  function $(id) { return document.getElementById(id); }
 
   // ---- Asia/Seoul calendar helpers ----
   function seoulToday() {
@@ -25,70 +35,127 @@
       timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
     }).format(new Date());
   }
-
-  // The seven dates (Mon..Sun) of the week that contains `iso`.
-  function weekOf(iso) {
+  function utc(iso) {
     var p = iso.split('-').map(Number);
-    var d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+    return new Date(Date.UTC(p[0], p[1] - 1, p[2] || 1));
+  }
+  function iso(d) { return d.toISOString().slice(0, 10); }
+
+  // The seven dates (Mon..Sun) of the week that contains `day`.
+  function weekOf(day) {
+    var d = utc(day);
     var fromMonday = (d.getUTCDay() + 6) % 7;      // Mon = 0 ... Sun = 6
-    var days = [];
+    var out = [];
     for (var i = 0; i < 7; i++) {
       var x = new Date(d);
       x.setUTCDate(d.getUTCDate() - fromMonday + i);
-      days.push(x.toISOString().slice(0, 10));
+      out.push(iso(x));
     }
-    return days;
+    return out;
+  }
+
+  // ISO week number (weeks start on Monday)
+  function isoWeek(day) {
+    var d = utc(day);
+    d.setUTCDate(d.getUTCDate() + 3 - ((d.getUTCDay() + 6) % 7));   // Thursday of this week
+    var jan4 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+    return 1 + Math.round(((d - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7);
   }
 
   function valid(data) {
     return data && typeof data.current === 'number' && Array.isArray(data.week);
   }
 
-  // ---- Rendering ----
-  // Elements (all optional): [data-streak] wrappers, #streak-count,
-  // #streak-bar (svg circle r=23), #streak-ring, #streak-week
-  var R = 23;
-  var CIRC = 2 * Math.PI * R;
-
   function setHidden(hidden) {
     document.querySelectorAll('[data-streak]').forEach(function (el) { el.hidden = hidden; });
+  }
+
+  function dayLabel(d, read, today) {
+    var x = utc(d);
+    return (x.getUTCMonth() + 1) + '월 ' + x.getUTCDate() + '일 ' + DOW_KO[(x.getUTCDay() + 6) % 7] + '요일' +
+      (d === today ? ', 오늘' : '') + (read ? ', 읽음' : (d > today ? '' : ', 안 읽음'));
+  }
+
+  // ---- Rendering ----
+  function renderWeek(today) {
+    var el = $('streak-week');
+    if (!el) return;
+    var read = {};
+    state.week.forEach(function (d) { read[String(d).slice(0, 10)] = true; });
+    el.setAttribute('role', 'list');
+    el.innerHTML = weekOf(today).map(function (d, i) {
+      var cls = 'sw-day' + (read[d] ? ' is-read' : '') + (d === today ? ' is-today' : '') + (d > today ? ' is-future' : '');
+      return '<div class="' + cls + '" role="listitem" aria-label="' + dayLabel(d, read[d], today) + '">' +
+          '<span class="sw-dow" aria-hidden="true">' + DOW[i] + '</span>' +
+          '<span class="sw-num" aria-hidden="true">' + utc(d).getUTCDate() + '</span>' +
+          '<i class="sw-dot" aria-hidden="true"></i>' +
+        '</div>';
+    }).join('');
+
+    var label = $('streak-week-label');
+    if (label) label.textContent = MON[utc(today).getUTCMonth()] + ' · WEEK ' + isoWeek(today);
+  }
+
+  function renderSummary() {
+    var sum = $('streak-summary');
+    if (sum) {
+      sum.textContent = state.current > 0
+        ? state.current + '일째 이어 읽는 중'
+        : '오늘 시나 책을 열면 시작돼요';
+    }
+    var count = $('streak-count');
+    if (count) {
+      count.textContent = state.current;
+      count.setAttribute('aria-label', state.current + '일째 이어 읽는 중');
+    }
+    var sub = $('streak-sub');
+    if (sub) {
+      sub.innerHTML = '가장 길게 이은 기록 <b>' + (state.longest || 0) + '</b>일 · ' +
+        (state.checkedInToday ? '오늘 읽음' : '오늘은 아직이에요');
+    }
+  }
+
+  function renderMonth(today) {
+    var el = $('streak-month');
+    if (!el || !days) return;
+    var read = {};
+    days.forEach(function (d) { read[String(d).slice(0, 10)] = true; });
+    if (state.checkedInToday) read[today] = true;
+
+    var first = utc(today.slice(0, 7) + '-01');
+    var y = first.getUTCFullYear(), m = first.getUTCMonth();
+    var last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    var lead = (first.getUTCDay() + 6) % 7;            // empty cells before the 1st (Mon first)
+    var count = Object.keys(read).filter(function (d) { return d.slice(0, 7) === today.slice(0, 7); }).length;
+
+    var cells = '';
+    for (var i = 0; i < lead; i++) cells += '<span class="sm-cell is-empty" aria-hidden="true"></span>';
+    for (var n = 1; n <= last; n++) {
+      var d = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(n).padStart(2, '0');
+      var cls = 'sm-cell' + (read[d] ? ' is-read' : '') + (d === today ? ' is-today' : '') + (d > today ? ' is-future' : '');
+      cells += '<span class="' + cls + '" role="listitem" aria-label="' + dayLabel(d, read[d], today) + '">' + n + '</span>';
+    }
+
+    el.innerHTML =
+      '<div class="sm-head"><span>' + MONTH[m] + ' ' + y + '</span><span>읽은 날 ' + count + '</span></div>' +
+      '<div class="sm-grid sm-dows" aria-hidden="true">' + DOW.map(function (w) { return '<span>' + w[0] + '</span>'; }).join('') + '</div>' +
+      '<div class="sm-grid" role="list" aria-label="' + (m + 1) + '월에 읽은 날">' + cells + '</div>';
   }
 
   function render() {
     if (!state) { setHidden(true); return; }
     setHidden(false);
-
-    var count = document.getElementById('streak-count');
-    if (count) count.textContent = state.current;
-
-    var ring = document.getElementById('streak-ring');
-    if (ring) ring.setAttribute('aria-label', '연속 ' + state.current + '일');
-
-    var bar = document.getElementById('streak-bar');
-    if (bar) {
-      bar.style.strokeDasharray = CIRC;
-      // the ring fills over one week
-      bar.style.strokeDashoffset = CIRC * (1 - Math.min(state.current, 7) / 7);
-    }
-
-    var week = document.getElementById('streak-week');
-    if (week) {
-      var today = seoulToday();
-      var read = {};
-      state.week.forEach(function (d) { read[String(d).slice(0, 10)] = true; });
-      var letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-      week.innerHTML = weekOf(today).map(function (d, i) {
-        var cls = (read[d] ? 'on' : '') + (d === today ? ' today' : '');
-        return '<div class="' + cls.trim() + '"><span>' + letters[i] + '</span><i></i></div>';
-      }).join('');
-    }
+    var today = seoulToday();
+    renderWeek(today);
+    renderSummary();
+    renderMonth(today);
   }
 
   // ---- API ----
   async function request(path, method) {
     try {
       var res = await authFetch(path, { method: method });
-      if (!res.ok) return null;                 // 404 until the API exists
+      if (!res.ok) return null;
       var data = await res.json();
       return valid(data) ? data : null;
     } catch (err) {
@@ -97,8 +164,12 @@
   }
 
   // Load the streak and draw it. Resolves to the state, or null when hidden.
+  // A page with #streak-month also gets this month's read days.
   async function load() {
-    state = await request('/api/streak', 'GET');
+    var path = '/api/streak';
+    if ($('streak-month')) path += '?month=' + seoulToday().slice(0, 7);
+    state = await request(path, 'GET');
+    days = state && Array.isArray(state.days) ? state.days : days;
     render();
     return state;
   }

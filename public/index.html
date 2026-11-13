@@ -19,16 +19,13 @@
   <!-- ===== 홈: 위는 스트릭, 아래는 최근 방 카드 3개 (마지막에 연 방이 맨 앞) ===== -->
   <main class="page home" id="home">
 
-    <!-- 스트릭 자리: 생김새와 동작은 8단계(경윤). 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
-    <section class="streak-slot" aria-label="읽은 날" data-streak hidden>
-      <div class="streak" data-streak hidden>
-        <div class="ring" id="streak-ring" role="img">
-          <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="streak-bar" cx="26" cy="26" r="23"/></svg>
-          <b id="streak-count"></b>
-        </div>
-        <p class="ring-cap">일 연속</p>
+    <!-- 스트릭: 이번 주 7일 (streak.js, 시안 C). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
+    <section class="streak-slot sw" aria-labelledby="streak-week-label" data-streak hidden>
+      <div class="sw-head">
+        <span class="sw-label" id="streak-week-label">이번 주</span>
+        <span class="sw-sum" id="streak-summary"></span>
       </div>
-      <div class="week" id="streak-week" aria-label="이번 주 읽은 날" data-streak hidden></div>
+      <div class="sw-days" id="streak-week"></div>
     </section>
 
     <p id="status" class="status" role="status"></p>
