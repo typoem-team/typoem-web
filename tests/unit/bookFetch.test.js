@@ -214,6 +214,13 @@ describe("isHeading", () => {
 // toParagraphs
 // ---------------------------------------------------------------------------
 describe("toParagraphs", () => {
+    test("numeral and title on two lines is one heading (The Time Machine)", () => {
+        expect(bf.toParagraphs(" I.\n Introduction\n\nThe Time Traveller was\nspeaking.")).toEqual([
+            { text: "I. Introduction", heading: true },
+            { text: "The Time Traveller was speaking.", heading: false },
+        ]);
+    });
+
     test("joins wrapped lines, collapses spaces and removes _emphasis_", () => {
         const paras = bf.toParagraphs("It was  the _best_\nof times.\n\n\n  Second   one.  ");
         expect(paras).toEqual([
@@ -331,6 +338,20 @@ describe("splitChapters", () => {
     test("bare numerals are still chapters when the book has no numbered titles", () => {
         const { chapters } = bf.splitChapters([H("PART I"), H("I."), P("a"), H("II."), P("b")]);
         expect(chapters.map((c) => c.title)).toEqual(["PART I — I.", "II."]);
+    });
+
+    test("no headings at all: unnumbered ALL-CAPS titles become chapters, signatures don't", () => {
+        const { chapters } = bf.splitChapters([
+            P("STORY OF THE DOOR"), P("a"), P("SEARCH FOR MR. HYDE"), P("b"), P("HASTIE LANYON."),
+            P("“HENRY JEKYLL.”"), P("THE LAST NIGHT"), P("c"),
+        ]);
+        expect(chapters.map((c) => c.title)).toEqual(["STORY OF THE DOOR", "SEARCH FOR MR. HYDE", "THE LAST NIGHT"]);
+        expect(chapters[1].paragraphs).toEqual(["b", "HASTIE LANYON.", "“HENRY JEKYLL.”"]);
+    });
+
+    test("ALL-CAPS lines are not chapters when the book has real headings", () => {
+        const { chapters } = bf.splitChapters([H("CHAPTER I."), P("a"), P("THE END OF IT"), P("b")]);
+        expect(chapters).toEqual([{ title: "CHAPTER I.", paragraphs: ["a", "THE END OF IT", "b"] }]);
     });
 
     test("skips a table of contents when the first heading appears again", () => {
