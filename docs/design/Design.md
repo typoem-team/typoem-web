@@ -38,7 +38,27 @@
 - `#82AAB9`와 `#F2CB96`은 흰 바탕 위 **글자색으로 쓰지 않아요** (대비가 낮아요). 어두운 바탕 위 글자나 채우기로만 써요. 흰 바탕 위 강조 글자는 `--color-accent-text`.
 - 아바타 색은 rose · line(민트) · warm · accent 네 가지를 돌려 써요. 글자는 `--color-ink`.
 - 옛 이름(`--bg`, `--ink`, `--ink-2`, `--on-ink`, `--accent` …)은 새 값을 가리켜요. 앱(`typoem-app/app-shell.js`)이 읽으니 지우지 않아요.
-- 다크 모드 값은 아직 없어요. 정해지면 이 표에 한 칸을 더하고 `:root[data-theme="dark"]`에 같은 이름으로 넣어요.
+- 다크 모드: 이름은 그대로, 값만 바꿔요 (`:root[data-theme="dark"]`, 기기 설정이면 `prefers-color-scheme`). `theme.js`가 `<html data-theme>`를 붙여요.
+
+### 다크 값
+
+| 토큰 | 다크 값 | 메모 |
+|---|---|---|
+| `--color-bg` | `#161E20` | |
+| `--color-surface` | `#1F2A2D` | |
+| `--color-line` | `#2E3D40` | |
+| `--color-line-dashed` | `#4A5E60` | |
+| `--color-ink` | `#E6EEEA` | 글자. ink로 채운 버튼은 밝아져요 → 그 위 글자는 `--button-ink #28383C` |
+| `--color-ink-2` | `#A9BCBA` | |
+| `--color-ink-3` | `#7F9493` | |
+| `--color-on-ink` | `#FFFFFF` | 그대로: 표지 · 아바타 · 시 머리 띠 위 글자 |
+| `--color-accent` | `#82AAB9` | 그대로 |
+| `--color-accent-text` | `#9CC3D1` | 어두운 바탕 위 링크 |
+| `--color-accent-warm` / `-rose` | 그대로 | |
+| `--color-danger` | `#E08A7E` | 어두운 바탕에서 읽히게 밝게 |
+| `--color-highlight` | `rgba(236,196,64,.30)` | |
+| `--color-scrim` | `rgba(0,0,0,.55)` | |
+| 표지 색 `--cover-1…7` | 그대로 | |
 
 ## 2. 글꼴
 

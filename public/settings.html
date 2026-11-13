@@ -8,6 +8,7 @@
 
   <!-- App stylesheet -->
   <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
 </head>
 <body data-tab="me">
 
@@ -16,11 +17,22 @@
     <p class="app-date" id="today"></p>
   </header>
 
-  <!-- 설정: 닉네임 · 계정(개인정보처리방침, 로그아웃, 계정 삭제). 테마 전환은 다크 색 값이 정해지면 더해요 (13단계) -->
+  <!-- 설정: 테마(라이트 · 다크 · 기기 설정) · 닉네임 · 정보(출처 · 버전) · 계정(개인정보처리방침, 로그아웃, 계정 삭제) -->
   <main class="page">
     <div class="page-headline">
       <a href="/me.html" class="link-btn back-link">&larr; 나</a>
       <h1>설정</h1>
+    </div>
+
+    <!-- 테마: theme.js가 [data-theme-choice] 버튼을 이어요. 이 기기에만 저장돼요 -->
+    <h2 class="me-h" id="theme-h">화면</h2>
+    <div class="me-box set-theme">
+      <span class="set-theme-label">테마</span>
+      <div class="r-tabs theme-tabs" role="radiogroup" aria-labelledby="theme-h">
+        <button type="button" role="radio" data-theme-choice="light" aria-checked="true">라이트</button>
+        <button type="button" role="radio" data-theme-choice="dark" aria-checked="false">다크</button>
+        <button type="button" role="radio" data-theme-choice="system" aria-checked="false">기기 설정</button>
+      </div>
     </div>
 
     <h2 class="me-h">닉네임</h2>
@@ -32,6 +44,19 @@
       </div>
       <p class="me-username" id="nick-id"></p>
     </form>
+
+    <h2 class="me-h">정보</h2>
+    <div class="me-box">
+      <details class="s-row set-credits">
+        <summary>출처 및 라이선스</summary>
+        <dl>
+          <dt>뜻</dt><dd>위키낱말사전 (CC BY-SA 4.0)</dd>
+          <dt>시 · 책</dt><dd>퍼블릭 도메인 (Project Gutenberg, PoetryDB)</dd>
+          <dt>글꼴</dt><dd>SIL Open Font License</dd>
+        </dl>
+      </details>
+      <div class="s-row set-version">버전 <span>1.0</span></div>
+    </div>
 
     <h2 class="me-h">계정</h2>
     <div class="me-box">

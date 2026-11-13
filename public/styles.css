@@ -20,6 +20,7 @@
   --color-ink-3: #7c8f91;        /* placeholders, inactive tabs (large text / icons only) */
   --color-on-ink: #ffffff;
   --color-on-ink-2: #ddebe4;     /* secondary text on dark */
+  --color-on-fill: #ffffff;      /* text on an ink-filled button / chip / today circle (dark: dark text) */
   --color-accent: #82aab9;       /* book, progress, current-tab dot. Fills only: too light for text on white */
   --color-accent-text: #3f6e7e;  /* links and accent text on white (contrast 5.4:1) */
   --color-accent-warm: #f2cb96;  /* today's poem, quoted line, owner chip */
@@ -105,6 +106,83 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --shadow-card: 0 1px 0 rgba(var(--sheen-rgb), .8) inset, 0 8px 18px -14px rgba(var(--ink-rgb), .4);
   --shadow-sheet: 0 -10px 40px -10px rgba(var(--ink-rgb), .35);
+}
+
+/* ---- Dark (docs/design/Design.md 1장). theme.js sets <html data-theme>:
+   'dark' always, 'system' when the device is dark. Only values change; no structure here. ---- */
+:root[data-theme="dark"] {
+  --color-bg: #161e20;
+  --color-surface: #1f2a2d;
+  --color-line: #2e3d40;
+  --color-line-dashed: #4a5e60;
+  --color-ink: #e6eeea;
+  --color-ink-2: #a9bcba;
+  --color-ink-3: #7f9493;
+  --color-on-ink: #ffffff;          /* still white: text on covers, avatars and the reader band */
+  --color-on-ink-2: #ddebe4;
+  --color-accent: #82aab9;
+  --color-accent-text: #9cc3d1;
+  --color-accent-warm: #f2cb96;
+  --color-accent-rose: #e3a59d;
+  --color-danger: #e08a7e;
+  --color-highlight: rgba(236, 196, 64, .30);
+  --color-scrim: rgba(0, 0, 0, .55);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, .5);
+  --shadow-book: 0 14px 22px -12px rgba(0, 0, 0, .8), 0 2px 4px rgba(0, 0, 0, .4);
+
+  --bg-rgb: 22, 30, 32;
+  --surface-rgb: 31, 42, 45;
+  --ink-rgb: 0, 0, 0;              /* shadows and scrims stay dark */
+  --hair-rgb: 46, 61, 64;
+  --accent-rgb: 156, 195, 209;
+  --on-ink-rgb: 255, 255, 255;
+  --sheen-rgb: 46, 61, 64;          /* no bright edge on cards */
+  --poem-ink: #e6eeea;
+  --color-on-fill: #28383c;         /* ink fills are light in dark, so their text is dark */
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --color-bg: #161e20;
+    --color-surface: #1f2a2d;
+    --color-line: #2e3d40;
+    --color-line-dashed: #4a5e60;
+    --color-ink: #e6eeea;
+    --color-ink-2: #a9bcba;
+    --color-ink-3: #7f9493;
+    --color-on-ink: #ffffff;          /* still white: text on covers, avatars and the reader band */
+    --color-on-ink-2: #ddebe4;
+    --color-accent: #82aab9;
+    --color-accent-text: #9cc3d1;
+    --color-accent-warm: #f2cb96;
+    --color-accent-rose: #e3a59d;
+    --color-danger: #e08a7e;
+    --color-highlight: rgba(236, 196, 64, .30);
+    --color-scrim: rgba(0, 0, 0, .55);
+    --shadow-pop: 0 12px 32px rgba(0, 0, 0, .5);
+    --shadow-book: 0 14px 22px -12px rgba(0, 0, 0, .8), 0 2px 4px rgba(0, 0, 0, .4);
+
+    --bg-rgb: 22, 30, 32;
+    --surface-rgb: 31, 42, 45;
+    --ink-rgb: 0, 0, 0;              /* shadows and scrims stay dark */
+    --hair-rgb: 46, 61, 64;
+    --accent-rgb: 156, 195, 209;
+    --on-ink-rgb: 255, 255, 255;
+    --sheen-rgb: 46, 61, 64;          /* no bright edge on cards */
+    --poem-ink: #e6eeea;
+    --color-on-fill: #28383c;         /* ink fills are light in dark, so their text is dark */
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+  }
 }
 
 /* ============ Fonts (self-hosted, SIL OFL — see public/fonts/<family>/OFL.txt) ============ */
@@ -240,7 +318,7 @@ button:disabled {
   padding: 12px 26px;
   border-radius: 999px;
   background: var(--ink);
-  color: var(--on-ink);
+  color: var(--color-on-fill);
   font-family: var(--ko);
   font-size: 14.5px;
   text-align: center;
@@ -553,7 +631,7 @@ hr {
   padding: 10px 16px;
   border-radius: 999px;
   background: var(--ink);
-  color: var(--on-ink);
+  color: var(--color-on-fill);
   font-size: 13px;
   pointer-events: none;
   transition: opacity .3s var(--ease), transform .3s var(--ease);
@@ -1090,7 +1168,7 @@ html[lang="en"] .landing-invite {
   padding: 0 5px;
   border-radius: 10px;
   background: var(--accent);
-  color: var(--on-ink);
+  color: var(--color-on-fill);
   font: 600 10.5px/19px system-ui, sans-serif;
   text-align: center;
   box-shadow: 0 4px 8px -4px rgba(var(--accent-rgb), .6);
@@ -1633,7 +1711,7 @@ html[lang="en"] .landing-invite {
 }
 .sw-day.is-today .sw-num {
   background: var(--color-ink);
-  color: var(--color-on-ink);
+  color: var(--color-on-fill);
 }
 .sw-day.is-future .sw-num {
   border: 1px dashed var(--color-line-dashed);
@@ -1727,7 +1805,7 @@ html[lang="en"] .landing-invite {
 }
 .sm-cell.is-today {
   background: var(--color-ink);
-  color: var(--color-on-ink);
+  color: var(--color-on-fill);
 }
 .sm-cell.is-future {
   opacity: .55;
@@ -1922,7 +2000,7 @@ html[lang="en"] .landing-invite {
 
 .pri {
   background: var(--ink);
-  color: var(--on-ink);
+  color: var(--color-on-fill);
 }
 
 .sec {
@@ -2058,7 +2136,7 @@ textarea.field:focus {
   padding: 2px 9px;
   border-radius: 999px;
   background: var(--ink);
-  color: var(--on-ink);
+  color: var(--color-on-fill);
   font-size: 11px;
 }
 
@@ -2259,7 +2337,7 @@ textarea.field:focus {
 .book-btn.book-btn-pri,
 .book-btn.book-btn-pri:hover {
   background: var(--ink, #1f1b16);
-  color: var(--on-ink, #f4efe6);
+  color: var(--color-on-fill);
   border-radius: 999px;
   padding: 11px 22px;
   font-size: 14px;
@@ -2267,7 +2345,7 @@ textarea.field:focus {
 .book-btn.book-btn-pri:disabled,
 .book-btn.book-btn-pri:disabled:hover {
   background: var(--ink, #1f1b16);
-  color: var(--on-ink, #f4efe6);
+  color: var(--color-on-fill);
 }
 /* secondary: hairline pill */
 .book-btn.book-btn-sec,
@@ -3689,7 +3767,7 @@ button.book-shelf-item:active .book-cover {
 }
 .hist-tabs button[aria-pressed="true"] {
   background: var(--color-ink);
-  color: var(--color-on-ink);
+  color: var(--color-on-fill);
 }
 .hist-month {
   display: flex;
@@ -3861,4 +3939,76 @@ button.book-shelf-item:active .book-cover {
 .hist-reread {
   align-self: flex-start;
   margin-top: var(--space-1);
+}
+
+/* ============ 설정 · 테마 (theme.js) ============ */
+.set-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 56px;
+}
+.set-theme-label {
+  font-size: var(--fs-body);
+}
+.theme-tabs {
+  background: var(--color-bg);
+  color: var(--color-ink-2);
+}
+.theme-tabs button {
+  border: 0;
+  background: none;
+  font-family: var(--font-ui);
+  opacity: 1;
+}
+.theme-tabs button[aria-checked="true"] {
+  background: var(--color-ink);
+  color: var(--color-on-fill);
+  font-weight: 700;
+}
+
+/* ============ 설정 · 정보 (출처 및 라이선스, 버전) ============ */
+.set-credits {
+  display: block;
+}
+.set-credits summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  cursor: pointer;
+  list-style: none;
+}
+.set-credits summary::-webkit-details-marker {
+  display: none;
+}
+.set-credits summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid var(--color-ink-2);
+  border-bottom: 1.5px solid var(--color-ink-2);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .2s var(--ease);
+}
+.set-credits[open] summary::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.set-credits dl {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  row-gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.set-version {
+  justify-content: space-between;
+}
+.set-version span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  color: var(--color-ink-2);
 }
