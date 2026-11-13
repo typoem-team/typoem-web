@@ -77,7 +77,7 @@
         UI.toast('아침 알림을 껐어요');
       } else if (await schedule(hhmm)) {
         save(hhmm);
-        UI.toast('매일 ' + hhmm + '에 알려 드릴게요');
+        UI.toast('매일 ' + hhmm + '쯤 알려 드릴게요');   // inexact alarm: Android may deliver it up to an hour late
       } else {
         save(null);
         UI.toast('휴대폰 설정에서 Typoem 알림을 켜 주세요');
