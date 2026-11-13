@@ -75,10 +75,10 @@
 
       <!-- 초대: 이 방의 코드 · 코드 복사 · 공유하기 (invite.js가 버튼을 맡아요) -->
       <section class="hr-invite-box" aria-label="친구 초대">
-        <div class="code-box"><small>초대 코드</small><p class="code" id="invite-code"></p></div>
-        <div class="sheet-actions">
-          <button type="button" class="sec" id="invite-copy">코드 복사</button>
-          <button type="button" class="pri" id="invite-share">공유하기</button>
+        <div class="code-box">
+          <div class="code-wrap"><small>초대 코드</small><p class="code" id="invite-code"></p></div>
+          <button type="button" class="sec" id="invite-copy" aria-label="초대 코드 복사" title="복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg></button>
+          <button type="button" class="sec" id="invite-share" aria-label="초대 코드 공유" title="공유"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg></button>
         </div>
       </section>
     </section>
