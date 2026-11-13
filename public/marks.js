@@ -24,6 +24,8 @@
 //     changed({ type: 'create' | 'update' | 'delete', row })  the screen updates its list and calls set()
 //     clip,             optional: element whose box is the visible area (default: the window)
 //     keepSelection,    optional: selector of controls that don't end a selection (page turns)
+//     selectable,       optional: false = no new selections (marks are still drawn and
+//                       listed, and my own can still be edited / deleted). Poem: a past day.
 //   });
 //   marks.set(rows)   show these marks (the screen owns the list)
 //   marks.refresh()   re-measure after the text moved (re-layout, resize)
@@ -441,6 +443,7 @@
     function onDown(e) {
       lastPointer = e.pointerType || 'mouse';
       if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (opts.selectable === false) return;
       stopGesture();
       var w = wordFrom(e.target);
       if (!w) return;

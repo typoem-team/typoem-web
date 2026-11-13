@@ -2,16 +2,21 @@
 // Reading screen — today's poem for one room.
 //   - cover-colour band with title / author, date line under it
 //   - a floating "메모 N" pill -> sheet with every memo (write · like · edit)
-//   - lines that have notes: dotted underline + a count on the right;
-//     the count or the left margin of a line opens that line's sheet
+//   - highlights (4 colours) and notes on a word range (marks.js, same as the book):
+//     long press / drag across words -> toolbar; a single tap on a marked word -> list
+//   - (off for now) line notes: dotted underline + a count on the right; the count or
+//     the left margin of a line opened that line's sheet. Poem marks replace them; the
+//     code is kept below, commented out where it starts.
 //   - opening today's poem checks me in for the streak (GET /today does it on the
 //     server), so there is no "다 읽었어요" button
 //
-// Data source: GET /api/rooms/:id/today  (poem + memos + annotations in one payload)
+// Data source: GET /api/rooms/:id/today  (poem + memos + annotations + poem_marks in one payload)
 // A past poem (?date=YYYY-MM-DD) comes from GET /api/rooms/:id/history/:date and
-// is read-only: memos and line notes are shown, but nothing can be written,
-// edited, deleted or liked.
-// Depends on auth.js, ui.js (TypoemUI).
+// is read-only: memos are shown, but nothing can be written, edited, deleted or liked.
+// Poem marks on a past poem follow their API: shown and listed, no new ones
+// (POST is today's poem only), but my own can still be edited / deleted
+// (PATCH / DELETE /api/poem-marks/:id have no date rule).
+// Depends on auth.js, ui.js (TypoemUI), marks.js (TypoemMarks).
 // dict-popup.js handles taps on words.
 
 requireLogin();
@@ -34,7 +39,8 @@ const READ_ONLY = !!PAST_DATE;
 let poem = null;              // { id, title, author, lines: [{ id, line_number, text }] }
 let poemDate = null;          // the server's date for this poem (YYYY-MM-DD)
 let memos = [];               // full-poem memos, newest first
-let annotationsByLine = {};   // { line_id: [annotation, ...] }
+let annotationsByLine = {};   // { line_id: [annotation, ...] }  (line notes: off, stays empty)
+let poemMarks = [];           // highlights + notes on this poem (poem_marks), oldest first
 let currentLineId = null;     // line whose sheet is open, or null
 let lineOpener = null;        // the button that opened the line view (focus goes back to it)
 
@@ -74,6 +80,7 @@ if ($('past-link')) $('past-link').href = HISTORY_URL;
 // Android back button: sheets are closed by ui.js first; then back to home
 // (or to History when this is a past poem).
 window.TypoemNav.setBackHandler(function () {
+  if (marks.cancel()) return true;   // a word selection
   if (closeLineView()) return true;
   window.location.href = PAST_DATE ? HISTORY_URL : '/index.html';
   return true;
@@ -144,11 +151,13 @@ function writeFetch(url, options) {
 function refreshNotes(data) {
   if (wrote) return;
   memos = data.memos || [];
-  indexAnnotations(data.annotations || []);
-  (poem.lines || []).forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
+  // line notes: off (poem marks replace them)
+  // indexAnnotations(data.annotations || []);
+  // (poem.lines || []).forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
+  showMarks(data.poem_marks);
   renderPill();
   renderMemos();
-  if (currentLineId != null) renderAnnotations();
+  // if (currentLineId != null) renderAnnotations();
 }
 
 function showPoem(data) {
@@ -159,10 +168,13 @@ function showPoem(data) {
   poem = data.poem;
   poemDate = data.date;
   memos = data.memos || [];
-  indexAnnotations(data.annotations || []);
+  // line notes: off (poem marks replace them)
+  // indexAnnotations(data.annotations || []);
 
   $('room-name').textContent = (data.room && data.room.name) || '';
+  marks.reset();                 // new text: no selection, no marks until showMarks
   renderPoem();
+  showMarks(data.poem_marks);
   renderPill();
   renderMemos();                 // the side panel (1024px+) shows the list straight away
   $('memo-pill').hidden = false;
@@ -235,21 +247,29 @@ function renderPoem() {
 
   const lines = Array.isArray(poem.lines) ? poem.lines : [];
   bodyEl.innerHTML = lines.map(renderLine).join('');
-  lines.forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
+  // data-w = each word's 0-based position in its line (marks.js; poem_marks
+  // start_word / end_word). DOM order = wrapWords' order = lib/poemWords.js.
+  bodyEl.querySelectorAll('.ln[data-line-no]').forEach((ln) => {
+    ln.querySelectorAll('.word').forEach((w, i) => { w.dataset.w = i; });
+  });
+  // line notes: off (poem marks replace them)
+  // lines.forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
 }
 
-// One poem line: [ margin button ] [ text ] [ note count ]
-//   - margin button -> this line's sheet (notes)
-//   - text          -> dictionary territory (words wrapped for dict-popup.js)
-//   - count         -> added by updateLine() when the line has notes
-// Blank lines render as spacers.
+// One poem line: [ text ]
+//   - text          -> dictionary territory (words wrapped for dict-popup.js) and
+//                      marks.js's unit (data-line-no = poem_marks start_line / end_line)
+//   - (off) margin button -> this line's sheet (notes)
+//   - (off) count         -> added by updateLine() when the line has notes
+// Blank lines render as spacers (no words, so marks skip them).
 function renderLine(line) {
   if (!hasContent(line.text)) {
     return '<span class="ln ln-blank" aria-hidden="true"></span>';
   }
+  // line notes: off — the margin button went inside .ln, before .tx:
+  //   <button type="button" class="mark" aria-label="이 줄의 메모"></button>
   return `
-    <span class="ln" data-line-id="${line.id}">
-      <button type="button" class="mark" aria-label="이 줄의 메모"></button>
+    <span class="ln" data-line-id="${line.id}" data-line-no="${line.line_number}">
       <span class="tx">${wrapWords(line.text)}</span>
     </span>`;
 }
@@ -292,6 +312,8 @@ function renderMeta(text) {
 //   --      -> —               (em dash)
 // Punctuation is split off the dictionary lookup so "And," looks up "and",
 // while the line still DISPLAYS the punctuation verbatim.
+// The split must stay the same as lib/poemWords.js on the server (poem_marks
+// word positions; tests/unit/poemWords.test.js checks it).
 function wrapWords(text) {
   let t = text.replace(/-{2,}/g, '—');   // 1) em dash (2+ hyphens), before tokenising
 
@@ -341,11 +363,70 @@ function wrapWordChunk(chunk) {
 
 // The margin button or the count opens that line's sheet.
 // (Words are handled by dict-popup.js.)
-$('poem-body').addEventListener('click', (e) => {
-  const btn = e.target.closest('.mark, .cm');
-  if (!btn) return;
-  openLine(Number(btn.parentNode.dataset.lineId), btn);
+// line notes: off (poem marks replace them)
+// $('poem-body').addEventListener('click', (e) => {
+//   const btn = e.target.closest('.mark, .cm');
+//   if (!btn) return;
+//   openLine(Number(btn.parentNode.dataset.lineId), btn);
+// });
+
+// =====================================================================
+//  Highlights + notes (marks.js does selection, toolbar, sheets, drawing)
+// =====================================================================
+// Units are the poem's lines (.ln with words); a position is [line_number, word].
+// The poem id is taken when a selection starts, so a save can't land on another poem.
+
+// failed response -> Error with a message for the toast
+function marksError(res, fallback) {
+  if (res.status === 403) return new Error('내가 남긴 것만 고칠 수 있어요.');
+  // POST on a poem that is no longer today's (the day turned while this was open)
+  if (res.status === 404) return new Error('오늘의 시에만 남길 수 있어요.');
+  return new Error(fallback);
+}
+
+const marks = window.TypoemMarks.attach({
+  container: $('poem-body'),
+  unitSelector: '.ln[data-line-no]',
+  unitKey: (ln) => Number(ln.dataset.lineNo),
+  selectable: !READ_ONLY,          // a past poem: no new marks (POST is today's poem only)
+  context: () => ({ poemId: poem && poem.id }),
+  rangeOf: (m) => ({ start: [m.start_line, m.start_word], end: [m.end_line, m.end_word] }),
+  async create(m) {
+    const body = {
+      kind: m.kind,
+      startLine: m.start[0], startWord: m.start[1],
+      endLine: m.end[0], endWord: m.end[1],
+      quote: m.quote,
+    };
+    if (m.kind === 'highlight') body.color = m.color;   // required for highlights
+    else body.content = m.content;
+    const url = `/api/rooms/${encodeURIComponent(ROOM_ID)}/poems/${m.ctx.poemId}/marks`;
+    const res = await writeFetch(url, { method: 'POST', body: JSON.stringify(body) });
+    if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
+    return res.json();
+  },
+  async update(row, content) {
+    const res = await writeFetch(`/api/poem-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
+    if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
+    return res.json();
+  },
+  async remove(row) {
+    const res = await writeFetch(`/api/poem-marks/${row.id}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
+  },
+  changed({ type, row }) {
+    if (!poem || row.poem_id !== poem.id) return;
+    let list = poemMarks.filter((m) => m.id !== row.id);
+    if (type !== 'delete') list = list.concat(row);
+    list.sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : a.id - b.id));
+    showMarks(list);
+  },
 });
+
+function showMarks(list) {
+  poemMarks = Array.isArray(list) ? list : [];
+  marks.set(poemMarks);
+}
 
 
 // =====================================================================
