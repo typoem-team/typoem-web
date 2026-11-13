@@ -388,15 +388,15 @@
     nav.innerHTML =
       '<a class="nav-brand" href="/index.html">Typoem</a>' +
       '<div class="tabs-main">' +
-        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '홈</a>' +
-        '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + '방</a>' +
-        '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
+        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + 'Home</a>' +
+        '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + 'Rooms</a>' +
+        '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + 'Words</a>' +
       '</div>' +
       '<a class="tab tab-me" data-tab="me" href="/me.html">' + icon('me') +
-        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></a>';
+        '<span class="tab-me-label">Me</span><span class="tab-me-nick"></span></a>';
     var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     // textContent: the nickname is user input
-    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '나';
+    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || 'Me';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
     });
