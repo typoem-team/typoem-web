@@ -24,6 +24,7 @@ class AlreadyMemberError extends Error {
 }
 
 const { getDb } = require('../db');
+const { cleanBookTitle } = require('../lib/bookTitle');
 
 
 // finders
@@ -78,7 +79,7 @@ async function listRoomsForUser(user_id, date) {
     return rows.map(({ book_total_words, book_words_read, ...room }) => ({
         ...room,
         today_poem_title: room.today_poem_title ?? null,
-        book_title: room.book_title ?? null,
+        book_title: room.book_title == null ? null : cleanBookTitle(room.book_title),
         book_progress: room.book_title == null ? null
             : book_total_words > 0 ? Math.min(100, Math.floor((book_words_read * 100) / book_total_words)) : 0,
     }));
