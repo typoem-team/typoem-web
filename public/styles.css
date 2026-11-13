@@ -4411,37 +4411,43 @@ button.book-shelf-item:active .book-cover {
 .hr-invite-box {
   margin-top: var(--space-5);
 }
-/* one quiet row: code on the left, two small pills on the right */
+/* one row in a white box with a green border: code on the left, two round icon buttons on the right */
 .hr-invite-box .code-box {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 8px 12px;
-  background: var(--color-bg);     /* same as the page: no box, just a centered row */
+  margin: 0;
+  padding: 16px 16px 16px 20px;    /* same space above the label and below the code */
+  border: 1.5px solid var(--color-surface);
+  border-radius: var(--radius-md);  /* same as the History box */
+  background: var(--color-bg);
   text-align: left;
 }
 .hr-invite-box .code-wrap {
-  margin-right: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.hr-invite-box small {
+  display: block;
+  line-height: 1.2;
 }
 .hr-invite-box .code {
-  font-size: 18px;
-  letter-spacing: .1em;
-  margin: 2px 0 0;
+  font-size: min(28px, 8vw);
+  line-height: 1.1;
+  letter-spacing: .12em;
+  margin: 4px 0 0;
 }
-/* small squares, no border, icon centered */
 .hr-invite-box .sec {
-  width: 32px;
-  min-height: 32px;
+  width: 40px;
+  min-height: 40px;
   padding: 0;
-  border-radius: 9px;
-  background: var(--color-bg);
+  border-radius: 50%;
+  background: var(--color-surface);  /* the box is white now, so the buttons take the green */
   box-shadow: none;
 }
 .hr-invite-box .sec svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
