@@ -445,8 +445,9 @@
     //   { date: 'YYYY-MM-DD', roomId, title, author, lines: [first two lines],
     //     streak: { current, longest, checkedInToday } | null }
     // The streak is read after /today, which is what checks me in, so today's reading counts.
+    // streak (optional): a TypoemStreak.load() promise the page already has, so it isn't fetched twice.
     // Does nothing outside the app.
-    sendTodayToWidget: function (today, roomId) {
+    sendTodayToWidget: function (today, roomId, streak) {
       var C = window.Capacitor;
       var poem = today && today.poem;
       if (!poem || !(C && C.isPluginAvailable && C.isPluginAvailable('TypoemWidget'))) return;
@@ -460,8 +461,7 @@
         lines: (poem.lines || []).map(function (l) { return plain(l.text); }).filter(Boolean).slice(0, 2),
         streak: null,
       };
-      authFetch('/api/streak')
-        .then(function (res) { return res.ok ? res.json() : null; })
+      (streak || authFetch('/api/streak').then(function (res) { return res.ok ? res.json() : null; }))
         .catch(function () { return null; })
         .then(function (s) {
           if (s && typeof s.current === 'number') {
