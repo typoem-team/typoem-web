@@ -13,7 +13,7 @@ const $ = (id) => document.getElementById(id);
 
 async function loadRooms() {
   const status = $('status');
-  status.textContent = '방을 불러오는 중이에요…';
+  status.textContent = '불러오는 중…';
 
   let res;
   try {
@@ -24,7 +24,7 @@ async function loadRooms() {
   }
   // authFetch already handles 401 (logout + redirect)
   if (!res.ok) {
-    status.textContent = '방을 불러오지 못했어요.';
+    status.textContent = '방 목록을 불러오지 못했어요.';
     return;
   }
   const rooms = await res.json();

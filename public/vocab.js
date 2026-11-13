@@ -43,7 +43,7 @@ function vocabCard(v) {
       <h2 class="vocab-word">${escapeHtml(v.word)} ${phon}</h2>
       ${vocabKoBlock(v.ko)}
       ${v.definition && !hasKo ? `<p class="vocab-def">${v.definition_pos ? `<span class="d-pos">${escapeHtml(v.definition_pos)}</span> ` : ''}${escapeHtml(v.definition)}</p>` : ''}
-      <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">지우기</button>
+      <button type="button" class="link-btn" data-vocab-del="${encodeURIComponent(v.id)}">삭제</button>
     </article>
   `;
 }
@@ -54,7 +54,7 @@ async function loadVocab() {
   const list = document.getElementById('vocab-list');
   const empty = document.getElementById('empty-state');
 
-  status.textContent = '단어장을 불러오는 중이에요…';
+  status.textContent = '불러오는 중…';
   empty.hidden = true;
 
   try {
@@ -62,7 +62,7 @@ async function loadVocab() {
 
     // authFetch already handles 401 (logout + redirect); handle the rest here
     if (!res.ok) {
-      status.textContent = '단어장을 불러오지 못했어요.';
+      status.textContent = '단어장을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
       return;
     }
 
@@ -147,15 +147,15 @@ document.getElementById('vocab-list').addEventListener('click', async (e) => {
   try {
     const res = await authFetch(`/api/vocab/${encodeURIComponent(id)}`, { method: 'DELETE' });
     if (res.ok || res.status === 204) {
-      TypoemUI.toast('단어를 지웠어요');
+      TypoemUI.toast('단어를 삭제했어요');
       loadVocab();
     } else {
-      TypoemUI.toast('단어를 지우지 못했어요');
+      TypoemUI.toast('단어를 삭제하지 못했어요');
       btn.disabled = false;
     }
   } catch (err) {
     console.error(err);
-    TypoemUI.toast('단어를 지우지 못했어요');
+    TypoemUI.toast('단어를 삭제하지 못했어요');
     btn.disabled = false;
   }
 });

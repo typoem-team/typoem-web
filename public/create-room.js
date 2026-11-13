@@ -17,11 +17,11 @@ form.addEventListener('submit', async function (e) {
   const description = document.getElementById('description').value.trim();
 
   if (name.length < 1 || name.length > 50) {
-    showError('방 이름은 1~50자로 써 주세요.');
+    showError('방 이름은 1~50자로 입력해 주세요.');
     return;
   }
   if (description.length > 200) {
-    showError('소개는 200자까지 쓸 수 있어요.');
+    showError('방 소개는 200자 이내로 입력해 주세요.');
     return;
   }
 
@@ -29,7 +29,7 @@ form.addEventListener('submit', async function (e) {
   if (description) body.description = description;
 
   submitBtn.disabled = true;
-  submitBtn.textContent = '만드는 중이에요…';
+  submitBtn.textContent = '만드는 중…';
 
   try {
     const res = await authFetch('/api/rooms', {
@@ -41,7 +41,7 @@ form.addEventListener('submit', async function (e) {
       // 403 = room limit reached (owned or joined); the numbers are MAX_OWNED_ROOMS / MAX_JOINED_ROOMS in roomsController
       const e = new Error(res.status === 403
         ? '방은 최대 3개까지 만들고, 5개까지 참여할 수 있어요.'
-        : '방을 만들지 못했어요.');
+        : '방을 만들지 못했어요. 잠시 후 다시 시도해 주세요.');
       e.isUserMessage = true;
       throw e;
     }

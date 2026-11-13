@@ -65,7 +65,7 @@ async function loadToday() {
   const status = $('status');
 
   if (!ROOM_ID) {
-    status.textContent = '방을 찾지 못했어요.';
+    status.textContent = '방 정보를 찾을 수 없어요.';
     return;
   }
 
@@ -123,8 +123,8 @@ function runTour() {
       mouse: '단어를 더블클릭하면 단어 사전을 볼 수 있어요. 다시 보고 싶은 단어는 단어장에 담아요.',
     } },
     { el: line, text: {
-      touch: '단어를 길게 누르거나 여러 단어를 끌어서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.',
-      mouse: '단어를 드래그해서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.',
+      touch: '단어를 길게 누르거나 여러 단어를 끌어서 고르면 형광펜을 칠하거나 구절 메모를 남길 수 있어요.',
+      mouse: '단어를 드래그해서 고르면 형광펜을 칠하거나 구절 메모를 남길 수 있어요.',
     } },
     { el: ['#memo-pill', '#r-side'], text: '이 시에 남긴 메모는 여기서 보고, 나도 남겨요.' },
     { el: '#past-link', text: '지난 시는 읽은 기록에서 다시 볼 수 있어요.' },
@@ -137,16 +137,16 @@ function setReadOnly() {
   $('memo-form').hidden = true;
   const note = document.createElement('p');
   note.className = 's-note read-only-note';
-  note.textContent = '지난 시는 읽기만 할 수 있어요.';
+  note.textContent = '지난 시에는 새 메모를 남길 수 없어요.';
   $('memo-form').after(note);
 }
 
 // Korean message for a failed load (the API's own messages are English).
 function loadErrorText(status) {
-  if (status === 403) return '이 방의 멤버가 아니에요.';
-  if (READ_ONLY) return status === 404 ? '그날의 시를 찾지 못했어요.' : '지난 시를 불러오지 못했어요.';
-  if (status === 404) return '방을 찾지 못했어요.';
-  if (status === 503) return '오늘의 시를 가져오지 못했어요. 잠시 뒤에 다시 열어 주세요.';
+  if (status === 403) return '참여 중인 방이 아니에요.';
+  if (READ_ONLY) return status === 404 ? '해당 날짜의 시를 찾지 못했어요.' : '지난 시를 불러오지 못했어요.';
+  if (status === 404) return '방 정보를 찾을 수 없어요.';
+  if (status === 503) return '오늘의 시를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
   return '오늘의 시를 불러오지 못했어요.';
 }
 
@@ -269,9 +269,9 @@ function wrapWordChunk(chunk) {
 
 // failed response -> Error with a message for the toast
 function marksError(res, fallback) {
-  if (res.status === 403) return new Error('내가 남긴 것만 고칠 수 있어요.');
+  if (res.status === 403) return new Error('본인이 작성한 메모만 수정할 수 있어요.');
   // POST on a poem that is no longer today's (the day turned while this was open)
-  if (res.status === 404) return new Error('오늘의 시에만 남길 수 있어요.');
+  if (res.status === 404) return new Error('형광펜과 구절 메모는 오늘의 시에만 남길 수 있어요.');
   return new Error(fallback);
 }
 
@@ -293,17 +293,17 @@ const marks = window.TypoemMarks.attach({
     else body.content = m.content;
     const url = `/api/rooms/${encodeURIComponent(ROOM_ID)}/poems/${m.ctx.poemId}/marks`;
     const res = await authFetch(url, { method: 'POST', body: JSON.stringify(body) });
-    if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
+    if (!res.ok) throw marksError(res, m.kind === 'note' ? '구절 메모를 저장하지 못했어요' : '형광펜을 저장하지 못했어요');
     return res.json();
   },
   async update(row, content) {
     const res = await authFetch(`/api/poem-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
-    if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
+    if (!res.ok) throw marksError(res, '구절 메모를 수정하지 못했어요');
     return res.json();
   },
   async remove(row) {
     const res = await authFetch(`/api/poem-marks/${row.id}`, { method: 'DELETE' });
-    if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
+    if (!res.ok && res.status !== 404) throw marksError(res, '삭제하지 못했어요');   // 404: already gone
   },
   changed({ type, row }) {
     if (!poem || row.poem_id !== poem.id) return;
@@ -331,7 +331,7 @@ function renderPill() {
     .sort(byNewest)
     .forEach((x) => { if (names.indexOf(x.author_nickname) < 0) names.push(x.author_nickname); });
   $('pill-avs').innerHTML = names.slice(0, 3).map(UI.avatar).join('');
-  $('pill-label').textContent = n ? `메모 ${n}` : '메모 없음';
+  $('pill-label').textContent = n ? `메모 ${n}` : '첫 메모 남기기';
 }
 
 function byNewest(a, b) {
@@ -345,14 +345,14 @@ function renderMemos() {
   $('m-count').textContent = items.length ? `${items.length}개` : '';
   $('memo-list').innerHTML = items.length
     ? items.map(memoItem).join('')
-    : '<p class="s-note">아직 남긴 메모가 없어요.</p>';
+    : '<p class="s-note">아직 남겨진 메모가 없어요. 첫 감상을 남겨 보세요.</p>';
 }
 
 function controls(id) {
   if (READ_ONLY) return '';
   return `<span class="note-controls">
-      <button type="button" class="link-btn" data-edit data-id="${id}">고치기</button>
-      <button type="button" class="link-btn" data-del data-id="${id}">지우기</button>
+      <button type="button" class="link-btn" data-edit data-id="${id}">수정</button>
+      <button type="button" class="link-btn" data-del data-id="${id}">삭제</button>
     </span>`;
 }
 
@@ -388,7 +388,7 @@ $('memo-form').addEventListener('submit', async (e) => {
   const input = $('memo-input');
   const content = input.value.trim();
   if (content.length < 1 || content.length > 1000) {
-    UI.toast('메모는 1~1000자로 써 주세요');
+    UI.toast('메모는 1~1,000자 이내로 입력해 주세요');
     return;
   }
   const btn = $('memo-submit');
@@ -399,7 +399,7 @@ $('memo-form').addEventListener('submit', async (e) => {
       body: JSON.stringify({ content }),
     });
     if (!res.ok) {
-      UI.toast('메모를 남기지 못했어요');
+      UI.toast('메모를 등록하지 못했어요');
       return;
     }
     input.value = '';
@@ -456,7 +456,7 @@ function startInlineEdit(id) {
   const editor = document.createElement('div');
   editor.className = 'note-edit';
   editor.innerHTML = `
-    <textarea class="note-edit-input field" maxlength="1000" rows="3" aria-label="메모 고치기"></textarea>
+    <textarea class="note-edit-input field" maxlength="1000" rows="3" aria-label="메모 수정"></textarea>
     <div class="note-edit-actions">
       <button type="button" class="btn-sm note-edit-save">저장</button>
       <button type="button" class="btn-sm note-edit-cancel">취소</button>
@@ -490,7 +490,7 @@ function startInlineEdit(id) {
   editor.querySelector('.note-edit-save').addEventListener('click', async () => {
     const trimmed = textarea.value.trim();
     if (trimmed.length < 1 || trimmed.length > 1000) {
-      UI.toast('메모는 1~1000자로 써 주세요');
+      UI.toast('메모는 1~1,000자 이내로 입력해 주세요');
       return;
     }
     const res = await authFetch(`/api/memos/${id}`, {
@@ -498,7 +498,7 @@ function startInlineEdit(id) {
       body: JSON.stringify({ content: trimmed }),
     });
     if (!res.ok) {
-      UI.toast('메모를 고치지 못했어요');
+      UI.toast('메모를 수정하지 못했어요');
       return;
     }
     await reloadMemos();
@@ -515,9 +515,9 @@ function startInlineDelete(id) {
   const box = document.createElement('div');
   box.className = 'note-confirm';
   box.innerHTML = `
-    <span class="note-confirm-text">이 메모를 지울까요?</span>
+    <span class="note-confirm-text">이 메모를 삭제할까요?</span>
     <span class="note-confirm-actions">
-      <button type="button" class="btn-sm btn-danger note-confirm-yes">지우기</button>
+      <button type="button" class="btn-sm btn-danger note-confirm-yes">삭제</button>
       <button type="button" class="btn-sm note-confirm-no">취소</button>
     </span>
   `;
@@ -531,7 +531,7 @@ function startInlineDelete(id) {
   box.querySelector('.note-confirm-yes').addEventListener('click', async () => {
     const res = await authFetch(`/api/memos/${id}`, { method: 'DELETE' });
     if (!res.ok && res.status !== 204) {
-      UI.toast('메모를 지우지 못했어요');
+      UI.toast('메모를 삭제하지 못했어요');
       return;
     }
     await reloadMemos();

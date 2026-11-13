@@ -58,18 +58,18 @@ requireLogin();
         '<span class="hist-date">' + (p ? p.mo + '/' + String(p.d).padStart(2, '0') + '<br>' + p.dow : '') + '</span>' +
         '<span class="hist-main"><b class="hist-name">' + UI.poemTitleHtml(r.title || 'Untitled') + '</b>' +
           '<small>' + UI.poemTitleHtml(r.author || '') + '</small></span>' +
-        '<span class="hist-meta" aria-label="' + (n ? n + '명이 메모를 남겼어요' : '메모 없음') + '">' +
+        '<span class="hist-meta" aria-label="' + (n ? '메모 작성자 ' + n + '명' : '메모 없음') + '">' +
           (n ? ICON_PEOPLE + '<span>' + n + '</span>' : '') + '</span>' +
       '</a>';
   }
 
   async function loadPoems() {
     var list = $('poem-list');
-    list.innerHTML = '<p class="s-note">불러오는 중이에요…</p>';
+    list.innerHTML = '<p class="s-note">불러오는 중…</p>';
     var res = null;
     try { res = await authFetch('/api/rooms/' + enc(ROOM_ID) + '/history'); } catch (e) { /* below */ }
     if (!res || !res.ok) {
-      list.innerHTML = '<p class="s-note">지난 시를 불러오지 못했어요.</p>';
+      list.innerHTML = '<p class="s-note">지난 시 목록을 불러오지 못했어요.</p>';
       return;
     }
     loaded.poem = true;
@@ -77,7 +77,7 @@ requireLogin();
     var today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
     var past = ((await res.json()).history || []).filter(function (r) { return r.date !== today; });
     if (!past.length) {
-      list.innerHTML = '<p class="s-note">아직 지난 시가 없어요. 내일부터 여기에 쌓여요.</p>';
+      list.innerHTML = '<p class="s-note">아직 지난 시 기록이 없어요. 내일부터 이곳에 차곡차곡 쌓여요.</p>';
       return;
     }
     var html = '', month = '';
@@ -104,14 +104,14 @@ requireLogin();
   function bookRow(b, i) {
     var isOwner = room && room.owner_id === me.id;
     var chip = b.status === 'paused'
-      ? '<span class="hist-chip is-paused">' + b.progress + '%에서 멈춤</span>'
+      ? '<span class="hist-chip is-paused">' + b.progress + '% 중단</span>'
       : '<span class="hist-chip is-' + b.status + '">' + STATUS[b.status] + '</span>';
-    var when = b.status === 'finished' && b.finished_at ? shortDate(b.finished_at) + '에 끝까지 읽음'
-      : b.is_current ? '' : (b.last_read_at ? shortDate(b.last_read_at) + '에 마지막으로 읽음' : '아직 안 열어 봤어요');
+    var when = b.status === 'finished' && b.finished_at ? shortDate(b.finished_at) + ' 완독'
+      : b.is_current ? '' : (b.last_read_at ? '최근 독서 ' + shortDate(b.last_read_at) : '읽기 전');
     var reading = b.readers.filter(function (r) { return !r.finished; }).length;
     var done = b.readers.length - reading;
     var who = b.readers.length
-      ? avatars(b.readers) + '<span>' + (done ? done + '명 완독' : '') + (done && reading ? ' · ' : '') + (reading ? reading + (b.is_current ? '명 읽는 중' : '명 읽다 멈춤') : '') + '</span>'
+      ? avatars(b.readers) + '<span>' + (done ? done + '명 완독' : '') + (done && reading ? ' · ' : '') + (reading ? reading + (b.is_current ? '명 읽는 중' : '명 중단') : '') + '</span>'
       : '';
 
     var cover = '<span class="hist-cover" style="background-color:' + UI.coverColor(b.book_id) + '" aria-hidden="true"></span>';
@@ -123,9 +123,9 @@ requireLogin();
           ? '<span class="hist-progress"><span class="bar"><i style="width:' + b.progress + '%"></i></span><span>' + b.progress + '%</span></span>'
           : '') +
         (who ? '<span class="hist-who">' + who + '</span>' : '') +
-        (b.my_mark_count ? '<small class="hist-marks">내 형광펜 · 주석 ' + b.my_mark_count + '</small>' : '') +
+        (b.my_mark_count ? '<small class="hist-marks">내 형광펜 · 구절 메모 ' + b.my_mark_count + '개</small>' : '') +
         (!b.is_current && isOwner
-          ? '<button type="button" class="btn-sm hist-reread" data-i="' + i + '">이 책으로 다시 읽기</button>'
+          ? '<button type="button" class="btn-sm hist-reread" data-i="' + i + '">이 책 다시 읽기</button>'
           : '') +
       '</span>';
 
@@ -136,17 +136,17 @@ requireLogin();
 
   async function loadBooks() {
     var list = $('book-list');
-    list.innerHTML = '<p class="s-note">불러오는 중이에요…</p>';
+    list.innerHTML = '<p class="s-note">불러오는 중…</p>';
     var res = null;
     try { res = await authFetch('/api/rooms/' + enc(ROOM_ID) + '/books/history'); } catch (e) { /* below */ }
     if (!res || !res.ok) {
-      list.innerHTML = '<p class="s-note">읽은 책을 불러오지 못했어요.</p>';
+      list.innerHTML = '<p class="s-note">읽은 책 목록을 불러오지 못했어요.</p>';
       return;
     }
     loaded.book = true;
     books = await res.json();
     if (!Array.isArray(books) || !books.length) {
-      list.innerHTML = '<p class="s-note">아직 이 방에서 고른 책이 없어요.</p>';
+      list.innerHTML = '<p class="s-note">아직 이 방에서 읽은 책이 없어요.</p>';
       return;
     }
     renderBooks();
@@ -165,8 +165,8 @@ requireLogin();
     if (!rereadBook) return;
     var cur = books.find(function (b) { return b.is_current; });
     $('reread-title').textContent = '‘' + rereadBook.title + '’, 다시 읽을까요?';
-    $('reread-note').textContent = '방 전체가 이 책으로 바뀌어요. 각자 읽던 데서 이어 읽어요.' +
-      (cur ? ' 지금 읽던 ‘' + cur.title + '’도 위치가 그대로 남아요.' : '');
+    $('reread-note').textContent = '방의 함께 읽는 책이 변경되며, 각자 이전에 읽던 위치부터 이어서 읽을 수 있어요.' +
+      (cur ? ' 지금 읽고 있는 ‘' + cur.title + '’의 진행 기록도 그대로 보존돼요.' : '');
     UI.openSheet('sheet-reread', { anchor: btn });
   });
   $('reread-cancel').addEventListener('click', function () { UI.closeSheets(); });
@@ -184,7 +184,7 @@ requireLogin();
     } catch (e) { /* below */ }
     ok.disabled = false;
     if (!res || !res.ok) {
-      UI.toast(res && res.status === 403 ? '책은 방장만 바꿀 수 있어요.' : '책을 바꾸지 못했어요. 다시 시도해 주세요.');
+      UI.toast(res && res.status === 403 ? '책 변경은 방장만 할 수 있어요' : '책을 변경하지 못했어요. 다시 시도해 주세요');
       return;
     }
     window.location.href = '/book.html?id=' + enc(ROOM_ID);
@@ -220,7 +220,7 @@ requireLogin();
   }
 
   if (!ROOM_ID) {
-    $('status').textContent = '방을 찾지 못했어요.';
+    $('status').textContent = '방 정보를 찾을 수 없어요.';
     return;
   }
   // back: the home, showing this room (History is opened from the home's History box)

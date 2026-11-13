@@ -52,10 +52,10 @@
   var esc = UI.esc;
 
   var COLORS = [
-    { key: 'yellow', label: '노랑' },
-    { key: 'pink', label: '핑크' },
-    { key: 'blue', label: '파랑' },
-    { key: 'green', label: '연두' },
+    { key: 'yellow', label: '노란색' },
+    { key: 'pink', label: '분홍색' },
+    { key: 'blue', label: '파란색' },
+    { key: 'green', label: '초록색' },
   ];
   var COLOR_KEYS = COLORS.map(function (c) { return c.key; });
   var LONG_PRESS_MS = 400;
@@ -105,12 +105,12 @@
     bar = document.createElement('div');
     bar.className = 'mk-bar';
     bar.setAttribute('role', 'toolbar');
-    bar.setAttribute('aria-label', '고른 부분');
+    bar.setAttribute('aria-label', '구절 도구 모음');
     bar.hidden = true;
     bar.innerHTML = COLORS.map(function (c) {
       return '<button type="button" class="mk-swatch mk-c-' + c.key + '" data-color="' + c.key + '" aria-label="' + c.label + ' 형광펜"><span></span></button>';
     }).join('') +
-      '<button type="button" class="mk-bar-btn" data-act="note">주석</button>';
+      '<button type="button" class="mk-bar-btn" data-act="note">구절 메모</button>';
     document.body.appendChild(bar);
     // keep focus / the tap from reaching the text underneath
     bar.addEventListener('pointerdown', function (e) { e.preventDefault(); });
@@ -130,7 +130,7 @@
     listSheet.dataset.wide = 'popover';
     listSheet.hidden = true;
     listSheet.setAttribute('role', 'dialog');
-    listSheet.setAttribute('aria-label', '이 부분의 형광펜과 주석');
+    listSheet.setAttribute('aria-label', '이 구절의 형광펜과 메모');
     listSheet.innerHTML =
       '<span class="handle"></span>' +
       '<div class="mk-list" aria-live="polite"></div>';
@@ -155,13 +155,13 @@
     noteSheet.id = 'sheet-mark-note';
     noteSheet.hidden = true;
     noteSheet.setAttribute('role', 'dialog');
-    noteSheet.setAttribute('aria-label', '주석');
+    noteSheet.setAttribute('aria-label', '구절 메모');
     noteSheet.innerHTML =
       '<span class="handle"></span>' +
       '<p class="s-title"><b class="mk-note-title"></b><span class="mk-note-count"></span></p>' +
       '<p class="d-ex mk-note-quote"></p>' +
       '<form class="mk-note-form" novalidate>' +
-        '<textarea class="field mk-note-text" rows="4" maxlength="' + NOTE_MAX + '" aria-label="주석"></textarea>' +
+        '<textarea class="field mk-note-text" rows="4" maxlength="' + NOTE_MAX + '" aria-label="구절 메모"></textarea>' +
         '<div class="sheet-actions">' +
           '<button type="button" class="sec" data-close>취소</button>' +
           '<button type="submit" class="pri mk-note-save">저장</button>' +
@@ -574,8 +574,8 @@
         : '<p class="mk-hl-tag"><span class="mk-dot mk-c-' + colorOf(row) + '"></span>형광펜</p>';
       var ctrl = mine
         ? '<div class="m-foot"><span class="note-controls">' +
-            (row.kind === 'note' ? '<button type="button" class="link-btn" data-act="edit" data-id="' + row.id + '">고치기</button>' : '') +
-            '<button type="button" class="link-btn" data-act="del" data-id="' + row.id + '">지우기</button>' +
+            (row.kind === 'note' ? '<button type="button" class="link-btn" data-act="edit" data-id="' + row.id + '">수정</button>' : '') +
+            '<button type="button" class="link-btn" data-act="del" data-id="' + row.id + '">삭제</button>' +
           '</span></div>'
         : '';
       return '<div class="m-item mk-item" data-id="' + row.id + '">' +
@@ -630,7 +630,7 @@
       } catch (err) {
         pending = pending.filter(function (p) { return p !== temp; });
         render();
-        UI.toast(err.message || '형광펜을 저장하지 못했어요.');
+        UI.toast(err.message || '형광펜을 저장하지 못했어요');
       }
     }
 
@@ -638,13 +638,13 @@
       if (!sel) return;
       var r = ordered();
       var s = { a: r[0], f: r[1], ctx: sel.ctx };
-      openNoteSheet({ mode: 'new', inst: inst, sel: s }, '주석 남기기', quoteOf(r[0], r[1]), '');
+      openNoteSheet({ mode: 'new', inst: inst, sel: s }, '구절 메모 남기기', quoteOf(r[0], r[1]), '');
     }
 
     function openNoteEdit(id) {
       var row = rowById(id);
       if (!row) return;
-      openNoteSheet({ mode: 'edit', inst: inst, row: row }, '주석 고치기', row.quote, row.content);
+      openNoteSheet({ mode: 'edit', inst: inst, row: row }, '구절 메모 수정', row.quote, row.content);
     }
 
     async function saveNote(value) {
@@ -652,7 +652,7 @@
       if (!st) return;
       var content = String(value || '').trim();
       if (content.length < 1 || content.length > NOTE_MAX) {
-        UI.toast('주석은 1~' + NOTE_MAX + '자로 써 주세요');
+        UI.toast('구절 메모는 1~' + NOTE_MAX + '자 이내로 입력해 주세요');
         return;
       }
       var btn = noteSheet.querySelector('.mk-note-save');
@@ -676,19 +676,19 @@
         UI.haptic();
       } catch (err) {
         btn.disabled = false;
-        UI.toast(err.message || '주석을 저장하지 못했어요.');
+        UI.toast(err.message || '구절 메모를 저장하지 못했어요');
       }
     }
 
-    // 지우기 asks once more on the same button ("정말 지우기"), then deletes.
+    // 삭제 asks once more on the same button ("삭제 확인"), then deletes.
     async function deleteFromList(btn) {
       var row = rowById(Number(btn.dataset.id));
       if (!row) return;
       if (!btn.dataset.armed) {
         btn.dataset.armed = '1';
-        btn.textContent = '정말 지우기';
+        btn.textContent = '삭제 확인';
         setTimeout(function () {
-          if (btn.isConnected) { delete btn.dataset.armed; btn.textContent = '지우기'; }
+          if (btn.isConnected) { delete btn.dataset.armed; btn.textContent = '삭제'; }
         }, 4000);
         return;
       }
@@ -696,10 +696,10 @@
       try {
         await opts.remove(row);
         opts.changed({ type: 'delete', row: row });
-        UI.toast('지웠어요');
+        UI.toast('삭제했어요');
       } catch (err) {
         btn.disabled = false;
-        UI.toast(err.message || '지우지 못했어요.');
+        UI.toast(err.message || '삭제하지 못했어요');
       }
     }
 

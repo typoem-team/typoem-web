@@ -74,7 +74,7 @@ requireLogin();
     var poem = today && today.poem;
     var title = (poem && poem.title) || room.today_poem_title;
     $('hr-poem').href = '/room.html?id=' + enc(room.id);
-    $('hr-poem-title').innerHTML = title ? UI.poemTitleHtml(title) : '오늘의 시를 열어 보세요';
+    $('hr-poem-title').innerHTML = title ? UI.poemTitleHtml(title) : '오늘의 시를 펼쳐 보세요';
     $('hr-poem-title').className = 'hr-title' + (title ? sizeClass(title) : ' is-empty');
     $('hr-poem-title').lang = title ? 'en' : 'ko';     // English titles: hyphenate in English
 
@@ -99,15 +99,15 @@ requireLogin();
     var has = !!room.book_title;
     var p = Math.max(0, Math.min(100, Number(room.book_progress || 0)));
     $('hr-book').href = '/book.html?id=' + enc(room.id);
-    $('hr-book-title').textContent = has ? room.book_title : '아직 고른 책이 없어요';
+    $('hr-book-title').textContent = has ? room.book_title : '아직 선택한 책이 없어요';
     $('hr-book-title').className = 'hr-title' + (has ? sizeClass(room.book_title) : ' is-empty');
     $('hr-book-title').lang = has ? 'en' : 'ko';
     $('hr-book-bar').style.visibility = has ? '' : 'hidden';   // keep its space: the divider stays in the same place
     $('hr-book-bar').firstElementChild.style.width = p + '%';
-    $('hr-book-meta').innerHTML = !has ? '<span class="hr-hint">책 고르기</span>'
+    $('hr-book-meta').innerHTML = !has ? '<span class="hr-hint">함께 읽을 책 고르기</span>'
       : p >= 100 ? '<b>완독</b>' : '<b>' + p + '%</b><span class="hr-hint">이어 읽기</span>';
     fitTitle($('hr-book-title'));
-    $('hr-book').setAttribute('aria-label', has ? '책 이어 읽기, ' + room.book_title + ', ' + p + '%' : '이 방의 책 고르기');
+    $('hr-book').setAttribute('aria-label', has ? '책 이어 읽기, ' + room.book_title + ', ' + p + '%' : '함께 읽을 책 고르기');
   }
 
   function drawMembers(members) {
@@ -132,12 +132,12 @@ requireLogin();
     return '<a class="hr-past" href="/room.html?id=' + enc(hist.roomId) + '&date=' + enc(r.date) + '">' +
         '<span class="hr-date">' + Number(m[1]) + '/' + m[2] + '<br>' + dow + '</span>' +
         '<span class="hr-past-main"><i>' + UI.poemTitleHtml(r.title || 'Untitled') + '</i><small>' + UI.poemTitleHtml(r.author || '') + '</small></span>' +
-        (n ? '<span class="hr-count" aria-label="' + n + '명 참여">' + COUNT_ICON + n + '</span>' : '') +
+        (n ? '<span class="hr-count" aria-label="' + n + '명 메모 작성">' + COUNT_ICON + n + '</span>' : '') +
       '</a>';
   }
 
   function bookRow(b) {
-    var status = b.status === 'finished' ? '완독' : b.status === 'reading' ? '읽는 중' : b.progress + '%에서 멈춤';
+    var status = b.status === 'finished' ? '완독' : b.status === 'reading' ? '읽는 중' : b.progress + '%에서 중단';
     return '<a class="hr-past" href="' + (b.is_current ? '/book.html?id=' + enc(hist.roomId) : historyUrl()) + '">' +
         '<span class="hr-mini-cover" style="background-color:' + UI.coverColor(b.book_id) + '" aria-hidden="true"></span>' +
         '<span class="hr-past-main"><i>' + esc(b.title) + '</i><small>' + esc(status) + (b.status !== 'finished' ? ' · ' + b.progress + '%' : '') + '</small></span>' +
@@ -153,18 +153,18 @@ requireLogin();
 
     var list = isPoem ? hist.poems : hist.books;
     if (list === null) {                       // still loading
-      $('hr-past').innerHTML = '<p class="hr-empty">불러오는 중이에요…</p>';
+      $('hr-past').innerHTML = '<p class="hr-empty">불러오는 중…</p>';
       $('hr-all').hidden = true;
       return;
     }
     if (!list.length) {
-      $('hr-past').innerHTML = '<p class="hr-empty">' + (isPoem ? '지난 시는 내일부터 여기에 쌓여요.' : '아직 이 방에서 고른 책이 없어요.') + '</p>';
+      $('hr-past').innerHTML = '<p class="hr-empty">' + (isPoem ? '내일부터 이곳에 지난 시가 차곡차곡 쌓여요.' : '아직 이 방에서 읽은 책이 없어요.') + '</p>';
       $('hr-all').hidden = true;
       return;
     }
     $('hr-past').innerHTML = isPoem ? poemRow(list[0]) : bookRow(list[0]);
     $('hr-all').href = historyUrl();
-    $('hr-all').textContent = '전체 보기 · ' + list.length + (isPoem ? '편' : '권');
+    $('hr-all').textContent = '전체 보기 (' + list.length + (isPoem ? '편' : '권') + ')';
     $('hr-all').hidden = false;
   }
 
@@ -187,9 +187,9 @@ requireLogin();
 
   async function load() {
     var status = $('status');
-    status.textContent = '방을 불러오는 중이에요…';
+    status.textContent = '불러오는 중…';
     var rooms = await getJson('/api/rooms/mine');
-    if (!rooms) { status.textContent = '방을 불러오지 못했어요. 다시 시도해 주세요.'; return; }
+    if (!rooms) { status.textContent = '방 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'; return; }
     status.textContent = '';
 
     var list = Array.isArray(rooms) ? rooms : [];
@@ -210,7 +210,7 @@ requireLogin();
     $('hr-name').textContent = room.name;
     $('hr-invite').dataset.inviteRoom = String(room.id);
     $('hr-code').textContent = room.invite_code || '';
-    $('hr-invite').setAttribute('aria-label', room.invite_code ? '친구 초대, 초대 코드 ' + room.invite_code : '친구 초대');
+    $('hr-invite').setAttribute('aria-label', room.invite_code ? '멤버 및 초대 코드 보기, 초대 코드 ' + room.invite_code : '멤버 및 초대 코드 보기');
     drawPoem(room, null);
     drawBook(room);
 

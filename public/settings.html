@@ -25,21 +25,21 @@
     </div>
 
     <!-- 프로필 (11/13: 홈 아바타 팝오버 대신 여기). 함께한 날 = 가입한 날이 1일째 (한국 날짜) -->
-    <section class="me-box set-profile" aria-label="프로필">
+    <section class="me-box set-profile" aria-label="내 프로필">
       <span class="set-prof-av" id="prof-av"></span>
       <p class="set-prof-nick" id="prof-nick"></p>
       <dl class="set-prof-stats">
         <div><dt>함께한 날</dt><dd id="prof-days">–</dd></div>
-        <div><dt>참여한 방</dt><dd id="prof-rooms">–</dd></div>
+        <div><dt>참여 중인 방</dt><dd id="prof-rooms">–</dd></div>
       </dl>
     </section>
 
     <h2 class="me-h">닉네임</h2>
     <form class="me-box set-form" id="nick-form" novalidate>
-      <label for="nick-input">다른 사람에게 보이는 이름이에요 (2–20자, 띄어쓰기 없이)</label>
+      <label for="nick-input">방 멤버에게 표시되는 이름 (2~20자, 공백 제외)</label>
       <div class="set-row">
         <input class="field" id="nick-input" maxlength="20" autocomplete="nickname" required>
-        <button type="submit" class="btn-sm" id="nick-save">바꾸기</button>
+        <button type="submit" class="btn-sm" id="nick-save">변경</button>
       </div>
       <p class="me-username" id="nick-id"></p>
     </form>
@@ -60,11 +60,11 @@
       <h2 class="me-h" id="notify-h">알림</h2>
       <div class="me-box set-form">
         <label class="set-toggle">
-          <span>아침에 오늘의 시 알림</span>
+          <span>오늘의 시 아침 알림</span>
           <input type="checkbox" id="notify-on" role="switch">
         </label>
         <div class="set-row set-time" id="notify-time-row" hidden>
-          <label for="notify-time">시간</label>
+          <label for="notify-time">알림 시각</label>
           <input class="field" type="time" id="notify-time" value="08:00" step="300">
         </div>
       </div>
@@ -75,8 +75,8 @@
       <details class="s-row set-credits">
         <summary>출처 및 라이선스</summary>
         <dl>
-          <dt>뜻</dt><dd>위키낱말사전 (CC BY-SA 4.0)</dd>
-          <dt>시 · 책</dt><dd>퍼블릭 도메인 (Project Gutenberg, PoetryDB)</dd>
+          <dt>한국어 사전</dt><dd>위키낱말사전 (CC BY-SA 4.0)</dd>
+          <dt>영문 시 · 원서</dt><dd>퍼블릭 도메인 (Project Gutenberg, PoetryDB)</dd>
           <dt>글꼴</dt><dd>SIL Open Font License</dd>
         </dl>
       </details>
@@ -93,11 +93,11 @@
 
     <!-- 계정 삭제: 비밀번호를 한 번 더 받아요 (DELETE /api/users/me) -->
     <form class="me-box set-form set-danger" id="delete-form" novalidate hidden>
-      <p class="set-note">내 메모, 주석, 형광펜, 단어장, 읽은 기록이 모두 지워지고 되돌릴 수 없어요. 내가 만든 방은 가장 먼저 들어온 멤버에게 넘어가고, 혼자 있는 방은 지워져요.</p>
-      <label for="delete-password">비밀번호</label>
+      <p class="set-note">계정을 삭제하면 모든 독서 기록(메모, 구절 메모, 형광펜, 단어장, 읽은 기록)이 즉시 삭제되며 복구할 수 없어요. 내가 방장인 방은 가장 먼저 참여한 멤버에게 방장이 위임되고, 혼자 있는 방은 함께 삭제돼요.</p>
+      <label for="delete-password">비밀번호 확인</label>
       <div class="set-row">
         <input class="field" id="delete-password" type="password" autocomplete="current-password" required>
-        <button type="submit" class="btn-sm btn-danger" id="delete-btn">삭제</button>
+        <button type="submit" class="btn-sm btn-danger" id="delete-btn">계정 삭제</button>
       </div>
     </form>
   </main>

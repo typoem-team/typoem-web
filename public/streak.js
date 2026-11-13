@@ -62,7 +62,7 @@
   function dayLabel(d, read, today) {
     var x = utc(d);
     return (x.getUTCMonth() + 1) + '월 ' + x.getUTCDate() + '일 ' + DOW_KO[(x.getUTCDay() + 6) % 7] + '요일' +
-      (d === today ? ', 오늘' : '') + (read ? ', 읽음' : (d > today ? '' : ', 안 읽음'));
+      (d === today ? ', 오늘' : '') + (read ? ', 읽음' : (d > today ? '' : ', 읽지 않음'));
   }
 
   // ---- Rendering ----
@@ -90,7 +90,7 @@
     if (sum) {
       sum.textContent = state.current > 0
         ? state.current + '일째 이어 읽는 중'
-        : '오늘 시나 책을 열면 시작돼요';
+        : '오늘 첫 페이지를 펼쳐 보세요';
     }
     var count = $('streak-count');
     if (count) {
@@ -99,8 +99,8 @@
     }
     var sub = $('streak-sub');
     if (sub) {
-      sub.innerHTML = '가장 길게 이은 기록 <b>' + (state.longest || 0) + '</b>일 · ' +
-        (state.checkedInToday ? '오늘 읽음' : '오늘은 아직이에요');
+      sub.innerHTML = '최장 연속 기록 <b>' + (state.longest || 0) + '</b>일 · ' +
+        (state.checkedInToday ? '오늘 독서 완료' : '오늘 읽기 전');
     }
   }
 
