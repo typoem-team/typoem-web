@@ -78,15 +78,21 @@ requireLogin();
     $('hr-poem-title').className = 'hr-title' + (title ? sizeClass(title) : ' is-empty');
     $('hr-poem-title').lang = title ? 'en' : 'ko';     // English titles: hyphenate in English
 
-    var memos = (today && today.memos) || [];
+    // memos + note marks, like the badges count them (models/badgesModel.js). Highlights don't
+    // count, and old line notes (annotations) are not added: they are copied into poem_marks.
+    var notes = ((today && today.poem_marks) || []).filter(function (m) { return m.kind === 'note'; });
+    var items = ((today && today.memos) || []).concat(notes);
+    // newest first, so the avatars show who wrote most recently
+    items.sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); });
     var writers = [];
-    memos.forEach(function (m) { if (m.author_nickname && writers.indexOf(m.author_nickname) < 0) writers.push(m.author_nickname); });
-    $('hr-poem-meta').innerHTML = memos.length
+    items.forEach(function (m) { if (m.author_nickname && writers.indexOf(m.author_nickname) < 0) writers.push(m.author_nickname); });
+    var count = items.length;
+    $('hr-poem-meta').innerHTML = count
       ? '<span class="hr-avs-sm">' + avatars(writers, 3) + '</span>' +
-        '<span class="hr-count"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>' + memos.length + '</span>'
+        '<span class="hr-count"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>' + count + '</span>'
       : '<span class="hr-hint">첫 메모 남기기</span>';
     fitTitle($('hr-poem-title'));
-    $('hr-poem').setAttribute('aria-label', '오늘의 시 읽기' + (title ? ', ' + title : '') + (memos.length ? ', 메모 ' + memos.length + '개' : ''));
+    $('hr-poem').setAttribute('aria-label', '오늘의 시 읽기' + (title ? ', ' + title : '') + (count ? ', 메모 ' + count + '개' : ''));
   }
 
   function drawBook(room) {
