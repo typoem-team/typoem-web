@@ -4368,17 +4368,13 @@ button.book-shelf-item:active .book-cover {
 .hr-avs i + i {
   margin-left: -8px;
 }
+/* the avatars are the button that opens the members sheet */
 .hr-invite {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--touch);
-  height: var(--touch);
-  margin-left: -4px;
-  padding: 0 0 0 6px;
+  min-height: var(--touch);
+  padding: 0;
   border: 0;
   background: none;
-  color: var(--color-ink);
+  cursor: pointer;
 }
 /* the room's invite code at the bottom of the home: the sheet's code box, smaller */
 .hr-invite-box {
@@ -4403,32 +4399,23 @@ button.book-shelf-item:active .book-cover {
   letter-spacing: .1em;
   margin: 2px 0 0;
 }
+/* small white squares, no border, icon centered */
 .hr-invite-box .sec {
-  width: 40px;
-  min-height: 40px;
+  width: 32px;
+  min-height: 32px;
   padding: 0;
-  border-radius: 50%;
+  border-radius: 9px;
+  background: var(--color-bg);
+  box-shadow: none;
 }
 .hr-invite-box .sec svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-.hr-invite svg {
-  width: 32px;
-  height: 32px;
-  padding: 8px;
-  box-sizing: border-box;
-  border: 1.5px dashed var(--color-ink-2);
-  border-radius: 50%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
 }
 
 /* two book covers */
