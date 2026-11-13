@@ -439,6 +439,16 @@
         if (S) S.setStyle({ style: tone === 'light' ? 'DARK' : 'LIGHT' });
       } catch (e) { /* not in the app */ }
     },
+    // Home screen widget (typoem-app's TypoemWidget plugin): today's poem as plain text,
+    // { date: 'YYYY-MM-DD', title, author, lines: [first two lines] }. Does nothing outside the app.
+    updateWidget: function (poem) {
+      try {
+        var C = window.Capacitor;
+        if (C && C.isPluginAvailable && C.isPluginAvailable('TypoemWidget')) {
+          C.Plugins.TypoemWidget.update(poem).catch(function () { /* the widget keeps what it had */ });
+        }
+      } catch (e) { /* not in the app */ }
+    },
   };
 
   window.TypoemUI = {
