@@ -1,4 +1,5 @@
 const { getDb } = require('../db');
+const { roomDeleteStatements } = require('./roomsModel');
 
 // helper: thrown when a duplicate username is inserted
 class UsernameTakenError extends Error {
@@ -29,22 +30,6 @@ async function create({ username, nickname, password_hash }) { // password comes
 async function updateNickname(id, nickname) {
     const result = await getDb().run(`UPDATE users SET nickname = ? WHERE id = ?`, [nickname, id]);
     return result.changes > 0;
-}
-
-// statements that remove a room and everything in it (same order as roomsModel.deleteRoom)
-function roomDeleteStatements(room_id) {
-    return [
-        `DELETE FROM memo_likes WHERE memo_id IN (SELECT id FROM memos WHERE room_id = ?)`,
-        `DELETE FROM line_annotations WHERE room_id = ?`,
-        `DELETE FROM memos WHERE room_id = ?`,
-        `DELETE FROM daily_room_poems WHERE room_id = ?`,
-        `DELETE FROM poem_marks WHERE room_id = ?`,
-        `DELETE FROM book_marks WHERE room_id = ?`,
-        `DELETE FROM reading_progress WHERE room_id = ?`,
-        `DELETE FROM room_books WHERE room_id = ?`,
-        `DELETE FROM room_members WHERE room_id = ?`,
-        `DELETE FROM rooms WHERE id = ?`,
-    ].map((sql) => ({ sql, args: [room_id] }));
 }
 
 // Delete an account and everything that belongs to it (회원 탈퇴).

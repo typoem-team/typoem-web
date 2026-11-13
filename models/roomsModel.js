@@ -147,11 +147,11 @@ async function removeMember(room_id, user_id) {
     return await getDb().run(`DELETE FROM room_members WHERE room_id = ? AND user_id = ?`, [room_id, user_id]);
 }
 
-// delete a room and all dependent rows (no ON DELETE CASCADE in schema).
-// One batch: atomic and a single DB round trip. memo_likes must go before memos,
-// otherwise a room with liked memos fails the foreign key check.
-async function deleteRoom(room_id) {
-    const stmts = [
+// statements that remove a room and all dependent rows (no ON DELETE CASCADE in schema).
+// Shared with usersModel.deleteAccount, so a new room table is added in one place.
+// memo_likes must go before memos, otherwise a room with liked memos fails the foreign key check.
+function roomDeleteStatements(room_id) {
+    return [
         `DELETE FROM memo_likes WHERE memo_id IN (SELECT id FROM memos WHERE room_id = ?)`,
         `DELETE FROM line_annotations WHERE room_id = ?`,
         `DELETE FROM memos WHERE room_id = ?`,
@@ -163,7 +163,11 @@ async function deleteRoom(room_id) {
         `DELETE FROM room_members WHERE room_id = ?`,
         `DELETE FROM rooms WHERE id = ?`,
     ].map((sql) => ({ sql, args: [room_id] }));
-    const results = await getDb().batch(stmts);
+}
+
+// delete a room: one batch, atomic and a single DB round trip
+async function deleteRoom(room_id) {
+    const results = await getDb().batch(roomDeleteStatements(room_id));
     return results[results.length - 1];
 }
 
@@ -175,4 +179,4 @@ async function markOpened(room_id, user_id) {
     );
 }
 
-module.exports = { findById, markOpened, findByInviteCode, isMember, listRoomsForUser, listMembers, createRoom, addMember, removeMember, deleteRoom, countOwnedRooms, countMemberships, InviteCodeGenerationError, AlreadyMemberError };
+module.exports = { findById, markOpened, findByInviteCode, isMember, listRoomsForUser, listMembers, createRoom, addMember, removeMember, deleteRoom, roomDeleteStatements, countOwnedRooms, countMemberships, InviteCodeGenerationError, AlreadyMemberError };
