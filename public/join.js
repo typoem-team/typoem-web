@@ -8,6 +8,8 @@ const errorBox = document.getElementById('errorBox');
 const submitBtn = document.getElementById('submitBtn');
 const codeInput = document.getElementById('invite_code');
 
+backToPrevious(document.getElementById('backLink'));
+
 // Force uppercase as the user types (invite codes are uppercase)
 codeInput.addEventListener('input', function () {
   codeInput.value = codeInput.value.toUpperCase();
@@ -45,8 +47,9 @@ form.addEventListener('submit', async function (e) {
       throw e;
     }
 
-    // Joined successfully -> go to the room list
-    window.location.href = '/index.html';
+    // Joined -> straight to that room's home
+    const room = await res.json();
+    window.location.href = '/index.html?room=' + encodeURIComponent(room.id);
 
   } catch (err) {
     console.error('Join room error:', err);

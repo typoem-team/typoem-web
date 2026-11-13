@@ -138,6 +138,20 @@ function authErrorMessage(err) {
 }
 
 
+// ============ Back link ============
+
+// "← 돌아가기" on create-room / join: back to whichever Typoem screen opened it
+// (home or the Rooms tab); opened directly, the link's own href (home) is used.
+function backToPrevious(link) {
+  if (!link) return;
+  link.addEventListener('click', function (e) {
+    if (document.referrer.indexOf(window.location.origin + '/') !== 0) return;
+    e.preventDefault();
+    window.history.back();
+  });
+}
+
+
 // ============ Logout ============
 
 function logout() {
