@@ -151,7 +151,7 @@
         '<span class="rc-bar" aria-hidden="true"><span style="width:' + Number(r.book_progress || 0) + '%"></span></span>' +
         '<span class="rc-num">' + (r.book_progress >= 100 ? '완독' : Number(r.book_progress || 0) + '%') + '</span>'
       : '<span class="rc-none">아직 고른 책이 없어요</span>';
-    return '<a class="room-card" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '">' +
+    return '<a class="room-card' + (isLast ? ' is-current' : '') + '" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '"' + (isLast ? ' aria-current="true"' : '') + '>' +
         '<span class="rc-top"><b class="rc-name">' + esc(r.name) + '</b>' +
           (isLast ? '<span class="rc-tag">지금 방</span>' : '') + '</span>' +
         '<span class="rc-line"><span class="rc-label">TODAY</span>' + poem + '</span>' +

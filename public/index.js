@@ -95,7 +95,7 @@ requireLogin();
     $('hr-book-title').textContent = has ? room.book_title : '아직 고른 책이 없어요';
     $('hr-book-title').className = 'hr-title' + (has ? sizeClass(room.book_title) : ' is-empty');
     $('hr-book-title').lang = has ? 'en' : 'ko';
-    $('hr-book-bar').hidden = !has;
+    $('hr-book-bar').style.visibility = has ? '' : 'hidden';   // keep its space: the divider stays in the same place
     $('hr-book-bar').firstElementChild.style.width = p + '%';
     $('hr-book-meta').innerHTML = !has ? '<span class="hr-hint">책 고르기</span>'
       : p >= 100 ? '<b>완독</b>' : '<b>' + p + '%</b><span class="hr-hint">이어 읽기</span>';

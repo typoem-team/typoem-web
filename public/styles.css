@@ -4124,7 +4124,8 @@ button.book-shelf-item:active .book-cover {
   --line: rgba(242, 203, 150, .55);
   --accent-on-cover: var(--color-accent-warm);
   position: relative;
-  min-height: 252px;
+  aspect-ratio: 2 / 3;         /* a book, at every width (taller if a long title needs it) */
+  min-height: 236px;
   box-sizing: border-box;
   padding: 20px 16px 10px 24px;
   display: flex;
@@ -4357,4 +4358,40 @@ button.book-shelf-item:active .book-cover {
   border-right: 1.5px solid currentColor;
   border-bottom: 1.5px solid currentColor;
   transform: rotate(-45deg);
+}
+
+/* Home on wider screens: covers stay book-sized instead of stretching sideways */
+@media (min-width: 600px) {
+  .hr-books {
+    grid-template-columns: repeat(2, minmax(0, 210px));
+  }
+  .home .sw-days {
+    max-width: 480px;
+  }
+}
+/* 1024px+: covers on the left, History on the right */
+@media (min-width: 1024px) {
+  .home .hr {
+    display: grid;
+    grid-template-columns: auto minmax(300px, 440px);
+    column-gap: 48px;
+    align-items: start;
+    justify-content: start;
+  }
+  .hr-head {
+    grid-column: 1 / -1;
+  }
+  .hr-books,
+  .hr-history {
+    margin-top: 18px;
+  }
+}
+
+/* Rooms: the room the home shows — marked in place (the list keeps the order rooms were made) */
+.room-card {
+  border: 1px solid transparent;
+}
+.room-card.is-current {
+  border: 1.5px solid var(--color-ink);
+  background: var(--color-line);
 }

@@ -30,12 +30,18 @@ async function loadRooms() {
   const rooms = await res.json();
   status.textContent = '';
 
-  const list = Array.isArray(rooms) ? rooms : [];   // the server sends them last opened first
+  // The server sends them last opened first: the first one is the room the home shows.
+  // The 방 tab keeps them in the order they were made (room id) and marks that room instead,
+  // so picking a room doesn't shuffle the list.
+  const all = Array.isArray(rooms) ? rooms : [];
+  const homeId = all.length ? all[0].id : null;   // the home shows the first one
+  const onRoomsTab = !$('rooms-list').dataset.limit;
+  const list = onRoomsTab ? all.slice().sort((a, b) => a.id - b.id) : all;
   if ($('rooms-count')) $('rooms-count').textContent = list.length ? `${list.length}개` : '';   // the home has no count
   $('empty-state').hidden = list.length > 0;
   // the home shows only the first few (data-limit); the 방 tab shows them all
   const limit = Number($('rooms-list').dataset.limit) || list.length;
-  $('rooms-list').innerHTML = list.slice(0, limit).map((r, i) => UI.roomCard(r, i === 0 && !!r.last_opened_at)).join('');
+  $('rooms-list').innerHTML = list.slice(0, limit).map((r) => UI.roomCard(r, r.id === homeId)).join('');
   if ($('all-rooms')) {
     $('all-rooms').hidden = list.length <= limit;
     $('all-rooms').textContent = `모든 방 보기 (${list.length}개)`;
