@@ -2,6 +2,7 @@
 // First-run coach marks: a few speech bubbles per screen ("여기를 누르면 …"), shown once.
 //   TypoemTour.run('home', [{ el: '#hr-poem', text: '…' }, …])
 //     el: a selector, or a list of selectors (the first visible one wins).
+//     text: a string, or { touch, mouse } when the gesture differs (pointer: coarse = touch).
 //     Steps whose target is missing or hidden are skipped; nothing visible -> no tour, not marked seen.
 //   TypoemTour.reset()   settings "안내 다시 보기": every screen shows its tour again
 //   TypoemTour.close()   true if a tour was open (ui.js: the Android back button closes it first)
@@ -117,8 +118,12 @@
 
   function run(page, steps) {
     if (current || seen(page)) return;
+    // touch (the app, a phone browser) and mouse (a computer) do things differently
+    var touch = !window.matchMedia || window.matchMedia('(pointer: coarse)').matches;
     var list = steps
-      .map(function (s) { return { target: find(s.el), text: s.text }; })
+      .map(function (s) {
+        return { target: find(s.el), text: typeof s.text === 'string' ? s.text : s.text[touch ? 'touch' : 'mouse'] };
+      })
       .filter(function (s) { return s.target; });
     if (!list.length) return;
 

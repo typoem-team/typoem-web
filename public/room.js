@@ -118,8 +118,14 @@ function runTour() {
   if (READ_ONLY) return;
   const line = '#poem-body .ln:not(.ln-blank)';
   TypoemTour.run('room', [
-    { el: line, text: '단어를 두 번 톡톡 누르면 뜻이 나와요. 마음에 드는 단어는 단어장에 담아요.' },
-    { el: line, text: '단어를 길게 누르거나 여러 단어를 끌어서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.' },
+    { el: line, text: {
+      touch: '단어를 두 번 톡톡 누르면 뜻이 나와요. 마음에 드는 단어는 단어장에 담아요.',
+      mouse: '단어를 더블클릭하면 뜻이 나와요. 마음에 드는 단어는 단어장에 담아요.',
+    } },
+    { el: line, text: {
+      touch: '단어를 길게 누르거나 여러 단어를 끌어서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.',
+      mouse: '단어를 드래그해서 고르면 형광펜을 칠하거나 주석을 달 수 있어요.',
+    } },
     { el: ['#memo-pill', '#r-side'], text: '이 시에 남긴 메모는 여기서 보고, 나도 남겨요.' },
     { el: '#past-link', text: '지난 시는 History에서 다시 볼 수 있어요.' },
   ]);

@@ -75,7 +75,10 @@ async function loadVocab() {
       empty.hidden = false;
       sortBar.hidden = true;
       TypoemTour.run('vocab-empty', [
-        { el: '#empty-state', text: '시나 책에서 단어를 두 번 톡톡 누르고 “단어장에 담기”를 누르면 여기에 모여요.' },
+        { el: '#empty-state', text: {
+          touch: '시나 책에서 단어를 두 번 톡톡 누르고 “단어장에 담기”를 누르면 여기에 모여요.',
+          mouse: '시나 책에서 단어를 더블클릭하고 “단어장에 담기”를 누르면 여기에 모여요.',
+        } },
       ]);
       return;
     }
