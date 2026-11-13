@@ -17,7 +17,7 @@
     <p class="app-date" id="today"></p>
   </header>
 
-  <!-- 설정: 테마(라이트 · 다크 · 기기 설정) · 닉네임 · 정보(출처 · 버전) · 계정(개인정보처리방침, 로그아웃, 계정 삭제) -->
+  <!-- 설정: 테마(라이트 · 다크 · 기기 설정) · 아침 알림(앱) · 닉네임 · 정보(출처 · 버전) · 계정(개인정보처리방침, 로그아웃, 계정 삭제) -->
   <main class="page">
     <div class="page-headline">
       <a href="/me.html" class="link-btn back-link">&larr; 나</a>
@@ -34,6 +34,21 @@
         <button type="button" role="radio" data-theme-choice="system" aria-checked="false">기기 설정</button>
       </div>
     </div>
+
+    <!-- 아침 알림: 앱 안에서만 보여요 (notify.js, 폰 안에서 예약 — 서버를 안 써요) -->
+    <section id="notify-section" hidden>
+      <h2 class="me-h" id="notify-h">알림</h2>
+      <div class="me-box set-form">
+        <label class="set-toggle">
+          <span>아침에 오늘의 시 알림</span>
+          <input type="checkbox" id="notify-on" role="switch">
+        </label>
+        <div class="set-row set-time" id="notify-time-row" hidden>
+          <label for="notify-time">시간</label>
+          <input class="field" type="time" id="notify-time" value="08:00" step="300">
+        </div>
+      </div>
+    </section>
 
     <h2 class="me-h">닉네임</h2>
     <form class="me-box set-form" id="nick-form" novalidate>
@@ -79,6 +94,7 @@
   <script src="auth.js"></script>
   <script src="ui.js"></script>
   <script src="settings.js"></script>
+  <script src="notify.js"></script>
 
 </body>
 </html>
