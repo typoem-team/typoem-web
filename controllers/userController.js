@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const model = require('../models/usersModel');
 const badgesModel = require('../models/badgesModel');
 const { today } = require('../lib/dates');
+const { forgetUser } = require("../middleware/authMiddleware");
 
 async function getMe(req, res) {
     try{
@@ -50,6 +51,7 @@ async function deleteMe(req, res) {
         if (!ok) return res.status(403).json({ error: "Wrong password" });
 
         await model.deleteAccount(user.id);
+        forgetUser(user.id);   // the auth cache must not keep accepting this account's token
         return res.status(204).end();
     } catch (err) {
         console.error(err);
