@@ -940,6 +940,9 @@ html[lang="en"] .landing-invite {
 /* the room name is a button: members · invite (invite.js) */
 .r-room {
   min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -4421,6 +4424,9 @@ button.book-shelf-item:active .book-cover {
       "books  streak"
       "books  history"
       "empty  empty";
+    /* the cover column is taller than 'this week': the extra height goes to the History row,
+       so the History box keeps its place and only grows downwards */
+    grid-template-rows: auto auto auto 1fr auto;
     column-gap: 48px;
     justify-content: center;
     align-items: start;

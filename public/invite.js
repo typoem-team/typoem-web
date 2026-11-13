@@ -1,6 +1,6 @@
 // public/invite.js
-// Invite sheet: the room name in the room header (room.html, book.html) or the '+' next to
-// the members on the home (index.html, [data-invite-room] = the home's room id) opens it. Invite code (copy · share), members, and 방 삭제 (owner) / 나가기 (member).
+// Invite sheet: the '+' next to the members on the home (index.html, [data-invite-room] =
+// the home's room id) opens it. (The room header on 시 · 책 no longer opens it, 11/13.) Invite code (copy · share), members, and 방 삭제 (owner) / 나가기 (member).
 // Moved here from the home screen: a room is where you invite people now.
 //
 // Data (asked for when the sheet opens):
@@ -15,7 +15,7 @@
   var UI = window.TypoemUI;
   var esc = UI.esc;
   var q = new URLSearchParams(window.location.search);
-  var opener = document.querySelector('.r-room, [data-invite-room]');
+  var opener = document.querySelector('[data-invite-room]');   // the home's '+'
   if (!opener) return;
   // the home fills data-invite-room after it loads, so the id is read when the sheet opens
   var ROOM_ID = null;
