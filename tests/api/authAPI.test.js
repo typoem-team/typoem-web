@@ -21,7 +21,7 @@ jest.mock('../../models/usersModel', () => {
       if (users.some((u) => u.username === username)) {
         throw new UsernameTakenError(username);
       }
-      const user = { id: users.length + 1, username, nickname, password_hash };
+      const user = { id: users.length + 1, username, nickname, password_hash, created_at: '2026-11-02 10:15:00' };
       users.push(user);
       return { lastID: user.id };
     }),
@@ -174,6 +174,37 @@ describe('GET /api/users/me', () => {
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ username: 'dave', nickname: 'Dave' });
     expect(res.body).not.toHaveProperty('password_hash');
+  });
+
+  test('200 — includes created_at (sign-up time) for 함께한 날', async () => {
+    const res = await request(app)
+      .get('/api/users/me')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.created_at).toBe('2026-11-02 10:15:00');
+  });
+
+  test('200 — created_at is null when the user has none', async () => {
+    // the auth middleware reads the user too, so swap the lookup for this request only
+    const usersModel = require('../../models/usersModel');
+    const original = usersModel.findById.getMockImplementation();
+    usersModel.findById.mockImplementation(async (id) => {
+      const u = await original(id);
+      return u && { ...u, created_at: undefined };
+    });
+
+    let res;
+    try {
+      res = await request(app)
+        .get('/api/users/me')
+        .set('Authorization', `Bearer ${token}`);
+    } finally {
+      usersModel.findById.mockImplementation(original);
+    }
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('created_at', null);
   });
 
   test('401 — no Authorization header', async () => {

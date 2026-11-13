@@ -213,6 +213,26 @@ async function migrate(db) {
     );
     await db.run(`UPDATE book_marks SET color = 'yellow' WHERE kind = 'highlight' AND color IS NULL`);
   }
+
+  // users.created_at (설정 프로필의 '함께한 날'). ALTER TABLE can't default a column to
+  // CURRENT_TIMESTAMP, so new users get it from usersModel.create. Users from before get
+  // their earliest activity (UTC 'YYYY-MM-DD HH:MM:SS' like every created_at), or now.
+  if (!(await hasColumn(db, 'users', 'created_at'))) {
+    await db.exec(`ALTER TABLE users ADD COLUMN created_at DATETIME`);
+    await db.run(
+      `UPDATE users SET created_at = COALESCE((
+         SELECT MIN(t) FROM (
+           SELECT created_at AS t FROM memos WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM line_annotations WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM memo_likes WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM vocab WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM book_marks WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM poem_marks WHERE user_id = users.id
+           UNION ALL SELECT created_at FROM reading_checkins WHERE user_id = users.id
+         )), CURRENT_TIMESTAMP)
+       WHERE created_at IS NULL`
+    );
+  }
 }
 
 function getDb() {

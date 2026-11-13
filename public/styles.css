@@ -1861,7 +1861,8 @@ html[lang="en"] .landing-invite {
 
 .avs i,
 .mem-row i,
-.m-item > i {
+.m-item > i,
+.set-prof-av i {
   flex: none;
   display: grid;
   place-items: center;
@@ -2165,6 +2166,53 @@ html[lang="en"] .landing-invite {
 /* ---- 설정 (settings.html) ---- */
 .back-link {
   margin-left: -4px;
+}
+
+/* profile card at the top: [avatar] nickname / 함께한 날 | 참여한 방 */
+.set-profile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3) 14px;
+  padding: 18px;
+}
+
+.set-prof-av i {
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+}
+
+.set-prof-nick {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.set-prof-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--hair);
+  text-align: center;
+}
+
+.set-prof-stats div + div {
+  border-left: 1px solid var(--hair);
+}
+
+.set-prof-stats dt {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.set-prof-stats dd {
+  margin-top: 2px;
+  font-size: var(--fs-lg);
+  font-weight: 700;
 }
 
 .set-form {

@@ -15,7 +15,8 @@ async function findByUsername(username) { return await getDb().get(`SELECT * FRO
 // create new user
 async function create({ username, nickname, password_hash }) { // password comes in hashed from controllers
     try {
-        return await getDb().run( `INSERT INTO users (username, nickname, password_hash) VALUES (?, ?, ?)`, [username, nickname, password_hash] );  
+        // created_at: set here (the column was added by ALTER TABLE, which can't give it a default)
+        return await getDb().run( `INSERT INTO users (username, nickname, password_hash, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`, [username, nickname, password_hash] );
     } catch (err) {
         if (err.code === "SQLITE_CONSTRAINT" && /UNIQUE/i.test(err.message)) {
             throw new UsernameTakenError(username);

@@ -17,12 +17,32 @@
     <p class="app-date" id="today"></p>
   </header>
 
-  <!-- 설정: 테마(라이트 · 다크 · 기기 설정) · 아침 알림(앱) · 닉네임 · 정보(출처 · 버전) · 계정(개인정보처리방침, 로그아웃, 계정 삭제) -->
+  <!-- 설정: 프로필 · 닉네임(아이디) · 테마(라이트 · 다크 · 기기 설정) · 아침 알림(앱) · 정보(출처 · 버전) · 계정(개인정보처리방침, 로그아웃, 계정 삭제) -->
   <main class="page">
     <div class="page-headline">
       <a href="/me.html" class="link-btn back-link">&larr; 나</a>
       <h1>설정</h1>
     </div>
+
+    <!-- 프로필 (11/13: 홈 아바타 팝오버 대신 여기). 함께한 날 = 가입한 날이 1일째 (한국 날짜) -->
+    <section class="me-box set-profile" aria-label="프로필">
+      <span class="set-prof-av" id="prof-av"></span>
+      <p class="set-prof-nick" id="prof-nick"></p>
+      <dl class="set-prof-stats">
+        <div><dt>함께한 날</dt><dd id="prof-days">–</dd></div>
+        <div><dt>참여한 방</dt><dd id="prof-rooms">–</dd></div>
+      </dl>
+    </section>
+
+    <h2 class="me-h">닉네임</h2>
+    <form class="me-box set-form" id="nick-form" novalidate>
+      <label for="nick-input">다른 사람에게 보이는 이름이에요 (2–20자, 띄어쓰기 없이)</label>
+      <div class="set-row">
+        <input class="field" id="nick-input" maxlength="20" autocomplete="nickname" required>
+        <button type="submit" class="btn-sm" id="nick-save">바꾸기</button>
+      </div>
+      <p class="me-username" id="nick-id"></p>
+    </form>
 
     <!-- 테마: theme.js가 [data-theme-choice] 버튼을 이어요. 이 기기에만 저장돼요 -->
     <h2 class="me-h" id="theme-h">화면</h2>
@@ -49,16 +69,6 @@
         </div>
       </div>
     </section>
-
-    <h2 class="me-h">닉네임</h2>
-    <form class="me-box set-form" id="nick-form" novalidate>
-      <label for="nick-input">다른 사람에게 보이는 이름이에요 (2–20자, 띄어쓰기 없이)</label>
-      <div class="set-row">
-        <input class="field" id="nick-input" maxlength="20" autocomplete="nickname" required>
-        <button type="submit" class="btn-sm" id="nick-save">바꾸기</button>
-      </div>
-      <p class="me-username" id="nick-id"></p>
-    </form>
 
     <h2 class="me-h">정보</h2>
     <div class="me-box">
