@@ -3985,3 +3985,48 @@ button.book-shelf-item:active .book-cover {
     color: var(--button-ink);
   }
 }
+
+/* ============ 설정 · 정보 (출처 및 라이선스, 버전) ============ */
+.set-credits {
+  display: block;
+}
+.set-credits summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  cursor: pointer;
+  list-style: none;
+}
+.set-credits summary::-webkit-details-marker {
+  display: none;
+}
+.set-credits summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid var(--color-ink-2);
+  border-bottom: 1.5px solid var(--color-ink-2);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .2s var(--ease);
+}
+.set-credits[open] summary::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.set-credits dl {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  row-gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.set-version {
+  justify-content: space-between;
+}
+.set-version span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  color: var(--color-ink-2);
+}
