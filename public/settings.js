@@ -62,15 +62,15 @@ loadProfile();
 $('nick-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const nickname = $('nick-input').value.trim();
-  if (/\s/.test(nickname)) { UI.toast('닉네임에는 띄어쓰기를 쓸 수 없어요'); return; }
-  if (nickname.length < 2 || nickname.length > 20) { UI.toast('닉네임은 2–20자로 써 주세요'); return; }
+  if (/\s/.test(nickname)) { UI.toast('닉네임에는 공백(띄어쓰기)을 넣을 수 없어요'); return; }
+  if (nickname.length < 2 || nickname.length > 20) { UI.toast('닉네임은 2~20자로 입력해 주세요'); return; }
   if (nickname === me.nickname) return;
 
   const btn = $('nick-save');
   btn.disabled = true;
   try {
     const res = await authFetch('/api/users/me', { method: 'PATCH', body: JSON.stringify({ nickname }) });
-    if (!res.ok) { UI.toast('닉네임을 바꾸지 못했어요'); return; }
+    if (!res.ok) { UI.toast('닉네임을 변경하지 못했어요'); return; }
     const user = await res.json();
     // the tab bar and the 나 page read the nickname from the saved user
     saveAuth(getToken(), Object.assign({}, me, user));
@@ -78,7 +78,7 @@ $('nick-form').addEventListener('submit', async (e) => {
     const nick = document.querySelector('.tab-me-nick');
     if (nick) nick.textContent = user.nickname;
     showProfileName(user.nickname);
-    UI.toast('닉네임을 바꿨어요');
+    UI.toast('닉네임을 변경했어요');
   } catch (err) {
     UI.toast('네트워크에 연결할 수 없어요. 다시 시도해 주세요');
   } finally {
@@ -108,7 +108,7 @@ $('delete-form').addEventListener('submit', async (e) => {
       window.location.href = '/landing.html';
       return;
     }
-    UI.toast(res.status === 403 ? '비밀번호가 맞지 않아요' : '계정을 지우지 못했어요');
+    UI.toast(res.status === 403 ? '비밀번호가 일치하지 않아요' : '계정을 삭제하지 못했어요');
   } catch (err) {
     UI.toast('네트워크에 연결할 수 없어요. 다시 시도해 주세요');
   } finally {

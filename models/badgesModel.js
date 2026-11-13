@@ -11,12 +11,12 @@ const streakModel = require("./streakModel");
 const bookHistoryModel = require("./bookHistoryModel");
 
 const BADGES = [
-    { id: "streak_3", name: "3일 연속", description: "3일 연속으로 읽었어요", kind: "streak", goal: 3 },
-    { id: "streak_7", name: "7일 연속", description: "7일 연속으로 읽었어요", kind: "streak", goal: 7 },
-    { id: "streak_30", name: "30일 연속", description: "30일 연속으로 읽었어요", kind: "streak", goal: 30 },
-    { id: "first_memo", name: "첫 메모", description: "처음으로 메모를 남겼어요", kind: "memo", goal: 1 },
-    { id: "memo_10", name: "메모 10개", description: "메모를 10개 남겼어요", kind: "memo", goal: 10 },
-    { id: "first_book", name: "첫 완독", description: "책 한 권을 끝까지 읽었어요", kind: "book", goal: 1 },
+    { id: "streak_3", name: "3일 연속", description: "3일 연속으로 시나 책을 읽었어요", kind: "streak", goal: 3 },
+    { id: "streak_7", name: "7일 연속", description: "일주일 내내 꾸준히 읽었어요", kind: "streak", goal: 7 },
+    { id: "streak_30", name: "30일 연속", description: "한 달 동안 매일 독서를 이어갔어요", kind: "streak", goal: 30 },
+    { id: "first_memo", name: "첫 메모", description: "첫 감상 메모를 남겼어요", kind: "memo", goal: 1 },
+    { id: "memo_10", name: "메모 10개", description: "열 번의 생각과 감상을 기록했어요", kind: "memo", goal: 10 },
+    { id: "first_book", name: "첫 완독", description: "영어 원서 한 권을 끝까지 읽었어요", kind: "book", goal: 1 },
 ];
 
 async function countMemos(user_id) {

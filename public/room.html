@@ -19,7 +19,7 @@
 <body class="reader-page">
 
   <!-- ===== 읽기 화면 ===== -->
-  <article class="reader" id="reader" aria-label="시 읽기">
+  <article class="reader" id="reader" aria-label="시 본문">
     <!-- room header (back · room name · 시 | 책), drawn by ui.js; the same one is on book.html -->
     <div class="r-bar" data-room-bar="poem"></div>
 
@@ -43,14 +43,14 @@
       </div>
 
       <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널 -->
-      <aside class="r-side" id="r-side" aria-label="메모">
-        <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모" data-wide="inline">
+      <aside class="r-side" id="r-side" aria-label="감상 메모">
+        <section class="sheet" id="sheet-memo" role="dialog" aria-label="감상 메모" data-wide="inline">
           <span class="handle"></span>
-          <p class="s-title">메모 <span id="m-count"></span></p>
+          <p class="s-title">감상 메모 <span id="m-count"></span></p>
           <div id="memo-list" aria-live="polite"></div>
           <form class="m-write" id="memo-form" novalidate>
-            <input id="memo-input" class="field" placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000" autocomplete="off">
-            <button type="submit" class="pri" id="memo-submit">남기기</button>
+            <input id="memo-input" class="field" placeholder="떠오른 생각을 남겨 보세요" aria-label="이 시에 감상 메모 남기기" maxlength="1000" autocomplete="off">
+            <button type="submit" class="pri" id="memo-submit">등록</button>
           </form>
         </section>
       </aside>

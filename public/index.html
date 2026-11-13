@@ -22,7 +22,7 @@
   <main class="page home" id="home">
 
     <!-- 스트릭: 이번 주 7일 (streak.js). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
-    <section class="streak-slot sw" aria-label="이번 주 읽은 날" data-streak hidden>
+    <section class="streak-slot sw" aria-label="이번 주 독서 기록" data-streak hidden>
       <!-- 넓은 화면에서만 보여요 (폰에서는 위쪽 'N일째 이어 읽는 중'이 같은 역할) -->
       <p class="sw-label home-sw-label" id="streak-week-label"></p>
       <div class="sw-days" id="streak-week"></div>
@@ -33,14 +33,14 @@
     <!-- 고른 방 (index.js가 채워요) -->
     <section class="hr" id="home-room" hidden>
       <div class="hr-head">
-        <a class="hr-name" href="/rooms.html" aria-label="방 바꾸기">
+        <a class="hr-name" href="/rooms.html" aria-label="다른 방 선택">
           <b id="hr-name"></b>
           <span class="hr-switch" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>
         </a>
         <span class="hr-people">
           <span class="hr-avs" id="hr-avs"></span>
           <!-- invite.js가 이 버튼으로 초대 시트를 열어요 (data-invite-room = 방 id) -->
-          <button type="button" class="hr-invite" id="hr-invite" data-invite-room="" aria-label="친구 초대" aria-haspopup="dialog">
+          <button type="button" class="hr-invite" id="hr-invite" data-invite-room="" aria-label="멤버 및 초대 코드 보기" aria-haspopup="dialog">
             <span class="hr-code" id="hr-code"></span>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           </button>
@@ -77,9 +77,9 @@
 
     <!-- 방이 없을 때 -->
     <div id="empty-state" class="empty-state" hidden>
-      <p class="empty-lead">아직 방이 없어요</p>
+      <p class="empty-lead">아직 참여 중인 독서방이 없어요</p>
       <div class="actions">
-        <a href="/create-room.html" class="btn">방 만들기</a>
+        <a href="/create-room.html" class="btn">새 방 만들기</a>
         <a href="/join.html" class="btn btn-ghost">초대 코드로 참여</a>
       </div>
     </div>

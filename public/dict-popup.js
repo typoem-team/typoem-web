@@ -33,7 +33,7 @@
     popup.dataset.wide = 'popover';
     popup.hidden = true;
     popup.setAttribute('role', 'dialog');
-    popup.setAttribute('aria-label', '사전');
+    popup.setAttribute('aria-label', '단어 사전');
 
     popup.innerHTML = `
       <span class="handle"></span>
@@ -134,7 +134,7 @@
 
       if (res.ok || res.status === 201) {
         if (btn) {
-          btn.textContent = '단어장에 담았어요';   // stays until the next word
+          btn.textContent = '단어장에 담김';   // stays until the next word
           UI.haptic();
         }
       } else if (btn) {
@@ -164,7 +164,7 @@
     // Korean meanings first (at most 4 entries), then the English definitions.
     if (ko.length > 0) {
       if (data.koFrom) {
-        html += `<p class="d-ko-from">${escapeHtml(data.koFrom)}의 뜻</p>`;
+        html += `<p class="d-ko-from">원형 ‘${escapeHtml(data.koFrom)}’의 뜻</p>`;
       }
       html += '<ul class="dict-ko-list">';
       for (const e of ko.slice(0, 4)) {
@@ -184,12 +184,12 @@
       // the hand-written archaic meanings (own) get no credit line.
       const shown = ko.slice(0, 4);
       if (shown.some((e) => !e.own)) {
-        html += '<p class="d-ko-src">뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
+        html += '<p class="d-ko-src">한국어 뜻 출처: 위키낱말사전 (CC BY-SA 4.0)</p>';
       }
     }
 
     if (defs.length === 0 && ko.length === 0) {
-      html += `<p class="dict-empty">뜻을 찾지 못했어요.</p>`;
+      html += `<p class="dict-empty">사전에서 뜻을 찾지 못했어요.</p>`;
       hideSaveButton();
     } else {
       if (defs.length > 0) {
@@ -254,7 +254,7 @@
     document.getElementById('dict-popup-phonetic').textContent = '';
     currentEntry = null;
     hideSaveButton();
-    setBody('<p class="dict-loading">찾는 중이에요&hellip;</p>');
+    setBody('<p class="dict-loading">사전 찾는 중&hellip;</p>');
     const wasOpen = isOpen();
     clearTimeout(hideTimer);
     popup.hidden = false;
@@ -269,7 +269,7 @@
       res = await fetchEntry(word);
     } catch (err) {
       if (seq !== lookupSeq) return;
-      setBody('<p class="dict-error">사전에 연결하지 못했어요. 다시 눌러 주세요.</p>');
+      setBody('<p class="dict-error">사전에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.</p>');
       return;
     }
     // The user tapped another word (or closed the popup) while we were retrying.
@@ -277,11 +277,11 @@
 
     // authFetch handles 401 (logout + redirect); handle the rest here.
     if (res.status === 404) {
-      setBody('<p class="dict-error">이 단어는 사전에 없어요.</p>');
+      setBody('<p class="dict-error">사전에 등록되지 않은 단어예요.</p>');
       return;
     }
     if (!res.ok) {
-      setBody('<p class="dict-error">지금은 사전을 쓸 수 없어요.</p>');
+      setBody('<p class="dict-error">일시적인 오류로 사전을 불러오지 못했어요.</p>');
       return;
     }
 

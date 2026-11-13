@@ -120,9 +120,9 @@ async function authFetch(url, options) {
 async function authErrorFromResponse(res, fallback) {
   // Only the status matters; the body may not even be JSON (a proxy error page).
   let message;
-  if (res.status === 401) message = '아이디 또는 비밀번호가 맞지 않아요.';
-  else if (res.status === 409) message = '이미 쓰고 있는 아이디예요.';
-  else if (res.status >= 500) message = '서버에 문제가 생겼어요. 잠시 후 다시 시도해 주세요.';
+  if (res.status === 401) message = '아이디 또는 비밀번호가 일치하지 않아요.';
+  else if (res.status === 409) message = '이미 사용 중인 아이디예요.';
+  else if (res.status >= 500) message = '일시적인 서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
   else message = fallback;
   const err = new Error(message);
   err.isUserMessage = true;

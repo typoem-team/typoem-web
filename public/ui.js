@@ -147,15 +147,15 @@
   function roomCard(r, isLast) {
     var poem = r.today_poem_title
       ? '<i class="rc-poem">' + poemTitleHtml(r.today_poem_title) + '</i>'
-      : '<span class="rc-none">오늘의 시를 열어 보세요</span>';
+      : '<span class="rc-none">오늘의 시를 펼쳐 보세요</span>';
     var book = r.book_title
       ? '<i class="rc-book">' + esc(r.book_title) + '</i>' +
         '<span class="rc-bar" aria-hidden="true"><span style="width:' + Number(r.book_progress || 0) + '%"></span></span>' +
         '<span class="rc-num">' + (r.book_progress >= 100 ? '완독' : Number(r.book_progress || 0) + '%') + '</span>'
-      : '<span class="rc-none">아직 고른 책이 없어요</span>';
+      : '<span class="rc-none">아직 선택한 책이 없어요</span>';
     return '<a class="room-card' + (isLast ? ' is-current' : '') + '" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '"' + (isLast ? ' aria-current="true"' : '') + '>' +
         '<span class="rc-top"><b class="rc-name">' + esc(r.name) + '</b>' +
-          (isLast ? '<span class="rc-tag">지금 방</span>' : '') + '</span>' +
+          (isLast ? '<span class="rc-tag">현재 방</span>' : '') + '</span>' +
         '<span class="rc-line"><span class="rc-label">TODAY</span>' + poem + '</span>' +
         '<span class="rc-line"><span class="rc-label">BOOK</span>' + book + '</span>' +
         '<span class="rc-meta">멤버 ' + esc(r.member_count) + '명</span>' +
@@ -183,7 +183,7 @@
       return '<a href="' + href + '"' + (key === tab ? ' aria-current="page"' : '') + '>' + label + '</a>';
     }
     bar.innerHTML =
-      '<a href="' + back + '" class="r-back" aria-label="뒤로">' +
+      '<a href="' + back + '" class="r-back" aria-label="뒤로 가기">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>' +
       // the room name only (inviting is on the home: the '+' next to the members)
       '<span class="r-room"><span id="room-name"></span></span>' +
@@ -384,7 +384,7 @@
     var nav = document.createElement('nav');
     nav.className = 'tabbar';
     nav.id = 'tabbar';
-    nav.setAttribute('aria-label', '메뉴');
+    nav.setAttribute('aria-label', '주요 메뉴');
     nav.innerHTML =
       '<a class="nav-brand" href="/index.html">Typoem</a>' +
       '<div class="tabs-main">' +

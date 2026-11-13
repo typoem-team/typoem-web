@@ -40,7 +40,7 @@
     if (perm.display !== 'granted') perm = await LN.requestPermissions();
     if (perm.display !== 'granted') return false;
     try {   // Android 8+: the channel name is what people see in the phone's notification settings
-      await LN.createChannel({ id: CHANNEL, name: '아침 오늘의 시', importance: 3 });
+      await LN.createChannel({ id: CHANNEL, name: '오늘의 시 아침 알림', importance: 3 });
     } catch (e) { /* iOS / older Android: no channels */ }
     var p = hhmm.split(':').map(Number);
     await cancel();
@@ -49,7 +49,7 @@
         id: ID,
         channelId: CHANNEL,
         title: '오늘의 시가 도착했어요',
-        body: '한 편 읽고 하루를 시작해요',
+        body: '영시 한 편과 함께 차분한 하루를 시작해 보세요.',
         smallIcon: 'ic_stat_typoem',
         // inexact on purpose: no exact-alarm permission in the app, and a few minutes late is fine.
         // (plugin 8.3+ defaults to true and would open the system '알람 및 리마인더' screen on every schedule)
@@ -77,10 +77,10 @@
         UI.toast('아침 알림을 껐어요');
       } else if (await schedule(hhmm)) {
         save(hhmm);
-        UI.toast('매일 ' + hhmm + '쯤 알려 드릴게요');   // inexact alarm: Android may deliver it up to an hour late
+        UI.toast('매일 ' + hhmm + '경 오늘의 시를 알려 드릴게요');   // inexact alarm: Android may deliver it up to an hour late
       } else {
         save(null);
-        UI.toast('휴대폰 설정에서 Typoem 알림을 켜 주세요');
+        UI.toast('기기 설정에서 Typoem의 알림 권한을 허용해 주세요');
       }
     } catch (e) {
       UI.toast('알림을 설정하지 못했어요');

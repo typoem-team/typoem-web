@@ -29,15 +29,15 @@ function bookLine(m, book) {
   if (!book) return '';
   const p = book.progress.get(m.id) || { progress: 0, finished: false };
   const label = p.finished ? '완독' : `${p.progress}%`;
-  return `<div class="mf-book${p.finished ? ' is-done' : ''}" aria-label="책 ${label}">
+  return `<div class="mf-book${p.finished ? ' is-done' : ''}" aria-label="책 진행률 ${label}">
       <div class="mf-bar"><div style="width:${p.progress}%"></div></div><b>${label}</b>
     </div>`;
 }
 
 function friendRow(m, book) {
   const name = m.nickname || m.username || '';
-  const tags = [m.current > 0 ? `${m.current}일 연속` : '아직 기록 없음'];
-  if (m.checkedInToday) tags.push('오늘 읽음');
+  const tags = [m.current > 0 ? `${m.current}일 연속` : '기록 없음'];
+  if (m.checkedInToday) tags.push('오늘 독서 완료');
   if (me && m.id === me.id) tags.unshift('나');
   return `<div class="mem-row">${UI.avatar(name)}<p class="mf-name">${esc(name)}</p>
       <div class="mf-side"><span>${tags.join(' · ')}</span>${bookLine(m, book)}</div>
@@ -60,11 +60,11 @@ const getJson = (url) => authFetch(url)
 
 async function loadFriends() {
   const status = $('status');
-  status.textContent = '친구 기록을 불러오는 중이에요…';
+  status.textContent = '불러오는 중…';
   let rooms;
   try {
     const res = await authFetch('/api/rooms/mine');
-    if (!res.ok) { status.textContent = '친구 기록을 불러오지 못했어요.'; return; }
+    if (!res.ok) { status.textContent = '멤버 기록을 불러오지 못했어요.'; return; }
     // only rooms with someone besides me
     rooms = (await res.json()).filter((r) => r.member_count > 1);
   } catch (err) {
@@ -72,7 +72,7 @@ async function loadFriends() {
     return;
   }
   if (!rooms.length) {
-    status.textContent = '친구와 같은 방에 들어가면 서로의 기록이 여기 보여요.';
+    status.textContent = '독서방에 친구를 초대하면 서로의 독서 기록을 여기서 함께 볼 수 있어요.';
     return;
   }
   // shortcut: two requests per room; add a single "all my rooms" endpoint if people join many rooms
@@ -87,7 +87,7 @@ async function loadFriends() {
     const book = currentBook(books);   // books failing only drops the book line
     return `<section class="me-box" aria-label="${esc(r.name)}">
         <p class="me-room">${esc(r.name)}</p>
-        ${book ? `<p class="mf-title">같이 읽는 책 <b>${esc(book.title)}</b></p>` : ''}
+        ${book ? `<p class="mf-title">함께 읽는 책 <b>${esc(book.title)}</b></p>` : ''}
         ${members ? members.map((m) => friendRow(m, book)).join('') : '<p class="s-note">이 방의 기록을 불러오지 못했어요.</p>'}
       </section>`;
   }).join('');
@@ -120,7 +120,7 @@ function badgeItem(b) {
   const svg = `<svg viewBox="0 0 24 24" aria-hidden="true">${BADGE_ICONS[badgeKind(b.id)]}</svg>`;
   // earned: the look says it, so the words are for screen readers only
   const state = b.earned
-    ? '<span class="badge-sr">받았어요</span>'
+    ? '<span class="badge-sr">획득 완료</span>'
     : `<span class="badge-state">${b.progress} / ${b.goal}</span>`;
   return `<li class="badge${b.earned ? ' is-earned' : ''}">
       <span class="badge-ic">${svg}</span>

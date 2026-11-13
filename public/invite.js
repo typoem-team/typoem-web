@@ -35,7 +35,7 @@
     sheet.id = 'sheet-invite';
     sheet.dataset.wide = 'popover';
     sheet.setAttribute('role', 'dialog');
-    sheet.setAttribute('aria-label', '멤버 · 초대');
+    sheet.setAttribute('aria-label', '멤버 및 친구 초대');
     sheet.innerHTML =
       '<span class="handle"></span>' +
       '<p class="s-title">친구 초대 <span id="invite-room"></span></p>' +
@@ -44,7 +44,7 @@
         '<button type="button" class="sec" id="invite-copy">코드 복사</button>' +
         '<button type="button" class="pri" id="invite-share">공유하기</button>' +
       '</div>' +
-      '<p class="s-title s-title-gap">멤버 <span id="member-count"></span></p>' +
+      '<p class="s-title s-title-gap">참여 멤버 <span id="member-count"></span></p>' +
       '<div id="member-list" aria-live="polite"></div>' +
       '<div id="room-actions-row" class="room-leave"></div>';
     document.body.appendChild(sheet);
@@ -68,7 +68,7 @@
     syncShareButton();
     if (!room) {
       $('invite-code').textContent = '…';
-      $('member-list').innerHTML = '<p class="s-note">불러오는 중이에요…</p>';
+      $('member-list').innerHTML = '<p class="s-note">불러오는 중…</p>';
     }
     UI.openSheet(sheet, { anchor: opener });
     UI.haptic();
@@ -123,7 +123,7 @@
     var row = $('room-actions-row');
     if (!room || !me) { row.innerHTML = ''; return; }
     var isOwner = room.owner_id === me.id;
-    row.innerHTML = '<button type="button" class="leave" id="room-action">' + (isOwner ? '이 방 삭제하기' : '이 방 나가기') + '</button>';
+    row.innerHTML = '<button type="button" class="leave" id="room-action">' + (isOwner ? '방 삭제' : '방 나가기') + '</button>';
     $('room-action').addEventListener('click', function () { confirmRoomAction(isOwner); });
   }
 
@@ -132,8 +132,8 @@
     row.innerHTML =
       '<div class="note-confirm">' +
         '<span class="note-confirm-text">' + (isOwner
-          ? '이 방을 삭제할까요? 모두의 메모가 함께 사라지고 되돌릴 수 없어요.'
-          : '이 방에서 나갈까요?') + '</span>' +
+          ? '방을 삭제할까요? 모든 멤버의 메모와 독서 기록이 영구 삭제되며 복구할 수 없어요.'
+          : '이 방에서 나가시겠어요?') + '</span>' +
         '<span class="note-confirm-actions">' +
           '<button type="button" class="btn-sm btn-danger" id="room-confirm-yes">' + (isOwner ? '삭제' : '나가기') + '</button>' +
           '<button type="button" class="btn-sm" id="room-confirm-no">취소</button>' +
@@ -184,7 +184,7 @@
     // no share sheet: copy the invitation text instead
     try {
       await navigator.clipboard.writeText(text);
-      UI.toast('초대 문구를 복사했어요');
+      UI.toast('초대 메시지를 복사했어요');
     } catch (err) {
       UI.toast('초대 코드: ' + code);
     }

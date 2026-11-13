@@ -23,7 +23,7 @@
   <!-- ===== Shelf: the room has no book yet, or the owner is changing it ===== -->
   <div id="book-shelf-view" class="book-shelf-view" hidden>
     <header class="r-head">
-      <h1 class="c-title" id="book-shelf-title">이 방의 책</h1>
+      <h1 class="c-title" id="book-shelf-title">함께 읽을 책</h1>
       <p class="c-author" id="book-shelf-lead"></p>
     </header>
     <div class="book-shelf-wrap">
@@ -32,7 +32,7 @@
            the owner's empty slot at the end ("책 추가") -> search, and a found book is put on the shelf -->
       <ol id="book-shelf" class="book-shelf" aria-label="책장"></ol>
       <div id="book-shelf-foot" class="book-shelf-foot" hidden>
-        <button type="button" class="link-btn" id="book-shelf-back">돌아가기</button>
+        <button type="button" class="link-btn" id="book-shelf-back">읽던 책으로 돌아가기</button>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
     <div class="book-bar-stats">
       <span id="book-progress-text" class="book-progress-text"></span>
       <span class="book-goal">
-        <button type="button" id="book-pace" class="book-btn book-pace" aria-label="완독 목표일 정하기" disabled></button>
+        <button type="button" id="book-pace" class="book-btn book-pace" aria-label="완독 목표일 설정" disabled></button>
         <input type="date" id="book-goal-input" class="book-goal-input" tabindex="-1" aria-hidden="true">
       </span>
     </div>
@@ -58,7 +58,7 @@
   </header>
 
   <!-- Message (loading, not a member, no book, ...) -->
-  <div id="book-message" class="book-message" role="status"><p class="book-note">불러오는 중이에요&hellip;</p></div>
+  <div id="book-message" class="book-message" role="status"><p class="book-note">책을 펼치는 중&hellip;</p></div>
 
   <!-- Reader: text flows into one-screen-wide columns; pages move with translateX -->
   <main id="book-stage" class="book-stage" hidden>
@@ -66,19 +66,19 @@
       <div id="book-flow" class="book-flow" lang="en"></div>
     </div>
     <!-- Page-turn zones: outer ~15% on each side, so the middle stays free for word taps -->
-    <button type="button" id="book-edge-prev" class="book-btn book-edge book-edge-prev" aria-label="이전 쪽"></button>
-    <button type="button" id="book-edge-next" class="book-btn book-edge book-edge-next" aria-label="다음 쪽"></button>
+    <button type="button" id="book-edge-prev" class="book-btn book-edge book-edge-prev" aria-label="이전 페이지"></button>
+    <button type="button" id="book-edge-next" class="book-btn book-edge book-edge-next" aria-label="다음 페이지"></button>
   </main>
 
   <footer id="book-foot" class="book-foot" hidden>
-    <button type="button" id="book-prev" class="book-btn book-foot-nav" aria-label="이전 쪽">
+    <button type="button" id="book-prev" class="book-btn book-foot-nav" aria-label="이전 페이지">
       <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
     <span class="book-foot-text">
       <span id="book-chapter-name" class="book-chapter-name" lang="en"></span>
       <span id="book-page-num" class="book-page-num"></span>
     </span>
-    <button type="button" id="book-next" class="book-btn book-foot-nav" aria-label="다음 쪽">
+    <button type="button" id="book-next" class="book-btn book-foot-nav" aria-label="다음 페이지">
       <svg class="book-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
     </button>
   </footer>
@@ -91,7 +91,7 @@
     <p class="book-sheet-title">목차 <span id="book-toc-count"></span></p>
     <ol id="book-toc-list" class="book-toc-list" lang="en"></ol>
     <div class="book-toc-foot" id="book-toc-foot" hidden>
-      <button type="button" id="book-change-btn" class="book-btn book-btn-sec">책 바꾸기</button>
+      <button type="button" id="book-change-btn" class="book-btn book-btn-sec">읽는 책 변경</button>
     </div>
   </section>
 

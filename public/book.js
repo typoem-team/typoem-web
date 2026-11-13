@@ -124,7 +124,7 @@ const MARKS_URL = () => `/api/rooms/${encodeURIComponent(ROOM)}/book/marks`;
 
 // failed response -> Error with a message for the toast
 function marksError(res, fallback) {
-  return new Error(res.status === 403 ? '내가 남긴 것만 고칠 수 있어요.' : fallback);
+  return new Error(res.status === 403 ? '본인이 작성한 메모만 수정할 수 있어요.' : fallback);
 }
 
 const marks = window.TypoemMarks.attach({
@@ -146,17 +146,17 @@ const marks = window.TypoemMarks.attach({
     if (m.kind === 'highlight') body.color = m.color;   // required for highlights
     else body.content = m.content;
     const res = await authFetch(MARKS_URL(), { method: 'POST', body: JSON.stringify(body) });
-    if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
+    if (!res.ok) throw marksError(res, m.kind === 'note' ? '구절 메모를 저장하지 못했어요' : '형광펜을 저장하지 못했어요');
     return res.json();
   },
   async update(row, content) {
     const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
-    if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
+    if (!res.ok) throw marksError(res, '구절 메모를 수정하지 못했어요');
     return res.json();
   },
   async remove(row) {
     const res = await authFetch(`/api/book-marks/${row.id}`, { method: 'DELETE' });
-    if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
+    if (!res.ok && res.status !== 404) throw marksError(res, '삭제하지 못했어요');   // 404: already gone
   },
   // keep the per-chapter cache in step, then redraw if that chapter is open
   changed({ type, row }) {
@@ -214,7 +214,7 @@ function roomUrl() {
 
 async function init() {
   if (!ROOM) {
-    showMessage('방 정보를 찾지 못했어요. 내 방 목록에서 다시 들어와 주세요.', false);
+    showMessage('방 정보를 찾을 수 없어요. 방 목록에서 다시 선택해 주세요.', false);
     return;
   }
   let res;
@@ -246,7 +246,7 @@ async function init() {
   if (room) el('room-name').textContent = room.name || '';
 
   if (res.status === 403 || (res.status === 404 && roomsKnown && !room)) {
-    showMessage('이 방의 멤버가 아니거나 없는 방이에요.', false);
+    showMessage('참여 중인 방이 아니거나 존재하지 않는 방이에요.', false);
     return;
   }
   if (res.status === 404) {
@@ -254,7 +254,7 @@ async function init() {
     return;
   }
   if (!res.ok) {
-    showMessage('책을 불러오지 못했어요.', true);
+    showMessage('책을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', true);
     return;
   }
 
@@ -305,7 +305,7 @@ async function showReader(data) {
   el('book-toc-foot').hidden = !isOwner;
 
   if (chapters.length === 0) {
-    showMessage('이 책에는 읽을 장이 없어요.', true);
+    showMessage('이 책의 본문을 불러올 수 없어요. 다른 책을 선택해 주세요.', true);
     return;
   }
 
@@ -313,8 +313,8 @@ async function showReader(data) {
   await openChapter(chapterOfIdx(anchorIdx), { anchor: anchorIdx });
   TypoemTour.run('book', [
     { el: '#book-flow', text: {
-      touch: '옆으로 밀거나 화면 양쪽 끝을 누르면 쪽이 넘어가요. 단어를 두 번 톡톡 누르면 뜻이 나오고, 길게 누르면 형광펜과 주석을 남길 수 있어요.',
-      mouse: '양쪽 끝을 클릭하거나 ← → 키로 쪽을 넘겨요. 단어를 더블클릭하면 뜻이 나오고, 드래그하면 형광펜과 주석을 남길 수 있어요.',
+      touch: '옆으로 밀거나 화면 양쪽 끝을 누르면 쪽이 넘어가요. 단어를 두 번 톡톡 누르면 뜻이 나오고, 길게 누르면 형광펜과 구절 메모를 남길 수 있어요.',
+      mouse: '양쪽 끝을 클릭하거나 ← → 키로 쪽을 넘겨요. 단어를 더블클릭하면 뜻이 나오고, 드래그하면 형광펜과 구절 메모를 남길 수 있어요.',
     } },
     { el: '#book-toc-btn', text: '목차에서 읽고 싶은 장으로 가요.' },
     { el: '#book-pace', text: '완독 목표일을 정하면 하루에 몇 쪽 읽으면 되는지 알려줘요.' },
@@ -330,8 +330,8 @@ function showMessage(text, withBackLink) {
   setView('message');
   const box = el('book-message');
   box.innerHTML = `<p class="book-note">${escapeHtml(text)}</p>` + (withBackLink && ROOM
-    ? `<a class="book-btn book-btn-pri" href="${roomUrl()}">방으로 돌아가기</a>`
-    : '<a class="book-btn book-btn-pri" href="/rooms.html">내 방 목록으로</a>');
+    ? `<a class="book-btn book-btn-pri" href="${roomUrl()}">시 화면으로 돌아가기</a>`
+    : '<a class="book-btn book-btn-pri" href="/rooms.html">방 목록으로 이동</a>');
 }
 
 // =====================================================================
@@ -353,14 +353,14 @@ function openShelf() {
   if (changing) saveNow();           // keep the reading position before leaving
   setView('shelf');
   window.scrollTo(0, 0);
-  document.title = `${changing ? '책 바꾸기' : '이 방의 책'} · Typoem`;
+  document.title = `${changing ? '책 변경' : '함께 읽을 책'} · Typoem`;
 
-  el('book-shelf-title').textContent = changing ? '책 바꾸기' : '이 방의 책';
+  el('book-shelf-title').textContent = changing ? '책 변경' : '함께 읽을 책';
   el('book-shelf-lead').textContent = !isOwner
-    ? '방장이 책을 고르면 여기에 표시돼요'
+    ? '방장이 함께 읽을 책을 고르면 이곳에 열려요.'
     : changing
-      ? '바꾸면 방 전체에 적용돼요'
-      : '이 방에서 읽을 책을 고르세요';
+      ? '책을 바꾸면 방 멤버 모두 새 책을 읽게 돼요.'
+      : '방 멤버들과 함께 읽을 영어 원서를 골라 보세요.';
   el('book-shelf-foot').hidden = !(isOwner && changing);
 
   if (shelfBooks) renderShelf();
@@ -388,7 +388,7 @@ function displayAuthor(name) {
 // shelf = GET /api/books/shelf, then GET /api/books minus those 10
 async function loadShelf() {
   const status = el('book-shelf-status');
-  status.textContent = '책장을 불러오는 중이에요…';
+  status.textContent = '불러오는 중…';
   el('book-shelf').innerHTML = '';
   const [shelfRes, booksRes] = await Promise.all([
     authFetch('/api/books/shelf').catch(() => null),
@@ -439,7 +439,7 @@ function slotHtml() {
         <span class="book-slot-cover" aria-hidden="true"></span>
         <span class="book-shelf-text">
           <span class="book-slot-label">책 추가</span>
-          <span class="book-slot-hint">책 제목으로 찾기</span>
+          <span class="book-slot-hint">영어 제목 · 작가명으로 찾기</span>
         </span>
       </button>
       <div class="book-shelf-panel" hidden></div>
@@ -504,12 +504,12 @@ function openPick(cell) {
   if (!b) return;
   const panel = openPanel(cell, `
     <p class="book-note book-shelf-note">${book
-      ? '방 전체가 이 책으로 바뀌어요. 읽던 위치는 책마다 저장돼요.'
-      : '방 전체가 이 책을 읽게 돼요.'}</p>
+      ? '방의 함께 읽는 책이 변경돼요. 이전 책의 읽던 위치는 그대로 보존돼요.'
+      : '방 멤버들과 이 책을 함께 읽기 시작해요.'}</p>
     <div class="book-shelf-status" role="status"></div>
     <div class="book-shelf-actions">
       <button type="button" class="sec" data-act="cancel">취소</button>
-      <button type="button" class="pri" data-act="assign">이 책으로 정하기</button>
+      <button type="button" class="pri" data-act="assign">이 책으로 시작하기</button>
     </div>`);
   if (!panel) return;
   panel.querySelector('[data-act="assign"]').focus({ preventScroll: true });
@@ -538,8 +538,8 @@ async function assignCell(cell) {
   yes.disabled = true;
   no.disabled = true;
   status.innerHTML = `<p class="book-loading">${b.imported
-    ? '여는 중…'
-    : '책을 가져오는 중이에요. 처음에만 시간이 걸려요.'}</p>`;
+    ? '책을 펼치는 중…'
+    : '원서 본문을 준비하고 있어요. 처음 여는 책은 최대 1분 정도 걸릴 수 있어요.'}</p>`;
 
   let res = null;
   let failure = null;
@@ -551,7 +551,7 @@ async function assignCell(cell) {
     }), BOOK_PUT_TIMEOUT_MS);
   } catch (err) {
     failure = err && err.message === 'timeout'
-      ? '시간이 오래 걸려 멈췄어요. 다시 시도해 주세요.'
+      ? '불러오는 시간이 초과되었어요. 다시 시도해 주세요.'
       : '네트워크에 연결할 수 없어요.';
     retryable = true;
   }
@@ -569,7 +569,7 @@ async function assignCell(cell) {
       return;
     }
     collapseCell();
-    UI.toast('읽을 책을 정했어요');
+    UI.toast('함께 읽을 책을 선택했어요');
     await showReader(overview);
     return;
   }
@@ -577,16 +577,16 @@ async function assignCell(cell) {
   if (res) {
     if (res.status === 401) return;   // authFetch is redirecting to login
     if (res.status === 502 || res.status === 503) {
-      failure = '책을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.';
+      failure = '원서 데이터를 가져오지 못했어요. 잠시 후 다시 시도해 주세요.';
       retryable = true;
     } else if (res.status === 403) {
-      failure = '방장만 책을 고를 수 있어요.';
+      failure = '책 선택과 변경은 방장만 할 수 있어요.';
     } else if (res.status === 404) {
-      failure = '이 책을 찾지 못했어요.';
+      failure = '도서 정보를 찾을 수 없어요.';
     } else if (res.status === 422) {
-      failure = '이 책은 가져올 수 없어요. 다른 책을 골라 주세요.';
+      failure = '본문 형식이 맞지 않아 열 수 없는 책이에요. 다른 책을 선택해 주세요.';
     } else {
-      failure = '책을 고르지 못했어요.';
+      failure = '책을 선택하지 못했어요. 다시 시도해 주세요.';
     }
   }
 
@@ -602,12 +602,12 @@ async function assignCell(cell) {
 function openSearch(cell) {
   const panel = openPanel(cell, `
     <form class="m-write book-shelf-search" novalidate>
-      <input type="search" class="field" maxlength="100" placeholder="예: Emma"
-             aria-label="책 제목" autocomplete="off">
-      <button type="submit" class="pri">찾기</button>
+      <input type="search" class="field" maxlength="100" placeholder="영어 제목 또는 작가명 (예: Emma)"
+             aria-label="영어 도서 검색" autocomplete="off">
+      <button type="submit" class="pri">검색</button>
     </form>
     <p class="status book-shelf-search-status" role="status"></p>
-    <ol class="book-shelf-results" aria-label="찾은 책"></ol>`);
+    <ol class="book-shelf-results" aria-label="검색 결과"></ol>`);
   if (panel) panel.querySelector('input').focus({ preventScroll: true });
 }
 
@@ -616,11 +616,11 @@ async function runSearch(panel) {
   const status = panel.querySelector('.book-shelf-search-status');
   const list = panel.querySelector('.book-shelf-results');
   if (!q) {
-    status.textContent = '책 제목을 적어 주세요.';
+    status.textContent = '영어 책 제목이나 작가 이름을 입력해 주세요.';
     return;
   }
   const seq = ++searchSeq;
-  status.textContent = '찾는 중이에요…';
+  status.textContent = '검색 중…';
   list.innerHTML = '';
 
   let res = null;
@@ -633,14 +633,14 @@ async function runSearch(panel) {
   if (!res || !res.ok) {
     if (res && res.status === 401) return;
     status.textContent = res && res.status === 400
-      ? '100자 안으로 적어 주세요.'
-      : '지금은 검색이 잘 안 돼요. 잠시 후 다시 찾아 주세요.';
+      ? '검색어는 100자 이내로 입력해 주세요.'
+      : '일시적인 오류로 검색 결과를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
     return;
   }
   const results = await res.json();
   if (seq !== searchSeq) return;
   if (results.length === 0) {
-    status.textContent = '검색 결과가 없어요.';
+    status.textContent = '검색 결과가 없어요. 영어 제목이나 작가 철자를 확인해 주세요.';
     return;
   }
   status.textContent = '';
@@ -762,7 +762,7 @@ async function openChapter(c, where) {
     paragraphs = await fetchChapter(c);
   } catch (err) {
     console.error(err);
-    el('book-page-num').textContent = '이 장을 불러오지 못했어요. 다시 시도해 주세요.';
+    el('book-page-num').textContent = '본문을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
     navBusy = false;
     return;
   }
@@ -867,7 +867,7 @@ function anchorForPage(n) {
 function showPage(n) {
   curPage = Math.max(0, Math.min(pageCount - 1, n));
   flow.style.transform = `translateX(${-curPage * step}px)`;
-  el('book-page-num').textContent = `${curPage + 1} / ${pageCount}쪽 (이 장)`;
+  el('book-page-num').textContent = `${curPage + 1} / ${pageCount}쪽`;
   marks.reposition();        // a selection's toolbar follows the page
 }
 
@@ -964,16 +964,16 @@ function updateStats() {
   pace.classList.remove('is-late');
   pace.title = '';
   if (!targetEndDate) {
-    pace.textContent = '목표일 정하기';
+    pace.textContent = '목표일 설정';
     return;
   }
-  pace.title = `목표일 ${targetEndDate.slice(5).replace('-', '/')} · 눌러서 바꾸기`;
+  pace.title = `목표일 ${targetEndDate.slice(5).replace('-', '/')} · 눌러서 변경`;
   const remaining = total - read;
   const days = daysLeftIncludingToday(targetEndDate);
   if (remaining <= 0) {
     pace.textContent = '완독';
   } else if (days < 1) {
-    pace.textContent = '목표일이 지났어요';
+    pace.textContent = '목표일 지남 · 다시 설정하기';
     pace.classList.add('is-late');
   } else {
     const perDay = Math.ceil(remaining / days);
@@ -982,8 +982,8 @@ function updateStats() {
     const perPage = ch && pageCount ? ch.wordCount / pageCount : 0;
     const pages = perPage > 0 ? Math.max(1, Math.round(perDay / perPage)) : null;
     pace.textContent = pages
-      ? `오늘 약 ${pages}쪽 (${perDay.toLocaleString('ko-KR')}단어)`
-      : `오늘 약 ${perDay.toLocaleString('ko-KR')}단어`;
+      ? `오늘 분량 약 ${pages}쪽 (${perDay.toLocaleString('ko-KR')}단어)`
+      : `오늘 분량 약 ${perDay.toLocaleString('ko-KR')}단어`;
     pace.title += ` · 오늘 포함 ${days}일 남음`;
   }
 }
@@ -1055,12 +1055,12 @@ async function saveGoal(value) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      UI.toast('목표일을 저장하지 못했어요.');
+      UI.toast('목표일을 저장하지 못했어요');
       return;
     }
     savedIdx = idx;
     targetEndDate = data.targetEndDate || null;
-    UI.toast(targetEndDate ? '목표일을 저장했어요' : '목표일을 지웠어요');
+    UI.toast(targetEndDate ? '목표일을 설정했어요' : '목표일을 해제했어요');
     updateStats();
   } catch (err) {
     UI.toast('네트워크에 연결할 수 없어요');
