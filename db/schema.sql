@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS poems (
   author TEXT NOT NULL,
   linecount INTEGER NOT NULL
 );
+-- findPoemByTitleAuthor (cache lookup before storing a fetched poem)
+CREATE INDEX IF NOT EXISTS idx_poems_title_author ON poems(title, author);
 
 -- Poem Lines
 CREATE TABLE IF NOT EXISTS poem_lines (
@@ -44,6 +46,8 @@ CREATE TABLE IF NOT EXISTS poem_lines (
   text TEXT NOT NULL,
   FOREIGN KEY (poem_id) REFERENCES poems(id)
 );
+-- every poem screen loads its lines by poem_id; without this it scans every stored line
+CREATE INDEX IF NOT EXISTS idx_poem_lines_poem ON poem_lines(poem_id, line_number);
 
 -- Daily Room Poems
 CREATE TABLE IF NOT EXISTS daily_room_poems (
@@ -68,6 +72,8 @@ CREATE TABLE IF NOT EXISTS memos (
   FOREIGN KEY (room_id) REFERENCES rooms(id),
   FOREIGN KEY (poem_id) REFERENCES poems(id)
 );
+-- a poem's memos in a room (poem screen, home cover, history)
+CREATE INDEX IF NOT EXISTS idx_memos_room_poem ON memos(room_id, poem_id);
 
 -- Line Annotations
 CREATE TABLE IF NOT EXISTS line_annotations (
