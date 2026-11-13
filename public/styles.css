@@ -1,52 +1,96 @@
 /* =================================================
    Typoem — Stylesheet
    Calm reading-app look: space, type, and the depth of a book cover.
-   Design reference: docs/design/typoem-calm-demo.html
+   Design: docs/design/Design.md (시안 C)
    ================================================= */
 
 /* ============ Tokens ============ */
+/* Values come from docs/design/Design.md (시안 C). Change colours here only.
+   New role names (--color-*, --font-*, --fs-*, --space-*, --radius-*) are the ones to use in new CSS.
+   The old short names below (--bg, --ink, --ink-2, --on-ink …) now point at the new values;
+   keep them — older CSS and the app (typoem-app app-shell.js) still read them. */
 :root {
-  /* colour: warm grey paper, dark ink, one deep wine accent */
+  /* ---- colour: roles (시안 C) ---- */
+  --color-bg: #ffffff;
+  --color-surface: #f1f6f3;      /* History box, code box, stat cells */
+  --color-line: #ddebe4;         /* dividers, chip fill, sheet handle, light mint */
+  --color-line-dashed: #b9cec4;  /* days not reached yet */
+  --color-ink: #28383c;          /* text, primary button, dark cards */
+  --color-ink-2: #4f6568;        /* secondary text, reader title band, scrim base */
+  --color-ink-3: #7c8f91;        /* placeholders, inactive tabs (large text / icons only) */
+  --color-on-ink: #ffffff;
+  --color-on-ink-2: #ddebe4;     /* secondary text on dark */
+  --color-accent: #82aab9;       /* book, progress, current-tab dot. Fills only: too light for text on white */
+  --color-accent-text: #3f6e7e;  /* links and accent text on white (contrast 5.4:1) */
+  --color-accent-warm: #f2cb96;  /* today's poem, quoted line, owner chip */
+  --color-accent-rose: #e3a59d;  /* avatars */
+  --color-danger: #9a3b30;       /* errors, delete */
+  --color-highlight: rgba(236, 196, 64, .40);
+  --color-scrim: rgba(40, 56, 60, .45);
+
+  /* ---- type: roles ---- */
+  /* Noto / Newsreader / Plex are being added to public/fonts (지섭). Until then the old
+     self-hosted fonts and system fonts are the fallback, so nothing breaks. */
+  --font-ui: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-ko-head: 'Noto Serif KR', 'MaruBuri', 'Nanum Myeongjo', serif;
+  --font-text: 'Newsreader', 'Gentium Book Plus', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --fs-2xs: 10px; --fs-xs: 11px; --fs-sm: 12px; --fs-md: 13px; --fs-base: 14px;
+  --fs-body: 15px; --fs-lg: 16px; --fs-text: 19px; --fs-h3: 22px; --fs-h2: 28px;
+  --fs-h1: 44px; --fs-hero: 96px;
+
+  /* ---- space, radius, size ---- */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 28px;
+  --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px; --radius-xl: 14px;
+  --radius-sheet: 18px; --radius-pill: 999px;
+  --radius-book: 3px 10px 10px 3px;  /* book cover: spine side square, page side round */
+  --touch: 44px;
+  --shadow-pop: 0 12px 32px rgba(40, 56, 60, .28);
+  --shadow-book: 0 14px 22px -12px rgba(40, 56, 60, .7), 0 2px 4px rgba(40, 56, 60, .2);
+
+  /* ---- old names → new values (keep) ---- */
   /* The *-rgb triplets are the same colours as r, g, b, for translucent use:
      rgba(var(--ink-rgb), .4). Change both together (e.g. for dark mode). */
-  --bg: #f2eee7;
-  --bg-rgb: 242, 238, 231;
-  --surface: #fbf9f5;
-  --surface-rgb: 251, 249, 245;
-  --ink: #1f1b16;
-  --ink-rgb: 31, 27, 22;     /* shadows, scrims, faint lines */
-  --ink-2: #6b6358;
-  --ink-3: #9a9184;          /* placeholders, inactive tabs */
-  --hair: #e2dbcf;
-  --hair-rgb: 226, 219, 207;
-  --accent: #6e2f3a;
-  --accent-rgb: 110, 47, 58;
-  --on-ink: #f4efe6;         /* text on ink / cover colours */
-  --on-ink-rgb: 244, 239, 230;
+  --bg: var(--color-bg);
+  --bg-rgb: 255, 255, 255;
+  --surface: var(--color-surface);
+  --surface-rgb: 241, 246, 243;
+  --ink: var(--color-ink);
+  --ink-rgb: 40, 56, 60;     /* shadows, scrims, faint lines */
+  --ink-2: var(--color-ink-2);
+  --ink-3: var(--color-ink-3);
+  --hair: var(--color-line);
+  --hair-rgb: 221, 235, 228;
+  --accent: var(--color-accent-text);
+  --accent-rgb: 63, 110, 126;
+  --on-ink: var(--color-on-ink);
+  --on-ink-rgb: 255, 255, 255;
   --sheen-rgb: 255, 255, 255; /* light edge on cards and the memo pill (not on covers) */
-  --poem-ink: #2a241d;
+  --poem-ink: var(--color-ink);
   /* word-range highlighters (marks.js): translucent, so overlaps mix */
-  --hl-yellow: rgba(236, 196, 64, .40);
-  --hl-pink: rgba(232, 112, 146, .30);
-  --hl-blue: rgba(96, 150, 214, .30);
-  --hl-green: rgba(126, 186, 96, .34);
+  --hl-yellow: var(--color-highlight);
+  --hl-pink: rgba(227, 165, 157, .45);
+  --hl-blue: rgba(130, 170, 185, .40);
+  --hl-green: rgba(126, 186, 150, .36);
   --note-line: rgba(var(--accent-rgb), .45);   /* dotted underline under notes */
-  --scrim: rgba(var(--ink-rgb), .28);
-  --glass: rgba(var(--bg-rgb), .82);
+  --scrim: var(--color-scrim);
+  --glass: rgba(var(--bg-rgb), .86);
 
-  /* one cover colour per poem (picked by poem id, always the same) */
-  --cover-1: #2e3d35;
-  --cover-2: #5a2b33;
-  --cover-3: #2a3444;
-  --cover-4: #7a5f36;
-  --cover-5: #3b3a36;
-  --cover-6: #4a5a46;
-  --cover-7: #4b3b4f;
+  /* one cover colour per poem (picked by id, always the same). All dark enough for white text. */
+  --cover-1: #28383c;
+  --cover-2: #4f6568;
+  --cover-3: #3f6e7e;
+  --cover-4: #6e5a3a;
+  --cover-5: #3c4a4d;
+  --cover-6: #4a6b5e;
+  --cover-7: #7a4f49;
 
-  /* type */
-  --ko: 'MaruBuri', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
-  --display: 'Cormorant Garamond', 'MaruBuri', Georgia, serif;
-  --poem: 'Gentium Book Plus', 'MaruBuri', Georgia, serif;
+  /* type (old names) */
+  --ko: var(--font-ui);
+  --display: var(--font-text);
+  --poem: var(--font-text);
 
   /* motion */
   --ease: cubic-bezier(.22, .61, .36, 1);
