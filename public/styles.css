@@ -891,16 +891,16 @@ html[lang="en"] .landing-invite {
 
 /* ---- Invite code (create-room / join / room) ---- */
 .code-input {
-  font-family: var(--display);
+  font-family: var(--font-mono);
   font-size: 26px;
   font-weight: 500;
-  letter-spacing: .28em;
+  letter-spacing: .14em;
   text-align: center;
   text-transform: uppercase;
 }
 
 .code-input::placeholder {
-  letter-spacing: .28em;
+  letter-spacing: .14em;
 }
 
 .invite-code-row {
@@ -913,14 +913,17 @@ html[lang="en"] .landing-invite {
 .invite-code {
   flex: 1;
   min-width: 0;
-  padding: 16px 8px 16px calc(8px + .28em);
+  padding: 16px 8px 16px calc(8px + .14em);
   border-radius: 20px;
   background: var(--bg);
-  font-family: var(--display);
-  font-size: 32px;
+  /* room codes: fixed width (any 6 letters are as wide), 0/O and 1/I told apart; vw cap so a
+     bigger system font size in the app can't push it past one line */
+  font-family: var(--font-mono);
+  font-size: min(32px, 9vw);
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: .28em;
+  letter-spacing: .14em;
+  white-space: nowrap;
   text-align: center;
   color: var(--ink);
 }
@@ -2318,12 +2321,13 @@ textarea.field:focus {
 }
 
 .code {
-  font-family: var(--display);
-  font-size: 40px;
+  font-family: var(--font-mono);      /* same as .invite-code */
+  font-size: min(40px, 11vw);
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: .28em;
-  margin: 6px 0 0 .28em;
+  letter-spacing: .14em;
+  white-space: nowrap;
+  margin: 6px 0 0 .14em;
   user-select: all;
   -webkit-user-select: all;
 }
