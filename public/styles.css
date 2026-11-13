@@ -34,6 +34,8 @@
      self-hosted fonts and system fonts are the fallback, so nothing breaks. */
   --font-ui: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --font-ko-head: 'Noto Serif KR', 'MaruBuri', 'Nanum Myeongjo', serif;
+  /* Korean accent lines: empty states and hints ("오늘의 시를 열어 보세요"), one weight (400) */
+  --font-ko-accent: 'Typoem Myeongjo', 'Nanum Myeongjo', 'Noto Serif KR', serif;
   --font-text: 'Newsreader', 'Gentium Book Plus', Georgia, serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -241,6 +243,14 @@
   font-family: 'Noto Serif KR';
   src: url('fonts/noto-serif-kr/NotoSerifKR-SemiBold.subset.woff2') format('woff2');
   font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+/* Nanum Myeongjo Regular, subset (KS X 1001) and renamed: "Nanum" is a Reserved Font Name (OFL) */
+@font-face {
+  font-family: 'Typoem Myeongjo';
+  src: url('fonts/typoem-myeongjo/TypoemMyeongjo-Regular.subset.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -762,12 +772,14 @@ hr {
 }
 
 .empty-lead {
+  font-family: var(--font-ko-accent);
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--ink);
 }
 
 .empty-sub {
+  font-family: var(--font-ko-accent);
   font-size: 13.5px;
   color: var(--ink-2);
   margin-top: 6px;
@@ -2459,6 +2471,10 @@ textarea.field:focus {
 
 .rc-book {
   font-size: 14px;
+}
+
+.rc-none {
+  font-family: var(--font-ko-accent);
 }
 
 .rc-bar {
@@ -4478,7 +4494,7 @@ button.book-shelf-item:active .book-cover {
 .hr-title.is-xlong { font-size: 18px; }
 .hr-title.is-xxlong { font-size: 16px; }
 .hr-title.is-empty {
-  font-family: var(--font-ui);
+  font-family: var(--font-ko-accent);
   font-style: normal;
   font-size: var(--fs-base);
   line-height: 1.5;
@@ -4523,6 +4539,7 @@ button.book-shelf-item:active .book-cover {
   color: var(--color-on-ink);
 }
 .hr-hint {
+  font-family: var(--font-ko-accent);
   color: var(--color-on-ink-2);
 }
 .hr-avs-sm {
@@ -4665,6 +4682,7 @@ button.book-shelf-item:active .book-cover {
   color: var(--color-ink-2);
 }
 .hr-empty {
+  font-family: var(--font-ko-accent);
   padding: 14px 0;
   font-size: var(--fs-md);
   color: var(--color-ink-2);
