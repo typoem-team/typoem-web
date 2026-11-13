@@ -1,9 +1,10 @@
 // public/me.js
-// 나 탭 — my streak (streak.js; its look is step 8), my friends' streaks per room,
+// 나 탭 — my streak (streak.js; its look is step 8), my friends' streaks and book progress per room,
 // my badges, and a link to 설정 (settings.html).
 //
 // Data: GET /api/rooms/mine              -> [{ id, name, ... }]
 //       GET /api/rooms/:id/streaks       -> { date, members: [{ id, username, nickname, current, longest, checkedInToday }] }
+//       GET /api/rooms/:id/books/history -> [{ title, is_current, readers: [{ id, progress, finished }] }]
 //       GET /api/users/me/badges         -> { badges, earned_count }
 // Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak).
 
@@ -18,13 +19,40 @@ const me = getCurrentUser();
 $('me-nick').textContent = (me && me.nickname) || '나';
 $('me-username').textContent = me && me.username ? '@' + me.username : '';
 
-function friendRow(m) {
+// book = the room's current book, or null when it has none
+//        { title, progress: Map(user id -> { progress, finished }) }
+function bookLine(m, book) {
+  if (!book) return '';
+  const p = book.progress.get(m.id) || { progress: 0, finished: false };
+  const label = p.finished ? '다 읽음' : `${p.progress}%`;
+  return `<div class="mf-book${p.finished ? ' is-done' : ''}" aria-label="책 ${label}">
+      <div class="mf-bar"><div style="width:${p.progress}%"></div></div><b>${label}</b>
+    </div>`;
+}
+
+function friendRow(m, book) {
   const name = m.nickname || m.username || '';
   const tags = [m.current > 0 ? `${m.current}일 연속` : '아직 기록 없음'];
   if (m.checkedInToday) tags.push('오늘 읽음');
   if (me && m.id === me.id) tags.unshift('나');
-  return `<div class="mem-row">${UI.avatar(name)}${esc(name)}<span>${tags.join(' · ')}</span></div>`;
+  return `<div class="mem-row">${UI.avatar(name)}<p class="mf-name">${esc(name)}</p>
+      <div class="mf-side"><span>${tags.join(' · ')}</span>${bookLine(m, book)}</div>
+    </div>`;
 }
+
+// /books/history -> the current book with each reader's progress (read-only: no check-in, no room order)
+function currentBook(list) {
+  const cur = Array.isArray(list) ? list.find((b) => b.is_current) : null;
+  if (!cur) return null;
+  return {
+    title: cur.title,
+    progress: new Map(cur.readers.map((r) => [r.id, { progress: r.progress, finished: r.finished }])),
+  };
+}
+
+const getJson = (url) => authFetch(url)
+  .then((res) => (res.ok ? res.json() : null))
+  .catch(() => null);
 
 async function loadFriends() {
   const status = $('status');
@@ -43,17 +71,20 @@ async function loadFriends() {
     status.textContent = '친구와 같은 방에 들어가면 서로의 기록이 여기 보여요.';
     return;
   }
-  // shortcut: one request per room; add a single "all my rooms" endpoint if people join many rooms
-  const lists = await Promise.all(rooms.map((r) =>
-    authFetch(`/api/rooms/${encodeURIComponent(r.id)}/streaks`)
-      .then((res) => (res.ok ? res.json() : null))
-      .catch(() => null)));
+  // shortcut: two requests per room; add a single "all my rooms" endpoint if people join many rooms
+  const lists = await Promise.all(rooms.map((r) => {
+    const base = `/api/rooms/${encodeURIComponent(r.id)}`;
+    return Promise.all([getJson(`${base}/streaks`), getJson(`${base}/books/history`)]);
+  }));
   status.textContent = '';
   $('friends').innerHTML = rooms.map((r, i) => {
-    const members = lists[i] ? lists[i].members : null;
+    const [streaks, books] = lists[i];
+    const members = streaks ? streaks.members : null;
+    const book = currentBook(books);   // books failing only drops the book line
     return `<section class="me-box" aria-label="${esc(r.name)}">
         <p class="me-room">${esc(r.name)}</p>
-        ${members ? members.map(friendRow).join('') : '<p class="s-note">이 방의 기록을 불러오지 못했어요.</p>'}
+        ${book ? `<p class="mf-title">같이 읽는 책 <b>${esc(book.title)}</b></p>` : ''}
+        ${members ? members.map((m) => friendRow(m, book)).join('') : '<p class="s-note">이 방의 기록을 불러오지 못했어요.</p>'}
       </section>`;
   }).join('');
 }
