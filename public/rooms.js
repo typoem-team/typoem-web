@@ -4,7 +4,7 @@
 // Tapping a card picks that room for the home (POST /api/rooms/:id/open) and goes home (안 2, 11/13).
 //
 // Data: GET /api/rooms/mine -> [{ id, name, member_count, today_poem_title, book_title, book_progress }]
-// Depends on auth.js, ui.js (TypoemUI). The home (index.html) loads this file too.
+// Depends on auth.js, ui.js (TypoemUI).
 
 requireLogin();
 
@@ -35,17 +35,10 @@ async function loadRooms() {
   // so picking a room doesn't shuffle the list.
   const all = Array.isArray(rooms) ? rooms : [];
   const homeId = all.length ? all[0].id : null;   // the home shows the first one
-  const onRoomsTab = !$('rooms-list').dataset.limit;
-  const list = onRoomsTab ? all.slice().sort((a, b) => a.id - b.id) : all;
-  if ($('rooms-count')) $('rooms-count').textContent = list.length ? `${list.length}개` : '';   // the home has no count
+  const list = all.slice().sort((a, b) => a.id - b.id);
+  $('rooms-count').textContent = list.length ? `${list.length}개` : '';
   $('empty-state').hidden = list.length > 0;
-  // the home shows only the first few (data-limit); the 방 tab shows them all
-  const limit = Number($('rooms-list').dataset.limit) || list.length;
-  $('rooms-list').innerHTML = list.slice(0, limit).map((r) => UI.roomCard(r, r.id === homeId)).join('');
-  if ($('all-rooms')) {
-    $('all-rooms').hidden = list.length <= limit;
-    $('all-rooms').textContent = `모든 방 보기 (${list.length}개)`;
-  }
+  $('rooms-list').innerHTML = list.map((r) => UI.roomCard(r, r.id === homeId)).join('');
 }
 
 loadRooms();
