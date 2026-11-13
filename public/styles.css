@@ -1987,14 +1987,12 @@ html[lang="en"] .landing-invite {
   color: var(--color-ink-3);
 }
 
-/* earned card: lit from above (light top edge, soft drop shadow) */
+/* earned card: lit from above (light top edge), no drop shadow; the medal carries the depth */
 .badge.is-earned {
   border: 1px solid var(--color-line);
   background: linear-gradient(180deg, var(--color-bg), var(--color-surface) 70%);
   box-shadow:
-    0 1px 0 rgba(var(--sheen-rgb), .9) inset,
-    0 2px 4px -2px rgba(var(--ink-rgb), .18),
-    0 12px 22px -14px rgba(var(--ink-rgb), .45);
+    0 1px 0 rgba(var(--sheen-rgb), .9) inset;
   color: var(--color-ink);
 }
 
@@ -3764,6 +3762,11 @@ button.book-shelf-item:active .book-cover {
     padding: var(--space-4) var(--space-5);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
+  }
+
+  /* 나: the big number (line-height .82) rises above its line box, so more room on top */
+  .streak-slot.sm {
+    padding: var(--space-7) var(--space-6) var(--space-5);
   }
 
   .code {
