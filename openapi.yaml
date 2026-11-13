@@ -1088,6 +1088,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/rooms/{id}/open:
+    post:
+      tags: [Rooms]
+      summary: Pick a room for the home screen
+      description: Records the room as the one I opened last (room_members.last_opened_at), so the home shows it. The Rooms tab calls this when a room card is tapped.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Recorded
+        '400':
+          description: Invalid room id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not a member of this room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Room not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /api/rooms/{id}/members:
     get:
       tags: [Rooms]

@@ -1,6 +1,7 @@
 // public/history.js
 // History — this room's past poems (시) and the books it has read (소설).
-// history.html?room=ID&tab=poem|book. Reached from the poem screen's "History" link.
+// history.html?room=ID&tab=poem|book. Reached from the home's History box (and the poem screen's link).
+// No tab bar here; back goes to the home showing this room.
 //
 // Data:
 //   GET /api/rooms/mine                 -> this room's name and owner
@@ -224,9 +225,11 @@ requireLogin();
     $('status').textContent = '방을 찾지 못했어요.';
     return;
   }
-  $('hist-back').href = '/room.html?id=' + enc(ROOM_ID);
+  // back: the home, showing this room (History is opened from the home's History box)
+  var HOME_URL = '/index.html?room=' + enc(ROOM_ID);
+  $('hist-back').href = HOME_URL;
   window.TypoemNav && window.TypoemNav.setBackHandler && window.TypoemNav.setBackHandler(function () {
-    window.location.href = '/room.html?id=' + enc(ROOM_ID);
+    window.location.href = HOME_URL;
     return true;
   });
   loadRoom();

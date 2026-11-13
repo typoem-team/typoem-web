@@ -12,28 +12,67 @@
 </head>
 <body data-tab="today">
 
-  <header class="app-head">
+  <!-- ===== 홈 (안 2, 11/13 결정): 고른 방 하나를 크게 — 오늘의 시 · 우리 책 · History.
+       다른 방은 하단 Rooms 탭에서 고르면 홈이 그 방으로 바뀌어요 (POST /api/rooms/:id/open) ===== -->
+  <header class="app-head home-head">
     <h1 class="app-brand">Typoem</h1>
-    <p class="app-date" id="today"></p>
+    <span class="sw-sum" id="streak-summary" data-streak hidden></span>
   </header>
 
-  <!-- ===== 홈: 위는 스트릭, 아래는 최근 방 카드 3개 (마지막에 연 방이 맨 앞) ===== -->
   <main class="page home" id="home">
 
-    <!-- 스트릭: 이번 주 7일 (streak.js, 시안 C). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
-    <section class="streak-slot sw" aria-labelledby="streak-week-label" data-streak hidden>
-      <div class="sw-head">
-        <span class="sw-label" id="streak-week-label">이번 주</span>
-        <span class="sw-sum" id="streak-summary"></span>
-      </div>
+    <!-- 스트릭: 이번 주 7일 (streak.js). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
+    <section class="streak-slot sw" aria-label="이번 주 읽은 날" data-streak hidden>
+      <!-- 넓은 화면에서만 보여요 (폰에서는 위쪽 'N일째 이어 읽는 중'이 같은 역할) -->
+      <p class="sw-label home-sw-label" id="streak-week-label"></p>
       <div class="sw-days" id="streak-week"></div>
     </section>
 
     <p id="status" class="status" role="status"></p>
 
-    <!-- 최근에 연 방 3개까지. 전부는 방 탭(rooms.html)에서 봐요 -->
-    <nav id="rooms-list" class="room-cards" aria-label="최근 방" data-limit="3"></nav>
-    <a href="/rooms.html" class="link-btn all-rooms" id="all-rooms" hidden></a>
+    <!-- 고른 방 (index.js가 채워요) -->
+    <section class="hr" id="home-room" hidden>
+      <div class="hr-head">
+        <a class="hr-name" href="/rooms.html" aria-label="방 바꾸기">
+          <b id="hr-name"></b>
+          <span class="hr-switch" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>
+        </a>
+        <span class="hr-people">
+          <span class="hr-avs" id="hr-avs"></span>
+          <!-- invite.js가 이 버튼으로 초대 시트를 열어요 (data-invite-room = 방 id) -->
+          <button type="button" class="hr-invite" id="hr-invite" data-invite-room="" aria-label="친구 초대" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </span>
+      </div>
+
+      <div class="hr-books">
+        <a class="hr-cover is-poem" id="hr-poem" href="#">
+          <span class="hr-kicker">TODAY'S POEM</span>
+          <b class="hr-title" id="hr-poem-title"></b>
+          <span class="hr-foot"><span class="hr-meta" id="hr-poem-meta"></span><svg class="hr-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="hr-cover is-book" id="hr-book" href="#">
+          <span class="hr-kicker">OUR BOOK</span>
+          <b class="hr-title" id="hr-book-title"></b>
+          <span class="hr-bar" id="hr-book-bar" aria-hidden="true"><i></i></span>
+          <span class="hr-foot"><span class="hr-meta" id="hr-book-meta"></span><svg class="hr-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+
+      <section class="hr-history" aria-labelledby="hr-history-h">
+        <div class="hr-history-head">
+          <h2 id="hr-history-h"><a id="hr-history-link" href="#">History</a></h2>
+          <!-- 시 | 소설: 홈 안에서 바꿔 보여줘요. 'History'나 '전체 보기'를 누르면 History 화면으로 가요 -->
+          <span class="hr-history-tabs" role="group" aria-label="기록 종류">
+            <button type="button" data-kind="poem" aria-pressed="true">시</button>
+            <button type="button" data-kind="book" aria-pressed="false">소설</button>
+          </span>
+        </div>
+        <div id="hr-past"></div>
+        <a class="hr-all" id="hr-all" href="#" hidden></a>
+      </section>
+    </section>
 
     <!-- 방이 없을 때 -->
     <div id="empty-state" class="empty-state" hidden>
@@ -48,8 +87,7 @@
   <script src="auth.js"></script>
   <script src="ui.js"></script>
   <script src="streak.js"></script>
-  <script src="rooms.js"></script>
   <script src="index.js"></script>
-
+  <script src="invite.js"></script>
 </body>
 </html>

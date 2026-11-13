@@ -10,12 +10,13 @@
   <link rel="stylesheet" href="styles.css">
   <script src="theme.js"></script>
 </head>
-<body data-tab="rooms">
+<body>
 
-  <!-- History: 이 방에서 지난 시 · 읽은 책. history.html?room=ID&tab=poem|book -->
+  <!-- History: 이 방에서 지난 시 · 읽은 책. history.html?room=ID&tab=poem|book
+       홈의 History 칸에서 들어와요. 하단 탭 없이, 뒤로 가면 홈(그 방)으로 -->
   <main class="page hist">
     <div class="hist-top">
-      <a class="hist-back" id="hist-back" href="/index.html" aria-label="방으로 돌아가기">
+      <a class="hist-back" id="hist-back" href="/index.html" aria-label="홈으로 돌아가기">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
         <span id="hist-room"></span>
       </a>

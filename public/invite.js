@@ -1,6 +1,6 @@
 // public/invite.js
-// Invite sheet inside a room (room.html, book.html): the room name in the header
-// opens it. Invite code (copy · share), members, and 방 삭제 (owner) / 나가기 (member).
+// Invite sheet: the '+' next to the members on the home (index.html, [data-invite-room] =
+// the home's room id) opens it. (The room header on 시 · 책 no longer opens it, 11/13.) Invite code (copy · share), members, and 방 삭제 (owner) / 나가기 (member).
 // Moved here from the home screen: a room is where you invite people now.
 //
 // Data (asked for when the sheet opens):
@@ -15,9 +15,13 @@
   var UI = window.TypoemUI;
   var esc = UI.esc;
   var q = new URLSearchParams(window.location.search);
-  var ROOM_ID = q.get('id') || q.get('room');
-  var opener = document.querySelector('.r-room');
-  if (!ROOM_ID || !opener) return;
+  var opener = document.querySelector('[data-invite-room]');   // the home's '+'
+  if (!opener) return;
+  // the home fills data-invite-room after it loads, so the id is read when the sheet opens
+  var ROOM_ID = null;
+  function currentRoomId() {
+    return (opener.dataset && opener.dataset.inviteRoom) || q.get('id') || q.get('room');
+  }
 
   var me = getCurrentUser();
   var room = null;            // { id, name, invite_code, owner_id } from /rooms/mine
@@ -55,6 +59,9 @@
   window.addEventListener('load', syncShareButton);
 
   async function open() {
+    var id = currentRoomId();
+    if (!id) return;
+    if (id !== ROOM_ID) { ROOM_ID = id; room = null; }
     if (!sheet) build();
     if (UI.isWide() && sheet.classList.contains('show')) { UI.closeSheets(); return; }  // second click closes the popover
     syncShareButton();

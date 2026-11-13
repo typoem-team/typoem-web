@@ -151,9 +151,9 @@
         '<span class="rc-bar" aria-hidden="true"><span style="width:' + Number(r.book_progress || 0) + '%"></span></span>' +
         '<span class="rc-num">' + (r.book_progress >= 100 ? '완독' : Number(r.book_progress || 0) + '%') + '</span>'
       : '<span class="rc-none">아직 고른 책이 없어요</span>';
-    return '<a class="room-card" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '">' +
+    return '<a class="room-card' + (isLast ? ' is-current' : '') + '" href="/room.html?id=' + encodeURIComponent(r.id) + '" data-room-id="' + esc(r.id) + '"' + (isLast ? ' aria-current="true"' : '') + '>' +
         '<span class="rc-top"><b class="rc-name">' + esc(r.name) + '</b>' +
-          (isLast ? '<span class="rc-tag">최근</span>' : '') + '</span>' +
+          (isLast ? '<span class="rc-tag">지금 방</span>' : '') + '</span>' +
         '<span class="rc-line"><span class="rc-label">TODAY</span>' + poem + '</span>' +
         '<span class="rc-line"><span class="rc-label">BOOK</span>' + book + '</span>' +
         '<span class="rc-meta">멤버 ' + esc(r.member_count) + '명</span>' +
@@ -163,7 +163,7 @@
   // ---- Room header: back · room name · 시 | 책 (room.html and book.html) ----
   // A room is the unit; 시 and 책 are its two tabs. Both pages take ?id= (book.html also
   // still reads the old ?room=). Drawn as soon as ui.js runs, so room.js / book.js
-  // find #room-name right away. The room name opens the invite sheet (invite.js).
+  // find #room-name right away. Inviting is on the home now (the '+' next to the members).
   function roomId() {
     var q = new URLSearchParams(window.location.search);
     return q.get('id') || q.get('room');
@@ -176,17 +176,15 @@
     var id = encodeURIComponent(roomId() || '');
     // a past poem (room.html?date=) goes back to History, everything else to home
     var back = new URLSearchParams(window.location.search).get('date')
-      ? '/history.html?room=' + id + '&tab=poem' : '/index.html';
+      ? '/history.html?room=' + id + '&tab=poem' : '/index.html?room=' + id;   // home, showing this room
     function tabLink(key, href, label) {
       return '<a href="' + href + '"' + (key === tab ? ' aria-current="page"' : '') + '>' + label + '</a>';
     }
     bar.innerHTML =
       '<a href="' + back + '" class="r-back" aria-label="뒤로">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>' +
-      '<button type="button" class="r-room" aria-haspopup="dialog" aria-label="멤버 · 초대">' +
-        '<span id="room-name"></span>' +
-        '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c1-3.3 3.3-5 6-5s5 1.7 6 5"/><path d="M19 8v6M16 11h6"/></svg>' +
-      '</button>' +
+      // the room name only (inviting is on the home: the '+' next to the members)
+      '<span class="r-room"><span id="room-name"></span></span>' +
       '<nav class="r-tabs" aria-label="시와 책">' +
         tabLink('poem', '/room.html?id=' + id, '시') +
         tabLink('book', '/book.html?id=' + id, '책') +

@@ -14,6 +14,7 @@ router.post("/", controller.createRoom);
 router.get("/mine", controller.listMyRooms);
 router.post("/join", controller.joinRoom);
 router.get("/:id/members", controller.getMembers);
+router.post("/:id/open", controller.openRoom); // home shows this room (Rooms tab -> tap a room)
 router.get("/:id/today", todayController.getToday); // today's poem + memos + annotations
 router.get("/:id/history", todayController.getHistory); // past daily poems + contributors
 router.get("/:id/history/:date", todayController.getPoemOnDate); // one past day, read-only
