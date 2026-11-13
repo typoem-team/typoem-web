@@ -5,9 +5,9 @@
 // a book per room with everyone at a different place, a word list).
 //
 //   까망 (kkamang) — the review account, owner of all three rooms
-//   작심삼백일    까망 · 초코 · 몽글 · 나비   6 days   The Adventures of Sherlock Holmes
+//   작심삼백일    까망 · 초코칩 · 몽글이 · 나비   6 days   The Adventures of Sherlock Holmes
 //   토익 990 목표  까망 · 철수 · 영희         4 days   The Great Gatsby
-//   셰익스피어     까망 · 노랑 · 파랑         3 days   Pride and Prejudice
+//   셰익스피어     까망 · 빨강 · 파랑         3 days   Pride and Prejudice
 //
 // Dates are counted back from the day it runs (Korea time), so run it again right before review.
 // Running it again first deletes these 8 accounts and the rooms 까망 owns (and everything in them),
@@ -40,12 +40,12 @@ const booksModel = require("../models/booksModel");
 
 const USERS = {
     kkamang: { nickname: "까망", hour: 12 },
-    choco: { nickname: "초코", hour: 7 },
-    monggeul: { nickname: "몽글", hour: 21 },
+    choco: { nickname: "초코칩", hour: 7 },
+    monggeul: { nickname: "몽글이", hour: 21 },
     nabi: { nickname: "나비", hour: 23 },
     cheolsu: { nickname: "철수", hour: 8 },
     younghee: { nickname: "영희", hour: 19 },
-    norang: { nickname: "노랑", hour: 10 },
+    ppalgang: { nickname: "빨강", hour: 10 },
     parang: { nickname: "파랑", hour: 22 },
 };
 const OWNER = "kkamang";
@@ -201,36 +201,36 @@ const ROOMS = [
     {
         name: "셰익스피어",
         description: "셰익스피어를 좋아하는 사람들의 방",
-        members: ["kkamang", "norang", "parang"],
+        members: ["kkamang", "ppalgang", "parang"],
         lastOpened: -2,
-        checkins: { norang: [-2, -1, 0], parang: [-2, 0] },
+        checkins: { ppalgang: [-2, -1, 0], parang: [-2, 0] },
         days: [
             { day: -2, poem: "summer", acts: [
-                { user: "norang", hl: { line: 4, phrase: "weary thee with bliss", color: "yellow" } },
-                { user: "parang", memo: { text: "'Prithee'는 셰익스피어 희곡에서 자주 보던 말이라 반가웠어요", likes: ["norang", "kkamang"] } },
+                { user: "ppalgang", hl: { line: 4, phrase: "weary thee with bliss", color: "yellow" } },
+                { user: "parang", memo: { text: "'Prithee'는 셰익스피어 희곡에서 자주 보던 말이라 반가웠어요", likes: ["ppalgang", "kkamang"] } },
             ] },
             { day: -1, poem: "harebell", acts: [
-                { user: "norang", note: { line: 1, phrase: "harebell", text: "harebell = 초롱꽃. 꽃이랑 벌의 사랑 이야기라 '한여름 밤의 꿈'이 생각나요" } },
+                { user: "ppalgang", note: { line: 1, phrase: "harebell", text: "harebell = 초롱꽃. 꽃이랑 벌의 사랑 이야기라 '한여름 밤의 꿈'이 생각나요" } },
                 { user: "kkamang", hl: { line: 8, phrase: "Would the Eden be an Eden,", color: "pink" } },
-                { user: "kkamang", memo: { text: "얻고 나서도 그 소중함이 그대로일까 묻는 시 같아요. 짧은데 생각할 게 많네요", likes: ["norang"] } },
+                { user: "kkamang", memo: { text: "얻고 나서도 그 소중함이 그대로일까 묻는 시 같아요. 짧은데 생각할 게 많네요", likes: ["ppalgang"] } },
             ] },
             { day: 0, poem: "angels", acts: [
-                { user: "norang", hl: { line: 3, phrase: "Stooping, plucking, smiling, flying:", color: "yellow" } },
+                { user: "ppalgang", hl: { line: 3, phrase: "Stooping, plucking, smiling, flying:", color: "yellow" } },
                 { user: "parang", note: { line: 8, phrase: "sighing", text: "1연은 smiling, 2연은 sighing. 한 단어만 바꿔 아침과 한낮을 대비시킨 게 소네트 같아요" } },
                 { user: "kkamang", hl: { line: 1, phrase: "Angels in the early morning", color: "blue" } },
-                { user: "norang", memo: { text: "아침엔 웃고 한낮엔 한숨 쉬는 천사들 🎭 다들 오늘은 smiling이었길", likes: ["parang", "kkamang"] } },
+                { user: "ppalgang", memo: { text: "아침엔 웃고 한낮엔 한숨 쉬는 천사들 🎭 다들 오늘은 smiling이었길", likes: ["parang", "kkamang"] } },
             ] },
         ],
         book: {
             id: 1342, setDay: -2,
-            progress: { norang: { pct: 22, target: 45 }, kkamang: { pct: 8, atLastMark: true }, parang: { pct: 1 } },
+            progress: { ppalgang: { pct: 22, target: 45 }, kkamang: { pct: 8, atLastMark: true }, parang: { pct: 1 } },
             acts: [
                 { day: -2, user: "parang", hl: { phrase: "It is a truth universally acknowledged", color: "yellow" } },
-                { day: -2, user: "norang", hl: { phrase: "It is a truth universally acknowledged", color: "yellow" } },
+                { day: -2, user: "ppalgang", hl: { phrase: "It is a truth universally acknowledged", color: "yellow" } },
                 { day: -1, user: "kkamang", note: { phrase: "She is tolerable: but not handsome enough to tempt me", text: "다아시 첫인상 최악 ㅋㅋ 여기서부터 시작이구나" } },
-                { day: -1, user: "norang", note: { phrase: "Pride relates more to our opinion of ourselves; vanity to what we would have others think of us.", text: "제목이 왜 '오만과 편견'인지 알 것 같은 문장" } },
+                { day: -1, user: "ppalgang", note: { phrase: "Pride relates more to our opinion of ourselves; vanity to what we would have others think of us.", text: "제목이 왜 '오만과 편견'인지 알 것 같은 문장" } },
                 { day: 0, user: "kkamang", hl: { phrase: "Mr. Darcy is all politeness", color: "blue" } },
-                { day: 0, user: "norang", hl: { phrase: "My dearest Lizzy", color: "pink" } },
+                { day: 0, user: "ppalgang", hl: { phrase: "My dearest Lizzy", color: "pink" } },
             ],
         },
     },
