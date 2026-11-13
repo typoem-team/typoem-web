@@ -3813,6 +3813,11 @@ button.book-shelf-item:active .book-cover {
     font-size: 26px;
   }
 
+  /* 설정 is a column of forms: full 1200px makes a 1100px-wide name field */
+  .page.page-narrow {
+    max-width: 760px;
+  }
+
   .vocab-list,
   .room-cards {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -4719,15 +4724,16 @@ button.book-shelf-item:active .book-cover {
     margin-right: auto;
   }
 }
-/* 1024px+: one centred two-column page —
+/* 1024px+: one two-column page, as wide as the top navigation (.page, 1200px) —
      room name (full width)
      covers  | this week
-             | History                                          */
+             | History
+   The covers grow with the screen (still book-shaped, capped at 300px each);
+   the right column takes the rest of the width.                    */
 @media (min-width: 1024px) {
   .page.home {
-    max-width: 980px;
     display: grid;
-    grid-template-columns: auto minmax(320px, 440px);
+    grid-template-columns: auto minmax(340px, 1fr);
     grid-template-areas:
       "status status"
       "head   head"
@@ -4747,7 +4753,12 @@ button.book-shelf-item:active .book-cover {
   .home #status { grid-area: status; }
   .home .empty-state { grid-area: empty; }
   .hr-head { grid-area: head; margin-top: 8px; }
-  .hr-books { grid-area: books; margin-top: 18px; }
+  .hr-books {
+    grid-area: books;
+    margin-top: 18px;
+    grid-template-columns: repeat(2, clamp(210px, 19vw, 300px));
+    gap: var(--space-4);
+  }
   .home .streak-slot {
     grid-area: streak;
     max-width: none;
