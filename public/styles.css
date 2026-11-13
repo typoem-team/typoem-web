@@ -4364,19 +4364,34 @@ button.book-shelf-item:active .book-cover {
 @media (min-width: 600px) {
   .hr-books {
     grid-template-columns: repeat(2, minmax(0, 210px));
+    justify-content: center;
   }
   .home .sw-days {
     max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
-/* 1024px+: covers on the left, History on the right */
+/* 1024px+: covers on the left, History on the right, the whole home in the middle */
 @media (min-width: 1024px) {
+  .page.home {
+    max-width: 980px;
+  }
+  .home .streak-slot {
+    margin-left: auto;
+    margin-right: auto;
+  }
   .home .hr {
     display: grid;
     grid-template-columns: auto minmax(300px, 440px);
     column-gap: 48px;
     align-items: start;
-    justify-content: start;
+    justify-content: center;
+  }
+  /* Rooms: 코드로 참여 · 새 방 만들기 in the middle */
+  .room-actions {
+    margin-left: auto;
+    margin-right: auto;
   }
   .hr-head {
     grid-column: 1 / -1;
