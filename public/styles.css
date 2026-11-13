@@ -4385,21 +4385,21 @@ button.book-shelf-item:active .book-cover {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0;
-  padding: 12px 14px 12px 18px;
-  background: var(--color-surface);
+  width: fit-content;
+  margin: 0 auto;
+  padding: 8px 12px;
+  background: var(--color-bg);     /* same as the page: no box, just a centered row */
   text-align: left;
 }
 .hr-invite-box .code-wrap {
-  flex: 1;
-  min-width: 0;
+  margin-right: 6px;
 }
 .hr-invite-box .code {
   font-size: 18px;
   letter-spacing: .1em;
   margin: 2px 0 0;
 }
-/* small white squares, no border, icon centered */
+/* small squares, no border, icon centered */
 .hr-invite-box .sec {
   width: 32px;
   min-height: 32px;
