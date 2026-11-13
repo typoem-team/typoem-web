@@ -408,9 +408,25 @@
     if (el) el.textContent = formatDay();
   }
 
+  // ---- Sticky page header (phones): shrinks once the page scrolls ----
+  // Shrinking makes the page ~70px shorter, so it turns compact past 100px but only
+  // turns back at the very top; one threshold would flicker on short pages.
+  function watchHead() {
+    var head = document.querySelector('.app-head');
+    if (!head) return;
+    function update() {
+      var y = window.scrollY;
+      if (y > 100) head.classList.add('compact');
+      else if (y < 4) head.classList.remove('compact');
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
   function init() {
     fillDate();
     if (document.body.dataset.tab !== undefined) buildTabbar();
+    watchHead();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
