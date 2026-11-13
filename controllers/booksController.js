@@ -17,13 +17,9 @@ const { today } = require("../lib/dates");
 const bookFetch = require("../lib/bookFetch");
 const BOOK_SHELF = require("../data/bookShelf.json");
 const { cleanBookTitle } = require("../lib/bookTitle");
+const { parseId } = require("../lib/parseId");
 
 // helper: parse ':id' path param and validate (same as roomsController)
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 // helper: non-negative integer from a query string ("0", "12"), else null
 function parseIndex(raw) {

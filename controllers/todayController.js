@@ -12,13 +12,8 @@ const roomsModel = require("../models/roomsModel");
 const memosModel = require("../models/memosModel");
 const poemMarksModel = require("../models/poemMarksModel");
 const streakModel = require("../models/streakModel");
+const { parseId } = require("../lib/parseId");
 
-// helpers copied from memosController/roomsController (for consistency)
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 const LIVE_RETRIES = 5;
 const MIN_LINES = 4;
@@ -43,31 +38,26 @@ const { fetchRandomFromApi } = require("../lib/poemFetch");
 // CASE2: fallback; fetching from backup json file
 // pick a random acceptable, room-unseen poem from the offline fallback pool.
 // returns a poem object or null if the pool all used for this room.
-async function pickFromFallbackPool(roomSeen) {
+function pickFromFallbackPool(roomSeen) {
     const pool = require("../data/poems.json");
-    const candidates = [];
-    for (const p of pool) {
-        if (!isAcceptablePoem(p)) continue;
-        if (await roomSeen(p)) continue;
-        candidates.push(p);
-    }
+    const candidates = pool.filter((p) => isAcceptablePoem(p) && !roomSeen(p));
     if (candidates.length === 0) return null;
     return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
 // Final function: CASE1 + CASE2
 // get a fresh poem: try live first (re-roll on wrong length / already-seen),
-// then fall back to the offline pool. roomSeen(poem) is an async predicate.
+// then fall back to the offline pool. roomSeen(poem) -> boolean.
 // returns a poem object, or null if both sources are exhausted for this room.
 async function getCandidatePoem(roomSeen) {
     for (let i = 0; i < LIVE_RETRIES; i++) {
         const poem = await fetchRandomFromApi();
         if (!poem) break;                    // cannot get from live -> go straight to fallback
         if (!isAcceptablePoem(poem)) continue; // wrong length -> re-roll
-        if (await roomSeen(poem)) continue;    // room already saw it -> re-roll
+        if (roomSeen(poem)) continue;          // room already saw it -> re-roll
         return poem;                           // fresh + acceptable
     }
-    return await pickFromFallbackPool(roomSeen); // all fails; go to fallback
+    return pickFromFallbackPool(roomSeen); // all fails; go to fallback
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,10 +87,9 @@ async function getToday(req, res) {
         let poem_id = todayPoemId;
         if (!poem_id) {
 
-            const roomSeen = async ({ title, author }) => {
-                const id = await poemsModel.findPoemByTitleAuthor(title, author);
-                return id ? await poemsModel.roomHasSeenPoem(room_id, id) : false;
-            };
+            const key = ({ title, author }) => JSON.stringify([title, author]);
+            const seen = new Set((await poemsModel.listSeenPoems(room_id)).map(key));
+            const roomSeen = (poem) => seen.has(key(poem));
 
             const candidate = await getCandidatePoem(roomSeen);
             if (!candidate) {
@@ -148,10 +137,12 @@ async function getHistory(req, res) {
         const room_id = parseId(req.params.id);
         if (!room_id) return res.status(400).json({ error: "invalid room id" });
 
-        const room = await roomsModel.findById(room_id);
+        // both permission checks at once (one DB round trip); the heavy list only after them
+        const [room, isMember] = await Promise.all([
+            roomsModel.findById(room_id),
+            roomsModel.isMember(room_id, req.user.id),
+        ]);
         if (!room) return res.status(404).json({ error: "Room not found" });
-
-        const isMember = await roomsModel.isMember(room_id, req.user.id);
         if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
 
         const history = await poemsModel.listRoomHistory(room_id);
@@ -174,10 +165,11 @@ async function getPoemOnDate(req, res) {
         if (!isValidDate(date)) return res.status(400).json({ error: "date must be YYYY-MM-DD" });
         if (date > today()) return res.status(400).json({ error: "date is in the future" });
 
-        const room = await roomsModel.findById(room_id);
+        const [room, isMember] = await Promise.all([
+            roomsModel.findById(room_id),
+            roomsModel.isMember(room_id, req.user.id),
+        ]);
         if (!room) return res.status(404).json({ error: "Room not found" });
-
-        const isMember = await roomsModel.isMember(room_id, req.user.id);
         if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
 
         const poem_id = await poemsModel.getTodayPoemId(room_id, date); // poem assigned on `date`

@@ -24,7 +24,7 @@ requireLogin();
   function enc(v) { return encodeURIComponent(v); }
 
   window.TypoemNative.setStatusBar('dark');   // dark status bar text on the page background
-  TypoemStreak.load();                        // hides itself on 404
+  var streakLoad = TypoemStreak.load();       // hides itself on 404; the widget reuses it
 
   function seoulToday() {
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
@@ -218,7 +218,7 @@ requireLogin();
       getJson('/api/rooms/' + id + '/books/history'),
     ]);
     drawPoem(room, results[0]);
-    window.TypoemNative.sendTodayToWidget(results[0], room.id);   // home screen widget
+    window.TypoemNative.sendTodayToWidget(results[0], room.id, streakLoad);   // home screen widget (?checkin=0: the streak is unchanged)
     drawMembers(results[1]);
     setHistory(room, results[2], results[3]);
   }
@@ -229,7 +229,7 @@ requireLogin();
   window.addEventListener('pageshow', function (e) {
     if (!e.persisted) return;
     window.TypoemNative.setStatusBar('dark');
-    TypoemStreak.load();
+    streakLoad = TypoemStreak.load();
     load();
   });
 })();

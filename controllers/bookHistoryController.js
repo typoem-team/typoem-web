@@ -14,11 +14,8 @@
 
 const model = require("../models/bookHistoryModel");
 const roomsModel = require("../models/roomsModel");
+const { parseId } = require("../lib/parseId");
 
-function parseId(raw) {
-    const n = Number(raw);
-    return Number.isInteger(n) && n > 0 ? n : null;
-}
 
 async function getRoomBookHistory(req, res) {
     try {

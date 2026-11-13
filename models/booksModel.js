@@ -5,8 +5,8 @@
 //   2. book_chapters, then book_paragraphs in batches of PARAGRAPHS_PER_BATCH (INSERT OR IGNORE)
 //   3. the books row LAST, only if the stored chapter/paragraph counts match the parse
 // A book counts as imported only when its books row exists, so a half-finished import is
-// invisible and is simply redone on the next attempt. Never uses exec('BEGIN'): db.js has one
-// global transaction for the whole server, so bulk writes go through db.batch() instead.
+// invisible and is simply redone on the next attempt. Bulk writes go through db.batch()
+// (db.js has no BEGIN/COMMIT).
 
 const { getDb } = require("../db");
 const { wordCount } = require("../lib/bookFetch");

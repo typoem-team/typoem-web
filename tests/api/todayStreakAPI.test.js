@@ -65,3 +65,22 @@ test("non-members are not checked in", async () => {
   expect(res.statusCode).toBe(403);
   expect(streakModel.checkIn).not.toHaveBeenCalled();
 });
+
+test("no poem yet + PoetryDB down: picks the one fallback poem this room hasn't seen", async () => {
+  const pool = require("../../data/poems.json");
+  const ok = (p) => p.lines.filter((l) => l && l.trim()).length >= 4 && p.lines.filter((l) => l && l.trim()).length <= 30;
+  const acceptable = pool.filter(ok);
+  const fresh = acceptable[acceptable.length - 1];
+  const fetchSpy = jest.spyOn(global, "fetch").mockRejectedValue(new Error("offline"));
+  poemsModel.getTodayPoemId.mockResolvedValue(null);
+  poemsModel.listSeenPoems.mockResolvedValue(acceptable.slice(0, -1).map(({ title, author }) => ({ title, author })));
+  poemsModel.findOrCreatePoem.mockResolvedValue(3);
+  poemsModel.assignPoemToRoom.mockResolvedValue(3);
+
+  const res = await request(app).get("/api/rooms/5/today").set(auth);
+
+  expect(res.statusCode).toBe(200);
+  expect(poemsModel.listSeenPoems).toHaveBeenCalledTimes(1);   // one query, not one per candidate
+  expect(poemsModel.findOrCreatePoem).toHaveBeenCalledWith(fresh);
+  fetchSpy.mockRestore();
+});

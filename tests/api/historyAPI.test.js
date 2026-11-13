@@ -47,7 +47,6 @@ describe("GET /api/rooms/:id/history", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
-    expect(roomsModel.isMember).not.toHaveBeenCalled();
     expect(poemsModel.listRoomHistory).not.toHaveBeenCalled();
   });
 

@@ -1170,57 +1170,6 @@ html[lang="en"] .landing-invite {
   padding: 0;
 }
 
-/* left margin of the line: always there (no hover needed), a faint dot */
-.mark {
-  position: absolute;
-  left: -44px;
-  top: 0;
-  width: 44px;
-  height: 44px;
-}
-
-.mark::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 50%;
-  background: var(--hair);
-  transition: background .3s var(--ease);
-}
-
-/* a line with notes: dotted underline + a count on the right */
-.ln.has-cm .tx {
-  text-decoration: underline dotted var(--note-line);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
-}
-
-.cm {
-  position: absolute;
-  right: -44px;
-  top: 0;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-}
-
-.cm b {
-  min-width: 19px;
-  height: 19px;
-  padding: 0 5px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--color-on-fill);
-  font: 600 10.5px/19px system-ui, sans-serif;
-  text-align: center;
-  box-shadow: 0 4px 8px -4px rgba(var(--accent-rgb), .6);
-}
-
 /* word span — dictionary territory (dict-popup.js binds to .word) */
 .word {
   cursor: pointer;
@@ -1366,11 +1315,6 @@ html[lang="en"] .landing-invite {
 .m-write .field {
   flex: 1;
   min-width: 0;
-}
-
-.line-btn {
-  width: 100%;
-  margin-top: 14px;
 }
 
 /* ---- Inline editing / confirmation inside a sheet ---- */
@@ -2563,11 +2507,6 @@ textarea.field:focus {
   border-bottom: 0;
 }
 
-/* "전체 메모로": only in the side panel (1024px+) */
-.panel-back {
-  display: none;
-}
-
 /* ============ Motion: quiet, and off when the user asks ============ */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -3167,7 +3106,7 @@ body.book-page:not(.is-shelf) .r-bar #room-name {
   background-image: linear-gradient(transparent 62%, var(--hl) 62%, var(--hl) 94%, transparent 94%);
 }
 
-/* note: the dotted underline of .ln.has-cm .tx */
+/* note: a dotted underline */
 .mk-note {
   border-bottom: 1px dotted var(--note-line);
   margin-top: 1.5px;
@@ -3932,12 +3871,6 @@ button.book-shelf-item:active .book-cover {
     padding: 0;
   }
 
-  /* the line whose notes are showing in the panel */
-  .ln-open .mark::after {
-    background: var(--accent);
-    transform: scale(1.5);
-  }
-
   .memo-pill {
     display: none;
   }
@@ -3982,26 +3915,6 @@ button.book-shelf-item:active .book-cover {
     background: linear-gradient(rgba(var(--bg-rgb), 0), var(--bg) 12px);
   }
 
-  .r-side .sheet > .line-btn:last-child,
-  .r-side #l-edit-mine {
-    margin-bottom: 20px;
-  }
-
-  /* one view at a time: all memos, or this line's */
-  .r-side:not(.line-mode) #sheet-line,
-  .r-side.line-mode #sheet-memo {
-    display: none;
-  }
-
-  .panel-back {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    margin: -10px 0 4px -4px;
-    padding: 0 4px;
-    font-size: 13px;
-    color: var(--ink-2);
-  }
 }
 
 

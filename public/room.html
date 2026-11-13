@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널. 패널에서는 둘 중 하나만 보여요. -->
+      <!-- 메모: 시트 / 대화상자 / (1024px+) 옆 패널 -->
       <aside class="r-side" id="r-side" aria-label="메모">
         <section class="sheet" id="sheet-memo" role="dialog" aria-label="메모" data-wide="inline">
           <span class="handle"></span>
@@ -52,19 +52,6 @@
             <input id="memo-input" class="field" placeholder="이 시에 메모 남기기" aria-label="이 시에 메모 남기기" maxlength="1000" autocomplete="off">
             <button type="submit" class="pri" id="memo-submit">남기기</button>
           </form>
-        </section>
-
-        <section class="sheet" id="sheet-line" role="dialog" aria-label="이 줄의 메모" data-wide="inline">
-          <span class="handle"></span>
-          <button type="button" class="panel-back" id="l-back">&larr; 전체 메모로</button>
-          <p class="s-title">이 줄의 메모 <span id="l-count"></span></p>
-          <p class="d-ex" id="drawer-line"></p>
-          <div id="annotation-list" aria-live="polite"></div>
-          <form class="m-write" id="annotation-form" novalidate>
-            <input id="annotation-input" class="field" placeholder="이 줄에 메모 남기기" aria-label="이 줄에 메모 남기기" maxlength="1000" autocomplete="off">
-            <button type="submit" class="pri" id="annotation-submit">남기기</button>
-          </form>
-          <button type="button" class="sec line-btn" id="l-edit-mine" hidden>내 메모 고치기</button>
         </section>
       </aside>
     </div>
