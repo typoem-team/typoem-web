@@ -1,6 +1,6 @@
 // public/ui.js
 // Shared app chrome for the logged-in screens:
-//   - date line (11/10 Tue, Asia/Seoul)
+//   - date line (11/10 (화), Asia/Seoul)
 //   - bottom tab bar: 홈 · 방 · 단어장 · 나
 //   - bottom sheets + toast
 //   - room cards (rooms.html, and the home screen next)
@@ -15,7 +15,7 @@
   'use strict';
 
 
-  // ---- Date: always computed in Asia/Seoul, shown as "11/10 Tue" ----
+  // ---- Date: always computed in Asia/Seoul, shown as "11/10 (화)" ----
   // (The server's "today" is UTC for now, so it rolls over at 09:00 KST.)
   function seoulParts(date) {
     var parts = new Intl.DateTimeFormat('en-US', {
@@ -30,12 +30,14 @@
     return out;
   }
 
+  var KO_DOW = { Sun: '일', Mon: '월', Tue: '화', Wed: '수', Thu: '목', Fri: '금', Sat: '토' };
+
   function formatDay(date) {
     var p = seoulParts(date);
-    return p.month + '/' + p.day + ' ' + p.weekday;
+    return p.month + '/' + p.day + ' (' + KO_DOW[p.weekday] + ')';
   }
 
-  // 'YYYY-MM-DD' (a calendar date from the API) -> "11/10 Tue"
+  // 'YYYY-MM-DD' (a calendar date from the API) -> "11/10 (화)"
   function formatIsoDay(iso) {
     var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
     if (!m) return iso || '';
@@ -386,15 +388,15 @@
     nav.innerHTML =
       '<a class="nav-brand" href="/index.html">Typoem</a>' +
       '<div class="tabs-main">' +
-        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + 'Home</a>' +
-        '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + 'Rooms</a>' +
-        '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + 'Words</a>' +
+        '<a class="tab" data-tab="today" href="/index.html">' + icon('today') + '홈</a>' +
+        '<a class="tab" data-tab="rooms" href="/rooms.html">' + icon('rooms') + '방</a>' +
+        '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
       '</div>' +
       '<a class="tab tab-me" data-tab="me" href="/me.html">' + icon('me') +
-        '<span class="tab-me-label">Me</span><span class="tab-me-nick"></span></a>';
+        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></a>';
     var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     // textContent: the nickname is user input
-    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || 'Me';
+    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '나';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
     });

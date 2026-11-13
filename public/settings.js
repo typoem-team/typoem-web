@@ -14,7 +14,7 @@ const $ = (id) => document.getElementById(id);
 const me = getCurrentUser() || {};
 
 $('nick-input').value = me.nickname || '';
-$('nick-id').textContent = me.username ? `아이디 @${me.username}은 바뀌지 않아요` : '';
+$('nick-id').textContent = me.username ? `아이디(@${me.username})는 바꿀 수 없어요` : '';
 $('logout-btn').addEventListener('click', () => logout());
 $('tour-reset').addEventListener('click', () => {
   TypoemTour.reset();

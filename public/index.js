@@ -117,7 +117,7 @@ requireLogin();
     $('hr-avs').setAttribute('role', 'img');
   }
 
-  // History box: 시 | 소설 switch in place; the title and '전체 보기' open the History screen.
+  // 읽은 기록 box: 시 | 책 switch in place; the title and '전체 보기' open the History screen.
   var hist = { roomId: null, kind: 'poem', poems: null, books: null };
   var COUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>';
 
@@ -127,7 +127,7 @@ requireLogin();
 
   function poemRow(r) {
     var m = /^\d{4}-(\d{2})-(\d{2})/.exec(r.date) || [];
-    var dow = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date(r.date + 'T12:00:00Z').getUTCDay()];
+    var dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(r.date + 'T12:00:00Z').getUTCDay()];
     var n = r.contributor_count || 0;
     return '<a class="hr-past" href="/room.html?id=' + enc(hist.roomId) + '&date=' + enc(r.date) + '">' +
         '<span class="hr-date">' + Number(m[1]) + '/' + m[2] + '<br>' + dow + '</span>' +
@@ -229,10 +229,10 @@ requireLogin();
     await streakLoad.catch(function () {});   // the week row shows (or hides) itself first
     TypoemTour.run('home', [
       { el: '#hr-poem', text: '매일 새 시 한 편이 와요. 눌러서 읽고 메모를 남겨요.' },
-      { el: '#hr-book', text: '방 친구들과 소설 한 권을 함께 읽어요.' },
+      { el: '#hr-book', text: '방 친구들과 책 한 권을 함께 읽어요.' },
       { el: ['#streak-week', '#streak-summary'], text: '오늘의 시를 열면 읽은 날이 하루씩 쌓여요.' },
       { el: '#hr-invite', text: '친구를 이 방에 초대해요.' },
-      { el: '.hr-name', text: '방이 여러 개면 여기서 다른 방으로 바꿔요.' },
+      { el: '.tab[data-tab="rooms"]', text: '방이 여러 개면 방 탭에서 다른 방으로 바꿔요.' },
     ]);
   }
 

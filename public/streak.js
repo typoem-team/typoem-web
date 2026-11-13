@@ -1,6 +1,6 @@
 // public/streak.js
 // Reading streak (시안 C, docs/design/Design.md):
-//   - home: this week as seven day circles (#streak-week) with "NOV · WEEK 46" and "N일째 이어 읽는 중"
+//   - home: this week as seven day circles (#streak-week) with "11월 · 이번 주" and "N일째 이어 읽는 중"
 //   - 나: the big number (#streak-count), the longest streak, and this month's calendar (#streak-month)
 // A day counts when I open a poem or a book that day (the server checks me in).
 //
@@ -20,11 +20,7 @@
   var state = null;        // last good response, or null when unavailable
   var days = null;         // this month's read days (only when #streak-month is on the page)
 
-  var DOW = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   var DOW_KO = ['월', '화', '수', '목', '금', '토', '일'];
-  var MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  var MONTH = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-    'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
   function $(id) { return document.getElementById(id); }
 
@@ -54,13 +50,6 @@
     return out;
   }
 
-  // ISO week number (weeks start on Monday)
-  function isoWeek(day) {
-    var d = utc(day);
-    d.setUTCDate(d.getUTCDate() + 3 - ((d.getUTCDay() + 6) % 7));   // Thursday of this week
-    var jan4 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
-    return 1 + Math.round(((d - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7);
-  }
 
   function valid(data) {
     return data && typeof data.current === 'number' && Array.isArray(data.week);
@@ -86,14 +75,14 @@
     el.innerHTML = weekOf(today).map(function (d, i) {
       var cls = 'sw-day' + (read[d] ? ' is-read' : '') + (d === today ? ' is-today' : '') + (d > today ? ' is-future' : '');
       return '<div class="' + cls + '" role="listitem" aria-label="' + dayLabel(d, read[d], today) + '">' +
-          '<span class="sw-dow" aria-hidden="true">' + DOW[i] + '</span>' +
+          '<span class="sw-dow" aria-hidden="true">' + DOW_KO[i] + '</span>' +
           '<span class="sw-num" aria-hidden="true">' + utc(d).getUTCDate() + '</span>' +
           '<i class="sw-dot" aria-hidden="true"></i>' +
         '</div>';
     }).join('');
 
     var label = $('streak-week-label');
-    if (label) label.textContent = MON[utc(today).getUTCMonth()] + ' · WEEK ' + isoWeek(today);
+    if (label) label.textContent = (utc(today).getUTCMonth() + 1) + '월 · 이번 주';
   }
 
   function renderSummary() {
@@ -137,8 +126,8 @@
     }
 
     el.innerHTML =
-      '<div class="sm-head"><span>' + MONTH[m] + ' ' + y + '</span><span>읽은 날 ' + count + '</span></div>' +
-      '<div class="sm-grid sm-dows" aria-hidden="true">' + DOW.map(function (w) { return '<span>' + w[0] + '</span>'; }).join('') + '</div>' +
+      '<div class="sm-head"><span>' + y + '년 ' + (m + 1) + '월</span><span>읽은 날 ' + count + '일</span></div>' +
+      '<div class="sm-grid sm-dows" aria-hidden="true">' + DOW_KO.map(function (w) { return '<span>' + w + '</span>'; }).join('') + '</div>' +
       '<div class="sm-grid" role="list" aria-label="' + (m + 1) + '월에 읽은 날">' + cells + '</div>';
   }
 

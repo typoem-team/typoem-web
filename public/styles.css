@@ -848,13 +848,6 @@ hr {
   margin-bottom: 28px;
 }
 
-html[lang="en"] .auth-subtitle,
-html[lang="en"] .landing-tagline,
-html[lang="en"] .landing-invite {
-  font-family: var(--display);
-  font-size: 17px;
-}
-
 .auth-form .field {
   margin-bottom: 18px;
 }
@@ -1705,9 +1698,7 @@ html[lang="en"] .landing-invite {
   margin-bottom: var(--space-3);
 }
 .sw-label {
-  font-family: var(--font-mono);
   font-size: var(--fs-xs);
-  letter-spacing: 1.5px;
   color: var(--color-ink-2);
 }
 .sw-sum {
@@ -1727,7 +1718,6 @@ html[lang="en"] .landing-invite {
   gap: 6px;
 }
 .sw-dow {
-  font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   color: var(--color-ink-2);
 }
@@ -1823,9 +1813,7 @@ html[lang="en"] .landing-invite {
   color: var(--color-ink-2);
 }
 .sm-head span:first-child {
-  font-family: var(--font-mono);
   font-size: var(--fs-xs);
-  letter-spacing: 1.5px;
 }
 .sm-grid {
   display: grid;
@@ -1834,7 +1822,6 @@ html[lang="en"] .landing-invite {
 }
 .sm-dows {
   margin-bottom: 5px;
-  font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   color: var(--color-ink-2);
   text-align: center;
@@ -4021,12 +4008,10 @@ button.book-shelf-item:active .book-cover {
   margin: var(--space-2) 0 var(--space-5);
 }
 .hist-title {
-  font-family: var(--font-text);
-  font-style: italic;
+  font-family: var(--font-ko-accent);
   font-weight: 400;
   font-size: var(--fs-h1);
   line-height: 1;
-  letter-spacing: -1px;
   color: var(--color-ink);
 }
 .hist-tabs {
@@ -4595,8 +4580,7 @@ button.book-shelf-item:active .book-cover {
   border-bottom: 1px solid var(--color-line);
 }
 .hr-history-head h2 {
-  font-family: var(--font-text);
-  font-style: italic;
+  font-family: var(--font-ko-accent);
   font-weight: 400;
   font-size: 20px;
 }
