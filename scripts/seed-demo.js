@@ -236,16 +236,17 @@ const ROOMS = [
     },
 ];
 
-// 까망's word list: words from these poems and books
+// 까망's word list: words from the poems whose English (Free Dictionary) and Korean (data/ko_dict.jsonl)
+// meanings both read cleanly in the dictionary popup (checked 11/14). day = the day that poem was read.
 const VOCAB = [
-    { word: "clime", pos: "noun", definition: "A region, especially considered with reference to its climate." },
-    { word: "frigate", pos: "noun", definition: "A fast sailing warship." },
-    { word: "cordially", pos: "adverb", definition: "In a warm and friendly way." },
-    { word: "frugal", pos: "adjective", definition: "Simple and plain and costing little." },
-    { word: "aristocracy", pos: "noun", definition: "The highest class in certain societies." },
-    { word: "banish", pos: "verb", definition: "To send someone away from a country or place as a punishment." },
-    { word: "deceptive", pos: "adjective", definition: "Giving an appearance or impression different from the true one." },
-    { word: "vulnerable", pos: "adjective", definition: "Exposed to the possibility of being attacked or harmed." },
+    { word: "clime", phonetic: "/ˈklaɪm/", day: -5 },          // Ah Sunflower
+    { word: "crimson", phonetic: "/ˈkɹɪmzən/", day: -4 },      // The Sick Rose
+    { word: "sorrow", phonetic: "/ˈsɔɹoʊ/", day: -3 },         // To-Morrow
+    { word: "cordially", phonetic: "/ˈkɔːdɪəli/", day: -2 },   // The bee is not afraid of me
+    { word: "prithee", phonetic: "/ˈpɹɪði/", day: -2 },        // Summer
+    { word: "pedigree", phonetic: "/ˈpɛd.ɪ.ɡɹi/", day: -1 },   // The pedigree of honey
+    { word: "aristocracy", phonetic: "/ˌæ.ɹɪˈstɒk.ɹə.si/", day: -1 },
+    { word: "chariot", phonetic: "/ˈt͡ʃæɹɪət/", day: 0 },       // There is no frigate like a book
 ];
 
 // ---------------------------------------------------------------------------
@@ -269,12 +270,14 @@ function findWords(text, phrase) {
     return null;
 }
 
-// Korea date 'YYYY-MM-DD' + hour + minutes -> UTC 'YYYY-MM-DD HH:MM:SS', never later than a few minutes ago
-let recent = 0;
+// Korea date 'YYYY-MM-DD' + hour + minutes -> UTC 'YYYY-MM-DD HH:MM:SS'.
+// A time still in the future (today, run early in the day) is squeezed into "midnight .. a minute ago"
+// in the same order, so it stays on the same Korea date and never looks like it came from tomorrow.
 function stamp(date, hour, minute) {
-    let t = new Date(`${date}T${String(hour).padStart(2, "0")}:00:00+09:00`).getTime() + minute * 60000;
-    const now = Date.now();
-    if (t > now - 60000) t = now - (++recent) * 7 * 60000;
+    const dayStart = new Date(`${date}T00:00:00+09:00`).getTime();
+    let t = dayStart + (hour * 60 + minute) * 60000;
+    const latest = Date.now() - 60000;
+    if (t > latest) t = dayStart + Math.max(0, latest - dayStart) * Math.min(1, (hour * 60 + minute) / (24 * 60));
     return new Date(t).toISOString().slice(0, 19).replace("T", " ");
 }
 
@@ -326,6 +329,11 @@ function checkPoems() {
                 }
             }
         }
+    }
+    const poemWords = new Set(Object.values(POEMS).flatMap((p) => p.lines.flatMap(lineWords)).map((w) => w.toLowerCase()));
+    for (const v of VOCAB) {
+        if (!poemWords.has(v.word)) problems.push(`word list: "${v.word}" is not in any poem`);
+        if (!koOf(v.word)) problems.push(`word list: "${v.word}" has no Korean meaning`);
     }
     return problems;
 }
@@ -388,7 +396,6 @@ async function removeOld(db) {
 
 async function seed(db, password) {
     const D = (n) => addDays(today(), n);
-    const firstDay = Math.min(...ROOMS.map((r) => Math.min(...r.days.map((d) => d.day))));
 
     // accounts
     const uid = {};
@@ -485,10 +492,10 @@ async function seed(db, password) {
         })));
     }
 
-    // 까망's word list
+    // 까망's word list, saved the way the dictionary popup saves (Korean meanings only, no English line)
     await db.batch(VOCAB.map((v, i) => ({
-        sql: `INSERT INTO vocab (user_id, word, phonetic, definition, definition_pos, definition_ko, created_at) VALUES (?, ?, NULL, ?, ?, ?, ?)`,
-        args: [uid[OWNER], v.word, v.definition, v.pos, koOf(v.word), stamp(D(firstDay + (i % 6)), USERS[OWNER].hour, 45 + i)],
+        sql: `INSERT INTO vocab (user_id, word, phonetic, definition, definition_pos, definition_ko, created_at) VALUES (?, ?, ?, '', NULL, ?, ?)`,
+        args: [uid[OWNER], v.word, v.phonetic, koOf(v.word), stamp(D(v.day), USERS[OWNER].hour, 45 + i)],
     })));
 
     return passwords;
