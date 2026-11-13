@@ -136,6 +136,10 @@ async function listRoomHistory(room_id) {
                       FROM line_annotations la
                       JOIN poem_lines pl ON pl.id = la.line_id
                      WHERE la.room_id = d.room_id AND pl.poem_id = d.poem_id
+                    UNION
+                    SELECT pm.user_id
+                      FROM poem_marks pm
+                     WHERE pm.room_id = d.room_id AND pm.poem_id = d.poem_id
                  )) AS contributor_count,
                 (SELECT GROUP_CONCAT(nickname) FROM (
                     SELECT DISTINCT u.nickname
@@ -147,6 +151,10 @@ async function listRoomHistory(room_id) {
                       JOIN poem_lines pl ON pl.id = la.line_id
                       JOIN users u ON u.id = la.user_id
                      WHERE la.room_id = d.room_id AND pl.poem_id = d.poem_id
+                    UNION
+                    SELECT DISTINCT u.nickname
+                      FROM poem_marks pm JOIN users u ON u.id = pm.user_id
+                     WHERE pm.room_id = d.room_id AND pm.poem_id = d.poem_id
                  )) AS contributors
            FROM daily_room_poems d
            JOIN poems p ON p.id = d.poem_id
