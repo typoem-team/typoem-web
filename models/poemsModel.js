@@ -30,6 +30,15 @@ async function roomHasSeenPoem(room_id, poem_id) {
     return !!row;
 }
 
+// every poem this room has ever received, as [{ title, author }]: one query, so picking
+// a fresh poem checks candidates in memory instead of asking the DB once per candidate.
+async function listSeenPoems(room_id) {
+    return await getDb().all(
+        `SELECT DISTINCT p.title, p.author FROM daily_room_poems d JOIN poems p ON p.id = d.poem_id WHERE d.room_id = ?`,
+        [room_id]
+    );
+}
+
 // cache a new poem and its lines atomically, in one DB round trip; return the new poem id.
 // empty lines preserved for poem rendering.
 async function createPoemWithLines({ title, author, lines }) {
@@ -151,6 +160,7 @@ module.exports = {
     getTodayPoemId,          // today's assigned poem id for this room, or null
     findPoemByTitleAuthor,   // cache lookup only: returns id if stored, else null (no write)
     roomHasSeenPoem,         // has this room ever received this poem? (no-repeat check)
+    listSeenPoems,           // every { title, author } this room has received (no-repeat check, one query)
     createPoemWithLines,     // store a new poem + its lines (keeps blank lines as ''), returns new poem_id
     findOrCreatePoem,        // reuse if cached, else store new (get-or-create)
     assignPoemToRoom,        // assign today's poem to the room; on clash, returns the winning poem_id

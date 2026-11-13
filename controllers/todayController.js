@@ -43,31 +43,26 @@ const { fetchRandomFromApi } = require("../lib/poemFetch");
 // CASE2: fallback; fetching from backup json file
 // pick a random acceptable, room-unseen poem from the offline fallback pool.
 // returns a poem object or null if the pool all used for this room.
-async function pickFromFallbackPool(roomSeen) {
+function pickFromFallbackPool(roomSeen) {
     const pool = require("../data/poems.json");
-    const candidates = [];
-    for (const p of pool) {
-        if (!isAcceptablePoem(p)) continue;
-        if (await roomSeen(p)) continue;
-        candidates.push(p);
-    }
+    const candidates = pool.filter((p) => isAcceptablePoem(p) && !roomSeen(p));
     if (candidates.length === 0) return null;
     return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
 // Final function: CASE1 + CASE2
 // get a fresh poem: try live first (re-roll on wrong length / already-seen),
-// then fall back to the offline pool. roomSeen(poem) is an async predicate.
+// then fall back to the offline pool. roomSeen(poem) -> boolean.
 // returns a poem object, or null if both sources are exhausted for this room.
 async function getCandidatePoem(roomSeen) {
     for (let i = 0; i < LIVE_RETRIES; i++) {
         const poem = await fetchRandomFromApi();
         if (!poem) break;                    // cannot get from live -> go straight to fallback
         if (!isAcceptablePoem(poem)) continue; // wrong length -> re-roll
-        if (await roomSeen(poem)) continue;    // room already saw it -> re-roll
+        if (roomSeen(poem)) continue;          // room already saw it -> re-roll
         return poem;                           // fresh + acceptable
     }
-    return await pickFromFallbackPool(roomSeen); // all fails; go to fallback
+    return pickFromFallbackPool(roomSeen); // all fails; go to fallback
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,10 +92,9 @@ async function getToday(req, res) {
         let poem_id = todayPoemId;
         if (!poem_id) {
 
-            const roomSeen = async ({ title, author }) => {
-                const id = await poemsModel.findPoemByTitleAuthor(title, author);
-                return id ? await poemsModel.roomHasSeenPoem(room_id, id) : false;
-            };
+            const key = ({ title, author }) => JSON.stringify([title, author]);
+            const seen = new Set((await poemsModel.listSeenPoems(room_id)).map(key));
+            const roomSeen = (poem) => seen.has(key(poem));
 
             const candidate = await getCandidatePoem(roomSeen);
             if (!candidate) {
