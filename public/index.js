@@ -187,6 +187,7 @@ requireLogin();
     status.textContent = '';
 
     var list = Array.isArray(rooms) ? rooms : [];
+    window.TypoemHomeRooms = list;   // invite.js ('+') reads the room's code and owner from here
     $('empty-state').hidden = list.length > 0;
     $('home-room').hidden = !list.length;
     if (!list.length) return;

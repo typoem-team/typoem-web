@@ -4,7 +4,8 @@
 // Moved here from the home screen: a room is where you invite people now.
 //
 // Data (asked for when the sheet opens):
-//   GET    /api/rooms/mine         this room's invite_code and owner
+//   GET    /api/rooms/mine         this room's invite_code and owner (skipped when the home
+//                                  already has it in window.TypoemHomeRooms)
 //   GET    /api/rooms/:id/members  members in join order
 //   DELETE /api/rooms/:id (owner) · DELETE /api/rooms/:id/leave (member)
 // Depends on auth.js, ui.js (TypoemUI, which draws the header's .r-room button).
@@ -74,20 +75,25 @@
     await load();
   }
 
+  function findRoom(rooms) {
+    return (Array.isArray(rooms) ? rooms : []).find(function (r) { return String(r.id) === String(ROOM_ID); }) || null;
+  }
+
   async function load() {
+    // the home already loaded /rooms/mine (index.js -> window.TypoemHomeRooms); ask again only without it
+    var known = findRoom(window.TypoemHomeRooms);
     var roomsRes, membersRes;
     try {
       var id = encodeURIComponent(ROOM_ID);
       [roomsRes, membersRes] = await Promise.all([
-        authFetch('/api/rooms/mine'),
+        known ? null : authFetch('/api/rooms/mine'),
         authFetch('/api/rooms/' + id + '/members'),
       ]);
     } catch (err) {
       $('member-list').innerHTML = '<p class="s-note">네트워크 오류가 났어요. 다시 열어 주세요.</p>';
       return;
     }
-    var rooms = roomsRes.ok ? await roomsRes.json() : [];
-    room = (Array.isArray(rooms) ? rooms : []).find(function (r) { return String(r.id) === String(ROOM_ID); }) || null;
+    room = known || findRoom(roomsRes.ok ? await roomsRes.json() : []);
     if (!room || !membersRes.ok) {
       $('invite-code').textContent = '';
       $('member-list').innerHTML = '<p class="s-note">방 정보를 불러오지 못했어요.</p>';

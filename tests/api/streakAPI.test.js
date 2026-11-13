@@ -75,6 +75,14 @@ describe("GET /api/rooms/:id/streaks", () => {
     expect(streakModel.listForRoom).not.toHaveBeenCalled();
   });
 
+  test("404 (not 403) when the room is missing and I'm not a member — both are read at once", async () => {
+    roomsModel.findById.mockResolvedValue(undefined);
+    roomsModel.isMember.mockResolvedValue(false);
+    const res = await request(app).get("/api/rooms/5/streaks").set(auth);
+    expect(res.statusCode).toBe(404);
+    expect(streakModel.listForRoom).not.toHaveBeenCalled();
+  });
+
   test("403 for non-members", async () => {
     roomsModel.findById.mockResolvedValue({ id: 5, name: "r" });
     roomsModel.isMember.mockResolvedValue(false);

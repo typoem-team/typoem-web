@@ -59,16 +59,27 @@ async function getSummary(user_id, today) {
     return summarize(map.get(user_id), today);
 }
 
-// streaks of every member of a room (join order), for the friends view
+// streaks of every member of a room (join order), for the friends view.
+// Members and their check-ins are both found by room id, so the two queries run at once.
 async function listForRoom(room_id, today) {
-    const members = await getDb().all(
-        `SELECT u.id, u.username, u.nickname
-         FROM room_members rm JOIN users u ON u.id = rm.user_id
-         WHERE rm.room_id = ?
-         ORDER BY rm.id ASC`,
-        [room_id]
-    );
-    const map = await datesForUsers(members.map((m) => m.id));
+    const db = getDb();
+    const [members, rows] = await Promise.all([
+        db.all(
+            `SELECT u.id, u.username, u.nickname
+             FROM room_members rm JOIN users u ON u.id = rm.user_id
+             WHERE rm.room_id = ?
+             ORDER BY rm.id ASC`,
+            [room_id]
+        ),
+        db.all(
+            `SELECT rc.user_id, rc.date
+             FROM reading_checkins rc JOIN room_members rm ON rm.user_id = rc.user_id
+             WHERE rm.room_id = ?`,
+            [room_id]
+        ),
+    ]);
+    const map = new Map(members.map((m) => [m.id, new Set()]));
+    for (const r of rows) map.get(r.user_id)?.add(r.date);
     return members.map((m) => {
         const s = summarize(map.get(m.id), today);
         return { ...m, current: s.current, longest: s.longest, checkedInToday: s.checkedInToday };
