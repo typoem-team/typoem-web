@@ -100,23 +100,23 @@ async function listMembers(room_id) { // list members of a room, joined with use
 // retries on invite_code UNIQUE collisions.
 const MAX_INVITE_CODE_RETRIES = 50;
 async function createRoom({ name, description, owner_id }) {
-    const db = getDb();
     for (let attempt = 0; attempt < MAX_INVITE_CODE_RETRIES; attempt++) {
         const invite_code = generateInviteCode();
         try {
-            await db.exec("BEGIN");
-            const result = await db.run(
-                `INSERT INTO rooms (name, description, invite_code, owner_id) VALUES (?, ?, ?, ?)`,
-                [name, description, invite_code, owner_id]
-            );
-            await db.run(
-                `INSERT INTO room_members (room_id, user_id, role) VALUES (?, ?, ?)`,
-                [result.lastID, owner_id, "owner"]
-            );
-            await db.exec("COMMIT");
-            return { id: result.lastID, name, description, invite_code, owner_id };
+            // one batch = one transaction: the room and its owner row land together or not at all
+            const [room] = await getDb().batch([
+                {
+                    sql: `INSERT INTO rooms (name, description, invite_code, owner_id) VALUES (?, ?, ?, ?)`,
+                    args: [name, description, invite_code, owner_id],
+                },
+                {
+                    sql: `INSERT INTO room_members (room_id, user_id, role)
+                          VALUES ((SELECT id FROM rooms WHERE invite_code = ?), ?, 'owner')`,
+                    args: [invite_code, owner_id],
+                },
+            ]);
+            return { id: room.lastID, name, description, invite_code, owner_id };
         } catch (err) {
-            await db.exec("ROLLBACK");
             // retry only on invite_code UNIQUE collision
             if (err.code === "SQLITE_CONSTRAINT" && /UNIQUE/i.test(err.message) && /invite_code/i.test(err.message)) {
                 continue;

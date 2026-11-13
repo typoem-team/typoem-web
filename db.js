@@ -44,54 +44,11 @@ function normalizeError(err) {
   return err;
 }
 
-// ---------- transactions ----------
-// Models do exec('BEGIN') ... exec('COMMIT' | 'ROLLBACK').
-// Map that onto client.transaction(), one transaction at a time.
-let tx = null;          // active libSQL transaction
-let txRelease = null;   // releases the lock for the next BEGIN
-let txQueue = Promise.resolve();
-
-async function begin() {
-  const prev = txQueue;
-  let release;
-  txQueue = new Promise((r) => { release = r; });
-  await prev;
-  try {
-    tx = await client.transaction('write');
-    txRelease = release;
-  } catch (err) {
-    release();
-    throw normalizeError(err);
-  }
-}
-
-async function finish(kind) {
-  if (!tx) return; // BEGIN failed earlier → nothing to commit/rollback
-  const current = tx;
-  const release = txRelease;
-  tx = null;
-  txRelease = null;
-  try {
-    if (kind === 'COMMIT') await current.commit();
-    else await current.rollback();
-  } catch (err) {
-    throw normalizeError(err);
-  } finally {
-    current.close();
-    release();
-  }
-}
-
-// while a transaction is open, statements go through it
-function target() {
-  return tx || client;
-}
-
 async function execute(sql, params) {
   const stats = requestStats.getStore();
   const started = Date.now();
   try {
-    return await target().execute({ sql, args: toArgs(params) });
+    return await client.execute({ sql, args: toArgs(params) });
   } catch (err) {
     throw normalizeError(err);
   } finally {
@@ -119,10 +76,8 @@ function makeDb() {
       };
     },
     // Run several statements atomically in ONE request: [{ sql, args }] -> [{ rows, lastID, changes }].
-    // Goes straight to client.batch(), never through the global `tx` above, so it can't
-    // swallow (or roll back) statements from other requests. Use this instead of
-    // exec('BEGIN') for bulk writes. Note: with DB_PATH=':memory:' the client has a single
-    // connection, so a batch issued while a BEGIN transaction is open fails (TRANSACTION_ACTIVE).
+    // This is the only way to write atomically: there is no exec('BEGIN'), because a
+    // server-wide open transaction would swallow other requests' statements.
     async batch(statements) {
       const stmts = statements.map(({ sql, args }) => ({ sql, args: toArgs(args === undefined ? [] : [args]) }));
       const stats = requestStats.getStore();
@@ -139,13 +94,10 @@ function makeDb() {
         throw normalizeError(err);
       }
     },
+    // several statements, no args (schema.sql, PRAGMA, ALTER TABLE)
     async exec(sql) {
-      const cmd = sql.trim().replace(/;$/, '').toUpperCase();
-      if (cmd === 'BEGIN' || cmd === 'BEGIN TRANSACTION') return begin();
-      if (cmd === 'COMMIT' || cmd === 'END') return finish('COMMIT');
-      if (cmd === 'ROLLBACK') return finish('ROLLBACK');
       try {
-        await target().executeMultiple(sql);
+        await client.executeMultiple(sql);
       } catch (err) {
         throw normalizeError(err);
       }

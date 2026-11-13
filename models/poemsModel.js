@@ -30,41 +30,33 @@ async function roomHasSeenPoem(room_id, poem_id) {
     return !!row;
 }
 
-// cache a new poem and its lines in one transaction; return the new poem id.
+// cache a new poem and its lines atomically, in one DB round trip; return the new poem id.
 // empty lines preserved for poem rendering.
 async function createPoemWithLines({ title, author, lines }) {
-    const db = getDb();
     const all = Array.isArray(lines) ? lines : [];
     // normalize: blank lines -> '', content lines kept verbatim
     const normalized = all.map((l) => (l && l.trim().length > 0 ? l : ''));
     const linecount = normalized.filter((l) => l !== '').length;
 
-    try {
-        await db.exec('BEGIN');
-        const result = await db.run(
-            `INSERT INTO poems (title, author, linecount) VALUES (?, ?, ?)`,
-            [title, author, linecount]
-        );
-        const poem_id = result.lastID;
-        // insert lines in multi-row batches: one DB round trip per 100 lines
-        // instead of one per line (matters a lot with a remote DB)
-        const BATCH = 100;
-        for (let start = 0; start < normalized.length; start += BATCH) {
-            const chunk = normalized.slice(start, start + BATCH);
-            const placeholders = chunk.map(() => '(?, ?, ?)').join(', ');
-            const params = [];
-            chunk.forEach((text, j) => params.push(poem_id, start + j + 1, text));
-            await db.run(
-                `INSERT INTO poem_lines (poem_id, line_number, text) VALUES ${placeholders}`,
-                params
-            );
-        }
-        await db.exec('COMMIT');
-        return poem_id;
-    } catch (err) {
-        await db.exec('ROLLBACK');
-        throw err;
+    // A batch is one write transaction, so MAX(id) is the poem inserted just before.
+    // Lines go 100 per INSERT to stay well under SQLite's bound-parameter limit.
+    const statements = [{
+        sql: `INSERT INTO poems (title, author, linecount) VALUES (?, ?, ?)`,
+        args: [title, author, linecount],
+    }];
+    const CHUNK = 100;
+    for (let start = 0; start < normalized.length; start += CHUNK) {
+        const chunk = normalized.slice(start, start + CHUNK);
+        const args = [];
+        chunk.forEach((text, j) => args.push(start + j + 1, text));
+        statements.push({
+            sql: `INSERT INTO poem_lines (poem_id, line_number, text) VALUES ` +
+                chunk.map(() => '((SELECT MAX(id) FROM poems), ?, ?)').join(', '),
+            args,
+        });
     }
+    const [poem] = await getDb().batch(statements);
+    return poem.lastID;
 }
 
 // poem cache get-or-create (NOT date/room-specific): reuse if (title,author)
