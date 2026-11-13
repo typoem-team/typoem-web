@@ -9,6 +9,7 @@
 // is at most a page or so: max(500 words, 1% of the book).
 
 const { getDb } = require("../db");
+const { cleanBookTitle } = require("../lib/bookTitle");
 
 const FINISH_SLACK_WORDS = 500;
 
@@ -63,7 +64,7 @@ async function listForRoom(room_id, user_id) {
     const entry = (book_id, title, author) => {
         if (!books.has(book_id)) {
             books.set(book_id, {
-                book_id, title, author,
+                book_id, title: cleanBookTitle(title), author,
                 is_current: current?.book_id === book_id,
                 status: null, progress: 0, last_read_at: null, finished_at: null,
                 my_mark_count: markCounts.get(book_id) || 0,

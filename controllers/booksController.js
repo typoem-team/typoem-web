@@ -16,6 +16,7 @@ const streakModel = require("../models/streakModel");
 const { today } = require("../lib/dates");
 const bookFetch = require("../lib/bookFetch");
 const BOOK_SHELF = require("../data/bookShelf.json");
+const { cleanBookTitle } = require("../lib/bookTitle");
 
 // helper: parse ':id' path param and validate (same as roomsController)
 function parseId(raw) {
@@ -64,7 +65,7 @@ function bookDto(b) {
     return {
         id: b.id,
         gutenbergId: b.id,
-        title: b.title,
+        title: cleanBookTitle(b.title),
         author: b.author,
         authorDeathYear: b.author_death_year ?? null,
         totalWords: b.total_words,
@@ -112,7 +113,7 @@ async function listBooks(req, res) {
         res.status(200).json(books.map((b) => ({
             id: b.id,
             gutenbergId: b.id,
-            title: b.title,
+            title: cleanBookTitle(b.title),
             author: b.author,
             totalWords: b.total_words,
         })));
@@ -130,7 +131,7 @@ async function getShelf(req, res) {
         const imported = new Set(await booksModel.findImportedIds(BOOK_SHELF.map((b) => b.gutenbergId)));
         res.status(200).json(BOOK_SHELF.map((b) => ({
             gutenbergId: b.gutenbergId,
-            title: b.title,
+            title: cleanBookTitle(b.title),
             author: b.author,
             imported: imported.has(b.gutenbergId),
         })));
@@ -154,7 +155,7 @@ async function searchBooks(req, res) {
 
         res.status(200).json(pd.map((b) => ({
             gutenbergId: b.id,
-            title: b.title,
+            title: cleanBookTitle(b.title),
             authors: (b.authors || []).map((a) => ({ name: a.name, deathYear: a.death_year ?? null })),
             alreadyImported: imported.has(b.id),
         })));
