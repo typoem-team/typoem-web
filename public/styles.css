@@ -1957,6 +1957,97 @@ html[lang="en"] .landing-invite {
   margin-top: 28px;
 }
 
+/* badges: 3 across on phones too; earned = mint fill + ink icon, not yet = dashed + faint */
+.badge-count {
+  margin-left: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--color-ink-2);
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-2) var(--space-3);
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--color-line-dashed);
+  text-align: center;
+  color: var(--color-ink-3);
+}
+
+.badge.is-earned {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--color-ink);
+}
+
+.badge-ic {
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-1);
+  border: 1px dashed var(--color-line-dashed);
+}
+
+.badge.is-earned .badge-ic {
+  border: 0;
+  background: var(--color-accent-warm);
+  color: var(--cover-1);
+}
+
+.badge-ic svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.badge-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.badge-desc {
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  color: var(--color-ink-2);
+  word-break: keep-all;
+}
+
+.badge-state {
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-ink-2);
+}
+
+.badge.is-earned .badge-state {
+  color: var(--color-accent-text);
+}
+
+@media (min-width: 600px) {
+  .badge-grid { gap: var(--space-3); }
+}
+
 .s-row-sub {
   margin-left: auto;
   font-size: 12px;

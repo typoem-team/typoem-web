@@ -40,9 +40,11 @@
     <p id="status" class="status" role="status"></p>
     <div id="friends"></div>
 
-    <!-- 배지 자리: 규칙(16단계, A6)이 정해지면 채워요 -->
-    <h2 class="me-h">배지</h2>
-    <p class="s-note">배지는 곧 생겨요.</p>
+    <!-- 배지 (me.js, GET /api/users/me/badges). 불러오지 못하면 영역째 숨겨요 -->
+    <section aria-labelledby="badges-h" id="badges-box" hidden>
+      <h2 class="me-h" id="badges-h">배지 <span class="badge-count" id="badges-count"></span></h2>
+      <ul class="badge-grid" id="badges"></ul>
+    </section>
 
     <div class="me-box me-account">
       <a class="s-row" href="/settings.html">설정 <span class="s-row-sub">닉네임 · 로그아웃 · 계정 삭제</span></a>
