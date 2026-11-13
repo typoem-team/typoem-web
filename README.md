@@ -1,384 +1,106 @@
 # Typoem
 
-![CI](https://github.com/so-yeon-333/typoem/actions/workflows/test.yml/badge.svg)
+![CI](https://github.com/typoem-team/typoem-web/actions/workflows/test.yml/badge.svg)
 
-**Live app:** https://typoem-app.onrender.com &nbsp;·&nbsp; **API docs:** https://typoem.onrender.com/api/docs
+**서비스:** https://typoem-app.onrender.com &nbsp;·&nbsp; **API 문서:** https://typoem-app.onrender.com/api/docs &nbsp;·&nbsp; **Android 앱:** [typoem-team/typoem-app](https://github.com/typoem-team/typoem-app)
 
-> *Type + Poem* — A cozy little corner where friends gather to read a daily poem and leave their ink-marks across the page.
+> *Type + Poem* — 친구들과 함께 매일 영어 시 한 편을 읽는 공간
 
-Typoem is a full-stack web application where small groups of close friends gather in private code-based rooms to read one English poem together each day. Users can leave memos on the poem as a whole, attach line-level annotations to specific lines, and look up unfamiliar words through a built-in dictionary.
+Typoem은 가까운 친구들이 초대 코드로 만든 비공개 방에서 매일 영어 시 한 편을 함께 읽는 서비스입니다. 시의 단어에 하이라이트와 메모를 남기고, 모르는 단어는 영한 사전으로 바로 찾아 단어장에 저장할 수 있습니다. 방마다 저작권이 만료된 영어 책을 정해 함께 읽을 수도 있습니다.
 
-This project is the team submission for **ITM519 Web Programming (Spring 2026)**, Team 5.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Setup](#setup)
-- [Environment Variables](#environment-variables)
-- [Running the App](#running-the-app)
-- [Testing](#testing)
-- [API Documentation](#api-documentation)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Team](#team)
-- [AI Use Disclosure](#ai-use-disclosure)
-- [License](#license)
+이 저장소에는 서버와 웹 화면이 함께 들어 있습니다. Android 앱은 이 저장소의 웹 화면을 그대로 사용합니다.
 
 ---
 
-## Features
+## 주요 기능
 
-**Core**
-
-- Create or join private rooms with invite codes
-- Receive a daily English poem in each room
-- Write and share full-poem memos
-- Attach line-level annotations to specific lines
-- Look up unknown words with an in-app dictionary
-
-**Additional**
-
-- **Personal vocabulary notebook** — save words from the dictionary popup and review them later (`/api/vocab`)
-- **Poem history** — browse every daily poem a room has read, newest first, with the members who left notes on each (`/api/rooms/:id/history`)
-- **Memo likes** — like and unlike memos, with per-memo like counts (`/api/memos/:id/like`)
-
-**Stretch (not implemented)**
-
-- Replies on memos
-- Streaks and badges
-- Calendar with friend activity
-- Review past poems with notes
-- Dark mode
-
----
-
-## Tech Stack
-
-| Layer | Technology |
+| 기능 | 설명 |
 | --- | --- |
-| Frontend | HTML + CSS + Vanilla JavaScript |
-| Backend | Node.js + Express |
-| Database | SQLite (sqlite + sqlite3) |
-| Authentication | JWT + `bcrypt` |
-| API Documentation | `swagger-ui-express` + `yamljs` |
-| Testing | Jest + Supertest |
-| CI | GitHub Actions |
-| Deployment | Render (free tier) |
-
-**External APIs**
-
-- [PoetryDB](https://poetrydb.org/) — Source of English poems (free, no auth)
-- [Free Dictionary API](https://dictionaryapi.dev/) — Word definitions and pronunciation (free, no auth)
-
-**Data**
-
-- Korean meanings of English words (`data/ko_dict.jsonl`) come from the Korean edition of [Wiktionary](https://ko.wiktionary.org/), extracted by [Wiktextract](https://github.com/tatuylonen/wiktextract) ([kaikki.org](https://kaikki.org/)). Licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Rebuild with `scripts/build_ko_dict.py` from its source `scripts/en-from-ko.jsonl` (same license). The server tidies the meanings it sends (`lib/koGloss.js`).
+| 방 | 방을 만들고 초대 코드로 친구를 초대합니다. |
+| 오늘의 시 | 방마다 하루에 한 편씩(한국 시간 기준) 시가 주어집니다. 지난 시는 기록에서 다시 볼 수 있습니다. |
+| 하이라이트 · 메모 | 시의 단어나 구절에 하이라이트나 메모를 남기고, 시 전체에 대한 메모를 남깁니다. |
+| 사전 · 단어장 | 단어를 누르면 영어 뜻과 한국어 뜻을 보여 줍니다. 저장한 단어는 단어장에서 다시 봅니다. |
+| 함께 읽는 책 | 방장이 책을 정하면 멤버들이 장별로 읽고, 서로 어디까지 읽었는지 확인합니다. |
+| 연속 읽기 · 배지 | 매일 시를 다 읽으면 연속 읽기 기록이 이어지고 배지를 받습니다. |
+| 설정 | 닉네임, 라이트 · 다크 테마, 아침 알림(앱), 계정 삭제를 제공합니다. |
 
 ---
 
-## Project Structure
+## 기술 스택
 
-```
-typoem/
-├── server.js               # Entry point — env validation, DB init, seed, listen
-├── app.js                  # Express app — middleware, routers, Swagger, /api/health
-├── db.js                   # Database connection (initDb / getDb)
-├── openapi.yaml            # OpenAPI 3.0 specification
-├── package.json
-├── package-lock.json
-├── routes/                 # Express routers
-│   ├── auth.js
-│   ├── users.js
-│   ├── rooms.js
-│   ├── memos.js
-│   ├── annotations.js
-│   ├── dictionary.js
-│   ├── public.js
-│   └── vocab.js
-├── controllers/            # Route handler logic
-├── models/                 # DB access layer
-├── lib/
-│   └── poemFetch.js        # Shared PoetryDB fetch helper
-├── middleware/
-│   └── authMiddleware.js
-├── db/
-│   ├── schema.sql          # CREATE TABLE statements
-│   └── seed.js             # DB initialization + seed data
-├── data/
-│   └── poems.json          # Pre-fetched poems from PoetryDB
-├── tests/                  # Jest + Supertest tests
-├── scripts/                # Utility scripts (e.g., fetch-poems.js)
-├── public/                 # Frontend (Lecture 12 pattern)
-│   ├── landing.html / landing.js      # Public landing page (logged-out visitors)
-│   ├── index.html / index.js          # My Rooms — room list (logged-in home)
-│   ├── register.html / register.js
-│   ├── login.html / login.js
-│   ├── create-room.html / create-room.js
-│   ├── join.html / join.js
-│   ├── room.html / room.js            # Today's poem + memos + annotations
-│   ├── history.html / history.js      # Past daily poems for a room
-│   ├── vocab.html / vocab.js          # Personal vocabulary notebook
-│   ├── dict-popup.js                  # Dictionary popup (word lookup + save)
-│   ├── auth.js                        # Shared helper (JWT, requireLogin, authFetch)
-│   ├── assets/                        # Static assets (e.g., paw.svg)
-│   └── styles.css
-├── .github/
-│   └── workflows/
-│       └── test.yml        # GitHub Actions CI
-├── .env.example
-├── .gitignore
-└── README.md
-```
-
-The structure follows the MVC pattern, with frontend pages served as static files from `public/`.
+| 구분 | 사용 기술 |
+| --- | --- |
+| 프론트엔드 | HTML, CSS, JavaScript |
+| 백엔드 | Node.js 22, Express 5 |
+| 데이터베이스 | libSQL (운영: Turso, 개발 · 테스트: 로컬 SQLite 파일) |
+| 인증 | JWT, bcrypt |
+| API 문서 | OpenAPI 3.0, Swagger UI |
+| 테스트 · CI | Jest, Supertest, GitHub Actions |
+| 배포 | Render |
 
 ---
 
-## Prerequisites
+## 실행 방법
 
-- **Node.js** v22.x (the project is pinned to Node 22 via `engines` in `package.json`; the CI runs on Node 22)
-- **npm** v10 or higher
-- A GitHub account (for cloning)
-
-Check your versions:
+Node.js 22가 필요합니다.
 
 ```bash
-node --version
-npm --version
-```
-
----
-
-## Setup
-
-```bash
-git clone https://github.com/so-yeon-333/typoem.git
-cd typoem
+git clone https://github.com/typoem-team/typoem-web.git
+cd typoem-web
 npm install
-cp .env.example .env
+cp .env.example .env     # JWT_SECRET에 임의의 긴 문자열을 넣습니다
+npm run dev              # http://localhost:3000
 ```
 
-Then edit `.env` and fill in your values (see [Environment Variables](#environment-variables)).
+처음 실행하면 로컬 데이터베이스 파일(`typoem.db`)과 예시 데이터가 만들어집니다. 회원가입 후 이용해 주세요.
 
-On first startup, the database is created from `db/schema.sql` and seeded with demo data (`db/seed.js`): sample users, one room with invite code `ABC123`, and one poem ("Wild Nights - Wild Nights!" by Emily Dickinson) set as today's poem, so the room screen has content to display. (The seeded users use placeholder password hashes and are not meant for login; register a new account to log in.) Seeding is skipped if the database already contains users. To reset, delete the database file (`typoem.db`) and restart.
-
----
-
-## Environment Variables
-
-Create a `.env` file based on `.env.example`:
-
-| Variable | Description | Example |
-| --- | --- | --- |
-| `PORT` | Port the server listens on | `3000` |
-| `JWT_SECRET` | Secret key for signing JWTs (use a long random string) | `your-long-random-string-here` |
-| `JWT_EXPIRES_IN` | JWT expiry passed to `jsonwebtoken` (e.g. `1h`) | `1h` |
-| `DB_PATH` | Path to the SQLite database file | `./typoem.db` |
-| `NODE_ENV` | Environment mode | `development` or `production` |
-
-> ⚠️ `JWT_SECRET` and `JWT_EXPIRES_IN` are **required**. The server checks them on startup (`server.js`) and stops right away if either one is missing.
-
-> ⚠️ **Never commit `.env` to git.** It is listed in `.gitignore`.
-
----
-
-## Running the App
-
-### Development
-
-```bash
-npm run dev
-```
-
-Uses Node's `--watch` mode for automatic restart on file changes. Open `http://localhost:3000` in your browser. The same Express server serves both the REST API and the frontend pages from `public/`.
-
-### Production-style run
-
-```bash
-npm start
-```
-
-A health check endpoint is available at `/api/health`, which returns `{ "status": "ok", "app": "Typoem" }`.
-
-### Refreshing the poem pool (optional)
-
-`data/poems.json` holds poems pre-fetched from PoetryDB. To re-fetch a fresh batch:
-
-```bash
-npm run fetch-poems
-```
-
-This is a one-off utility (`scripts/fetch-poems.js`) and is not required to run the app.
-
----
-
-## Testing
-
-All tests are written with Jest and Supertest.
+테스트는 다음 명령으로 실행합니다.
 
 ```bash
 npm test
 ```
 
-To run with a coverage report:
+### 환경 변수
 
-```bash
-npm run test:coverage
-```
+| 변수 | 필수 | 설명 |
+| --- | --- | --- |
+| `JWT_SECRET` | 필수 | 토큰 서명용 비밀 키 |
+| `JWT_EXPIRES_IN` | 필수 | 토큰 유효 기간 (예: `1h`) |
+| `PORT` | | 서버 포트 (기본값 `3000`) |
+| `DB_PATH` | | 로컬 데이터베이스 파일 경로 (기본값 `./typoem.db`) |
+| `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | 운영 | Turso 데이터베이스 연결 정보 |
+| `CORS_ORIGINS` | | 추가로 허용할 출처 |
+| `NODE_ENV` | | `development`, `production`, `test` |
 
-**What's tested:**
-
-- Unit tests for controllers, validators, and utilities (at least 2 modules with real logic)
-- API tests covering at least one authenticated route, one error case (401/404/400), and one successful main-flow endpoint
-
-Tests run automatically on every push to `main` and on every pull request via GitHub Actions (see CI badge at the top of this README).
-
----
-
-## API Documentation
-
-The OpenAPI 3.0 specification is in `openapi.yaml` (repository root).
-
-When the server is running, you can open the API documentation (where you can try the endpoints in the browser) at:
-
-```
-http://localhost:3000/api/docs
-```
-
-On the deployed instance: https://typoem.onrender.com/api/docs
-
-The docs are served by loading the static `openapi.yaml` file with `yamljs` and rendering it through `swagger-ui-express`.
+그 밖의 선택 항목은 `.env.example`에 설명되어 있습니다.
 
 ---
 
-## Deployment & CI/CD
+## 배포
 
-The application is deployed on Render (free tier) so it can be opened easily during evaluation.
-
-**Deployed URL:** https://typoem.onrender.com
-
-### Continuous Deployment (CD)
-Render is connected to this GitHub repository and auto-deploys on every push to `main`.
-Combined with GitHub Actions CI, the full pipeline is:
-
-`push / PR → GitHub Actions (CI: tests) → merge to main → Render auto-deploy (CD)`
-
-Every change that lands on `main` is tested by CI, then automatically built and released to the live URL with no manual step.
-
-### Notes on Render's free tier
-* Render's free web service does not persist files on disk, so the SQLite database is wiped on every redeploy and after periods of inactivity.
-* To handle this, the app seeds the database with a set of ready-made poems on every startup, so there is always something to show.
-* User-created data (accounts, rooms, memos) is therefore not persistent — it is kept only until the next redeploy or sleep.
-* Free services sleep after ~15 minutes of inactivity; the first request after that may take about 30 seconds to wake up.
-
-### Running locally as a fallback
-If the deployed URL is unavailable, follow the [Setup](https://github.com/so-yeon-333/typoem#setup) and [Running the App](https://github.com/so-yeon-333/typoem#running-the-app) sections.
----
-
-## Contributing
-
-This is a team project; the following workflow is followed by all team members.
-
-### Branch Naming
-
-```
-feature/<area>-<short-description>    # e.g., feature/auth-jwt
-fix/<area>-<short-description>        # e.g., fix/login-validation
-test/<area>                           # e.g., test/auth-controller
-docs/<area>                           # e.g., docs/readme-update
-chore/<area>                          # e.g., chore/install-bcrypt
-```
-
-### Commit Messages
-
-We follow simplified Conventional Commits:
-
-```
-feat: <description>     # New feature
-fix: <description>      # Bug fix
-test: <description>     # Test addition
-docs: <description>     # Documentation
-refactor: <description> # Code refactoring
-chore: <description>    # Maintenance, setup
-```
-
-All commit messages are written in English.
-
-### Pull Request Workflow
-
-1. Create a feature branch from `main`
-2. Make changes and commit
-3. Push the branch and open a Pull Request on GitHub
-4. CI must pass before merging
-5. Review from a teammate is recommended but not required
-6. Use Merge commit so each person's commit history stays visible on `main`
-7. Delete the feature branch after merging (GitHub does this automatically)
-
-### Git Configuration
-
-Before your first commit, ensure your git identity matches your GitHub account:
-
-```bash
-git config user.name "Your Name"
-git config user.email "your-github-email@example.com"
-```
+`main` 브랜치에 변경이 합쳐지면 GitHub Actions에서 테스트를 실행하고, Render가 자동으로 배포합니다. 데이터는 Turso에 저장되어 재배포 후에도 유지됩니다.
 
 ---
 
-## Team
+## 데이터 출처 및 라이선스
 
-**Team 5**
+- 시: [PoetryDB](https://poetrydb.org/)
+- 영어 뜻: [Free Dictionary API](https://dictionaryapi.dev/)
+- 책: [Project Gutenberg](https://www.gutenberg.org/), [Gutendex](https://gutendex.com/) — 한국에서 저작권이 만료된 작품만 제공합니다.
+- 한국어 뜻: 한국어 [위키낱말사전](https://ko.wiktionary.org/) ([Wiktextract](https://github.com/tatuylonen/wiktextract), [kaikki.org](https://kaikki.org/)), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+- 글꼴: SIL Open Font License (`public/fonts/` 각 폴더의 `OFL.txt`)
 
-| Member | Role |
+---
+
+## 팀
+
+| 이름 | 이메일 |
 | --- | --- |
-| 박소연 | Team Lead, Frontend (poem screen, memo/annotation UI), Deployment, Initial repo and CI setup |
-| 권시현 | Backend (DB schema, memos, line annotations, tests) |
-| 이지섭 | Backend (authentication, rooms, today's poem API) |
-| 김경윤 | Frontend (auth pages, room list, dictionary), CI maintenance and reporting |
+| 박소연 | amypark310@gmail.com |
+| 권시현 | sihyun0305@naver.com |
+| 이지섭 | ljseop1030@gmail.com |
+| 김경윤 | gracekim6531@naver.com |
 
----
+## 라이선스
 
-## AI Use Disclosure
-
-**Tools used:**
-
-- Claude (Anthropic)
-
-**How each team member used AI:**
-
-- **박소연 (Soyeon)**
-  1. Designing the UI structure and interaction patterns of the P13 poem screen (memo/annotation drawer, gutter click target)
-  2. Comparing font metrics (digit/cap-height ratio of IM Fell English SC vs Gentium Book Plus) with help using fontTools
-  3. Debugging the Render deployment — diagnosing free-tier environment issues such as the `sqlite3` v6 GLIBC requirement conflict
-  4. Cross-checking the final README line by line against the actual code to catch mismatches (entry point, missing env vars, etc.)
-
-- **이지섭 (Jiseop)**
-  1. Help structuring and scaffolding which test cases to write
-  2. Help with areas not covered in class or unclear, such as SQLite handling
-  3. Debugging when errors occurred or behavior did not match intent
-  4. Because the team conventions and project specification are very specific, repeatedly checking with AI whether his code followed them
-
-- **권시현 (Sihyun)**
-  1. Structuring the `sqlite` + `sqlite3` handling and the `initDb()` / `getDb()` layer
-  2. Designing the REST API structure (404/403 branching, splitting routes across two paths)
-  3. Scaffolding tests using a mock-based approach
-  4. Cross-checking his code against the project spec and team conventions (table constraints, REST response codes)
-
-- **김경윤 (Gyeongyoon)**
-  1. Building the auth pages and room pages (form handling, client-side validation, the authFetch request/response/error flow)
-  2. Designing the dictionary popup (`dict-popup.js`) — reusable popup DOM, event delegation for word clicks, position-flip calculation, close-on-Esc/outside-click — mostly not covered in class
-  3. Writing the regex that strips punctuation from PoetryDB markup (`_italic_`, em dashes) so dictionary lookups don't break
-  4. Debugging the mobile popup-position bug and word-lookup failures caused by punctuation
-
-All AI-assisted output is reviewed, understood, and modified by the responsible team member before being committed.
-
----
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+MIT License — [LICENSE](LICENSE)
