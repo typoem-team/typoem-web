@@ -68,6 +68,13 @@ const BADGE_ICONS = {
   book: '<path d="M12 6.5C10.3 5.2 7.8 4.6 4 4.6v13c3.8 0 6.3.6 8 1.9 1.7-1.3 4.2-1.9 8-1.9v-13c-3.8 0-6.3.6-8 1.9z"/><path d="M12 6.5v13"/>',
 };
 
+// "first" badges lead, then by how soon you can reach them; ids the server adds later go last
+const BADGE_ORDER = ['first_memo', 'first_book', 'streak_3', 'streak_7', 'memo_10', 'streak_30'];
+const badgeRank = (id) => {
+  const i = BADGE_ORDER.indexOf(id);
+  return i === -1 ? BADGE_ORDER.length : i;
+};
+
 function badgeKind(id) {
   if (id.startsWith('streak_')) return 'streak';
   if (id.startsWith('memo') || id === 'first_memo') return 'memo';
@@ -93,7 +100,8 @@ async function loadBadges() {
     const res = await authFetch('/api/users/me/badges');
     if (!res.ok) return;   // keep the section hidden
     const data = await res.json();
-    $('badges').innerHTML = data.badges.map(badgeItem).join('');
+    const badges = [...data.badges].sort((a, b) => badgeRank(a.id) - badgeRank(b.id));
+    $('badges').innerHTML = badges.map(badgeItem).join('');
     $('badges-count').textContent = `${data.earned_count} / ${data.badges.length}`;
     $('badges-box').hidden = false;
   } catch (err) {
