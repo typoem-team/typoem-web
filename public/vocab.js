@@ -74,11 +74,21 @@ async function loadVocab() {
       list.innerHTML = '';
       empty.hidden = false;
       sortBar.hidden = true;
+      TypoemTour.run('vocab-empty', [
+        { el: '#empty-state', text: {
+          touch: '시나 책에서 단어를 두 번 톡톡 누르고 “단어장에 담기”를 누르면 여기에 모여요.',
+          mouse: '시나 책에서 단어를 더블클릭하고 “단어장에 담기”를 누르면 여기에 모여요.',
+        } },
+      ]);
       return;
     }
 
     sortBar.hidden = false;
     renderList();
+    TypoemTour.run('vocab', [
+      { el: '#vocab-list > :first-child', text: '시와 책에서 담은 단어가 여기 모여요.' },
+      { el: '#vocab-sort', text: '최근에 담은 순서나 A–Z 순서로 볼 수 있어요.' },
+    ]);
   } catch (err) {
     console.error(err);
     status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';

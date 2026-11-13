@@ -415,11 +415,12 @@
   else init();
 
   // ---- Android back button (the app shell calls TypoemNav.back()) ----
-  // Order: close an open sheet -> the page's own handler (reader -> home) ->
+  // Order: close the coach marks -> close an open sheet -> the page's own handler (reader -> home) ->
   // not handled (false), and the shell then leaves the app.
   var backHandler = null;
   window.TypoemNav = {
     back: function () {
+      if (window.TypoemTour && window.TypoemTour.close()) return true;   // coach marks (tour.js)
       if (closeSheets()) return true;
       if (backHandler) return backHandler() !== false;
       return false;
