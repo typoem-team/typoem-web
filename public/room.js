@@ -67,10 +67,15 @@ function setThemeColor(color) {
   if (metaEl) metaEl.setAttribute('content', color);
 }
 
-// Android back button: sheets are closed by ui.js first; then back to home.
+// History (지난 시 · 읽은 책). A past poem goes back there instead of home.
+const HISTORY_URL = `/history.html?room=${encodeURIComponent(ROOM_ID || '')}&tab=poem`;
+if ($('past-link')) $('past-link').href = HISTORY_URL;
+
+// Android back button: sheets are closed by ui.js first; then back to home
+// (or to History when this is a past poem).
 window.TypoemNav.setBackHandler(function () {
   if (closeLineView()) return true;
-  window.location.href = '/index.html';
+  window.location.href = PAST_DATE ? HISTORY_URL : '/index.html';
   return true;
 });
 

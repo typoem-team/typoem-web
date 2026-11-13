@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>History · Typoem</title>
+
+  <!-- App stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-tab="rooms">
+
+  <!-- History: 이 방에서 지난 시 · 읽은 책. history.html?room=ID&tab=poem|book -->
+  <main class="page hist">
+    <div class="hist-top">
+      <a class="hist-back" id="hist-back" href="/index.html" aria-label="방으로 돌아가기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        <span id="hist-room"></span>
+      </a>
+    </div>
+
+    <div class="hist-head">
+      <h1 class="hist-title">History</h1>
+      <div class="r-tabs hist-tabs" role="group" aria-label="기록 종류">
+        <button type="button" data-tab="poem" aria-pressed="true">시</button>
+        <button type="button" data-tab="book" aria-pressed="false">소설</button>
+      </div>
+    </div>
+
+    <p id="status" class="status" role="status"></p>
+
+    <!-- 시: 지난 시를 달별로 묶어요. 누르면 그날 시(읽기 전용)로 가요 -->
+    <section class="hist-list" id="poem-list" aria-label="지난 시"></section>
+
+    <!-- 소설: 이 방에서 읽은 책 (지금 책이 맨 위) -->
+    <section class="hist-list" id="book-list" aria-label="읽은 책" hidden></section>
+  </main>
+
+  <!-- 이 책으로 다시 읽기 (방장만) -->
+  <section class="sheet" id="sheet-reread" role="dialog" aria-label="이 책으로 다시 읽기">
+    <span class="handle"></span>
+    <p class="s-title" id="reread-title"></p>
+    <p class="s-note" id="reread-note"></p>
+    <div class="sheet-actions">
+      <button type="button" class="sec" id="reread-cancel">취소</button>
+      <button type="button" class="pri" id="reread-ok">다시 읽기</button>
+    </div>
+  </section>
+
+  <script src="auth.js"></script>
+  <script src="ui.js"></script>
+  <script src="history.js"></script>
+</body>
+</html>
