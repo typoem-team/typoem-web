@@ -9,7 +9,8 @@
 //   GET /api/rooms/mine                 -> rooms (name, today_poem_title, book_title, book_progress)
 //   GET /api/rooms/:id/today?checkin=0  -> today's poem + memos (no streak check-in: only reading counts)
 //   GET /api/rooms/:id/members          -> avatars
-//   GET /api/rooms/:id/history          -> the last past poem + how many
+//   GET /api/rooms/:id/history          -> the last past poem + how many (History box, 시)
+//   GET /api/rooms/:id/books/history    -> the room's books (History box, 소설)
 // Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak). invite.js uses #hr-invite.
 
 requireLogin();
@@ -110,30 +111,72 @@ requireLogin();
     $('hr-avs').setAttribute('role', 'img');
   }
 
-  function drawHistory(room, history) {
-    var id = enc(room.id);
-    $('hr-history-poem').href = '/history.html?room=' + id + '&tab=poem';
-    $('hr-history-book').href = '/history.html?room=' + id + '&tab=book';
-    var today = seoulToday();
-    var past = ((history && history.history) || []).filter(function (r) { return r.date !== today; });
-    if (!past.length) {
-      $('hr-past').innerHTML = '<p class="hr-empty">지난 시는 내일부터 여기에 쌓여요.</p>';
-      $('hr-all').hidden = true;
-      return;
-    }
-    var r = past[0];
+  // History box: 시 | 소설 switch in place; the title and '전체 보기' open the History screen.
+  var hist = { roomId: null, kind: 'poem', poems: null, books: null };
+  var COUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>';
+
+  function historyUrl() {
+    return '/history.html?room=' + enc(hist.roomId) + '&tab=' + hist.kind;
+  }
+
+  function poemRow(r) {
     var m = /^\d{4}-(\d{2})-(\d{2})/.exec(r.date) || [];
     var dow = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date(r.date + 'T12:00:00Z').getUTCDay()];
     var n = r.contributor_count || 0;
-    $('hr-past').innerHTML =
-      '<a class="hr-past" href="/room.html?id=' + id + '&date=' + enc(r.date) + '">' +
+    return '<a class="hr-past" href="/room.html?id=' + enc(hist.roomId) + '&date=' + enc(r.date) + '">' +
         '<span class="hr-date">' + Number(m[1]) + '/' + m[2] + '<br>' + dow + '</span>' +
         '<span class="hr-past-main"><i>' + UI.poemTitleHtml(r.title || 'Untitled') + '</i><small>' + UI.poemTitleHtml(r.author || '') + '</small></span>' +
-        (n ? '<span class="hr-count" aria-label="' + n + '명 참여"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>' + n + '</span>' : '') +
+        (n ? '<span class="hr-count" aria-label="' + n + '명 참여">' + COUNT_ICON + n + '</span>' : '') +
       '</a>';
-    $('hr-all').href = '/history.html?room=' + id + '&tab=poem';
-    $('hr-all').textContent = '전체 보기 · ' + past.length + '편';
+  }
+
+  function bookRow(b) {
+    var status = b.status === 'finished' ? '완독' : b.status === 'reading' ? '읽는 중' : b.progress + '%에서 멈춤';
+    return '<a class="hr-past" href="' + (b.is_current ? '/book.html?id=' + enc(hist.roomId) : historyUrl()) + '">' +
+        '<span class="hr-mini-cover" style="background-color:' + UI.coverColor(b.book_id) + '" aria-hidden="true"></span>' +
+        '<span class="hr-past-main"><i>' + esc(b.title) + '</i><small>' + esc(status) + (b.status !== 'finished' ? ' · ' + b.progress + '%' : '') + '</small></span>' +
+      '</a>';
+  }
+
+  function drawHistoryBox() {
+    var isPoem = hist.kind === 'poem';
+    document.querySelectorAll('.hr-history-tabs button').forEach(function (btn) {
+      btn.setAttribute('aria-pressed', String(btn.dataset.kind === hist.kind));
+    });
+    $('hr-history-link').href = historyUrl();
+
+    var list = isPoem ? hist.poems : hist.books;
+    if (list === null) {                       // still loading
+      $('hr-past').innerHTML = '<p class="hr-empty">불러오는 중이에요…</p>';
+      $('hr-all').hidden = true;
+      return;
+    }
+    if (!list.length) {
+      $('hr-past').innerHTML = '<p class="hr-empty">' + (isPoem ? '지난 시는 내일부터 여기에 쌓여요.' : '아직 이 방에서 고른 책이 없어요.') + '</p>';
+      $('hr-all').hidden = true;
+      return;
+    }
+    $('hr-past').innerHTML = isPoem ? poemRow(list[0]) : bookRow(list[0]);
+    $('hr-all').href = historyUrl();
+    $('hr-all').textContent = '전체 보기 · ' + list.length + (isPoem ? '편' : '권');
     $('hr-all').hidden = false;
+  }
+
+  document.querySelectorAll('.hr-history-tabs button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (btn.dataset.kind === hist.kind) return;
+      UI.haptic();
+      hist.kind = btn.dataset.kind;
+      drawHistoryBox();
+    });
+  });
+
+  function setHistory(room, poemsRes, booksRes) {
+    var today = seoulToday();
+    hist.roomId = room.id;
+    hist.poems = poemsRes ? ((poemsRes.history || []).filter(function (r) { return r.date !== today; })) : [];
+    hist.books = Array.isArray(booksRes) ? booksRes : [];
+    drawHistoryBox();
   }
 
   async function load() {
@@ -158,14 +201,18 @@ requireLogin();
     drawBook(room);
 
     var id = enc(room.id);
+    hist.roomId = room.id;
+    hist.poems = hist.books = null;
+    drawHistoryBox();
     var results = await Promise.all([
       getJson('/api/rooms/' + id + '/today?checkin=0'),
       getJson('/api/rooms/' + id + '/members'),
       getJson('/api/rooms/' + id + '/history'),
+      getJson('/api/rooms/' + id + '/books/history'),
     ]);
     drawPoem(room, results[0]);
     drawMembers(results[1]);
-    drawHistory(room, results[2]);
+    setHistory(room, results[2], results[3]);
   }
 
   load();

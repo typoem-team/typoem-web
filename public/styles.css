@@ -4294,7 +4294,10 @@ button.book-shelf-item:active .book-cover {
   border-radius: var(--radius-pill);
   background: var(--color-bg);
 }
-.hr-history-tabs a {
+.hr-history-tabs button {
+  border: 0;
+  background: none;
+  font-family: var(--font-ui);
   display: grid;
   place-items: center;
   min-width: 44px;
@@ -4305,10 +4308,32 @@ button.book-shelf-item:active .book-cover {
   font-size: var(--fs-sm);
   text-decoration: none;
 }
-.hr-history-tabs a[aria-current] {
+.hr-history-tabs button[aria-pressed="true"] {
   background: var(--color-ink);
   color: var(--color-on-fill);
   font-weight: 700;
+}
+.hr-history-head h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+.hr-history-head h2 a::after {      /* a small arrow: the title goes to the History screen */
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 8px;
+  border-right: 1.5px solid var(--color-ink-2);
+  border-bottom: 1.5px solid var(--color-ink-2);
+  transform: rotate(-45deg) translateY(-3px);
+}
+.hr-mini-cover {
+  flex: none;
+  width: 30px;
+  height: 42px;
+  border-radius: 2px 4px 4px 2px;
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, .06) 3px, rgba(255, 255, 255, .2) 4px, rgba(255, 255, 255, 0) 7px);
+  box-shadow: 0 4px 8px -4px rgba(var(--ink-rgb), .5);
 }
 .hr-past {
   display: flex;
