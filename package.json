@@ -1,7 +1,7 @@
 {
   "name": "typoem",
   "version": "0.1.0",
-  "description": "A cozy little corner where friends gather to read a daily poem and leave their ink-marks across the page.",
+  "description": "친구들과 함께 영어 시와 소설을 읽고 생각을 나누는 공간",
   "main": "app.js",
   "type": "commonjs",
   "directories": {
