@@ -482,8 +482,39 @@ hr {
    ================================================= */
 
 /* ---- Page header: brand + date (11/10 Tue) ---- */
+/* stays on top while scrolling; ui.js adds .compact once the page scrolls */
 .app-head {
+  position: sticky;
+  top: 0;
+  z-index: 20;               /* under the tab bar (30) and sheets (60) */
   padding: calc(var(--safe-top) + 28px) var(--gutter) 0;
+  background: var(--bg);
+  transition: padding .2s ease;
+}
+
+.app-head.compact {
+  padding-top: calc(var(--safe-top) + 8px);
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(var(--hair-rgb), .8);
+}
+
+.app-head .app-brand {
+  transition: font-size .2s ease;
+}
+
+.app-head.compact .app-brand {
+  font-size: 24px;
+}
+
+.app-head.compact .app-date {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-head,
+  .app-head .app-brand {
+    transition: none;
+  }
 }
 
 .app-brand {
