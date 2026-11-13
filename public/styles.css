@@ -2048,6 +2048,28 @@ html[lang="en"] .landing-invite {
   .badge-grid { gap: var(--space-3); }
 }
 
+/* ≥1024px: calendar on the left, friends · badges · settings on the right */
+@media (min-width: 1024px) {
+  .me-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+
+  .me-cols > .streak-slot {
+    margin-bottom: 0;
+  }
+
+  .me-side {
+    grid-column: 2;
+  }
+
+  .me-side > .me-h:first-child {
+    margin-top: 0;
+  }
+}
+
 .s-row-sub {
   margin-left: auto;
   font-size: 12px;

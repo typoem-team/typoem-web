@@ -24,6 +24,8 @@
       <p class="me-username" id="me-username"></p>
     </div>
 
+    <!-- ≥1024px: 왼쪽 달력 | 오른쪽 친구 기록 · 배지 · 설정. 그보다 좁으면 위에서 아래로 쌓여요 -->
+    <div class="me-cols">
     <!-- 스트릭: 큰 숫자 + 이번 달 달력 (streak.js, 시안 C). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
     <section class="streak-slot sm" aria-label="읽은 날" data-streak hidden>
       <div class="sm-hero">
@@ -36,6 +38,7 @@
       <div class="sm-month" id="streak-month"></div>
     </section>
 
+    <div class="me-side">
     <h2 class="me-h">친구 기록</h2>
     <p id="status" class="status" role="status"></p>
     <div id="friends"></div>
@@ -48,6 +51,8 @@
 
     <div class="me-box me-account">
       <a class="s-row" href="/settings.html">설정 <span class="s-row-sub">닉네임 · 로그아웃 · 계정 삭제</span></a>
+    </div>
+    </div>
     </div>
   </main>
 
