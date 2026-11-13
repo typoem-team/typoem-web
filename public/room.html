@@ -36,8 +36,8 @@
           <p class="r-meta" id="r-meta"></p>
           <p id="status" class="status" role="status"></p>
           <div class="poem" id="poem-body"></div>
-          <!-- 지난 시: 지금은 시트(past.js). History 화면이 생기면 그쪽 링크로 바꿔요 -->
-          <button type="button" class="past-link" id="past-link" aria-haspopup="dialog">지난 시 보기</button>
+          <!-- 지난 시 · 읽은 책: History 화면 (href는 room.js가 방 id를 붙여요) -->
+          <a class="past-link" id="past-link" href="/history.html">History · 지난 시 보기</a>
         </div>
       </div>
 
@@ -74,17 +74,10 @@
     <span class="avs" id="pill-avs"></span><span id="pill-label"></span>
   </button>
 
-  <section class="sheet" id="sheet-history" role="dialog" aria-label="지난 시">
-    <span class="handle"></span>
-    <p class="s-title">지난 시 <span id="h-count"></span></p>
-    <div id="h-list"></div>
-  </section>
-
   <script src="auth.js"></script>
   <script src="ui.js"></script>
   <script src="invite.js"></script>
   <script src="room.js"></script>
-  <script src="past.js"></script>
   <script src="dict-popup.js"></script>
 
 </body>

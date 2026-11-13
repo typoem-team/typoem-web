@@ -174,11 +174,14 @@
     if (!bar) return;
     var tab = bar.dataset.roomBar;       // 'poem' | 'book'
     var id = encodeURIComponent(roomId() || '');
+    // a past poem (room.html?date=) goes back to History, everything else to home
+    var back = new URLSearchParams(window.location.search).get('date')
+      ? '/history.html?room=' + id + '&tab=poem' : '/index.html';
     function tabLink(key, href, label) {
       return '<a href="' + href + '"' + (key === tab ? ' aria-current="page"' : '') + '>' + label + '</a>';
     }
     bar.innerHTML =
-      '<a href="/index.html" class="r-back" aria-label="뒤로">' +
+      '<a href="' + back + '" class="r-back" aria-label="뒤로">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>' +
       '<button type="button" class="r-room" aria-haspopup="dialog" aria-label="멤버 · 초대">' +
         '<span id="room-name"></span>' +

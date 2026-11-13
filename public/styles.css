@@ -1011,9 +1011,10 @@ html[lang="en"] .landing-invite {
   text-align: left;
 }
 
-/* "지난 시 보기": a small link under the poem (past.js) */
+/* "History · 지난 시 보기": a small link under the poem, to history.html */
 .past-link {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   min-height: 44px;
   margin-top: 28px;
   font-size: 13px;
@@ -3577,3 +3578,232 @@ button.book-shelf-item:active .book-cover {
   }
 }
 
+
+/* ============ History (history.html): 지난 시 · 읽은 책 — 시안 C, docs/design/Design.md ============ */
+.hist {
+  padding-top: calc(var(--safe-top) + var(--space-3));
+}
+.hist-top {
+  margin: 0 calc(var(--space-3) * -1);
+}
+.hist-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch);
+  padding-right: var(--space-3);
+  color: var(--color-ink-2);
+  font-size: var(--fs-base);
+  text-decoration: none;
+}
+.hist-back svg {
+  width: var(--touch);
+  height: var(--touch);
+  padding: 11px;
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.hist-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 var(--space-5);
+}
+.hist-title {
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-h1);
+  line-height: 1;
+  letter-spacing: -1px;
+  color: var(--color-ink);
+}
+.hist-tabs {
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+}
+.hist-tabs button {
+  min-width: 52px;
+  border: 0;
+  background: none;
+  font-family: var(--font-ui);
+  opacity: 1;
+}
+.hist-tabs button[aria-pressed="true"] {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+.hist-month {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-4) 0 var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: var(--color-ink-2);
+}
+.hist-month.is-ko {
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+}
+.hist-month:first-child {
+  padding-top: 0;
+}
+.hist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.hist-date {
+  flex: none;
+  width: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--color-ink-2);
+}
+.hist-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.hist-main small {
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.hist-name {
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.25;
+}
+.hist-meta {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
+}
+.hist-meta svg,
+.hist-go svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hist-go {
+  flex: none;
+  align-self: center;
+  color: var(--color-ink-2);
+}
+.hist-go svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 소설 */
+.hist-book {
+  align-items: flex-start;
+  padding: var(--space-4) 0;
+}
+.hist-cover {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 60px;
+  border-radius: 2px 5px 5px 2px;
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, .06) 4px, rgba(255, 255, 255, .22) 5px, rgba(255, 255, 255, 0) 9px);
+  box-shadow: 0 8px 12px -6px rgba(var(--ink-rgb), .55), 0 2px 3px rgba(var(--ink-rgb), .18);
+}
+.hist-cover::after {
+  content: '';
+  position: absolute;
+  inset: 4px 4px 4px 8px;
+  border: 1px solid rgba(255, 255, 255, .55);
+  border-radius: 1px 3px 3px 1px;
+}
+.hist-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.hist-chip {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+.hist-chip.is-reading { background: var(--color-line); }
+.hist-chip.is-finished { background: var(--color-accent-warm); }
+.hist-chip.is-paused { border: 1px solid var(--color-line); color: var(--color-ink-2); }
+.hist-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-ink-2);
+}
+.hist-progress .bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-line);
+}
+.hist-progress .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+.hist-who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
+}
+.hist-avs {
+  display: flex;
+}
+.hist-avs i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-bg);
+  border-radius: 50%;
+  color: var(--color-on-ink);
+  font-size: var(--fs-2xs);
+  font-style: normal;
+  font-weight: 700;
+}
+.hist-avs i + i {
+  margin-left: -6px;
+}
+.hist-reread {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
