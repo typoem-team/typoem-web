@@ -127,7 +127,7 @@ function runTour() {
       mouse: '단어를 드래그해서 고르면 형광펜을 칠하거나 구절 메모를 남길 수 있어요.',
     } },
     { el: ['#memo-pill', '#r-side'], text: '이 시에 남긴 메모는 여기서 보고, 나도 남겨요.' },
-    { el: '#past-link', text: '지난 시는 읽은 기록에서 다시 볼 수 있어요.' },
+    { el: '#past-link', text: '지난 시는 History에서 다시 볼 수 있어요.' },
   ]);
 }
 

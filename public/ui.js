@@ -1,7 +1,7 @@
 // public/ui.js
 // Shared app chrome for the logged-in screens:
 //   - date line (11/10 (화), Asia/Seoul)
-//   - bottom tab bar: 홈 · 방 · 단어장 · 나
+//   - bottom tab bar: 홈 · 방 · 단어장 · 내 정보
 //   - bottom sheets + toast
 //   - room cards (rooms.html, and the home screen next)
 //
@@ -393,10 +393,10 @@
         '<a class="tab" data-tab="vocab" href="/vocab.html">' + icon('vocab') + '단어장</a>' +
       '</div>' +
       '<a class="tab tab-me" data-tab="me" href="/me.html">' + icon('me') +
-        '<span class="tab-me-label">나</span><span class="tab-me-nick"></span></a>';
+        '<span class="tab-me-label">내 정보</span><span class="tab-me-nick"></span></a>';
     var user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     // textContent: the nickname is user input
-    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '나';
+    nav.querySelector('.tab-me-nick').textContent = (user && user.nickname) || '내 정보';
     nav.querySelectorAll('.tab').forEach(function (t) {
       if (t.dataset.tab === active) t.setAttribute('aria-current', 'page');
     });

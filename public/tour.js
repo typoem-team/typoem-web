@@ -8,13 +8,13 @@
 //   TypoemTour.close()   true if a tour was open (ui.js: the Android back button closes it first)
 // Only for accounts made in the last 14 days (user.created_at from login), on any device;
 // older accounts only after reset() (localStorage['typoem:tour-on']).
-// Seen flags: localStorage['typoem:tour:<page>'] = '1', this device only (no server).
+// Seen flags: localStorage['typoem:tour2:<page>'] = '1', this device only (no server).
 // Call run() after the screen has drawn its content. Load after ui.js.
 
 (function () {
   'use strict';
 
-  var PREFIX = 'typoem:tour:';
+  var PREFIX = 'typoem:tour2:';   // tour2: the tours were redone (11/13), so they show once more
   var ON = 'typoem:tour-on';   // set by reset(): an older account asked to see the tours
   var NEW_DAYS = 14;
   var current = null;   // { root, hole, tip, steps, i, page, onKey, onMove }
