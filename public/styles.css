@@ -1957,6 +1957,138 @@ html[lang="en"] .landing-invite {
   margin-top: 28px;
 }
 
+/* badges: 3 across on phones too; earned = raised card + amber medal, not yet = dashed card + pressed-in slot */
+.badge-count {
+  margin-left: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--color-ink-2);
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-2) var(--space-3);
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--color-line-dashed);
+  text-align: center;
+  color: var(--color-ink-3);
+}
+
+/* earned card: lit from above (light top edge), no drop shadow; the medal carries the depth */
+.badge.is-earned {
+  border: 1px solid var(--color-line);
+  background: linear-gradient(180deg, var(--color-bg), var(--color-surface) 70%);
+  box-shadow:
+    0 1px 0 rgba(var(--sheen-rgb), .9) inset;
+  color: var(--color-ink);
+}
+
+.badge-ic {
+  display: grid;
+  place-items: center;
+  width: var(--touch);
+  height: var(--touch);
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-1);
+}
+
+/* not yet: the icon sits in a pressed-in slot */
+.badge:not(.is-earned) .badge-ic {
+  background: var(--color-surface);
+  box-shadow: inset 0 2px 4px rgba(var(--ink-rgb), .10);
+}
+
+/* earned: a raised medal — shine top-left, darker rim at the bottom, shadow under */
+.badge.is-earned .badge-ic {
+  border: 0;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(var(--on-ink-rgb), .45), transparent 58%),
+    var(--color-accent-warm);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--on-ink-rgb), .6),
+    inset 0 -3px 0 rgba(var(--ink-rgb), .10),
+    0 6px 12px -6px rgba(var(--ink-rgb), .5);
+  color: var(--cover-1);
+}
+
+.badge-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.badge-ic svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.badge-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.badge-desc {
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  color: var(--color-ink-2);
+  word-break: keep-all;
+}
+
+.badge-state {
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-ink-2);
+}
+
+@media (min-width: 600px) {
+  .badge-grid { gap: var(--space-3); }
+}
+
+/* ≥1024px: calendar on the left, friends · badges · settings on the right */
+@media (min-width: 1024px) {
+  .me-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+
+  .me-cols > .streak-slot {
+    margin-bottom: 0;
+  }
+
+  .me-side {
+    grid-column: 2;
+  }
+
+  .me-side > .me-h:first-child {
+    margin-top: 0;
+  }
+}
+
 .s-row-sub {
   margin-left: auto;
   font-size: 12px;
@@ -3630,6 +3762,11 @@ button.book-shelf-item:active .book-cover {
     padding: var(--space-4) var(--space-5);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
+  }
+
+  /* 나: the big number (line-height .82) rises above its line box, so more room on top */
+  .streak-slot.sm {
+    padding: var(--space-7) var(--space-6) var(--space-5);
   }
 
   .code {

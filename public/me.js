@@ -1,9 +1,10 @@
 // public/me.js
 // 나 탭 — my streak (streak.js; its look is step 8), my friends' streaks per room,
-// a place for badges (step 16), and a link to 설정 (settings.html).
+// my badges, and a link to 설정 (settings.html).
 //
 // Data: GET /api/rooms/mine              -> [{ id, name, ... }]
 //       GET /api/rooms/:id/streaks       -> { date, members: [{ id, username, nickname, current, longest, checkedInToday }] }
+//       GET /api/users/me/badges         -> { badges, earned_count }
 // Depends on auth.js, ui.js (TypoemUI), streak.js (TypoemStreak).
 
 requireLogin();
@@ -57,5 +58,57 @@ async function loadFriends() {
   }).join('');
 }
 
+// ---- 배지: GET /api/users/me/badges -> { badges: [{ id, name, description, earned, progress, goal }], earned_count }
+const BADGE_ICONS = {
+  // flame: streaks
+  streak: '<path d="M12 3c.5 3.2 4.5 5.4 4.5 10a4.5 4.5 0 0 1-9 0c0-2 1-3.4 2-4.4.2 1.6 1 2.6 2 2.9C11 9.3 11 6 12 3z"/>',
+  // pen: memos
+  memo: '<path d="M15.5 4.5l4 4L9 19H5v-4z"/><path d="M13 7l4 4"/>',
+  // open book: finished a book
+  book: '<path d="M12 6.5C10.3 5.2 7.8 4.6 4 4.6v13c3.8 0 6.3.6 8 1.9 1.7-1.3 4.2-1.9 8-1.9v-13c-3.8 0-6.3.6-8 1.9z"/><path d="M12 6.5v13"/>',
+};
+
+// "first" badges lead, then by how soon you can reach them; ids the server adds later go last
+const BADGE_ORDER = ['first_memo', 'first_book', 'streak_3', 'streak_7', 'memo_10', 'streak_30'];
+const badgeRank = (id) => {
+  const i = BADGE_ORDER.indexOf(id);
+  return i === -1 ? BADGE_ORDER.length : i;
+};
+
+function badgeKind(id) {
+  if (id.startsWith('streak_')) return 'streak';
+  if (id.startsWith('memo') || id === 'first_memo') return 'memo';
+  return 'book';
+}
+
+function badgeItem(b) {
+  const svg = `<svg viewBox="0 0 24 24" aria-hidden="true">${BADGE_ICONS[badgeKind(b.id)]}</svg>`;
+  // earned: the look says it, so the words are for screen readers only
+  const state = b.earned
+    ? '<span class="badge-sr">받았어요</span>'
+    : `<span class="badge-state">${b.progress} / ${b.goal}</span>`;
+  return `<li class="badge${b.earned ? ' is-earned' : ''}">
+      <span class="badge-ic">${svg}</span>
+      <b class="badge-name">${esc(b.name)}</b>
+      <span class="badge-desc">${esc(b.description)}</span>
+      ${state}
+    </li>`;
+}
+
+async function loadBadges() {
+  try {
+    const res = await authFetch('/api/users/me/badges');
+    if (!res.ok) return;   // keep the section hidden
+    const data = await res.json();
+    const badges = [...data.badges].sort((a, b) => badgeRank(a.id) - badgeRank(b.id));
+    $('badges').innerHTML = badges.map(badgeItem).join('');
+    $('badges-count').textContent = `${data.earned_count} / ${data.badges.length}`;
+    $('badges-box').hidden = false;
+  } catch (err) {
+    // network error: leave the section hidden
+  }
+}
+
 TypoemStreak.load();   // hides itself on 404
 loadFriends();
+loadBadges();
