@@ -1552,19 +1552,8 @@ html[lang="en"] .landing-invite {
 
 /* =================================================
    Home — this week's streak on top, every room below as a card (.room-card).
-   The streak's look is step 8 (경윤); this only gives it its place.
+   The streak's look is below ("Streak", 시안 C).
    ================================================= */
-.streak-slot {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 22px;
-}
-
-.streak-slot .week {
-  flex: 1;
-  margin-top: 0;
-}
 
 .home .empty-state .actions {
   margin-top: 20px;
@@ -1576,93 +1565,172 @@ html[lang="en"] .landing-invite {
   margin: 14px auto 0;
 }
 
-/* ---- Streak ring + this week's dots (hidden while the API is missing) ---- */
-.ring {
-  position: relative;
-  width: 52px;
-  height: 52px;
+/* ---- Streak (streak.js) — 시안 C, docs/design/Design.md ----
+   home: this week's seven days (.sw) · 나: big number + this month (.sm) */
+.streak-slot {
+  margin-bottom: var(--space-6);
 }
 
-.ring svg {
-  width: 52px;
-  height: 52px;
-  transform: rotate(-90deg);
+.sw-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-3);
 }
-
-.ring circle {
-  fill: none;
-  stroke-width: 3;
+.sw-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 1.5px;
+  color: var(--color-ink-2);
 }
-
-.ring .track {
-  stroke: var(--hair);
+.sw-sum {
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
 }
-
-.ring .bar {
-  stroke: var(--accent);
-  stroke-linecap: round;
-  transition: stroke-dashoffset .6s var(--ease);
+.sw-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+  text-align: center;
 }
-
-.ring b {
-  position: absolute;
-  inset: 0;
+.sw-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.sw-dow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--color-ink-2);
+}
+.sw-num {
   display: grid;
   place-items: center;
-  font-family: var(--display);
-  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  color: var(--color-ink-2);
+}
+.sw-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.sw-day.is-read .sw-num {
+  background: var(--color-line);
+  color: var(--color-ink);
+}
+.sw-day.is-read .sw-dot {
+  background: var(--color-accent);
+}
+.sw-day.is-today .sw-dow {
+  color: var(--color-ink);
   font-weight: 500;
 }
-
-.ring-cap {
-  font-size: 11px;
-  color: var(--ink-2);
-  text-align: center;
-  margin-top: 4px;
+.sw-day.is-today .sw-num {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+.sw-day.is-future .sw-num {
+  border: 1px dashed var(--color-line-dashed);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sw-day.is-today.is-read .sw-dot {
+    animation: sw-pop .5s var(--ease) both;
+  }
+  @keyframes sw-pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
 }
 
-.week {
+.sm-hero {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+.sm-num {
+  font-family: var(--font-text);
+  font-weight: 300;
+  font-size: var(--fs-hero);
+  line-height: .82;
+  letter-spacing: -4px;
+  color: var(--color-ink);
+}
+.sm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.sm-cap {
+  font-family: var(--font-ko-head);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.sm-sub {
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.sm-sub b {
+  font-family: var(--font-mono);
+  color: var(--color-ink);
+}
+.sm-month {
+  margin-top: var(--space-4);
+}
+.sm-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
+}
+.sm-head span:first-child {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 1.5px;
+}
+.sm-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-top: 22px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.sm-dows {
+  margin-bottom: 5px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--color-ink-2);
   text-align: center;
 }
-
-.week span {
-  font-family: var(--display);
-  font-size: 14px;
-  letter-spacing: .04em;
-  color: var(--ink-2);
+.sm-cell {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border-radius: 15px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--color-ink-2);
 }
-
-.week i {
-  display: block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin: 8px auto 0;
-  background: var(--hair);
-  transition: background .5s var(--ease), transform .5s var(--ease);
+.sm-cell.is-read {
+  background: var(--color-line);
+  color: var(--color-ink);
 }
-
-.week .on i {
-  background: var(--ink);
+.sm-cell.is-today {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
 }
-
-.week .today span {
-  color: var(--ink);
-  font-weight: 700;
-}
-
-.week .today i {
-  background: transparent;
-  box-shadow: inset 0 0 0 1.5px var(--ink);
-}
-
-.week .today.on i {
-  background: var(--accent);
-  box-shadow: none;
-  transform: scale(1.25);
+.sm-cell.is-future {
+  opacity: .55;
 }
 
 /* avatars: a row of overlapping initials */
@@ -3437,25 +3505,12 @@ button.book-shelf-item:active .book-cover {
     font-size: 20px;
   }
 
-  /* reading record: ring and week side by side in one card */
-  .streak {
-    position: static;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .ring-cap {
-    margin-top: 0;
-    font-size: 13px;
-  }
-
-  .week {
-    margin-top: 0;
-    padding: 16px 12px 18px;
-    border-radius: 16px;
-    background: var(--surface);
-    box-shadow: var(--shadow-card);
+  /* reading record: this week / this month sit on a light card on wide screens */
+  .streak-slot {
+    max-width: 520px;
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
   }
 
   .code {

@@ -23,16 +23,16 @@
       <p class="me-username" id="me-username"></p>
     </div>
 
-    <!-- 스트릭 자리: 생김새와 동작은 8단계(경윤). 스트릭 API가 없으면(404) streak.js가 숨겨요 -->
-    <section class="streak-slot" aria-label="읽은 날" data-streak hidden>
-      <div class="streak" data-streak hidden>
-        <div class="ring" id="streak-ring" role="img">
-          <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="track" cx="26" cy="26" r="23"/><circle class="bar" id="streak-bar" cx="26" cy="26" r="23"/></svg>
-          <b id="streak-count"></b>
+    <!-- 스트릭: 큰 숫자 + 이번 달 달력 (streak.js, 시안 C). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
+    <section class="streak-slot sm" aria-label="읽은 날" data-streak hidden>
+      <div class="sm-hero">
+        <b class="sm-num" id="streak-count"></b>
+        <div class="sm-text">
+          <p class="sm-cap" aria-hidden="true">일째 이어 읽는 중</p>
+          <p class="sm-sub" id="streak-sub"></p>
         </div>
-        <p class="ring-cap">일 연속</p>
       </div>
-      <div class="week" id="streak-week" aria-label="이번 주 읽은 날" data-streak hidden></div>
+      <div class="sm-month" id="streak-month"></div>
     </section>
 
     <h2 class="me-h">친구 기록</h2>
