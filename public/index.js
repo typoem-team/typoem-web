@@ -211,8 +211,21 @@ requireLogin();
       getJson('/api/rooms/' + id + '/books/history'),
     ]);
     drawPoem(room, results[0]);
+    sendToWidget(results[0]);
     drawMembers(results[1]);
     setHistory(room, results[2], results[3]);
+  }
+
+  // The home screen widget shows the first lines of the poem this home shows.
+  // Plain text: PoetryDB's "--" is an em dash and _word_ is italics (no italics in a widget).
+  function plain(t) {
+    return String(t || '').replace(/-{2,}/g, '—').replace(/_([^_]+)_/g, '$1').trim();
+  }
+  function sendToWidget(today) {
+    var poem = today && today.poem;
+    if (!poem) return;
+    var lines = (poem.lines || []).map(function (l) { return plain(l.text); }).filter(Boolean).slice(0, 2);
+    window.TypoemNative.updateWidget({ date: today.date, title: plain(poem.title), author: plain(poem.author), lines: lines });
   }
 
   load();
