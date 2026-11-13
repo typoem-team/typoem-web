@@ -69,8 +69,9 @@
 | `--font-text` | Newsreader | 시·책 본문, 영어 제목. 화면 제목은 **이탤릭** |
 | `--font-mono` | IBM Plex Mono | 날짜, 숫자, 라벨(대문자 + 자간 1.5px), 줄 번호 |
 
-- 모두 SIL OFL이에요. `public/fonts/`에 직접 올려요 (지섭). 한국어 두 글꼴은 서브셋이 필요해요.
-- 올리기 전까지는 토큰의 뒤쪽 글꼴(MaruBuri, Gentium, 시스템 글꼴)이 대신 보여요.
+- 모두 SIL OFL이에요. `public/fonts/<글꼴>/`에 woff2와 `OFL.txt`를 같이 올렸어요 (11/13, 소연). 합쳐서 약 1MB예요.
+- 한국어 두 글꼴은 KS X 1001 한글 2,350자 + 영문 · 문장부호만 남겼어요 (MaruBuri와 같은 기준). 그 밖의 드문 한글은 그 글자만 뒤쪽 글꼴로 보여요.
+- CSS가 쓰는 굵기만 남겼어요: Noto Sans KR 400–700(가변), Noto Serif KR 600, Newsreader 300–500(가변, 보통 · 이탤릭), IBM Plex Mono 400 · 500. 다른 굵기를 쓰려면 글꼴을 다시 만들어야 해요.
 
 ### 글자 크기
 
