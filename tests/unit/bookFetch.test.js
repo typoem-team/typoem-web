@@ -317,6 +317,22 @@ describe("splitChapters", () => {
         expect(totalWords).toBe(6);
     });
 
+    test("story collection: bare numerals inside a titled story are sections, not chapters", () => {
+        const { chapters } = bf.splitChapters([
+            H("I. A SCANDAL IN BOHEMIA"), H("I."), P("a"), H("II."), P("b"), H("III."), P("c"),
+            H("II. THE RED-HEADED LEAGUE"), P("d"),
+        ]);
+        expect(chapters).toEqual([
+            { title: "I. A SCANDAL IN BOHEMIA", paragraphs: ["a", "b", "c"] },
+            { title: "II. THE RED-HEADED LEAGUE", paragraphs: ["d"] },
+        ]);
+    });
+
+    test("bare numerals are still chapters when the book has no numbered titles", () => {
+        const { chapters } = bf.splitChapters([H("PART I"), H("I."), P("a"), H("II."), P("b")]);
+        expect(chapters.map((c) => c.title)).toEqual(["PART I — I.", "II."]);
+    });
+
     test("skips a table of contents when the first heading appears again", () => {
         const long = body(40, 10);
         const paras = bf.toParagraphs(
