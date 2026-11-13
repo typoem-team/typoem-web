@@ -120,6 +120,7 @@ async function loadToday() {
   }
 
   const data = await res.json();
+  if (!PAST_DATE) window.TypoemNative.sendTodayToWidget(data, ROOM_ID);   // home screen widget (after the check-in)
   if (shown && data.poem && shown.poem && data.poem.id === shown.poem.id) refreshNotes(data);
   else showPoem(data);
 }
