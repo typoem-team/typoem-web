@@ -1957,7 +1957,7 @@ html[lang="en"] .landing-invite {
   margin-top: 28px;
 }
 
-/* badges: 3 across on phones too; earned = mint fill + ink icon, not yet = dashed + faint */
+/* badges: 3 across on phones too; earned = raised card + amber medal, not yet = dashed card + pressed-in slot */
 .badge-count {
   margin-left: var(--space-1);
   font-family: var(--font-mono);
@@ -1987,10 +1987,14 @@ html[lang="en"] .landing-invite {
   color: var(--color-ink-3);
 }
 
+/* earned card: lit from above (light top edge, soft drop shadow) */
 .badge.is-earned {
   border: 1px solid var(--color-line);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  background: linear-gradient(180deg, var(--color-bg), var(--color-surface) 70%);
+  box-shadow:
+    0 1px 0 rgba(var(--sheen-rgb), .9) inset,
+    0 2px 4px -2px rgba(var(--ink-rgb), .18),
+    0 12px 22px -14px rgba(var(--ink-rgb), .45);
   color: var(--color-ink);
 }
 
@@ -2001,13 +2005,34 @@ html[lang="en"] .landing-invite {
   height: var(--touch);
   border-radius: var(--radius-pill);
   margin-bottom: var(--space-1);
-  border: 1px dashed var(--color-line-dashed);
 }
 
+/* not yet: the icon sits in a pressed-in slot */
+.badge:not(.is-earned) .badge-ic {
+  background: var(--color-surface);
+  box-shadow: inset 0 2px 4px rgba(var(--ink-rgb), .10);
+}
+
+/* earned: a raised medal — shine top-left, darker rim at the bottom, shadow under */
 .badge.is-earned .badge-ic {
   border: 0;
-  background: var(--color-accent-warm);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(var(--on-ink-rgb), .45), transparent 58%),
+    var(--color-accent-warm);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--on-ink-rgb), .6),
+    inset 0 -3px 0 rgba(var(--ink-rgb), .10),
+    0 6px 12px -6px rgba(var(--ink-rgb), .5);
   color: var(--cover-1);
+}
+
+.badge-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .badge-ic svg {
@@ -2038,10 +2063,6 @@ html[lang="en"] .landing-invite {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   color: var(--color-ink-2);
-}
-
-.badge.is-earned .badge-state {
-  color: var(--color-accent-text);
 }
 
 @media (min-width: 600px) {

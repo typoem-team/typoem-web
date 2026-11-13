@@ -76,12 +76,15 @@ function badgeKind(id) {
 
 function badgeItem(b) {
   const svg = `<svg viewBox="0 0 24 24" aria-hidden="true">${BADGE_ICONS[badgeKind(b.id)]}</svg>`;
-  const state = b.earned ? '받았어요' : `${b.progress} / ${b.goal}`;
+  // earned: the look says it, so the words are for screen readers only
+  const state = b.earned
+    ? '<span class="badge-sr">받았어요</span>'
+    : `<span class="badge-state">${b.progress} / ${b.goal}</span>`;
   return `<li class="badge${b.earned ? ' is-earned' : ''}">
       <span class="badge-ic">${svg}</span>
       <b class="badge-name">${esc(b.name)}</b>
       <span class="badge-desc">${esc(b.description)}</span>
-      <span class="badge-state">${state}</span>
+      ${state}
     </li>`;
 }
 
