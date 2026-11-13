@@ -1,5 +1,5 @@
 // public/invite.js
-// Members sheet: the '+' next to the members on the home (index.html, [data-invite-room] =
+// Members sheet: the member avatars on the home (index.html, [data-invite-room] =
 // the home's room id) opens it: members, and 방 삭제 (owner) / 나가기 (member).
 // Also runs the home's invite box at the bottom (#invite-code · 코드 복사 · 공유하기, 피드백 11/13).
 //
@@ -16,7 +16,7 @@
   var UI = window.TypoemUI;
   var esc = UI.esc;
   var q = new URLSearchParams(window.location.search);
-  var opener = document.querySelector('[data-invite-room]');   // the home's '+'
+  var opener = document.querySelector('[data-invite-room]');   // the home's member avatars
   if (!opener) return;
   // the home fills data-invite-room after it loads, so the id is read when the sheet opens
   var ROOM_ID = null;
