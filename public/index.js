@@ -36,11 +36,34 @@ requireLogin();
     } catch (e) { return null; }
   }
 
-  // long titles step down so they fit the cover
+  // Titles get smaller as they get longer: a first guess by length, then fitTitle()
+  // shrinks a little more until no word is cut and it takes at most three lines.
   function sizeClass(title) {
     var n = String(title || '').length;
-    return n > 30 ? ' is-xlong' : n > 14 ? ' is-long' : '';
+    return n > 34 ? ' is-xxlong' : n > 24 ? ' is-xlong' : n > 16 ? ' is-long' : n > 10 ? ' is-mid' : '';
   }
+
+  var FIT_MIN = 14;   // px
+  var FIT_LINES = 3;
+  function fitTitle(el) {
+    el.style.fontSize = '';
+    if (el.classList.contains('is-empty') || !el.clientWidth) return;
+    var size = parseFloat(getComputedStyle(el).fontSize);
+    function overflows() {
+      var lh = parseFloat(getComputedStyle(el).lineHeight) || size * 1.1;
+      return el.scrollWidth > el.clientWidth + 1 || el.offsetHeight > lh * FIT_LINES + 1;
+    }
+    while (size > FIT_MIN && overflows()) {
+      size -= 1;
+      el.style.fontSize = size + 'px';
+    }
+  }
+  function fitTitles() {
+    fitTitle($('hr-poem-title'));
+    fitTitle($('hr-book-title'));
+  }
+  window.addEventListener('resize', fitTitles);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitles);
 
   function avatars(names, max) {
     return names.slice(0, max).map(function (n) { return UI.avatar(n); }).join('');
@@ -60,7 +83,8 @@ requireLogin();
     $('hr-poem-meta').innerHTML = memos.length
       ? '<span class="hr-avs-sm">' + avatars(writers, 3) + '</span>' +
         '<span class="hr-count"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H10l-5 4z"/></svg>' + memos.length + '</span>'
-      : '<span class="hr-hint">첫 메모를 남겨 보세요</span>';
+      : '<span class="hr-hint">첫 메모 남기기</span>';
+    fitTitle($('hr-poem-title'));
     $('hr-poem').setAttribute('aria-label', '오늘의 시 읽기' + (title ? ', ' + title : '') + (memos.length ? ', 메모 ' + memos.length + '개' : ''));
   }
 
@@ -75,6 +99,7 @@ requireLogin();
     $('hr-book-bar').firstElementChild.style.width = p + '%';
     $('hr-book-meta').innerHTML = !has ? '<span class="hr-hint">책 고르기</span>'
       : p >= 100 ? '<b>완독</b>' : '<b>' + p + '%</b><span class="hr-hint">이어 읽기</span>';
+    fitTitle($('hr-book-title'));
     $('hr-book').setAttribute('aria-label', has ? '책 이어 읽기, ' + room.book_title + ', ' + p + '%' : '이 방의 책 고르기');
   }
 

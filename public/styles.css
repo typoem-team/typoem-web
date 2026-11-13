@@ -4166,11 +4166,12 @@ button.book-shelf-item:active .book-cover {
   font-size: var(--fs-h2);
   line-height: 1.05;
   letter-spacing: -.5px;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  overflow-wrap: normal;      /* never cut a word: fitTitle() makes the title smaller instead */
 }
-.hr-title.is-long { font-size: 23px; }
-.hr-title.is-xlong { font-size: 19px; }
+.hr-title.is-mid { font-size: 24px; }
+.hr-title.is-long { font-size: 21px; }
+.hr-title.is-xlong { font-size: 18px; }
+.hr-title.is-xxlong { font-size: 16px; }
 .hr-title.is-empty {
   font-family: var(--font-ui);
   font-style: normal;
