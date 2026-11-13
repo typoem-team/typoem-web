@@ -107,6 +107,94 @@
   --shadow-sheet: 0 -10px 40px -10px rgba(var(--ink-rgb), .35);
 }
 
+/* ---- Dark (docs/design/Design.md 1장). theme.js sets <html data-theme>:
+   'dark' always, 'system' when the device is dark. Only values change; no structure here. ---- */
+:root[data-theme="dark"] {
+  --color-bg: #161e20;
+  --color-surface: #1f2a2d;
+  --color-line: #2e3d40;
+  --color-line-dashed: #4a5e60;
+  --color-ink: #e6eeea;
+  --color-ink-2: #a9bcba;
+  --color-ink-3: #7f9493;
+  --color-on-ink: #ffffff;          /* still white: text on covers, avatars and the reader band */
+  --color-on-ink-2: #ddebe4;
+  --color-accent: #82aab9;
+  --color-accent-text: #9cc3d1;
+  --color-accent-warm: #f2cb96;
+  --color-accent-rose: #e3a59d;
+  --color-danger: #e08a7e;
+  --color-highlight: rgba(236, 196, 64, .30);
+  --color-scrim: rgba(0, 0, 0, .55);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, .5);
+  --shadow-book: 0 14px 22px -12px rgba(0, 0, 0, .8), 0 2px 4px rgba(0, 0, 0, .4);
+
+  --bg-rgb: 22, 30, 32;
+  --surface-rgb: 31, 42, 45;
+  --ink-rgb: 0, 0, 0;              /* shadows and scrims stay dark */
+  --hair-rgb: 46, 61, 64;
+  --accent-rgb: 156, 195, 209;
+  --on-ink-rgb: 255, 255, 255;
+  --sheen-rgb: 46, 61, 64;          /* no bright edge on cards */
+  --poem-ink: #e6eeea;
+  --button-ink: #28383c;            /* primary buttons: light fill, dark text */
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --color-bg: #161e20;
+    --color-surface: #1f2a2d;
+    --color-line: #2e3d40;
+    --color-line-dashed: #4a5e60;
+    --color-ink: #e6eeea;
+    --color-ink-2: #a9bcba;
+    --color-ink-3: #7f9493;
+    --color-on-ink: #ffffff;          /* still white: text on covers, avatars and the reader band */
+    --color-on-ink-2: #ddebe4;
+    --color-accent: #82aab9;
+    --color-accent-text: #9cc3d1;
+    --color-accent-warm: #f2cb96;
+    --color-accent-rose: #e3a59d;
+    --color-danger: #e08a7e;
+    --color-highlight: rgba(236, 196, 64, .30);
+    --color-scrim: rgba(0, 0, 0, .55);
+    --shadow-pop: 0 12px 32px rgba(0, 0, 0, .5);
+    --shadow-book: 0 14px 22px -12px rgba(0, 0, 0, .8), 0 2px 4px rgba(0, 0, 0, .4);
+
+    --bg-rgb: 22, 30, 32;
+    --surface-rgb: 31, 42, 45;
+    --ink-rgb: 0, 0, 0;              /* shadows and scrims stay dark */
+    --hair-rgb: 46, 61, 64;
+    --accent-rgb: 156, 195, 209;
+    --on-ink-rgb: 255, 255, 255;
+    --sheen-rgb: 46, 61, 64;          /* no bright edge on cards */
+    --poem-ink: #e6eeea;
+    --button-ink: #28383c;            /* primary buttons: light fill, dark text */
+  }
+}
+
+/* buttons and chips filled with --ink: in dark the fill is light, so their text goes dark */
+:root[data-theme="dark"] :is(.auth-submit, .toast, .pri, .rc-tag, .book-btn-pri, .sw-day.is-today .sw-num, .sm-cell.is-today),
+:root[data-theme="dark"] .hist-tabs button[aria-pressed="true"] {
+  color: var(--button-ink);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] :is(.auth-submit, .toast, .pri, .rc-tag, .book-btn-pri, .sw-day.is-today .sw-num, .sm-cell.is-today),
+  :root[data-theme="system"] .hist-tabs button[aria-pressed="true"] {
+    color: var(--button-ink);
+  }
+}
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+  }
+}
+
 /* ============ Fonts (self-hosted, SIL OFL — see public/fonts/<family>/OFL.txt) ============ */
 @font-face {
   font-family: 'MaruBuri';
@@ -3861,4 +3949,39 @@ button.book-shelf-item:active .book-cover {
 .hist-reread {
   align-self: flex-start;
   margin-top: var(--space-1);
+}
+
+/* ============ 설정 · 테마 (theme.js) ============ */
+.set-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 56px;
+}
+.set-theme-label {
+  font-size: var(--fs-body);
+}
+.theme-tabs {
+  background: var(--color-bg);
+  color: var(--color-ink-2);
+}
+.theme-tabs button {
+  border: 0;
+  background: none;
+  font-family: var(--font-ui);
+  opacity: 1;
+}
+.theme-tabs button[aria-checked="true"] {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+  font-weight: 700;
+}
+:root[data-theme="dark"] .theme-tabs button[aria-checked="true"] {
+  color: var(--button-ink);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] .theme-tabs button[aria-checked="true"] {
+    color: var(--button-ink);
+  }
 }

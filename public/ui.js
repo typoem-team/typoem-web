@@ -91,7 +91,7 @@
   // Avatar colour from the nickname (the history API only gives nicknames).
   var AVATARS = [
     ['--accent', '#6e2f3a'], ['--cover-3', '#2a3444'], ['--cover-4', '#7a5f36'],
-    ['--ink', '#1f1b16'], ['--cover-6', '#4a5a46'], ['--cover-7', '#4b3b4f'],
+    ['--cover-1', '#28383c'], ['--cover-6', '#4a5a46'], ['--cover-7', '#4b3b4f'],   // not --ink: it turns light in dark mode
   ];
   function avatarColor(name) {
     var s = String(name || ''), h = 7;
@@ -436,6 +436,8 @@
       try {
         var S = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
         // Capacitor: Style.Dark = light text, Style.Light = dark text
+        // dark theme: the page is dark, so the status bar text is always light
+        if (window.TypoemTheme && window.TypoemTheme.isDark()) tone = 'light';
         if (S) S.setStyle({ style: tone === 'light' ? 'DARK' : 'LIGHT' });
       } catch (e) { /* not in the app */ }
     },
