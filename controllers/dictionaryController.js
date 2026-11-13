@@ -66,11 +66,13 @@ async function getDictionary(req, res) {
     const cached = await wordCache.findByWord(word);
 
     if (cached) {
+      const definitions = JSON.parse(cached.definitions);
       return res.json({
         word: cached.word,
         phonetic: cached.phonetic,
-        definitions: JSON.parse(cached.definitions),
+        definitions,
         ...kor,
+        ko: koDict.fillPos(kor.ko, definitions),
         cached: true,
       });
     }
@@ -116,7 +118,7 @@ async function getDictionary(req, res) {
     //    if two requests look up the same new word at once.
     await wordCache.upsert(word, slim.phonetic, slim.definitions);
 
-    return res.json({ ...slim, ...kor, cached: false });
+    return res.json({ ...slim, ...kor, ko: koDict.fillPos(kor.ko, slim.definitions), cached: false });
   } catch (err) {
     console.error("Dictionary error:", err);
     return res.status(500).json({ error: "internal server error" });
