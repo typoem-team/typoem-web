@@ -36,11 +36,11 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      // 404 -> no such room, 409 -> already a member, 403 -> room limit reached
+      // 404 -> no such room, 409 -> already a member, 403 -> room limit reached (MAX_JOINED_ROOMS in roomsController)
       const messages = {
-        404: '그 코드의 방을 찾지 못했어요.',
+        404: '이 코드로 들어갈 수 있는 방이 없어요. 코드를 다시 확인해 주세요.',
         409: '이미 참여한 방이에요.',
-        403: '참여할 수 있는 방 수를 다 채워서 더 참여할 수 없어요.',
+        403: '방은 최대 5개까지 참여할 수 있어요.',
       };
       const e = new Error(messages[res.status] || '방에 참여하지 못했어요.');
       e.isUserMessage = true;
@@ -53,7 +53,7 @@ form.addEventListener('submit', async function (e) {
 
   } catch (err) {
     console.error('Join room error:', err);
-    showError(err.isUserMessage ? err.message : '문제가 생겼어요. 다시 시도해 주세요.');
+    showError(authErrorMessage(err));
     submitBtn.disabled = false;
     submitBtn.textContent = '참여';
   }

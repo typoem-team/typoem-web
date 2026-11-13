@@ -2452,6 +2452,12 @@ textarea.field:focus {
   gap: 10px;
   margin-top: 20px;
 }
+/* two half-width buttons on a phone: less side padding so "초대 코드로 참여" stays on one line */
+.room-actions .btn {
+  padding-left: 12px;
+  padding-right: 12px;
+  white-space: nowrap;
+}
 
 /* ---- Past poems ---- */
 .h-row {

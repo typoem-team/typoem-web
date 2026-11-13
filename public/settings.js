@@ -80,7 +80,7 @@ $('nick-form').addEventListener('submit', async (e) => {
     showProfileName(user.nickname);
     UI.toast('닉네임을 바꿨어요');
   } catch (err) {
-    UI.toast('네트워크 오류가 났어요. 다시 시도해 주세요');
+    UI.toast('네트워크에 연결할 수 없어요. 다시 시도해 주세요');
   } finally {
     btn.disabled = false;
   }
@@ -110,7 +110,7 @@ $('delete-form').addEventListener('submit', async (e) => {
     }
     UI.toast(res.status === 403 ? '비밀번호가 맞지 않아요' : '계정을 지우지 못했어요');
   } catch (err) {
-    UI.toast('네트워크 오류가 났어요. 다시 시도해 주세요');
+    UI.toast('네트워크에 연결할 수 없어요. 다시 시도해 주세요');
   } finally {
     btn.disabled = false;
   }

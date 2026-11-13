@@ -76,7 +76,7 @@ async function loadToday() {
   try {
     res = await authFetch(url);
   } catch (err) {
-    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
+    status.textContent = '네트워크에 연결할 수 없어요. 다시 시도해 주세요.';
     return;
   }
 
@@ -407,7 +407,7 @@ $('memo-form').addEventListener('submit', async (e) => {
     UI.anim($('memo-list').firstElementChild, [{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 360 });
     UI.haptic();
   } catch (err) {
-    UI.toast('네트워크 오류가 났어요. 다시 시도해 주세요');
+    UI.toast('네트워크에 연결할 수 없어요. 다시 시도해 주세요');
   } finally {
     btn.disabled = false;
   }
