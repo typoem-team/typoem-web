@@ -51,6 +51,9 @@
         title: '오늘의 시가 도착했어요',
         body: '한 편 읽고 하루를 시작해요',
         smallIcon: 'ic_stat_typoem',
+        // inexact on purpose: no exact-alarm permission in the app, and a few minutes late is fine.
+        // (plugin 8.3+ defaults to true and would open the system '알람 및 리마인더' screen on every schedule)
+        isExactNotification: false,
         schedule: { on: { hour: p[0], minute: p[1] }, allowWhileIdle: true },
       }],
     });
