@@ -12,6 +12,8 @@
 
 const booksModel = require("../models/booksModel");
 const roomsModel = require("../models/roomsModel");
+const streakModel = require("../models/streakModel");
+const { today } = require("../lib/dates");
 const bookFetch = require("../lib/bookFetch");
 const BOOK_SHELF = require("../data/bookShelf.json");
 
@@ -225,7 +227,8 @@ async function setRoomBook(req, res) {
     }
 }
 
-// [GET] /api/rooms/:id/book            -> { room, book, chapters, progress, readers }
+// [GET] /api/rooms/:id/book[?checkin=0] -> { room, book, chapters, progress, readers }
+//   Opening the book also checks me in for the streak (not with ?checkin=0 or ?chapter=N).
 // [GET] /api/rooms/:id/book?chapter=N  -> { chapter: { idx, title }, paragraphs }
 async function getRoomBook(req, res) {
     try {
@@ -255,6 +258,14 @@ async function getRoomBook(req, res) {
                 chapter: { idx: chapter.idx, title: chapter.title ?? null },
                 paragraphs: paragraphs.map((p) => ({ id: p.id, idx: p.idx, text: p.text })),
             });
+        }
+
+        // Opening the book counts as reading today (streak), like opening today's poem.
+        // ?checkin=0 opts out. A failed check-in must never break the book, so it only logs.
+        if (req.query.checkin !== "0") {
+            await Promise.resolve()
+                .then(() => streakModel.checkIn(req.user.id, today()))
+                .catch((err) => console.error("Streak check-in failed:", err));
         }
 
         const progress = await booksModel.getProgress(req.user.id, room.id, rb.book_id); // no row is created here

@@ -8,10 +8,12 @@ jest.mock("../../models/booksModel");
 jest.mock("../../models/roomsModel");
 jest.mock("../../models/usersModel");
 jest.mock("../../lib/bookFetch");
+jest.mock("../../models/streakModel");
 const booksModel = require("../../models/booksModel");
 const roomsModel = require("../../models/roomsModel");
 const usersModel = require("../../models/usersModel");
 const bookFetch = require("../../lib/bookFetch");
+const streakModel = require("../../models/streakModel");
 
 // user 1 = alice (room owner), user 2 = bob (member)
 const tokenFor = (id, username) => jwt.sign({ id, username }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -451,6 +453,48 @@ describe("GET /api/rooms/:id/book", () => {
         });
         expect(booksModel.getProgress).toHaveBeenCalledWith(2, 5, 1342);
         expect(booksModel.upsertProgress).not.toHaveBeenCalled();
+    });
+
+    // 책을 열면 출석 (A3): like opening today's poem
+    test("opening the book checks me in for the streak", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        const res = await request(app).get("/api/rooms/5/book").set("Authorization", member);
+        expect(res.statusCode).toBe(200);
+        expect(streakModel.checkIn).toHaveBeenCalledTimes(1);
+        expect(streakModel.checkIn).toHaveBeenCalledWith(2, expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+    });
+
+    test("?checkin=0 does not check in", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        const res = await request(app).get("/api/rooms/5/book?checkin=0").set("Authorization", member);
+        expect(res.statusCode).toBe(200);
+        expect(streakModel.checkIn).not.toHaveBeenCalled();
+    });
+
+    test("loading a chapter does not check in again", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        booksModel.getChapterParagraphs.mockResolvedValue([{ id: 1, idx: 0, text: "a" }]);
+        const res = await request(app).get("/api/rooms/5/book?chapter=0").set("Authorization", member);
+        expect(res.statusCode).toBe(200);
+        expect(streakModel.checkIn).not.toHaveBeenCalled();
+    });
+
+    test("no check-in when the room has no book", async () => {
+        booksModel.getRoomBook.mockResolvedValue(undefined);
+        await request(app).get("/api/rooms/5/book").set("Authorization", member);
+        expect(streakModel.checkIn).not.toHaveBeenCalled();
+    });
+
+    test("a failed check-in still returns the book", async () => {
+        booksModel.getRoomBook.mockResolvedValue(roomBook);
+        booksModel.getChapters.mockResolvedValue(chapters);
+        streakModel.checkIn.mockRejectedValue(new Error("db down"));
+        const res = await request(app).get("/api/rooms/5/book").set("Authorization", member);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.book).toEqual(bookJson);
     });
 
     test("200 overview with saved progress", async () => {
