@@ -4,13 +4,11 @@
 //   - a floating "메모 N" pill -> sheet with every memo (write · like · edit)
 //   - highlights (4 colours) and notes on a word range (marks.js, same as the book):
 //     long press / drag across words -> toolbar; a single tap on a marked word -> list
-//   - (off for now) line notes: dotted underline + a count on the right; the count or
-//     the left margin of a line opened that line's sheet. Poem marks replace them; the
-//     code is kept below, commented out where it starts.
 //   - opening today's poem checks me in for the streak (GET /today does it on the
 //     server), so there is no "다 읽었어요" button
 //
-// Data source: GET /api/rooms/:id/today  (poem + memos + annotations + poem_marks in one payload)
+// Data source: GET /api/rooms/:id/today  (poem + memos + poem_marks in one payload; its
+// `annotations` are the old line notes, copied into poem_marks and no longer shown)
 // A past poem (?date=YYYY-MM-DD) comes from GET /api/rooms/:id/history/:date and
 // is read-only: memos are shown, but nothing can be written, edited, deleted or liked.
 // Poem marks on a past poem follow their API: shown and listed, no new ones
@@ -39,34 +37,9 @@ const READ_ONLY = !!PAST_DATE;
 let poem = null;              // { id, title, author, lines: [{ id, line_number, text }] }
 let poemDate = null;          // the server's date for this poem (YYYY-MM-DD)
 let memos = [];               // full-poem memos, newest first
-let annotationsByLine = {};   // { line_id: [annotation, ...] }  (line notes: off, stays empty)
 let poemMarks = [];           // highlights + notes on this poem (poem_marks), oldest first
-let currentLineId = null;     // line whose sheet is open, or null
-let lineOpener = null;        // the button that opened the line view (focus goes back to it)
 
-// =====================================================================
-//  Opening: the home screen's cover has just grown into this band
-// =====================================================================
-// index.js leaves the tapped cover's colour and text in sessionStorage, so the
-// band can be painted before the poem arrives and the two pages join up.
-(function paintFromCover() {
-  let hint = null;
-  try {
-    hint = JSON.parse(sessionStorage.getItem('typoem:open') || 'null');
-    sessionStorage.removeItem('typoem:open');
-  } catch (err) { /* no hint */ }
-
-  if (hint && String(hint.roomId) === String(ROOM_ID)) {
-    $('r-head').style.background = hint.color;
-    $('poem-title').innerHTML = renderMeta(hint.title);
-    $('poem-title').className = 'c-title' + UI.titleSize(hint.title);
-    $('poem-author').innerHTML = renderMeta(hint.author);
-    $('room-name').textContent = hint.roomName || '';
-    setThemeColor(hint.color);
-    UI.anim($('poem-title'), [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 80 });
-  }
-  window.TypoemNative.setStatusBar('light');   // light status bar text on the dark band
-})();
+window.TypoemNative.setStatusBar('light');   // light status bar text on the dark band
 
 function setThemeColor(color) {
   const metaEl = document.querySelector('meta[name="theme-color"]');
@@ -81,7 +54,6 @@ if ($('past-link')) $('past-link').href = HISTORY_URL;
 // (or to History when this is a past poem).
 window.TypoemNav.setBackHandler(function () {
   if (marks.cancel()) return true;   // a word selection
-  if (closeLineView()) return true;
   window.location.href = PAST_DATE ? HISTORY_URL : '/index.html';
   return true;
 });
@@ -97,11 +69,6 @@ async function loadToday() {
     return;
   }
 
-  // Today's poem that the home screen just showed: draw it straight away, then
-  // refresh it from /today below (which is also what checks me in for the streak).
-  const shown = PAST_DATE ? null : takeHomeCopy();
-  if (shown) showPoem(shown);
-
   const url = PAST_DATE
     ? `/api/rooms/${encodeURIComponent(ROOM_ID)}/history/${PAST_DATE}`
     : `/api/rooms/${encodeURIComponent(ROOM_ID)}/today`;
@@ -109,57 +76,21 @@ async function loadToday() {
   try {
     res = await authFetch(url);
   } catch (err) {
-    if (!shown) status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
+    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
     return;
   }
 
   // authFetch already handles 401 (logout + redirect); handle the rest here
   if (!res.ok) {
-    if (!shown) status.textContent = loadErrorText(res.status);
+    status.textContent = loadErrorText(res.status);
     return;
   }
 
   const data = await res.json();
   if (!PAST_DATE) window.TypoemNative.sendTodayToWidget(data, ROOM_ID);   // home screen widget (after the check-in)
-  if (shown && data.poem && shown.poem && data.poem.id === shown.poem.id) refreshNotes(data);
-  else showPoem(data);
+  showPoem(data);
 }
 
-// The home screen leaves today's payload in sessionStorage when a cover is
-// opened (index.js openReader). Used once, only for this room, only if fresh.
-const HOME_COPY_MAX_AGE = 60 * 1000;
-function takeHomeCopy() {
-  let copy = null;
-  try {
-    copy = JSON.parse(sessionStorage.getItem('typoem:today') || 'null');
-    sessionStorage.removeItem('typoem:today');
-  } catch (err) { return null; }
-  if (!copy || String(copy.roomId) !== String(ROOM_ID)) return null;
-  if (!(Date.now() - copy.savedAt < HOME_COPY_MAX_AGE)) return null;
-  if (!copy.data || !copy.data.poem) return null;
-  return copy.data;
-}
-
-// Set by every write (memo, line note, like, edit, delete). Once I have changed
-// something, the background refresh must not paint the older list over it.
-let wrote = false;
-function writeFetch(url, options) {
-  wrote = true;
-  return authFetch(url, options);
-}
-
-// Same poem as the one drawn from the home copy: only the notes may have changed.
-function refreshNotes(data) {
-  if (wrote) return;
-  memos = data.memos || [];
-  // line notes: off (poem marks replace them)
-  // indexAnnotations(data.annotations || []);
-  // (poem.lines || []).forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
-  showMarks(data.poem_marks);
-  renderPill();
-  renderMemos();
-  // if (currentLineId != null) renderAnnotations();
-}
 
 function showPoem(data) {
   $('status').textContent = '';
@@ -169,8 +100,6 @@ function showPoem(data) {
   poem = data.poem;
   poemDate = data.date;
   memos = data.memos || [];
-  // line notes: off (poem marks replace them)
-  // indexAnnotations(data.annotations || []);
 
   $('room-name').textContent = (data.room && data.room.name) || '';
   marks.reset();                 // new text: no selection, no marks until showMarks
@@ -186,13 +115,11 @@ function showPoem(data) {
 // A past poem: hide everything that writes, and say why where the forms were.
 function setReadOnly() {
   document.body.classList.add('read-only');
-  ['memo-form', 'annotation-form', 'l-edit-mine'].forEach((id) => { $(id).hidden = true; });
-  ['memo-form', 'annotation-form'].forEach((id) => {
-    const note = document.createElement('p');
-    note.className = 's-note read-only-note';
-    note.textContent = '지난 시는 읽기만 할 수 있어요.';
-    $(id).after(note);
-  });
+  $('memo-form').hidden = true;
+  const note = document.createElement('p');
+  note.className = 's-note read-only-note';
+  note.textContent = '지난 시는 읽기만 할 수 있어요.';
+  $('memo-form').after(note);
 }
 
 // Korean message for a failed load (the API's own messages are English).
@@ -202,24 +129,6 @@ function loadErrorText(status) {
   if (status === 404) return '방을 찾지 못했어요.';
   if (status === 503) return '오늘의 시를 가져오지 못했어요. 잠시 뒤에 다시 열어 주세요.';
   return '오늘의 시를 불러오지 못했어요.';
-}
-
-// Group the flat annotations array by line_id.
-function indexAnnotations(list) {
-  annotationsByLine = {};
-  for (const a of list) {
-    if (!annotationsByLine[a.line_id]) annotationsByLine[a.line_id] = [];
-    annotationsByLine[a.line_id].push(a);
-  }
-}
-
-function allAnnotations() {
-  return Object.keys(annotationsByLine).reduce((out, k) => out.concat(annotationsByLine[k]), []);
-}
-
-function lineText(lineId) {
-  const line = poem && poem.lines.find((l) => l.id === lineId);
-  return line ? line.text.replace(/-{2,}/g, '—').replace(/_([^_]+)_/g, '$1').trim() : '';
 }
 
 // =====================================================================
@@ -253,49 +162,20 @@ function renderPoem() {
   bodyEl.querySelectorAll('.ln[data-line-no]').forEach((ln) => {
     ln.querySelectorAll('.word').forEach((w, i) => { w.dataset.w = i; });
   });
-  // line notes: off (poem marks replace them)
-  // lines.forEach((l) => { if (hasContent(l.text)) updateLine(l.id); });
 }
 
 // One poem line: [ text ]
 //   - text          -> dictionary territory (words wrapped for dict-popup.js) and
 //                      marks.js's unit (data-line-no = poem_marks start_line / end_line)
-//   - (off) margin button -> this line's sheet (notes)
-//   - (off) count         -> added by updateLine() when the line has notes
 // Blank lines render as spacers (no words, so marks skip them).
 function renderLine(line) {
   if (!hasContent(line.text)) {
     return '<span class="ln ln-blank" aria-hidden="true"></span>';
   }
-  // line notes: off — the margin button went inside .ln, before .tx:
-  //   <button type="button" class="mark" aria-label="이 줄의 메모"></button>
   return `
     <span class="ln" data-line-id="${line.id}" data-line-no="${line.line_number}">
       <span class="tx">${wrapWords(line.text)}</span>
     </span>`;
-}
-
-// Keep one line's indicators in sync: dotted underline, count.
-function updateLine(lineId) {
-  const ln = document.querySelector(`.ln[data-line-id="${lineId}"]`);
-  if (!ln) return;
-  const n = (annotationsByLine[lineId] || []).length;
-  ln.classList.toggle('has-cm', n > 0);
-
-  let cm = ln.querySelector('.cm');
-  if (n === 0) {
-    if (cm) cm.remove();
-    return;
-  }
-  if (!cm) {
-    cm = document.createElement('button');
-    cm.type = 'button';
-    cm.className = 'cm';
-    cm.innerHTML = '<b></b>';
-    ln.appendChild(cm);
-  }
-  cm.firstChild.textContent = n;
-  cm.setAttribute('aria-label', `이 줄의 메모 ${n}개 보기`);
 }
 
 // Title/author markup. Same PoetryDB markers as the body (em dash + italics)
@@ -362,15 +242,6 @@ function wrapWordChunk(chunk) {
     + esc(post);
 }
 
-// The margin button or the count opens that line's sheet.
-// (Words are handled by dict-popup.js.)
-// line notes: off (poem marks replace them)
-// $('poem-body').addEventListener('click', (e) => {
-//   const btn = e.target.closest('.mark, .cm');
-//   if (!btn) return;
-//   openLine(Number(btn.parentNode.dataset.lineId), btn);
-// });
-
 // =====================================================================
 //  Highlights + notes (marks.js does selection, toolbar, sheets, drawing)
 // =====================================================================
@@ -402,17 +273,17 @@ const marks = window.TypoemMarks.attach({
     if (m.kind === 'highlight') body.color = m.color;   // required for highlights
     else body.content = m.content;
     const url = `/api/rooms/${encodeURIComponent(ROOM_ID)}/poems/${m.ctx.poemId}/marks`;
-    const res = await writeFetch(url, { method: 'POST', body: JSON.stringify(body) });
+    const res = await authFetch(url, { method: 'POST', body: JSON.stringify(body) });
     if (!res.ok) throw marksError(res, m.kind === 'note' ? '주석을 저장하지 못했어요.' : '형광펜을 저장하지 못했어요.');
     return res.json();
   },
   async update(row, content) {
-    const res = await writeFetch(`/api/poem-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
+    const res = await authFetch(`/api/poem-marks/${row.id}`, { method: 'PATCH', body: JSON.stringify({ content }) });
     if (!res.ok) throw marksError(res, '주석을 고치지 못했어요.');
     return res.json();
   },
   async remove(row) {
-    const res = await writeFetch(`/api/poem-marks/${row.id}`, { method: 'DELETE' });
+    const res = await authFetch(`/api/poem-marks/${row.id}`, { method: 'DELETE' });
     if (!res.ok && res.status !== 404) throw marksError(res, '지우지 못했어요.');   // 404: already gone
   },
   changed({ type, row }) {
@@ -433,15 +304,11 @@ function showMarks(list) {
 // =====================================================================
 //  Memo pill + memo sheet (every memo on this poem)
 // =====================================================================
-function noteCount() {
-  return memos.length + allAnnotations().length;
-}
-
 function renderPill() {
-  const n = noteCount();
+  const n = memos.length;
   // people who left something, most recent first, three at most
   const names = [];
-  memos.concat(allAnnotations())
+  memos.slice()
     .sort(byNewest)
     .forEach((x) => { if (names.indexOf(x.author_nickname) < 0) names.push(x.author_nickname); });
   $('pill-avs').innerHTML = names.slice(0, 3).map(UI.avatar).join('');
@@ -452,29 +319,21 @@ function byNewest(a, b) {
   return String(b.created_at).localeCompare(String(a.created_at)) || b.id - a.id;
 }
 
-// The sheet lists full-poem memos and line notes together, newest first.
-// A line note shows the line it belongs to underneath.
+// The sheet lists full-poem memos, newest first.
 function renderMemos() {
-  const items = memos.map((m) => ({ kind: 'memo', x: m }))
-    .concat(allAnnotations().map((a) => ({ kind: 'anno', x: a })))
-    .sort((p, q) => byNewest(p.x, q.x));
+  const items = memos.slice().sort(byNewest);
 
   $('m-count').textContent = items.length ? `${items.length}개` : '';
   $('memo-list').innerHTML = items.length
-    ? items.map((it) => (it.kind === 'memo' ? memoItem(it.x) : annotationItem(it.x, true))).join('')
+    ? items.map(memoItem).join('')
     : '<p class="s-note">아직 남긴 메모가 없어요.</p>';
 }
 
-// A line note is edited with the sheet's "내 메모 고치기" button, so its own
-// row only needs "지우기".
-function controls(kind, id) {
+function controls(id) {
   if (READ_ONLY) return '';
-  const edit = kind === 'memo'
-    ? `<button type="button" class="link-btn" data-edit="${kind}" data-id="${id}">고치기</button>`
-    : '';
   return `<span class="note-controls">
-      ${edit}
-      <button type="button" class="link-btn" data-del="${kind}" data-id="${id}">지우기</button>
+      <button type="button" class="link-btn" data-edit data-id="${id}">고치기</button>
+      <button type="button" class="link-btn" data-del data-id="${id}">지우기</button>
     </span>`;
 }
 
@@ -492,24 +351,8 @@ function memoItem(memo) {
             <span class="like-heart" aria-hidden="true">${memo.liked_by_me ? '♥' : '♡'}</span>
             <span class="like-count">${memo.like_count || 0}</span>
           </button>
-          ${mine ? controls('memo', memo.id) : ''}
+          ${mine ? controls(memo.id) : ''}
         </div>
-      </div>
-    </div>`;
-}
-
-// withQuote: in the memo sheet a line note carries its line; in the line
-// sheet the line is already shown at the top, and the note can be edited.
-function annotationItem(a, withQuote) {
-  const mine = me && a.user_id === me.id;
-  return `
-    <div class="m-item" data-kind="anno" data-id="${a.id}">
-      ${UI.avatar(a.author_nickname)}
-      <div class="m-main">
-        <b>${esc(a.author_nickname)}<small>${formatDate(a.created_at)}</small></b>
-        <p class="note-content">${esc(a.content)}</p>
-        ${withQuote ? `<q>${esc(lineText(a.line_id))}</q>` : ''}
-        ${!withQuote && mine ? `<div class="m-foot">${controls('anno', a.id)}</div>` : ''}
       </div>
     </div>`;
 }
@@ -532,7 +375,7 @@ $('memo-form').addEventListener('submit', async (e) => {
   const btn = $('memo-submit');
   btn.disabled = true;
   try {
-    const res = await writeFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/memos`, {
+    const res = await authFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/memos`, {
       method: 'POST',
       body: JSON.stringify({ content }),
     });
@@ -564,7 +407,7 @@ async function reloadMemos() {
 // ({ liked, like_count }); update just this button rather than reloading the
 // list, so the scroll position and any open editors are kept.
 async function toggleLike(id) {
-  const res = await writeFetch(`/api/memos/${id}/like`, { method: 'POST' });
+  const res = await authFetch(`/api/memos/${id}/like`, { method: 'POST' });
   if (!res.ok) return;
   const data = await res.json();
   const memo = memos.find((m) => m.id === id);
@@ -578,157 +421,14 @@ async function toggleLike(id) {
 }
 
 // =====================================================================
-//  Line sheet (one line's notes)
+//  Inline edit / delete (memos)
 // =====================================================================
-function myAnnotation(lineId) {
-  return (annotationsByLine[lineId] || []).find((a) => me && a.user_id === me.id) || null;
+function itemEl(id) {
+  return $('memo-list').querySelector(`.m-item[data-id="${id}"]`);
 }
 
-// Narrow screens: a sheet / dialog. 1024px+: the side panel switches from
-// "all memos" to "this line", and "전체 메모로" (or Esc) switches it back.
-function openLine(lineId, opener) {
-  currentLineId = lineId;
-  $('drawer-line').textContent = lineText(lineId);
-  $('annotation-input').value = '';
-  renderAnnotations();
-  UI.haptic();
-
-  if (!UI.isWide()) {
-    UI.openSheet('sheet-line');
-    return;
-  }
-  UI.closeSheets();                         // e.g. an open dictionary popover
-  lineOpener = opener || document.activeElement;
-  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
-  const ln = lineEl(lineId);
-  if (ln) ln.classList.add('ln-open');
-  $('r-side').classList.add('line-mode');
-  const panel = $('sheet-line');
-  panel.setAttribute('tabindex', '-1');
-  panel.scrollTop = 0;
-  panel.focus({ preventScroll: true });     // move focus into the panel
-}
-
-function lineEl(lineId) {
-  return document.querySelector(`.ln[data-line-id="${lineId}"]`);
-}
-
-function lineViewOpen() {
-  return $('r-side').classList.contains('line-mode');
-}
-
-// Back to all memos; focus returns to the button that opened the line view
-// (or the line's margin button, if the count it came from is gone).
-function closeLineView() {
-  if (!lineViewOpen()) return false;
-  const ln = lineEl(currentLineId);
-  $('r-side').classList.remove('line-mode');
-  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
-  const back = (lineOpener && lineOpener.isConnected) ? lineOpener : (ln && ln.querySelector('.mark'));
-  if (back) back.focus({ preventScroll: true });
-  lineOpener = null;
-  return true;
-}
-
-$('l-back').addEventListener('click', closeLineView);
-
-// Esc closes the line view (an open popover or inline editor handles its own Esc first).
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Escape' || e.defaultPrevented) return;
-  if (document.querySelector('.sheet.show')) return;
-  if (closeLineView()) e.preventDefault();
-});
-
-// Crossing 1024px: the panel and the sheets are the same elements, so reset the view.
-UI.onWideChange(() => {
-  $('r-side').classList.remove('line-mode');
-  document.querySelectorAll('.ln-open').forEach((el) => el.classList.remove('ln-open'));
-  lineOpener = null;
-});
-
-function renderAnnotations() {
-  const list = annotationsByLine[currentLineId] || [];
-  $('l-count').textContent = list.length ? `${list.length}개` : '';
-  $('annotation-list').innerHTML = list.length
-    ? list.map((a) => annotationItem(a, false)).join('')
-    : '<p class="s-note">아직 이 줄에 남긴 메모가 없어요.</p>';
-
-  // One note per person per line (UNIQUE(line_id, room_id, user_id)):
-  // if mine exists, offer "edit my note" instead of a new one.
-  if (READ_ONLY) return;                      // the forms stay hidden
-  const mine = myAnnotation(currentLineId);
-  $('annotation-form').hidden = !!mine;
-  $('l-edit-mine').hidden = !mine;
-}
-
-$('l-edit-mine').addEventListener('click', () => {
-  const mine = myAnnotation(currentLineId);
-  if (mine) startInlineEdit('anno', mine.id);
-});
-
-$('annotation-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (currentLineId == null) return;
-  const lineId = currentLineId;
-  const input = $('annotation-input');
-  const content = input.value.trim();
-  if (content.length < 1 || content.length > 1000) {
-    UI.toast('메모는 1~1000자로 써 주세요');
-    return;
-  }
-  const btn = $('annotation-submit');
-  btn.disabled = true;
-  try {
-    const res = await writeFetch(
-      `/api/rooms/${encodeURIComponent(ROOM_ID)}/lines/${lineId}/annotations`,
-      { method: 'POST', body: JSON.stringify({ content }) }
-    );
-    if (!res.ok) {
-      // 409 = already annotated this line (written on another device, say)
-      UI.toast(res.status === 409 ? '이미 메모를 남겼어요' : '메모를 남기지 못했어요');
-      if (res.status === 409) await reloadAnnotations(lineId);
-      return;
-    }
-    input.value = '';
-    await reloadAnnotations(lineId);
-    UI.haptic();
-  } catch (err) {
-    UI.toast('네트워크 오류가 났어요. 다시 시도해 주세요');
-  } finally {
-    btn.disabled = false;
-  }
-});
-
-// Refresh one line's notes from the server, then the sheet, the line and the pill.
-async function reloadAnnotations(lineId) {
-  if (lineId == null) return;
-  const res = await authFetch(`/api/rooms/${encodeURIComponent(ROOM_ID)}/lines/${lineId}/annotations`);
-  if (!res.ok) return;
-  annotationsByLine[lineId] = await res.json();
-  if (currentLineId === lineId) renderAnnotations();
-  updateLine(lineId);
-  renderPill();
-  renderMemos();                 // line notes are listed with the memos too
-}
-
-// =====================================================================
-//  Inline edit / delete (memos and line notes share these)
-// =====================================================================
-const KIND = {
-  memo: { apiPath: '/api/memos', reload: () => reloadMemos() },
-  anno: { apiPath: '/api/annotations', reload: () => reloadAnnotations(currentLineId) },
-};
-
-function itemEl(kind, id) {
-  // the visible one: a line note can also sit (read-only) in the memo sheet
-  const scope = UI.isWide()
-    ? (lineViewOpen() ? '#sheet-line' : '#sheet-memo')
-    : '.sheet.show';
-  return document.querySelector(`${scope} .m-item[data-kind="${kind}"][data-id="${id}"]`);
-}
-
-function startInlineEdit(kind, id) {
-  const item = itemEl(kind, id);
+function startInlineEdit(id) {
+  const item = itemEl(id);
   if (!item) return;
   const contentEl = item.querySelector('.note-content');
   if (!contentEl || item.querySelector('.note-edit')) return;  // already editing
@@ -774,7 +474,7 @@ function startInlineEdit(kind, id) {
       UI.toast('메모는 1~1000자로 써 주세요');
       return;
     }
-    const res = await writeFetch(`${KIND[kind].apiPath}/${id}`, {
+    const res = await authFetch(`/api/memos/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ content: trimmed }),
     });
@@ -782,12 +482,12 @@ function startInlineEdit(kind, id) {
       UI.toast('메모를 고치지 못했어요');
       return;
     }
-    await KIND[kind].reload();
+    await reloadMemos();
   });
 }
 
-function startInlineDelete(kind, id) {
-  const item = itemEl(kind, id);
+function startInlineDelete(id) {
+  const item = itemEl(id);
   if (!item) return;
   const contentEl = item.querySelector('.note-content');
   if (!contentEl || item.querySelector('.note-confirm')) return;  // already confirming
@@ -810,12 +510,12 @@ function startInlineDelete(kind, id) {
     contentEl.hidden = false;
   });
   box.querySelector('.note-confirm-yes').addEventListener('click', async () => {
-    const res = await writeFetch(`${KIND[kind].apiPath}/${id}`, { method: 'DELETE' });
+    const res = await authFetch(`/api/memos/${id}`, { method: 'DELETE' });
     if (!res.ok && res.status !== 204) {
       UI.toast('메모를 지우지 못했어요');
       return;
     }
-    await KIND[kind].reload();
+    await reloadMemos();
   });
 }
 
@@ -826,20 +526,16 @@ function closeInline(item) {
   if (contentEl) contentEl.hidden = false;
 }
 
-// One listener per sheet for like / edit / delete (items are re-rendered often).
-function wireList(listEl) {
-  listEl.addEventListener('click', (e) => {
-    if (READ_ONLY) return;
-    const like = e.target.closest('[data-like]');
-    if (like) { toggleLike(Number(like.dataset.like)); return; }
-    const edit = e.target.closest('[data-edit]');
-    if (edit) { startInlineEdit(edit.dataset.edit, Number(edit.dataset.id)); return; }
-    const del = e.target.closest('[data-del]');
-    if (del) startInlineDelete(del.dataset.del, Number(del.dataset.id));
-  });
-}
-wireList($('memo-list'));
-wireList($('annotation-list'));
+// One listener for like / edit / delete (items are re-rendered often).
+$('memo-list').addEventListener('click', (e) => {
+  if (READ_ONLY) return;
+  const like = e.target.closest('[data-like]');
+  if (like) { toggleLike(Number(like.dataset.like)); return; }
+  const edit = e.target.closest('[data-edit]');
+  if (edit) { startInlineEdit(Number(edit.dataset.id)); return; }
+  const del = e.target.closest('[data-del]');
+  if (del) startInlineDelete(Number(del.dataset.id));
+});
 
 // =====================================================================
 //  Helpers
