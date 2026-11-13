@@ -38,9 +38,9 @@ form.addEventListener('submit', async function (e) {
     });
 
     if (!res.ok) {
-      // 403 = room limit reached (owned or joined)
+      // 403 = room limit reached (owned or joined); the numbers are MAX_OWNED_ROOMS / MAX_JOINED_ROOMS in roomsController
       const e = new Error(res.status === 403
-        ? '만들 수 있는 방 수를 다 채워서 더 만들 수 없어요.'
+        ? '방은 최대 3개까지 만들고, 5개까지 참여할 수 있어요.'
         : '방을 만들지 못했어요.');
       e.isUserMessage = true;
       throw e;
@@ -62,7 +62,7 @@ form.addEventListener('submit', async function (e) {
 
 // Our own errors carry a Korean message; anything else (network, parse) is generic.
 function userMessage(err) {
-  return err && err.isUserMessage ? err.message : '문제가 생겼어요. 다시 시도해 주세요.';
+  return authErrorMessage(err);
 }
 
 function showError(message) {

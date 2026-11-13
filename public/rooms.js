@@ -19,7 +19,7 @@ async function loadRooms() {
   try {
     res = await authFetch('/api/rooms/mine');
   } catch (err) {
-    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
+    status.textContent = '네트워크에 연결할 수 없어요. 다시 시도해 주세요.';
     return;
   }
   // authFetch already handles 401 (logout + redirect)

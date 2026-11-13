@@ -225,7 +225,7 @@ async function init() {
       authFetch('/api/rooms/mine').catch(() => null),
     ]);
   } catch (err) {
-    showMessage('서버에 연결할 수 없어요. 새로고침해 주세요.', true);
+    showMessage('네트워크에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.', true);
     return;
   }
   if (res.status === 401) return;   // authFetch is redirecting to login
@@ -552,7 +552,7 @@ async function assignCell(cell) {
   } catch (err) {
     failure = err && err.message === 'timeout'
       ? '시간이 오래 걸려 멈췄어요. 다시 시도해 주세요.'
-      : '서버에 연결할 수 없어요.';
+      : '네트워크에 연결할 수 없어요.';
     retryable = true;
   }
 
@@ -1063,7 +1063,7 @@ async function saveGoal(value) {
     UI.toast(targetEndDate ? '목표일을 저장했어요' : '목표일을 지웠어요');
     updateStats();
   } catch (err) {
-    UI.toast('서버에 연결할 수 없어요.');
+    UI.toast('네트워크에 연결할 수 없어요');
   }
 }
 

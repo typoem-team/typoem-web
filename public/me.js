@@ -28,7 +28,7 @@ drawName();
 function bookLine(m, book) {
   if (!book) return '';
   const p = book.progress.get(m.id) || { progress: 0, finished: false };
-  const label = p.finished ? '다 읽음' : `${p.progress}%`;
+  const label = p.finished ? '완독' : `${p.progress}%`;
   return `<div class="mf-book${p.finished ? ' is-done' : ''}" aria-label="책 ${label}">
       <div class="mf-bar"><div style="width:${p.progress}%"></div></div><b>${label}</b>
     </div>`;
@@ -68,7 +68,7 @@ async function loadFriends() {
     // only rooms with someone besides me
     rooms = (await res.json()).filter((r) => r.member_count > 1);
   } catch (err) {
-    status.textContent = '네트워크 오류가 났어요. 다시 시도해 주세요.';
+    status.textContent = '네트워크에 연결할 수 없어요. 다시 시도해 주세요.';
     return;
   }
   if (!rooms.length) {

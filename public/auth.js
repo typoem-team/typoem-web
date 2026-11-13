@@ -133,8 +133,8 @@ async function authErrorFromResponse(res, fallback) {
 // rejects with a TypeError when no answer came back at all (offline, server down).
 function authErrorMessage(err) {
   if (err && err.isUserMessage) return err.message;
-  if (err instanceof TypeError) return '서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.';
-  return '문제가 생겼어요. 다시 시도해 주세요.';
+  if (err instanceof TypeError) return '네트워크에 연결할 수 없어요. 인터넷 연결을 확인하고 다시 시도해 주세요.';
+  return '요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.';
 }
 
 

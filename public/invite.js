@@ -90,7 +90,7 @@
         authFetch('/api/rooms/' + id + '/members'),
       ]);
     } catch (err) {
-      $('member-list').innerHTML = '<p class="s-note">네트워크 오류가 났어요. 다시 열어 주세요.</p>';
+      $('member-list').innerHTML = '<p class="s-note">네트워크에 연결할 수 없어요. 다시 열어 주세요.</p>';
       return;
     }
     room = known || findRoom(roomsRes.ok ? await roomsRes.json() : []);
@@ -176,7 +176,7 @@
   async function share() {
     if (!room) return;
     var code = $('invite-code').textContent;
-    var text = room.name + '에서 같이 시 읽어요. Typoem 초대 코드: ' + code;
+    var text = '‘' + room.name + '’에서 매일 시 한 편과 책 한 권을 같이 읽어요. Typoem 초대 코드: ' + code;
     if (navigator.share) {
       try { await navigator.share({ title: 'Typoem', text: text }); } catch (err) { /* cancelled */ }
       return;

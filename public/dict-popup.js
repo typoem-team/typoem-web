@@ -193,7 +193,7 @@
       hideSaveButton();
     } else {
       if (defs.length > 0) {
-        if (ko.length > 0) html += '<p class="d-en-label">English</p>';
+        if (ko.length > 0) html += '<p class="d-en-label">영영 풀이</p>';
         html += '<ol class="dict-def-list">';
         for (const d of defs) {
           const pos = d.partOfSpeech
