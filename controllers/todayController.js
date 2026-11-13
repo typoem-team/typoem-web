@@ -82,17 +82,19 @@ async function getToday(req, res) {
         const room_id = parseId(req.params.id);
         if (!room_id) return res.status(400).json({ error: "invalid room id" });
 
-        // permission checks (same order/messages as memosController)
-        const room = await roomsModel.findById(room_id);
+        // permission checks (same order/messages as memosController) and today's poem id,
+        // all reads, at once: one DB round trip instead of three
+        const date = today();
+        const [room, isMember, todayPoemId] = await Promise.all([
+            roomsModel.findById(room_id),
+            roomsModel.isMember(room_id, req.user.id),
+            poemsModel.getTodayPoemId(room_id, date),
+        ]);
         if (!room) return res.status(404).json({ error: "Room not found" });
-
-        const isMember = await roomsModel.isMember(room_id, req.user.id);
         if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
 
-        const date = today();
-
         // assign today's poem if the room doesn't have one yet
-        let poem_id = await poemsModel.getTodayPoemId(room_id, date);
+        let poem_id = todayPoemId;
         if (!poem_id) {
 
             const roomSeen = async ({ title, author }) => {

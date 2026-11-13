@@ -35,17 +35,20 @@ async function loadRoomBook(req, res) {
         res.status(400).json({ error: "invalid room id" });
         return null;
     }
-    const room = await roomsModel.findById(room_id);
+    // room, membership and the room's book at once: one DB round trip instead of three
+    const [room, isMember, rb] = await Promise.all([
+        roomsModel.findById(room_id),
+        roomsModel.isMember(room_id, req.user.id),
+        booksModel.getRoomBook(room_id),
+    ]);
     if (!room) {
         res.status(404).json({ error: "Room not found" });
         return null;
     }
-    const isMember = await roomsModel.isMember(room_id, req.user.id);
     if (!isMember) {
         res.status(403).json({ error: "You are not a member of this room" });
         return null;
     }
-    const rb = await booksModel.getRoomBook(room_id);
     if (!rb) {
         res.status(404).json({ error: "No book assigned to this room" });
         return null;

@@ -36,12 +36,15 @@ async function loadRoomPoem(req, res) {
         res.status(400).json({ error: "invalid poem id" });
         return null;
     }
-    const room = await roomsModel.findById(room_id);
+    // both reads at once: one DB round trip instead of two (same answers and order)
+    const [room, isMember] = await Promise.all([
+        roomsModel.findById(room_id),
+        roomsModel.isMember(room_id, req.user.id),
+    ]);
     if (!room) {
         res.status(404).json({ error: "Room not found" });
         return null;
     }
-    const isMember = await roomsModel.isMember(room_id, req.user.id);
     if (!isMember) {
         res.status(403).json({ error: "You are not a member of this room" });
         return null;

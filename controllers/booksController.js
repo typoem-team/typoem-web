@@ -47,12 +47,15 @@ async function loadRoomForMember(req, res) {
         res.status(400).json({ error: "invalid room id" });
         return null;
     }
-    const room = await roomsModel.findById(room_id);
+    // both reads at once: one DB round trip instead of two (same answers and order)
+    const [room, isMember] = await Promise.all([
+        roomsModel.findById(room_id),
+        roomsModel.isMember(room_id, req.user.id),
+    ]);
     if (!room) {
         res.status(404).json({ error: "Room not found" });
         return null;
     }
-    const isMember = await roomsModel.isMember(room_id, req.user.id);
     if (!isMember) {
         res.status(403).json({ error: "You are not a member of this room" });
         return null;
@@ -234,11 +237,6 @@ async function getRoomBook(req, res) {
     try {
         const room = await loadRoomForMember(req, res);
         if (!room) return;
-        // opening the book puts the room first in my room list; never break the book over it
-        await Promise.resolve()
-            .then(() => roomsModel.markOpened(room.id, req.user.id))
-            .catch((err) => console.error("Marking the room opened failed:", err));
-
         let chapterIdx = null;
         if (req.query.chapter !== undefined) {
             chapterIdx = parseIndex(req.query.chapter);
@@ -248,28 +246,35 @@ async function getRoomBook(req, res) {
         const rb = await booksModel.getRoomBook(room.id);
         if (!rb) return res.status(404).json({ error: "No book assigned to this room" });
 
-        const chapters = await booksModel.getChapters(rb.book_id);
-
         if (chapterIdx !== null) {
+            // one chapter (turning pages): chapter list and paragraphs at once, and no writes
+            const [chapters, paragraphs] = await Promise.all([
+                booksModel.getChapters(rb.book_id),
+                booksModel.getChapterParagraphs(rb.book_id, chapterIdx),
+            ]);
             const chapter = chapters.find((c) => c.idx === chapterIdx);
             if (!chapter) return res.status(404).json({ error: "Chapter not found" });
-            const paragraphs = await booksModel.getChapterParagraphs(rb.book_id, chapterIdx);
             return res.status(200).json({
                 chapter: { idx: chapter.idx, title: chapter.title ?? null },
                 paragraphs: paragraphs.map((p) => ({ id: p.id, idx: p.idx, text: p.text })),
             });
         }
 
-        // Opening the book counts as reading today (streak), like opening today's poem.
-        // ?checkin=0 opts out. A failed check-in must never break the book, so it only logs.
-        if (req.query.checkin !== "0") {
-            await Promise.resolve()
-                .then(() => streakModel.checkIn(req.user.id, today()))
-                .catch((err) => console.error("Streak check-in failed:", err));
-        }
-
-        const progress = await booksModel.getProgress(req.user.id, room.id, rb.book_id); // no row is created here
-        const readers = await booksModel.getReaders(room.id, rb.book_id);
+        // Opening the book: the room goes first in my room list, and it counts as reading
+        // today (streak, like today's poem; ?checkin=0 opts out). Neither may break the
+        // book, so they only log. Everything here is independent -> one round trip.
+        const checkIn = req.query.checkin !== "0";
+        const [chapters, progress, readers] = await Promise.all([
+            booksModel.getChapters(rb.book_id),
+            booksModel.getProgress(req.user.id, room.id, rb.book_id),   // no row is created here
+            booksModel.getReaders(room.id, rb.book_id),
+            Promise.resolve()
+                .then(() => roomsModel.markOpened(room.id, req.user.id))
+                .catch((err) => console.error("Marking the room opened failed:", err)),
+            Promise.resolve()
+                .then(() => (checkIn ? streakModel.checkIn(req.user.id, today()) : null))
+                .catch((err) => console.error("Streak check-in failed:", err)),
+        ]);
         res.set("Cache-Control", "no-store");
         res.status(200).json({
             room: { id: room.id, name: room.name },
