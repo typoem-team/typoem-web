@@ -93,7 +93,7 @@
     current.tip.querySelector('.tour-count').textContent = (i + 1) + ' / ' + current.steps.length;
     current.tip.querySelector('.tour-skip').hidden = last;
     var next = current.tip.querySelector('.tour-next');
-    next.textContent = last ? '알겠어요' : '다음';
+    next.textContent = last ? '확인' : '다음';
     place();
     next.focus({ preventScroll: true });
   }

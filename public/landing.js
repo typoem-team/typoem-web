@@ -49,7 +49,7 @@ async function loadPoem() {
     statusEl.hidden = true;
     sheetEl.hidden = false;
   } else {
-    statusEl.textContent = "Couldn't load a poem right now. Please refresh.";
+    statusEl.textContent = '오늘의 시를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
   }
 }
 

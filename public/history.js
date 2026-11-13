@@ -1,5 +1,5 @@
 // public/history.js
-// History — this room's past poems (시) and the books it has read (소설).
+// History — this room's past poems (시) and the books it has read (책).
 // history.html?room=ID&tab=poem|book. Reached from the home's History box (and the poem screen's link).
 // No tab bar here; back goes to the home showing this room.
 //
@@ -30,9 +30,7 @@ requireLogin();
   function $(id) { return document.getElementById(id); }
   function enc(v) { return encodeURIComponent(v); }
 
-  var MONTHS = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY',
-    'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-  var DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
   function icon(path) {
     return '<svg viewBox="0 0 24 24" aria-hidden="true">' + path + '</svg>';
@@ -89,7 +87,7 @@ requireLogin();
       if (key !== month) {
         month = key;
         var count = past.filter(function (x) { var q2 = dayParts(x.date); return q2 && q2.y + '-' + q2.mo === key; }).length;
-        html += '<h2 class="hist-month"><span>' + (p ? MONTHS[p.mo - 1] : '') + '</span><span>' + count + '편</span></h2>';
+        html += '<h2 class="hist-month"><span>' + (p ? p.mo + '월' : '') + '</span><span>' + count + '편</span></h2>';
       }
       html += poemRow(r);
     });
@@ -166,9 +164,9 @@ requireLogin();
     rereadBook = books[+btn.dataset.i];
     if (!rereadBook) return;
     var cur = books.find(function (b) { return b.is_current; });
-    $('reread-title').textContent = rereadBook.title + '으로 다시 읽을까요?';
+    $('reread-title').textContent = '‘' + rereadBook.title + '’, 다시 읽을까요?';
     $('reread-note').textContent = '방 전체가 이 책으로 바뀌어요. 각자 읽던 데서 이어 읽어요.' +
-      (cur ? ' 지금 읽던 ' + cur.title + '도 위치가 그대로 남아요.' : '');
+      (cur ? ' 지금 읽던 ‘' + cur.title + '’도 위치가 그대로 남아요.' : '');
     UI.openSheet('sheet-reread', { anchor: btn });
   });
   $('reread-cancel').addEventListener('click', function () { UI.closeSheets(); });

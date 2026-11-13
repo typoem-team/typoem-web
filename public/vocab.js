@@ -147,12 +147,15 @@ document.getElementById('vocab-list').addEventListener('click', async (e) => {
   try {
     const res = await authFetch(`/api/vocab/${encodeURIComponent(id)}`, { method: 'DELETE' });
     if (res.ok || res.status === 204) {
+      TypoemUI.toast('단어를 지웠어요');
       loadVocab();
     } else {
+      TypoemUI.toast('단어를 지우지 못했어요');
       btn.disabled = false;
     }
   } catch (err) {
     console.error(err);
+    TypoemUI.toast('단어를 지우지 못했어요');
     btn.disabled = false;
   }
 });

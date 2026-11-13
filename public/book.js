@@ -313,8 +313,8 @@ async function showReader(data) {
   await openChapter(chapterOfIdx(anchorIdx), { anchor: anchorIdx });
   TypoemTour.run('book', [
     { el: '#book-flow', text: {
-      touch: '옆으로 밀거나 화면 양쪽 끝을 누르면 쪽이 넘어가요. 시처럼 두 번 톡톡 누르면 뜻, 길게 누르면 형광펜 · 주석이에요.',
-      mouse: '양쪽 끝을 클릭하거나 ← → 키로 쪽을 넘겨요. 시처럼 더블클릭하면 뜻, 드래그하면 형광펜 · 주석이에요.',
+      touch: '옆으로 밀거나 화면 양쪽 끝을 누르면 쪽이 넘어가요. 단어를 두 번 톡톡 누르면 뜻이 나오고, 길게 누르면 형광펜과 주석을 남길 수 있어요.',
+      mouse: '양쪽 끝을 클릭하거나 ← → 키로 쪽을 넘겨요. 단어를 더블클릭하면 뜻이 나오고, 드래그하면 형광펜과 주석을 남길 수 있어요.',
     } },
     { el: '#book-toc-btn', text: '목차에서 읽고 싶은 장으로 가요.' },
     { el: '#book-pace', text: '완독 목표일을 정하면 하루에 몇 쪽 읽으면 되는지 알려줘요.' },
