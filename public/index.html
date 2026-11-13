@@ -23,6 +23,8 @@
 
     <!-- 스트릭: 이번 주 7일 (streak.js). 스트릭 API가 안 되면 streak.js가 숨겨요 -->
     <section class="streak-slot sw" aria-label="이번 주 읽은 날" data-streak hidden>
+      <!-- 넓은 화면에서만 보여요 (폰에서는 위쪽 'N일째 이어 읽는 중'이 같은 역할) -->
+      <p class="sw-label home-sw-label" id="streak-week-label"></p>
       <div class="sw-days" id="streak-week"></div>
     </section>
 

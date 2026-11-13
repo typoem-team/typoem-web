@@ -4020,6 +4020,15 @@ button.book-shelf-item:active .book-cover {
 .home .streak-slot {
   margin-bottom: 0;
 }
+.home-sw-label {
+  display: none;                    /* shown on wide screens only (see 1024px+) */
+}
+@media (min-width: 1024px) {
+  .home-sw-label {
+    display: block;
+    margin-bottom: var(--space-3);
+  }
+}
 
 .hr-head {
   display: flex;
@@ -4372,21 +4381,43 @@ button.book-shelf-item:active .book-cover {
     margin-right: auto;
   }
 }
-/* 1024px+: covers on the left, History on the right, the whole home in the middle */
+/* 1024px+: one centred two-column page —
+     room name (full width)
+     covers  | this week
+             | History                                          */
 @media (min-width: 1024px) {
   .page.home {
     max-width: 980px;
-  }
-  .home .streak-slot {
-    margin-left: auto;
-    margin-right: auto;
+    display: grid;
+    grid-template-columns: auto minmax(320px, 440px);
+    grid-template-areas:
+      "status status"
+      "head   head"
+      "books  streak"
+      "books  history"
+      "empty  empty";
+    column-gap: 48px;
+    justify-content: center;
+    align-items: start;
   }
   .home .hr {
-    display: grid;
-    grid-template-columns: auto minmax(300px, 440px);
-    column-gap: 48px;
-    align-items: start;
-    justify-content: center;
+    display: contents;              /* its parts join the page grid */
+  }
+  .home #status { grid-area: status; }
+  .home .empty-state { grid-area: empty; }
+  .hr-head { grid-area: head; margin-top: 8px; }
+  .hr-books { grid-area: books; margin-top: 18px; }
+  .home .streak-slot {
+    grid-area: streak;
+    max-width: none;
+    margin: 18px 0 0;
+  }
+  .home .sw-days {
+    max-width: none;
+  }
+  .hr-history {
+    grid-area: history;
+    margin-top: 16px;
   }
   /* Rooms: 코드로 참여 · 새 방 만들기 in the middle */
   .room-actions {
