@@ -1,13 +1,9 @@
 const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 const model = require("../models/memosModel");
 const roomsModel = require("../models/roomsModel");
+const { parseId } = require("../lib/parseId");
 
 // helper: parse ':id' path param and validate (same as roomsController)
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 
 // create a memo on the room's poem of the day

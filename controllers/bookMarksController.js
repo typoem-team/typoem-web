@@ -12,13 +12,9 @@ const model = require("../models/bookMarksModel");
 const booksModel = require("../models/booksModel");
 const roomsModel = require("../models/roomsModel");
 const { checkMarkBody, noteContent } = require("../lib/markInput");
+const { parseId } = require("../lib/parseId");
 
 // helper: parse ':id' path param and validate (same as roomsController)
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 // helper: non-negative integer from a query string ("0", "12"), else null
 function parseIndex(raw) {

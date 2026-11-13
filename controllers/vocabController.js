@@ -1,11 +1,8 @@
 // controllers/vocabController.js
 const model = require("../models/vocabModel");
 const { tidyEntries } = require("../lib/koGloss");
+const { parseId } = require("../lib/parseId");
 
-function parseId(raw) {
-  const n = Number(raw);
-  return Number.isInteger(n) && n > 0 ? n : null;
-}
 
 // Korean meanings come from the dictionary popup as [{ pos, ko: [text], own }].
 // Keep only that shape and size before it is stored (as JSON text).

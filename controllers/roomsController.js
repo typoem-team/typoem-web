@@ -1,16 +1,12 @@
 const model = require("../models/roomsModel");
 const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
+const { parseId } = require("../lib/parseId");
 
 // per-user room limits (fixed server policy)
 const MAX_OWNED_ROOMS = 3;
 const MAX_JOINED_ROOMS = 5;
 
 // helper: parse ':id' path param and validate
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 // create a room
 // [POST] /api/rooms

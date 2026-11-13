@@ -14,11 +14,8 @@
 const model = require("../models/streakModel");
 const roomsModel = require("../models/roomsModel");
 const { today, isValidMonth, monthRange } = require("../lib/dates");
+const { parseId } = require("../lib/parseId");
 
-function parseId(raw) {
-    const n = Number(raw);
-    return Number.isInteger(n) && n > 0 ? n : null;
-}
 
 // GET /api/streak[?month=YYYY-MM]
 async function getMyStreak(req, res) {

@@ -14,13 +14,9 @@ const model = require("../models/poemMarksModel");
 const poemsModel = require("../models/poemsModel");
 const roomsModel = require("../models/roomsModel");
 const { checkMarkBody, noteContent } = require("../lib/markInput");
+const { parseId } = require("../lib/parseId");
 
 // helper: parse a path param and validate it as a positive integer
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 
 // helper: valid ids + room exists + caller is a member (same order/messages as annotationsController)

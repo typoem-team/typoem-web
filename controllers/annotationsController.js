@@ -1,13 +1,9 @@
 const { today } = require("../lib/dates"); // Korea (Asia/Seoul) calendar date
 const model = require("../models/annotationsModel");
 const roomsModel = require("../models/roomsModel");
+const { parseId } = require("../lib/parseId");
 
 // helper: parse a path param and validate it as a positive integer
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 
 // create an annotation on a specific line of the room's poem of the day

@@ -12,13 +12,8 @@ const roomsModel = require("../models/roomsModel");
 const memosModel = require("../models/memosModel");
 const poemMarksModel = require("../models/poemMarksModel");
 const streakModel = require("../models/streakModel");
+const { parseId } = require("../lib/parseId");
 
-// helpers copied from memosController/roomsController (for consistency)
-function parseId(raw) {
-    const id = Number(raw);
-    if (!Number.isInteger(id) || id <= 0) return null;
-    return id;
-}
 
 const LIVE_RETRIES = 5;
 const MIN_LINES = 4;
@@ -142,10 +137,12 @@ async function getHistory(req, res) {
         const room_id = parseId(req.params.id);
         if (!room_id) return res.status(400).json({ error: "invalid room id" });
 
-        const room = await roomsModel.findById(room_id);
+        // both permission checks at once (one DB round trip); the heavy list only after them
+        const [room, isMember] = await Promise.all([
+            roomsModel.findById(room_id),
+            roomsModel.isMember(room_id, req.user.id),
+        ]);
         if (!room) return res.status(404).json({ error: "Room not found" });
-
-        const isMember = await roomsModel.isMember(room_id, req.user.id);
         if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
 
         const history = await poemsModel.listRoomHistory(room_id);
@@ -168,10 +165,11 @@ async function getPoemOnDate(req, res) {
         if (!isValidDate(date)) return res.status(400).json({ error: "date must be YYYY-MM-DD" });
         if (date > today()) return res.status(400).json({ error: "date is in the future" });
 
-        const room = await roomsModel.findById(room_id);
+        const [room, isMember] = await Promise.all([
+            roomsModel.findById(room_id),
+            roomsModel.isMember(room_id, req.user.id),
+        ]);
         if (!room) return res.status(404).json({ error: "Room not found" });
-
-        const isMember = await roomsModel.isMember(room_id, req.user.id);
         if (!isMember) return res.status(403).json({ error: "You are not a member of this room" });
 
         const poem_id = await poemsModel.getTodayPoemId(room_id, date); // poem assigned on `date`
