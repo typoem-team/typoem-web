@@ -28,7 +28,7 @@
 | 하단 탭 이름을 영어로 (**Home · Rooms · Words · Me**, 11/13 결정) | ✅ 끝 | 이 PR |
 | 시 · 책 공통 방 헤더 (`ui.js` `drawRoomBar`, 둘 다 `?id=`) | ✅ 끝 | #51 |
 | 초대 시트를 방 안으로 (`invite.js`) | ✅ 끝 | #52 |
-| 홈: 스트릭 자리 + 최근 방 카드 3개 + `모든 방 보기` | ✅ 끝 | #53, #59 |
+| 홈: 스트릭 자리 + 최근 방 카드 3개 + `모든 방 보기` | ✅ 끝 → #69(안 2)로 바뀜. `rooms.js`의 홈용 분기는 지웠어요 | #53, #59, #71 |
 | 지난 시: 시 화면 아래 링크 → History (`history.html`) | ✅ 끝 | #53 → #62 |
 | 시 화면 밑줄 빼기 | ✅ 끝 | #48 |
 | 방 카드 API (A1), 마지막에 연 방 서버 저장 (A1-b) | ✅ 끝 | #47, #58 |
@@ -37,6 +37,7 @@
 | 닉네임 API (A4), openapi.yaml 문법 오류 | ✅ 끝 | #56 |
 | 설정 `settings.html` (닉네임 · 로그아웃 · 계정 삭제) | ✅ 끝 (테마 · 출처 · 버전 더함) | #57, #65 |
 | Design.md + 시안 C 색 · 글꼴 토큰 (1단계) | ✅ 끝 | #61 |
+| 시안 C 글꼴 파일 (Noto Sans KR · Noto Serif KR · Newsreader · IBM Plex Mono, 한국어 2,350자 서브셋, 약 1MB) | ✅ 끝 🟨 소연 | #70 |
 | 다크 모드 값 + 테마 전환 (`theme.js`, 라이트 · 다크 · 기기 설정) | ✅ 끝 | #65 |
 | 스트릭 화면 생김새 · 월 캘린더 (8단계, A5): 홈 이번 주 7일, 나 큰 숫자 + 이번 달 | ✅ 끝 | #63 |
 | History 화면 `history.html` 시 \| 소설 (9단계, A2) · `past.js` 지움 | ✅ 끝 | #62 |
@@ -49,7 +50,7 @@
 | 프로필: 팝오버 대신 **설정 맨 위**로 (14단계, 11/13 결정) | ⬜ 🟩 지섭 | |
 | 배지 화면 (16단계, API `GET /api/users/me/badges`는 #60에 있어요) | ⬜ 미정 | |
 | 홈: 고른 방 하나를 크게 (오늘의 시 · 우리 책 표지 두 장 + History, 안 2) | ✅ 끝 | #69 |
-| 아침 알림: 설정에서 켜기 · 시간 (`notify.js`, 폰 안에서 예약) | 🔶 웹 끝, 앱 플러그인 남음 🟨 소연 | #72 |
+| 아침 알림: 설정에서 켜기 · 시간 (`notify.js`, 폰 안에서 예약, 정확하지 않은 알람) | ✅ 끝 🟨 소연 (실기기 확인 남음) | #72, #73, 앱 #8 |
 | 홈 화면 위젯 (앱), 배지 화면 — **v1.1에서 v1.0으로 당김** | ⬜ 오늘 (11/13) | |
 
 ---
@@ -245,7 +246,7 @@ public/
 
 - 지금 토큰(`--bg`, `--ink`, `--accent` …)은 한동안 새 토큰을 가리키게 해요. 예: `--ink: var(--color-ink)`. 그러면 기존 CSS가 깨지지 않고 조금씩 옮길 수 있어요.
 - 테마 전환: `settings.html`에서 고른 값을 `localStorage['typoem:theme']`에 저장하고, 각 페이지 `<head>`의 한 줄짜리 인라인 스크립트가 `<html data-theme>`를 붙여요. 페이지가 처음 그려질 때 깜빡이지 않게 하려는 거예요. `meta theme-color`도 함께 바꿔요.
-- 폰트: 지금은 MaruBuri, Cormorant, Gentium을 직접 올려두고 써요 (OFL). 시안의 4종도 모두 OFL이에요. 앱이 오프라인에서도 돌아야 하니 **Google Fonts 링크보다 직접 올려두기(subset woff2)**를 추천해요. 한국어 폰트 2종은 용량이 크니 서브셋이 꼭 필요해요. 바꿀지는 Design.md에서 정해요.
+- 폰트: (11/13, PR #70) 시안의 4종을 `public/fonts/`에 직접 올렸어요 (subset woff2 + OFL.txt). 한국어 2종은 KS X 1001 2,350자만 남겼고, 굵기는 CSS가 쓰는 것만이에요. 자세한 건 Design.md 2장. 옛 MaruBuri · Cormorant · Gentium은 토큰의 뒤쪽 글꼴로 남아 있어요.
 
 ### 3-5. 앱(typoem-app)과 맞물리는 곳 (2026-11-12 확인)
 
@@ -259,6 +260,7 @@ public/
 | 안드로이드 뒤로 버튼 | (11/12) `EXIT_PAGES = ['/', '/index.html', '/login.html', '/landing.html']`. 그 밖의 페이지는 `history.back()`, 기록이 없으면 홈으로 가요 | 새 하단 탭 페이지(`rooms.html`, `me.html`, `vocab.html`)에서 뒤로 버튼을 누르면 탭을 거꾸로 돌아가요. (11/13, 앱 PR #6) `app-shell.js`의 `BACK_RULES` 상수 하나로 정해요 (`EXIT_PAGES`를 합침): 홈 · 로그인 · 랜딩은 앱 종료, 탭 페이지(`rooms` · `vocab` · `me`)는 홈으로(`location.replace`), `settings.html`은 `history.back()`이고 기록이 없으면 `me.html`. 새 페이지를 더하면 여기에 규칙을 더해요. 앱의 `npm test`(`scripts/test-back-button.mjs`)로 확인해요 |
 | 바탕색 | `app-shell.js:242`의 `PAPER = '#f2eee7'`와 `capacitor.config.json`의 `backgroundColor`, `StatusBar.backgroundColor`에 지금 바탕색이 박혀 있어요 | 시안의 흰 바탕이나 다크 모드로 바꾸면 **앱 쪽 값도 같이 바꿔야 해요.** 다크 모드는 app-shell이 `--bg`를 읽어서 상태 표시줄 색을 정하게 바꾸는 앱 PR이 필요해요 (13단계와 함께) |
 | 깨어나는 중 화면 | `app-shell.js:91-102`가 `var(--bg)`, `var(--ink)`, `var(--ink-2)`, `var(--on-ink)`를 써요 | 토큰 이름을 바꿔도 **이 네 이름은 별칭으로 계속 남겨요** (3-4장의 "기존 토큰은 새 토큰을 가리키게" 규칙) |
+| 아침 알림 (11/13) | 웹 `notify.js`가 `Capacitor.Plugins.LocalNotifications`를 직접 불러요 (앱 PR #8: `@capacitor/local-notifications` 8.x, 알림 아이콘 `ic_stat_typoem`). 플러그인이 없으면 설정의 알림 칸이 숨겨져요 | 정확한 알람 권한(`SCHEDULE_EXACT_ALARM`)은 넣지 않아요. 그래서 웹이 알림마다 `isExactNotification: false`를 줘요 (PR #73). 플러그인 8.3+ 기본값은 `true`라, 빼면 켤 때마다 '알람 및 리마인더' 설정 화면이 떠요 |
 
 참고: 앱의 `npm run sync:local`은 `WEB_DIR=../typoem-web …` 형식이라 Windows PowerShell에서는 그대로 실행되지 않아요. Git Bash에서 실행하거나 `$env:WEB_DIR='../typoem-web'; npm run sync`로 해요.
 
@@ -346,4 +348,5 @@ API를 바꾸거나 더하면 `openapi.yaml`과 `tests/`도 같이 고쳐요.
 - 하단 탭 이름은 영어: **Home · Rooms · Words · Me** (아이콘은 그대로)
 - 프로필 팝오버는 없애고 설정 맨 위로
 - 다크 모드: 라이트 · 다크 · 기기 설정, 기본은 라이트 (값은 Design.md)
+- 아침 알림: 폰 안에서 미리 예약해서 문구는 고정이에요 ("오늘의 시가 도착했어요 / 한 편 읽고 하루를 시작해요"). 기본 오전 8시, 설정에서 켜고 시간을 골라요. 원스토어 권한 설명: "알림(선택): 설정에서 켜면 매일 고른 시간에 '오늘의 시' 알림을 보내기 위해 사용하며, 끄면 알림을 보내지 않습니다."
 - **v1.1 패치는 없어요.** 아침 알림 · 홈 화면 위젯 · 배지 화면도 오늘(11/13) 끝내고, 내일(11/14) v1.0 하나로 빌드해서 원스토어에 제출해요. 위젯을 못 끝내면 위젯만 빼고 출시해요 (출시는 미루지 않아요). CSS 나누기(2단계)는 보이는 변화가 없는 정리라 그대로 제출 뒤에 해요
