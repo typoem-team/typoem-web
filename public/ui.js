@@ -439,15 +439,37 @@
         if (S) S.setStyle({ style: tone === 'light' ? 'DARK' : 'LIGHT' });
       } catch (e) { /* not in the app */ }
     },
-    // Home screen widget (typoem-app's TypoemWidget plugin): today's poem as plain text,
-    // { date: 'YYYY-MM-DD', title, author, lines: [first two lines] }. Does nothing outside the app.
-    updateWidget: function (poem) {
-      try {
-        var C = window.Capacitor;
-        if (C && C.isPluginAvailable && C.isPluginAvailable('TypoemWidget')) {
-          C.Plugins.TypoemWidget.update(poem).catch(function () { /* the widget keeps what it had */ });
-        }
-      } catch (e) { /* not in the app */ }
+    // Home screen widget (typoem-app's TypoemWidget plugin). Called with a /today payload by the
+    // home and the poem screen (the widget can open the poem screen directly, skipping the home).
+    // Sends plain text, no memos or names (a widget is always on the home screen):
+    //   { date: 'YYYY-MM-DD', roomId, title, author, lines: [first two lines],
+    //     streak: { current, longest, checkedInToday } | null }
+    // The streak is read after /today, which is what checks me in, so today's reading counts.
+    // Does nothing outside the app.
+    sendTodayToWidget: function (today, roomId) {
+      var C = window.Capacitor;
+      var poem = today && today.poem;
+      if (!poem || !(C && C.isPluginAvailable && C.isPluginAvailable('TypoemWidget'))) return;
+      // PoetryDB: "--" is an em dash, _word_ is italics (no italics in a widget)
+      function plain(t) { return String(t || '').replace(/-{2,}/g, '—').replace(/_([^_]+)_/g, '$1').trim(); }
+      var data = {
+        date: today.date,
+        roomId: String(roomId),
+        title: plain(poem.title),
+        author: plain(poem.author),
+        lines: (poem.lines || []).map(function (l) { return plain(l.text); }).filter(Boolean).slice(0, 2),
+        streak: null,
+      };
+      authFetch('/api/streak')
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .catch(function () { return null; })
+        .then(function (s) {
+          if (s && typeof s.current === 'number') {
+            data.streak = { current: s.current, longest: s.longest, checkedInToday: !!s.checkedInToday };
+          }
+          return C.Plugins.TypoemWidget.update(data);
+        })
+        .catch(function () { /* the widget keeps what it had */ });
     },
   };
 
