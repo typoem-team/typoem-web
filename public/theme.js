@@ -38,6 +38,7 @@
   function set(choice) {
     try { localStorage.setItem(KEY, choice); } catch (e) { /* private mode: this page only */ }
     apply(choice);
+    try { window.dispatchEvent(new Event('typoem:theme')); } catch (e) { /* old browser */ }   // the app repaints its bars
     document.querySelectorAll('[data-theme-choice]').forEach(function (b) {
       b.setAttribute('aria-checked', String(b.dataset.themeChoice === choice));
     });
@@ -45,7 +46,11 @@
 
   apply(read());
   if (media && media.addEventListener) {
-    media.addEventListener('change', function () { if (read() === 'system') apply('system'); });
+    media.addEventListener('change', function () {
+      if (read() !== 'system') return;
+      apply('system');
+      try { window.dispatchEvent(new Event('typoem:theme')); } catch (e) { /* old browser */ }
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
