@@ -1953,6 +1953,73 @@ html[lang="en"] .landing-invite {
   white-space: nowrap;
 }
 
+/* friends: the room's current book under the room name, each member's progress under their streak */
+.mf-title {
+  margin-top: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mf-title b {
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 500;
+  font-size: var(--fs-md);
+  color: var(--color-ink);
+}
+
+.mf-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mf-side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.mf-book {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mf-bar {
+  width: 64px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-line);
+  overflow: hidden;
+}
+
+.mf-bar > div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+}
+
+.mf-book.is-done .mf-bar > div {
+  background: var(--color-accent-warm);
+}
+
+.mf-book b {
+  min-width: 4.5ch;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--color-ink-2);
+}
+
 .me-account {
   margin-top: 28px;
 }
