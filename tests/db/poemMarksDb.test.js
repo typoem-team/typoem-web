@@ -119,6 +119,22 @@ describe("scripts/migrate-line-annotations.js", () => {
     });
 });
 
+describe("poemsModel.listRoomHistory", () => {
+    test("people who only highlighted or left a passage note count as contributors", async () => {
+        const db = getDb();
+        await db.run(`INSERT INTO rooms (name, invite_code, owner_id) VALUES ('r3', 'CCCCCC', 1)`);
+        const room = (await db.get(`SELECT id FROM rooms WHERE invite_code = 'CCCCCC'`)).id;
+        await db.run(`INSERT INTO daily_room_poems (room_id, poem_id, date) VALUES (?, 1, '2026-11-12')`, [room]);
+        await marksModel.createMark({ ...base, room_id: room, user_id: 1, kind: "highlight", color: "yellow" });
+        await marksModel.createMark({ ...base, room_id: room, user_id: 2, kind: "note", content: "좋다" });
+        await marksModel.createMark({ ...base, room_id: room, user_id: 2, kind: "highlight", color: "blue" });
+
+        const [day] = await require("../../models/poemsModel").listRoomHistory(room);
+        expect(day.contributor_count).toBe(2);
+        expect(day.contributors.split(",").sort()).toEqual(["alice", "bob"]);
+    });
+});
+
 describe("roomsModel.deleteRoom", () => {
     test("also removes the room's poem marks", async () => {
         await marksModel.createMark({ ...base, room_id: 2, user_id: 1, kind: "highlight", color: "green" });
