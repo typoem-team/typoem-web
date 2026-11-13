@@ -4735,3 +4735,26 @@ button.book-shelf-item:active .book-cover {
   border: 1.5px solid var(--color-ink);
   background: var(--color-line);
 }
+
+/* =================================================
+   Korean type rule (UI 피드백 11/13)
+   명조: room names, empty states, guide text, loading / status lines
+   고딕: buttons, inputs, labels, numbers, form errors, toasts (the --font-ui default)
+   ================================================= */
+/* room names: the same serif as the home's room name, everywhere it shows */
+.rc-name,
+.r-room,
+.me-room,
+#hist-room {
+  font-family: var(--font-ko-head);
+  font-weight: 600;               /* the one weight this face ships */
+}
+/* status lines ("…을 불러오는 중이에요", "…을 불러오지 못했어요") and coach-mark text */
+.status,
+.s-note,
+.dict-loading,
+.dict-empty,
+.book-note,
+.tour-text {
+  font-family: var(--font-ko-accent);
+}
