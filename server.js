@@ -20,6 +20,8 @@ initDb()
     .then(() => seed())
     .then(() => {
         app.listen(PORT, () => console.log(`Typoem running on http://localhost:${PORT}`));
+        // read the 1.7 MB Korean dictionary now, not on the first word tap after a cold start
+        require('./lib/koDict').lookup('a');
     })
     .catch((err) => {
         console.error('Failed to start:', err);
