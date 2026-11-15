@@ -1,4 +1,5 @@
 const { findWords, quoteOf, ROOMS, POEMS } = require("../../scripts/seed-demo");
+const video = require("../../scripts/seed-video");
 
 describe("seed-demo", () => {
     test("findWords: word positions the way the screen numbers them", () => {
@@ -17,6 +18,21 @@ describe("seed-demo", () => {
         for (const room of ROOMS) for (const d of room.days) for (const a of d.acts) {
             const m = a.hl || a.note;
             if (m) expect(findWords(POEMS[d.poem].lines[m.line - 1], m.phrase)).not.toBeNull();
+        }
+    });
+
+    test("seed-video: same rooms with new people, every mark on its line and by a member", () => {
+        expect(video.ROOMS.map((r) => r.name)).toEqual(ROOMS.map((r) => r.name));
+        expect(Object.values(video.USERS).map((u) => u.nickname).slice(0, 4)).toEqual(["소연", "지섭", "시현", "경윤"]);
+        for (const room of video.ROOMS) {
+            expect(room.members.every((m) => video.USERS[m])).toBe(true);
+            for (const d of room.days) for (const a of d.acts) {
+                expect(room.members).toContain(a.user);
+                if (a.memo) for (const l of a.memo.likes) expect(room.members).toContain(l);
+                const m = a.hl || a.note;
+                if (m) expect(findWords(POEMS[d.poem].lines[m.line - 1], m.phrase)).not.toBeNull();
+            }
+            for (const a of room.book.acts) expect(room.book.progress[a.user]).toBeDefined();
         }
     });
 });
