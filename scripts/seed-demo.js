@@ -318,7 +318,7 @@ async function ensureBook(db, id, apply) {
 // plan checks (no writes)
 // ---------------------------------------------------------------------------
 
-function checkPoems() {
+function checkPoems({ ROOMS, POEMS, VOCAB }) {
     const problems = [];
     for (const room of ROOMS) {
         for (const d of room.days) {
@@ -377,11 +377,17 @@ function resolveBook(room, book) {
 // writes
 // ---------------------------------------------------------------------------
 
-async function removeOld(db) {
+async function removeOld(db, { USERS, OWNER }) {
     const names = Object.keys(USERS);
     const users = await db.all(`SELECT id, username FROM users WHERE username IN (${names.map(() => "?").join(",")})`, names);
     const ids = users.map((u) => u.id);
     const owner = users.find((u) => u.username === OWNER);
+    // an account with one of these usernames that reads in someone else's room is a real person's: stop
+    if (ids.length) {
+        const foreign = await db.get(`SELECT r.name FROM room_members m JOIN rooms r ON r.id = m.room_id
+            WHERE m.user_id IN (${ids.map(() => "?").join(",")}) AND r.owner_id != ?`, [...ids, owner ? owner.id : -1]);
+        if (foreign) throw new Error(`a ${OWNER} demo username is a member of room "${foreign.name}", which ${OWNER} does not own; not touching it`);
+    }
     if (owner) {
         const rooms = await db.all(`SELECT id, name FROM rooms WHERE owner_id = ?`, [owner.id]);
         for (const r of rooms) {
@@ -396,7 +402,7 @@ async function removeOld(db) {
     if (users.length) console.log(`  deleted ${users.length} old demo account(s)`);
 }
 
-async function seed(db, password) {
+async function seed(db, password, { USERS, OWNER, ROOMS, POEMS, VOCAB }) {
     const D = (n) => addDays(today(), n);
 
     // accounts
@@ -515,10 +521,12 @@ async function seed(db, password) {
     return passwords;
 }
 
-async function main() {
+// cast = { USERS, OWNER, ROOMS, POEMS, VOCAB }; scripts/seed-video.js passes its own
+async function main(cast) {
+    const { USERS, OWNER, ROOMS } = cast;
     const apply = process.argv.includes("--apply");
     try {
-        const problems = checkPoems();
+        const problems = checkPoems(cast);
         if (problems.length) throw new Error("poem marks don't match the poems:\n  " + problems.join("\n  "));
         await initDb();
         const db = getDb();
@@ -541,8 +549,8 @@ async function main() {
         for (const room of ROOMS) await ensureBook(db, room.book.id, true);
         // every book mark is checked before anything is deleted or written
         for (const room of ROOMS) resolveBook(room, await loadBook(db, room.book.id));
-        await removeOld(db);
-        const passwords = await seed(db, password);
+        await removeOld(db, cast);
+        const passwords = await seed(db, password, cast);
         console.log("Done. Accounts:");
         for (const [u, pw] of Object.entries(passwords)) console.log(`  ${USERS[u].nickname}  ${u}  ${u === OWNER ? "(DEMO_PASSWORD)" : pw}`);
     } catch (err) {
@@ -553,7 +561,7 @@ async function main() {
 
 if (require.main === module) {
     require("dotenv").config({ quiet: true });
-    main();
+    main({ USERS, OWNER, ROOMS, POEMS, VOCAB });
 }
 
-module.exports = { findWords, quoteOf, ROOMS, POEMS };
+module.exports = { main, findWords, quoteOf, USERS, OWNER, ROOMS, POEMS, VOCAB };
