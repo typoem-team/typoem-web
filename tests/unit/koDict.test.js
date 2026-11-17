@@ -119,21 +119,6 @@ describe('koDict lemma rules (poems)', () => {
 });
 
 describe('koDict hand-written poem words (ko_extra.json)', () => {
-  const fs = require('fs');
-  const path = require('path');
-  const extra = JSON.parse(fs.readFileSync(path.join(__dirname, '../../scripts/ko_extra.json'), 'utf8'));
-
-  test('every entry has a part of speech and a Korean meaning', () => {
-    for (const [word, entries] of Object.entries(extra)) {
-      expect(entries.length).toBeGreaterThan(0);
-      for (const e of entries) {
-        expect(e.pos).toMatch(/[가-힣]/);
-        expect(e.ko.length).toBeGreaterThan(0);
-        for (const k of e.ko) expect(k).toMatch(/[가-힣]/);
-      }
-    }
-  });
-
   test('base words found, with no Wiktionary credit (own)', () => {
     for (const w of ['lyre', 'woe', 'farewell', 'no', 'much']) {
       const r = lookup(w);

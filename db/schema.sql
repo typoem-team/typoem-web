@@ -219,8 +219,8 @@ CREATE INDEX IF NOT EXISTS idx_book_marks_chapter ON book_marks(room_id, book_id
 -- Highlights + notes on a word range of a room's poem; same rules as book_marks.
 -- start_line / end_line = poem_lines.line_number; start_word / end_word = 0-based word inside
 -- that line (inclusive), split the way public/room.js wrapWords() does (see lib/poemWords.js).
--- source_annotation_id: the line_annotations row this note was copied from by
--- scripts/migrate-line-annotations.js (NULL for marks made in the app); UNIQUE keeps reruns idempotent.
+-- source_annotation_id: the line_annotations row this note was copied from by a one-off
+-- migration (NULL for marks made in the app); UNIQUE keeps reruns idempotent.
 -- line_annotations itself is left as it is (older app builds still use it).
 CREATE TABLE IF NOT EXISTS poem_marks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
