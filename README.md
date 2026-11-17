@@ -57,6 +57,12 @@ Typoem은 교환 독서에서 영감을 받아, 가까운 친구들이 초대 �
 - 글꼴: SIL Open Font License (`public/fonts/` 각 폴더의 `OFL.txt`)
 
 ---
+## 문의 · 개인정보
+
+- 문의: sihyun050305@gmail.com
+- [개인정보처리방침](https://typoem-app.onrender.com/privacy.html)
+- 
+---
 
 ## 팀
 
