@@ -6,7 +6,7 @@
 
 > *Type + Poem* — 친구들과 함께 영어 시와 소설을 읽고 생각을 나누는 공간
 
-Typoem은 가까운 친구들이 초대 코드로 만든 비공개 방에서 매일 영어 시 한 편과 소설을 함께 읽는 서비스입니다. 시의 단어에 하이라이트와 메모를 남기고, 모르는 단어는 영한 사전으로 바로 찾아 단어장에 저장할 수 있습니다. 소설은 방마다 저작권이 만료된 영어 작품을 한 권 정해 장별로 함께 읽습니다.
+Typoem은 교환 독서에서 영감을 받아, 가까운 친구들이 초대 코드로 만든 비공개 방에서 매일 영어 시 한 편과 소설을 함께 읽는 서비스입니다. 시와 소설에 하이라이트와 메모를 남기고, 모르는 단어는 영한 사전으로 바로 찾아 단어장에 저장할 수 있습니다. 친구가 남긴 흔적을 보며 같이 독서할 수 있습니다.
 
 이 저장소에는 서버와 웹 화면이 함께 들어 있습니다. Android 앱은 이 저장소의 웹 화면을 그대로 사용합니다.
 
@@ -39,42 +39,6 @@ Typoem은 가까운 친구들이 초대 코드로 만든 비공개 방에서 매
 | API 문서 | OpenAPI 3.0, Swagger UI |
 | 테스트 · CI | Jest, Supertest, GitHub Actions |
 | 배포 | Render |
-
----
-
-## 실행 방법
-
-Node.js 22가 필요합니다.
-
-```bash
-git clone https://github.com/typoem-team/typoem-web.git
-cd typoem-web
-npm install
-cp .env.example .env     # JWT_SECRET에 임의의 긴 문자열을 넣습니다
-npm run dev              # http://localhost:3000
-```
-
-처음 실행하면 로컬 데이터베이스 파일(`typoem.db`)과 예시 데이터가 만들어집니다. 회원가입 후 이용해 주세요.
-
-테스트는 다음 명령으로 실행합니다.
-
-```bash
-npm test
-```
-
-### 환경 변수
-
-| 변수 | 필수 | 설명 |
-| --- | --- | --- |
-| `JWT_SECRET` | 필수 | 토큰 서명용 비밀 키 |
-| `JWT_EXPIRES_IN` | 필수 | 토큰 유효 기간 (예: `1h`) |
-| `PORT` | | 서버 포트 (기본값 `3000`) |
-| `DB_PATH` | | 로컬 데이터베이스 파일 경로 (기본값 `./typoem.db`) |
-| `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | 운영 | Turso 데이터베이스 연결 정보 |
-| `CORS_ORIGINS` | | 추가로 허용할 출처 |
-| `NODE_ENV` | | `development`, `production`, `test` |
-
-그 밖의 선택 항목은 `.env.example`에 설명되어 있습니다.
 
 ---
 
