@@ -1,4 +1,4 @@
-// Real-SQL tests for models/poemMarksModel.js, scripts/migrate-line-annotations.js and the
+// Real-SQL tests for models/poemMarksModel.js and the
 // poem_marks cleanup in roomsModel.deleteRoom. No mocks: an in-memory libSQL database.
 
 process.env.DB_PATH = ":memory:";
@@ -8,7 +8,6 @@ delete process.env.TURSO_AUTH_TOKEN;
 const { initDb, getDb } = require("../../db");
 const marksModel = require("../../models/poemMarksModel");
 const roomsModel = require("../../models/roomsModel");
-const { migrateLineAnnotations } = require("../../scripts/migrate-line-annotations");
 
 async function count(sql, args = []) {
     return (await getDb().get(sql, args)).n;
@@ -70,55 +69,6 @@ describe("poemMarksModel", () => {
     });
 });
 
-describe("scripts/migrate-line-annotations.js", () => {
-    beforeAll(async () => {
-        await getDb().run(`DELETE FROM poem_marks`);
-    });
-
-    test("copies each annotation as a whole-line note, once; keeps the originals", async () => {
-        const db = getDb();
-        const long = "x".repeat(800); // line annotations allowed up to 1000
-        await db.run(`INSERT INTO line_annotations (line_id, room_id, user_id, content, created_at) VALUES (?, 1, 1, 'first line', '2026-11-01 10:00:00')`, [lineIds[0]]);
-        await db.run(`INSERT INTO line_annotations (line_id, room_id, user_id, content) VALUES (?, 1, 2, ?)`, [lineIds[2], long]);
-        await db.run(`INSERT INTO line_annotations (line_id, room_id, user_id, content) VALUES (?, 1, 1, 'on a blank line')`, [lineIds[1]]);
-
-        const r1 = await migrateLineAnnotations();
-        expect(r1).toEqual({ copied: 2, alreadyCopied: 0, skippedNoWords: [3] });
-
-        const marks = await db.all(`SELECT * FROM poem_marks ORDER BY source_annotation_id`);
-        expect(marks).toHaveLength(2);
-        expect(marks[0]).toMatchObject({
-            room_id: 1, poem_id: 1, user_id: 1, kind: "note", color: null,
-            start_line: 1, start_word: 0, end_line: 1, end_word: 7,  // 8 words
-            quote: LINES[0], content: "first line", source_annotation_id: 1, created_at: "2026-11-01 10:00:00",
-        });
-        expect(marks[1]).toMatchObject({
-            user_id: 2, start_line: 3, start_word: 0, end_line: 3, end_word: 6, // His house is in the village though
-            quote: LINES[2], content: long, source_annotation_id: 2,
-        });
-
-        // second run: nothing new
-        expect(await migrateLineAnnotations()).toEqual({ copied: 0, alreadyCopied: 0, skippedNoWords: [3] });
-        expect(await count(`SELECT COUNT(*) AS n FROM poem_marks`)).toBe(2);
-
-        // an annotation written later (older app build) is picked up by the next run
-        await db.run(`INSERT INTO line_annotations (line_id, room_id, user_id, content) VALUES (?, 1, 2, 'later')`, [lineIds[0]]);
-        expect((await migrateLineAnnotations()).copied).toBe(1);
-        expect(await count(`SELECT COUNT(*) AS n FROM poem_marks`)).toBe(3);
-
-        // originals untouched
-        expect(await count(`SELECT COUNT(*) AS n FROM line_annotations`)).toBe(4);
-    });
-
-    test("a duplicate copy is refused by the UNIQUE source id even without the NOT EXISTS filter", async () => {
-        const again = await marksModel.insertFromAnnotation({
-            source_annotation_id: 1, room_id: 1, poem_id: 1, user_id: 1, line_number: 1,
-            end_word: 7, quote: "q", content: "c", created_at: "2026-11-01 10:00:00",
-        });
-        expect(again).toBe(false);
-    });
-});
-
 describe("poemsModel.listRoomHistory", () => {
     test("people who only highlighted or left a passage note count as contributors", async () => {
         const db = getDb();
@@ -138,6 +88,7 @@ describe("poemsModel.listRoomHistory", () => {
 describe("roomsModel.deleteRoom", () => {
     test("also removes the room's poem marks", async () => {
         await marksModel.createMark({ ...base, room_id: 2, user_id: 1, kind: "highlight", color: "green" });
+        await marksModel.createMark({ ...base, room_id: 1, user_id: 1, kind: "highlight", color: "green" });
         const before = await count(`SELECT COUNT(*) AS n FROM poem_marks WHERE room_id = 1`);
         expect(before).toBeGreaterThan(0);
 
